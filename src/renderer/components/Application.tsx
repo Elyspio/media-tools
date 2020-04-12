@@ -1,12 +1,17 @@
-import { hot } from 'react-hot-loader/root';
 import * as React from 'react';
-import Counter from "./Counter";
+import {Component} from 'react';
+import Frame from "./frame/Frame";
+import Router from "./router/Router";
 
-const Application = () => (
-    <div>
-        Hello World from Electron!
-        <Counter />
-    </div>
-);
+class Application extends Component {
+	render() {
+		return (
+			<Frame>
+				<Router/>
+			</Frame>
+		);
+	}
+}
 
-export default hot(Application);
+
+export default Application;

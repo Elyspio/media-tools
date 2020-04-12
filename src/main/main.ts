@@ -21,8 +21,12 @@ const createWindow = async () => {
 
 	win = new BrowserWindow({
 		width: 800, height: 600, webPreferences: {
-			nodeIntegration: true
-		}
+			nodeIntegration: true,
+		},
+		minWidth: 800,
+		hasShadow: true,
+		frame: false
+
 	});
 
 	if (process.env.NODE_ENV !== 'production') {

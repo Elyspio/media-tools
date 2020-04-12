@@ -1,25 +1,41 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { AppContainer } from 'react-hot-loader';
+import {Provider} from 'react-redux';
 
 import Application from './components/Application';
-import store from './store';
+import {store} from './store';
+import {createMuiTheme, MuiThemeProvider} from "@material-ui/core";
+// @ts-ignore
+import style from "./App.scss"
 
 // Create main element
 const mainElement = document.createElement('div');
+mainElement.classList.add("root");
 document.body.appendChild(mainElement);
 
-// Render components
-const render = (Component: () => JSX.Element) => {
-    ReactDOM.render(
-        <AppContainer>
-            <Provider store={store}>
-                <Component />
-            </Provider>
-        </AppContainer>,
-        mainElement
-    );
-};
+const theme = createMuiTheme({
+	palette: {
+		type: "dark",
+		primary: {
+			main: style.primary
+		},
+		secondary: {
+			main: style.secondary
+		},
+		background: {
+			default: style.background,
+			paper: style.background
+		}
+	}
+})
 
-render(Application);
+
+ReactDOM.render(
+	<MuiThemeProvider theme={theme}>
+		<Provider store={store}>
+			<Application/>
+		</Provider>
+	</MuiThemeProvider>,
+	mainElement
+);
+

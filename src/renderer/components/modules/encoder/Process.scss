@@ -1,0 +1,19 @@
+.Process {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+
+
+	.bar {
+		width: 50vw;
+		margin-right: 2rem;
+	}
+
+	.name {
+		width: 40vw;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		margin-right: 2rem;
+	}
+}

@@ -1,11 +1,14 @@
-import { combineReducers } from 'redux';
+import {combineReducers} from 'redux';
 
-import { CounterState, reducer as counterReducer } from './module/counter/counterReducer';
+import {
+	ComponentsState,
+	reducer as componentsReducer
+} from './module/components/reducer';
 
-export interface RootState {
-    counter: CounterState;
+export interface StoreState {
+	components: ComponentsState;
 }
 
-export const rootReducer = combineReducers<RootState | undefined>({
-    counter: counterReducer
+export const rootReducer = combineReducers<StoreState>({
+	components: componentsReducer
 });
