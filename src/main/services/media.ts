@@ -20,7 +20,7 @@ export class MediaService {
 	public async convert(input: Media, format: string, options?: {outputPath: string} ) {
 		try {
 			const outputPath = options?.outputPath ?? path.join(__dirname, "output.mkv")
-			const process = spawn("ffmpeg.exe", ["-y", "-i",  input.file.path, "-c:v", format, "-progress", "-", "-nostats", outputPath], {stdio: "pipe"});
+			const process = spawn("ffmpeg.exe", ["-y", "-i",  input.file.path, "-map", "0",  "-c:v", format, "-progress", "-", "-nostats", outputPath], {stdio: "pipe"});
 			const s = new EventEmitter()
 			if (input.property === undefined) {
 				input.property = await this.getInfo(input.file)

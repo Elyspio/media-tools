@@ -4,7 +4,7 @@ import {connect} from "react-redux";
 import {ModuleDescription} from "../../../store/module/components/action";
 import Button from "@material-ui/core/Button";
 import {TextField} from "@material-ui/core";
-
+import "./Renamer.scss"
 import {promises as fs} from "fs"
 import LinearProgress from "@material-ui/core/LinearProgress";
 import * as path from "path";
@@ -26,11 +26,15 @@ const mapDispatchToProps = (dispatch: Function) => {
 
 
 interface State {
-	files: Episode[]
+	episodes: Episode[]
 	name?: string,
 	min?: number,
 	max?: number,
-	percentage?: number
+	percentage?: number,
+	replaceOptions: {
+		search?: string,
+		replaceWith?: string
+	}
 }
 
 interface Episode {
@@ -47,30 +51,52 @@ export class Renamer extends React.Component<{}, State> {
 		description: "toto"
 	}
 
+
 	constructor(props: {}) {
 		super(props);
 		this.state = {
-			files: []
+			episodes: [],
+			replaceOptions: {}
 		}
 	}
 
 	render() {
-		const options = <div className="options">
-			<TextField label={"Futur nom"} onChange={this.onNameChange}
-			           error={!(this.state.name !== undefined && this.state.name.length > 0)}/>
-			<p>Début: {this.state.min}</p>
-			<p>Fin: {this.state.max}</p>
-			<Button color={"primary"} onClick={() => this.rename()}>
-				Rename files
-			</Button>
-		</div>
-		let progresion = null
+		let options: JSX.Element | null = null;
+		if (this.state.episodes.length > 0) {
+			options = <div className="options">
+				<div className="classic">
+					<TextField label={"Futur nom"} onChange={this.onNameChange}
+					           error={!(this.state.name !== undefined && this.state.name.length > 0)}/>
+					<p>Début: {this.state.min}</p>
+					<p>Fin: {this.state.max}</p>
+					<Button color={"primary"} onClick={() => this.rename()}>
+						Rename files
+					</Button>
+				</div>
 
+				<div className="replace-char">
+					<TextField id={"episode-example-name"} disabled label={"Example"}
+					           value={this.state.episodes[0].file.name}/>
+					<div className={"actions"}>
+						<TextField onChange={this.setSearchChar} label={"Search"}/>
+						<TextField onChange={this.setReplaceChar} label={"Replace with"}/>
+						<Button onClick={this.replaceChar}>Replace</Button>
+					</div>
+
+				</div>
+
+			</div>;
+		}
+
+		let progresion = null
 		if (this.state.percentage) {
-			console.log("percent", this.state.percentage, this.state.files.length, this.state.percentage as number / this.state.files.length * 100)
-			progresion = <LinearProgress
-				variant="determinate"
-				value={this.state.percentage as number / this.state.files.length * 100}/>
+			console.log("percent", this.state.percentage, this.state.episodes.length, this.state.percentage as number / this.state.episodes.length * 100)
+			progresion = <div className={"progress"}>
+				<LinearProgress
+					variant="determinate"
+					value={this.state.percentage as number / this.state.episodes.length * 100}/>
+			</div>
+
 		}
 
 
@@ -86,7 +112,7 @@ export class Renamer extends React.Component<{}, State> {
 				       style={{display: "none"}}
 				       onChange={this.onFileSelect}/>
 
-				{this.state.files.length ? options : null}
+				{options}
 				{progresion}
 
 			</div>
@@ -125,7 +151,7 @@ export class Renamer extends React.Component<{}, State> {
 			const max = episodes.reduce((ep1, ep2) => ep1.num > ep2.num ? ep1 : ep2).num
 
 			this.setState({
-				files: episodes,
+				episodes: episodes,
 				min,
 				max
 			})
@@ -176,8 +202,10 @@ export class Renamer extends React.Component<{}, State> {
 	private rename = async (): Promise<any> => {
 
 		if (!(this.state.name !== undefined && this.state.name.length > 0)) return Promise.reject();
-
-		return Promise.all(this.state.files.map((episode: Episode) => {
+		this.setState({
+			percentage: 0
+		})
+		return Promise.all(this.state.episodes.map((episode: Episode) => {
 			return new Promise(async resolve => {
 				await fs.rename(episode.file.path, `${path.dirname(episode.file.path)}${path.sep}${this.state.name} ${episode.num}.${episode.extension}`)
 				this.setState(prev => ({
@@ -186,6 +214,46 @@ export class Renamer extends React.Component<{}, State> {
 			})
 		}))
 	}
+
+	private setReplaceChar = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+		e.persist();
+		this.setState(prev => ({
+			...prev,
+			replaceOptions: {
+				...prev.replaceOptions,
+				replaceWith: e.target.value
+			}
+		}))
+	}
+
+	private setSearchChar = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+		e.persist();
+		this.setState(prev => ({
+			...prev,
+			replaceOptions: {
+				...prev.replaceOptions,
+				search: e.target.value
+			}
+		}))
+	}
+
+	private replaceChar = async () => {
+
+		if (this.state.replaceOptions.replaceWith && this.state.replaceOptions.search) {
+
+			this.setState({
+				percentage: 0
+			})
+
+			for (const episode of this.state.episodes) {
+				const newFileName = episode.file.name.replace(new RegExp(this.state.replaceOptions.search, "g"), this.state.replaceOptions.replaceWith)
+				await fs.rename(episode.file.path, path.join(path.dirname(episode.file.path), newFileName));
+				this.setState(prev => ({
+					percentage: (prev.percentage ?? 0) + 1
+				}))
+			}
+		}
+	};
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Renamer);

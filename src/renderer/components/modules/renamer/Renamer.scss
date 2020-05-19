@@ -1,0 +1,24 @@
+$marginTopBetweenComponent: 4rem;
+
+
+.replace-char {
+	margin-top: $marginTopBetweenComponent;
+	display: flex;
+	flex-direction: column;
+	width: 90%;
+
+	#episode-example-name {
+		width: 80vw;
+	}
+
+	> div.actions {
+		margin-top: 0.5rem;
+		display: flex;
+		justify-content: space-evenly;
+		align-items: center;
+	}
+
+	.progress {
+		margin-top: $marginTopBetweenComponent;
+	}
+}
