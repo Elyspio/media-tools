@@ -43,7 +43,7 @@ class Titlebar extends Component<{}, State> {
 	}
 
 	private close(): void {
-		remote.getCurrentWindow().close();
+		remote.app.quit()
 	}
 
 	private minimize(): void {

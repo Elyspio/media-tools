@@ -1,5 +1,6 @@
 @import "src/renderer/App";
 
+
 .Titlebar {
 	display: flex;
 	justify-content: space-between;
@@ -16,7 +17,7 @@
 	.title {
 		justify-self: flex-start;
 		margin-left: 0.5rem;
-		color: #bcbcbc;
+		color: $headerColor;
 	}
 ;
 

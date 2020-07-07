@@ -2,7 +2,7 @@ import React, {PureComponent} from 'react';
 import {StoreState} from "../../store/reducer";
 import {connect} from "react-redux";
 import {Renamer} from "../modules/renamer/Renamer";
-import AppBoard from "../modules/appBoard/AppBoard";
+import AppBoard from "../modules/app-board/AppBoard";
 import Module from "../modules/Module";
 import {Encoder} from "../modules/encoder/Encoder";
 import {Light} from "../modules/lights/Light";
