@@ -7,7 +7,7 @@ import Paper from "@material-ui/core/Paper";
 
 interface State {
     cpuLoad?: number,
-    gpuLoad?: number,
+    gpuLoad?: { encode: number, decode: number, memory: number },
     memLoad?: number
 }
 
@@ -26,19 +26,31 @@ class BottomBar extends Component<{}, State> {
     }
 
     render() {
+
+        const format = (number?: number) => {
+            let str = "0";
+            if (number)  {
+                str = number.toFixed(2);
+                if (number < 0) str = "0" + str;
+            }
+
+            return str + "%";
+        }
+
+
         return (
             <Paper className={"BottomBar"}>
-                <Box>
+                <Box className={"item"}>
                     <span className={"label"}>CPU</span>
-                    <span className={"value"}>{this.state.cpuLoad?.toFixed(2) ?? ""}%</span>
+                    <span className={"value"}>{format(this.state.cpuLoad)}</span>
                 </Box>
-                <Box>
-                    <span className={"label"}>GPU</span>
-                    <span className={"value"}>{this.state.gpuLoad?.toFixed(2) ?? ""}%</span>
+                <Box className={"item"}>
+                    <span className={"label"}>GPU Encode</span>
+                    <span className={"value"}>{format(this.state.gpuLoad?.encode)}</span>
                 </Box>
-                <Box>
+                <Box className={"item"}>
                     <span className={"label"}>MEM</span>
-                    <span className={"value"}>{this.state.memLoad?.toFixed(2) ?? ""}%</span>
+                    <span className={"value"}>{format(this.state.memLoad)}</span>
                 </Box>
 
             </Paper>

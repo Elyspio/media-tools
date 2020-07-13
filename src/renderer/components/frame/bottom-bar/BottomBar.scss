@@ -13,9 +13,23 @@
 	border-radius: 0 !important;
 	height: $titlebarHeight / 2;
 
-	.label {
-		margin-right: 1rem;
-	}
 
+
+	.item {
+
+
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		.label {
+			margin-right: 1rem;
+		}
+
+		.value {
+			min-width: 3rem;
+			display: block;
+		}
+	}
 
 }

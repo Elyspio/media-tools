@@ -19,45 +19,45 @@ export interface DeclarationAttributes {
 }
 
 export interface NvidiaSmiLog {
-    timestamp:      AttachedGpus;
-    driver_version: AttachedGpus;
-    cuda_version:   AttachedGpus;
-    attached_gpus:  AttachedGpus;
+    timestamp:      Text;
+    driver_version: Text;
+    cuda_version:   Text;
+    attached_gpus:  Text;
     gpu:            GPU;
 }
 
-export interface AttachedGpus {
+export interface Text {
     _text: string;
 }
 
 export interface GPU {
     _attributes:                 GPUAttributes;
-    product_name:                AttachedGpus;
-    product_brand:               AttachedGpus;
-    display_mode:                AttachedGpus;
-    display_active:              AttachedGpus;
-    persistence_mode:            AttachedGpus;
-    accounting_mode:             AttachedGpus;
-    accounting_mode_buffer_size: AttachedGpus;
+    product_name:                Text;
+    product_brand:               Text;
+    display_mode:                Text;
+    display_active:              Text;
+    persistence_mode:            Text;
+    accounting_mode:             Text;
+    accounting_mode_buffer_size: Text;
     driver_model:                DriverModel;
-    serial:                      AttachedGpus;
-    uuid:                        AttachedGpus;
-    minor_number:                AttachedGpus;
-    vbios_version:               AttachedGpus;
-    multigpu_board:              AttachedGpus;
-    board_id:                    AttachedGpus;
-    gpu_part_number:             AttachedGpus;
+    serial:                      Text;
+    uuid:                        Text;
+    minor_number:                Text;
+    vbios_version:               Text;
+    multigpu_board:              Text;
+    board_id:                    Text;
+    gpu_part_number:             Text;
     inforom_version:             InforomVersion;
     gpu_operation_mode:          GPUOperationMode;
     gpu_virtualization_mode:     GPUVirtualizationMode;
     ibmnpu:                      Ibmnpu;
     pci:                         PCI;
-    fan_speed:                   AttachedGpus;
-    performance_state:           AttachedGpus;
+    fan_speed:                   Text;
+    performance_state:           Text;
     clocks_throttle_reasons:     ClocksThrottleReasons;
     fb_memory_usage:             MemoryUsage;
     bar1_memory_usage:           MemoryUsage;
-    compute_mode:                AttachedGpus;
+    compute_mode:                Text;
     utilization:                 Utilization;
     encoder_stats:               Stats;
     fbc_stats:                   Stats;
@@ -72,7 +72,7 @@ export interface GPU {
     max_clocks:                  Clocks;
     max_customer_boost_clocks:   MaxCustomerBoostClocks;
     clock_policy:                ClockPolicy;
-    supported_clocks:            AttachedGpus;
+    supported_clocks:            Text;
     processes:                   Processes;
     accounted_processes:         AccountedProcesses;
 }
@@ -85,43 +85,43 @@ export interface AccountedProcesses {
 }
 
 export interface ApplicationsClocks {
-    graphics_clock: AttachedGpus;
-    mem_clock:      AttachedGpus;
+    graphics_clock: Text;
+    mem_clock:      Text;
 }
 
 export interface MemoryUsage {
-    total: AttachedGpus;
-    used:  AttachedGpus;
-    free:  AttachedGpus;
+    total: Text;
+    used:  Text;
+    free:  Text;
 }
 
 export interface ClockPolicy {
-    auto_boost:         AttachedGpus;
-    auto_boost_default: AttachedGpus;
+    auto_boost:         Text;
+    auto_boost_default: Text;
 }
 
 export interface Clocks {
-    graphics_clock: AttachedGpus;
-    sm_clock:       AttachedGpus;
-    mem_clock:      AttachedGpus;
-    video_clock:    AttachedGpus;
+    graphics_clock: Text;
+    sm_clock:       Text;
+    mem_clock:      Text;
+    video_clock:    Text;
 }
 
 export interface ClocksThrottleReasons {
-    clocks_throttle_reason_gpu_idle:                    AttachedGpus;
-    clocks_throttle_reason_applications_clocks_setting: AttachedGpus;
-    clocks_throttle_reason_sw_power_cap:                AttachedGpus;
-    clocks_throttle_reason_hw_slowdown:                 AttachedGpus;
-    clocks_throttle_reason_hw_thermal_slowdown:         AttachedGpus;
-    clocks_throttle_reason_hw_power_brake_slowdown:     AttachedGpus;
-    clocks_throttle_reason_sync_boost:                  AttachedGpus;
-    clocks_throttle_reason_sw_thermal_slowdown:         AttachedGpus;
-    clocks_throttle_reason_display_clocks_setting:      AttachedGpus;
+    clocks_throttle_reason_gpu_idle:                    Text;
+    clocks_throttle_reason_applications_clocks_setting: Text;
+    clocks_throttle_reason_sw_power_cap:                Text;
+    clocks_throttle_reason_hw_slowdown:                 Text;
+    clocks_throttle_reason_hw_thermal_slowdown:         Text;
+    clocks_throttle_reason_hw_power_brake_slowdown:     Text;
+    clocks_throttle_reason_sync_boost:                  Text;
+    clocks_throttle_reason_sw_thermal_slowdown:         Text;
+    clocks_throttle_reason_display_clocks_setting:      Text;
 }
 
 export interface DriverModel {
-    current_dm: AttachedGpus;
-    pending_dm: AttachedGpus;
+    current_dm: Text;
+    pending_dm: Text;
 }
 
 export interface ECCErrors {
@@ -130,66 +130,66 @@ export interface ECCErrors {
 }
 
 export interface Aggregate {
-    sram_correctable:   AttachedGpus;
-    sram_uncorrectable: AttachedGpus;
-    dram_correctable:   AttachedGpus;
-    dram_uncorrectable: AttachedGpus;
+    sram_correctable:   Text;
+    sram_uncorrectable: Text;
+    dram_correctable:   Text;
+    dram_uncorrectable: Text;
 }
 
 export interface ECCMode {
-    current_ecc: AttachedGpus;
-    pending_ecc: AttachedGpus;
+    current_ecc: Text;
+    pending_ecc: Text;
 }
 
 export interface Stats {
-    session_count:   AttachedGpus;
-    average_fps:     AttachedGpus;
-    average_latency: AttachedGpus;
+    session_count:   Text;
+    average_fps:     Text;
+    average_latency: Text;
 }
 
 export interface GPUOperationMode {
-    current_gom: AttachedGpus;
-    pending_gom: AttachedGpus;
+    current_gom: Text;
+    pending_gom: Text;
 }
 
 export interface GPUVirtualizationMode {
-    virtualization_mode: AttachedGpus;
-    host_vgpu_mode:      AttachedGpus;
+    virtualization_mode: Text;
+    host_vgpu_mode:      Text;
 }
 
 export interface Ibmnpu {
-    relaxed_ordering_mode: AttachedGpus;
+    relaxed_ordering_mode: Text;
 }
 
 export interface InforomVersion {
-    img_version: AttachedGpus;
-    oem_object:  AttachedGpus;
-    ecc_object:  AttachedGpus;
-    pwr_object:  AttachedGpus;
+    img_version: Text;
+    oem_object:  Text;
+    ecc_object:  Text;
+    pwr_object:  Text;
 }
 
 export interface MaxCustomerBoostClocks {
-    graphics_clock: AttachedGpus;
+    graphics_clock: Text;
 }
 
 export interface PCI {
-    pci_bus:                 AttachedGpus;
-    pci_device:              AttachedGpus;
-    pci_domain:              AttachedGpus;
-    pci_device_id:           AttachedGpus;
-    pci_bus_id:              AttachedGpus;
-    pci_sub_system_id:       AttachedGpus;
+    pci_bus:                 Text;
+    pci_device:              Text;
+    pci_domain:              Text;
+    pci_device_id:           Text;
+    pci_bus_id:              Text;
+    pci_sub_system_id:       Text;
     pci_gpu_link_info:       PCIGPULinkInfo;
     pci_bridge_chip:         PCIBridgeChip;
-    replay_counter:          AttachedGpus;
-    replay_rollover_counter: AttachedGpus;
-    tx_util:                 AttachedGpus;
-    rx_util:                 AttachedGpus;
+    replay_counter:          Text;
+    replay_rollover_counter: Text;
+    tx_util:                 Text;
+    rx_util:                 Text;
 }
 
 export interface PCIBridgeChip {
-    bridge_chip_type: AttachedGpus;
-    bridge_chip_fw:   AttachedGpus;
+    bridge_chip_type: Text;
+    bridge_chip_fw:   Text;
 }
 
 export interface PCIGPULinkInfo {
@@ -198,24 +198,24 @@ export interface PCIGPULinkInfo {
 }
 
 export interface LinkWidths {
-    max_link_width:     AttachedGpus;
-    current_link_width: AttachedGpus;
+    max_link_width:     Text;
+    current_link_width: Text;
 }
 
 export interface PcieGen {
-    max_link_gen:     AttachedGpus;
-    current_link_gen: AttachedGpus;
+    max_link_gen:     Text;
+    current_link_gen: Text;
 }
 
 export interface PowerReadings {
-    power_state:          AttachedGpus;
-    power_management:     AttachedGpus;
-    power_draw:           AttachedGpus;
-    power_limit:          AttachedGpus;
-    default_power_limit:  AttachedGpus;
-    enforced_power_limit: AttachedGpus;
-    min_power_limit:      AttachedGpus;
-    max_power_limit:      AttachedGpus;
+    power_state:          Text;
+    power_management:     Text;
+    power_draw:           Text;
+    power_limit:          Text;
+    default_power_limit:  Text;
+    enforced_power_limit: Text;
+    min_power_limit:      Text;
+    max_power_limit:      Text;
 }
 
 export interface Processes {
@@ -223,36 +223,36 @@ export interface Processes {
 }
 
 export interface ProcessInfo {
-    pid:          AttachedGpus;
-    type:         AttachedGpus;
-    process_name: AttachedGpus;
-    used_memory:  AttachedGpus;
+    pid:          Text;
+    type:         Text;
+    process_name: Text;
+    used_memory:  Text;
 }
 
 export interface RetiredPages {
     multiple_single_bit_retirement: LEBitRetirement;
     double_bit_retirement:          LEBitRetirement;
-    pending_blacklist:              AttachedGpus;
-    pending_retirement:             AttachedGpus;
+    pending_blacklist:              Text;
+    pending_retirement:             Text;
 }
 
 export interface LEBitRetirement {
-    retired_count:    AttachedGpus;
-    retired_pagelist: AttachedGpus;
+    retired_count:    Text;
+    retired_pagelist: Text;
 }
 
 export interface Temperature {
-    gpu_temp:                   AttachedGpus;
-    gpu_temp_max_threshold:     AttachedGpus;
-    gpu_temp_slow_threshold:    AttachedGpus;
-    gpu_temp_max_gpu_threshold: AttachedGpus;
-    memory_temp:                AttachedGpus;
-    gpu_temp_max_mem_threshold: AttachedGpus;
+    gpu_temp:                   Text;
+    gpu_temp_max_threshold:     Text;
+    gpu_temp_slow_threshold:    Text;
+    gpu_temp_max_gpu_threshold: Text;
+    memory_temp:                Text;
+    gpu_temp_max_mem_threshold: Text;
 }
 
 export interface Utilization {
-    gpu_util:     AttachedGpus;
-    memory_util:  AttachedGpus;
-    encoder_util: AttachedGpus;
-    decoder_util: AttachedGpus;
+    gpu_util:     Text;
+    memory_util:  Text;
+    encoder_util: Text;
+    decoder_util: Text;
 }

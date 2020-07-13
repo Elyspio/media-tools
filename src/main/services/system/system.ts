@@ -23,9 +23,16 @@ export class SystemService {
         }
     }
 
-    public async gpuLoad(): Promise<number> {
+    public async gpuLoad(): Promise<{encode: number, decode: number, overall: number, memory: number}> {
         let xml = (await exec("nvidia-smi -x -q")).stdout;
         const data: NvidiaSmi = xml2js(xml, {compact: true}) as any;
-        return Number.parseFloat(data.nvidia_smi_log.gpu.utilization.gpu_util._text.slice(0, -1));
+        const use = data.nvidia_smi_log.gpu.utilization
+        const parse = (number: string) => Number.parseFloat(number.slice(0, -1))
+        return {
+            decode: parse(use.decoder_util._text),
+            encode: parse(use.encoder_util._text),
+            overall: parse(use.gpu_util._text),
+            memory: parse(use.memory_util._text)
+        }
     }
 }
