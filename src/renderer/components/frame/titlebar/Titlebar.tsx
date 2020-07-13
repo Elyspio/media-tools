@@ -8,54 +8,55 @@ import RemoveIcon from '@material-ui/icons/Remove';
 import {remote} from "electron";
 
 interface State {
-	fullscreen: boolean
+    fullscreen: boolean
 }
 
 
 class Titlebar extends Component<{}, State> {
 
-	state = {
-		fullscreen: remote.getCurrentWindow().isFullScreen()
-	}
+    state = {
+        fullscreen: remote.getCurrentWindow().isFullScreen()
+    }
 
-	render() {
+    render() {
 
-		let minimize;
-		if (this.state.fullscreen) {
-			minimize = <Button
-				onClick={() => this.goFullscreen(false)}><FullscreenExitIcon/></Button>
-		} else {
-			minimize = <Button
-				onClick={() => this.goFullscreen(true)}><FullscreenIcon/></Button>
-		}
+        let minimize;
+        if (this.state.fullscreen) {
+            minimize = <Button
+                onClick={() => this.goFullscreen(false)}><FullscreenExitIcon/></Button>
+        } else {
+            minimize = <Button
+                onClick={() => this.goFullscreen(true)}><FullscreenIcon/></Button>
+        }
 
-		return (
-			<div className={"Titlebar"}>
-				<span className={"title"}>Media App</span>
-				<div>
-					<Button onClick={this.minimize}><RemoveIcon/></Button>
-					{minimize}
-					<Button className={"close"} onClick={this.close}>X</Button>
-				</div>
+        return (
+            <div className={"Titlebar"}>
+                <span className={"title"}>Media App</span>
+                <div>
+                    <Button onClick={this.minimize}><RemoveIcon/></Button>
+                    {minimize}
+                    <Button className={"close"} onClick={this.close}>X</Button>
+                </div>
 
-			</div>
-		);
-	}
+            </div>
+        );
+    }
 
-	private close(): void {
-		remote.app.quit()
-	}
+    private close(): void {
+        remote.app.quit()
+        remote.process.exit(0);
+    }
 
-	private minimize(): void {
-		remote.getCurrentWindow().minimize();
-	}
+    private minimize(): void {
+        remote.getCurrentWindow().minimize();
+    }
 
-	private goFullscreen(state: boolean): void {
-		remote.getCurrentWindow().setFullScreen(state);
-		this.setState({
-			fullscreen: state
-		})
-	}
+    private goFullscreen(state: boolean): void {
+        remote.getCurrentWindow().setFullScreen(state);
+        this.setState({
+            fullscreen: state
+        })
+    }
 }
 
 export default Titlebar;

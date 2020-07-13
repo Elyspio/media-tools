@@ -8,7 +8,7 @@ import {Encoder} from "../modules/encoder/Encoder";
 import {Light} from "../modules/lights/Light";
 
 interface StateProps {
-	current?: string
+    current?: string
 }
 
 interface DispatchProps {
@@ -16,13 +16,13 @@ interface DispatchProps {
 }
 
 const mapStateToProps = (state: StoreState) => {
-	console.log("mapStateToProps", state);
-	return {
-		current: state.components.selected
-	}
+    console.log("mapStateToProps", state);
+    return {
+        current: state.components.selected
+    }
 };
 const mapDispatchToProps = (dispatch: Function) => {
-	return {}
+    return {}
 };
 
 interface Props extends StateProps, DispatchProps {
@@ -30,32 +30,32 @@ interface Props extends StateProps, DispatchProps {
 }
 
 interface State {
-	selectedComponent?: string
+    selectedComponent?: string
 }
 
 class Router extends PureComponent<Props, State> {
 
-	public static componentMap = {
-		[Renamer.info.name]: Renamer,
-		[Encoder.info.name]: Encoder,
-		[Light.info.name]: Light
-	}
+    public static componentMap = {
+        [Renamer.info.name]: Renamer,
+        [Encoder.info.name]: Encoder,
+        [Light.info.name]: Light
+    }
 
-	state = {
-		selectedComponent: undefined
-	}
+    state = {
+        selectedComponent: undefined
+    }
 
 
-	render() {
-		const comp = Router.componentMap[this.props.current ?? ""];
-		if (comp !== undefined) {
-			return <Module info={comp.info}  >
-				{React.createElement(comp, {})}
-			</Module>
-		} else {
-			return <AppBoard/>
-		}
-	}
+    render() {
+        const comp = Router.componentMap[this.props.current ?? ""];
+        if (comp !== undefined) {
+            return <Module info={comp.info}>
+                {React.createElement(comp, {})}
+            </Module>
+        } else {
+            return <AppBoard/>
+        }
+    }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Router);

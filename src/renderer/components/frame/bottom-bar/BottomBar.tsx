@@ -29,7 +29,7 @@ class BottomBar extends Component<{}, State> {
 
         const format = (number?: number) => {
             let str = "0";
-            if (number)  {
+            if (number) {
                 str = number.toFixed(2);
                 if (number < 0) str = "0" + str;
             }

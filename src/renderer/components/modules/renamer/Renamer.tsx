@@ -80,7 +80,7 @@ export class Renamer extends React.Component<{}, State> {
                     <div className={"actions"}>
                         <TextField onChange={this.setSearchChar} label={"Search"}/>
                         <TextField onChange={this.setReplaceChar} label={"Replace with"}/>
-                        <Button onClick={this.replaceChar}>Replace</Button>
+                        <Button color={"primary"} onClick={this.replaceChar}>Replace</Button>
                     </div>
 
                 </div>
@@ -101,10 +101,10 @@ export class Renamer extends React.Component<{}, State> {
 
 
         return (
-            <div>
-                <Button>
+            <div className={"Renamer"}>
+                <Button className={"header"} color={"primary"}>
                     <label htmlFor="fileInput">
-                        Fichiers
+                        Select files
                     </label>
                 </Button>
                 <input type={"file"} multiple={true}

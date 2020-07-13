@@ -1,6 +1,6 @@
 {
 	"name": "media-tools",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"description": "template for Electron with ReactJs rendering in TypeScript",
 	"main": "./dist/main.js",
 	"scripts": {

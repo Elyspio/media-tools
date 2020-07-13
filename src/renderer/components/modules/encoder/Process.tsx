@@ -6,27 +6,27 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import {ProcessData} from "./Encoder";
 
 interface Props {
-	data: ProcessData
+    data: ProcessData
 }
 
 
 class Process extends Component<Props> {
-	render() {
-		const {data} = this.props;
-		return (
-			<ListItem className={"Process"}>
-				<Typography
-					className={"name"}
-					title={data.media.file.name}>{data.media.file.name}
-				</Typography>
-				<LinearProgress
-					className={"bar"}
-					variant="determinate"
-					value={data.percentage}/>
-				<p>{data.percentage.toFixed(2)}%</p>
-			</ListItem>
-		);
-	}
+    render() {
+        const {data} = this.props;
+        return (
+            <ListItem className={"Process"}>
+                <Typography
+                    className={"name"}
+                    title={data.media.file.name}>{data.media.file.name}
+                </Typography>
+                <LinearProgress
+                    className={"bar"}
+                    variant="determinate"
+                    value={data.percentage}/>
+                <p>{data.percentage.toFixed(2)}%</p>
+            </ListItem>
+        );
+    }
 }
 
 export default Process;
