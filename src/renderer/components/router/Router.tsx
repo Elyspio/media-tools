@@ -6,6 +6,7 @@ import AppBoard from "../modules/app-board/AppBoard";
 import Module from "../modules/Module";
 import {Encoder} from "../modules/encoder/Encoder";
 import {Light} from "../modules/lights/Light";
+import {AndroidLink} from "../modules/android-link/AndroidLink";
 
 interface StateProps {
     current?: string
@@ -38,7 +39,8 @@ class Router extends PureComponent<Props, State> {
     public static componentMap = {
         [Renamer.info.name]: Renamer,
         [Encoder.info.name]: Encoder,
-        [Light.info.name]: Light
+        [Light.info.name]: Light,
+        [AndroidLink.info.name]: AndroidLink
     }
 
     state = {
