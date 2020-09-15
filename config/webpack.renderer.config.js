@@ -1,11 +1,11 @@
 const webpack = require('webpack');
-const merge = require('webpack-merge');
+const merge = require('webpack-merge').merge;
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const baseConfig = require('./webpack.base.config');
 
-module.exports = merge.smart(baseConfig, {
+module.exports = merge(baseConfig, {
 	target: 'electron-renderer',
 	entry: {
 		app: ['@babel/polyfill', '../src/renderer/app.tsx']
@@ -30,6 +30,7 @@ module.exports = merge.smart(baseConfig, {
 					plugins: [
 						["@babel/plugin-proposal-decorators", {legacy: true}],
 						['@babel/plugin-proposal-class-properties', {loose: true}],
+						['@babel/plugin-transform-typescript', {allowNamespaces: true}]
 					
 					]
 				}
