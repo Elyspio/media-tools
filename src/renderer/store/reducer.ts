@@ -1,6 +1,6 @@
-import {combineReducers} from 'redux';
+import { combineReducers } from 'redux';
 
-import {ComponentsState, reducer as componentsReducer} from './module/components/reducer';
+import { ComponentsState, reducer as componentsReducer } from './module/components/reducer';
 
 export interface StoreState {
     components: ComponentsState;

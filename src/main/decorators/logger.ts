@@ -8,7 +8,7 @@ export function log(target: any, key: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
 
     //editing the descriptor/value parameter
-    descriptor.value = function () {
+    descriptor.value = function() {
         const args = [];
         for (let _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
@@ -17,7 +17,7 @@ export function log(target: any, key: string, descriptor: PropertyDescriptor) {
         // note usage of originalMethod here
         const result = originalMethod.apply(this, args);
         const r = JSON.stringify(result);
-        console.log("Call: " + key + "(" + a + ") => " + r);
+        console.log('Call: ' + key + '(' + a + ') => ' + r);
         return result;
     };
 

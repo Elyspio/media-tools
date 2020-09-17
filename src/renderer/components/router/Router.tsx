@@ -1,63 +1,47 @@
-import React, {PureComponent} from 'react';
-import {StoreState} from "../../store/reducer";
-import {connect} from "react-redux";
-import {Renamer} from "../modules/renamer/Renamer";
-import AppBoard from "../modules/app-board/AppBoard";
-import Module from "../modules/Module";
-import {Encoder} from "../modules/encoder/Encoder";
-import {Light} from "../modules/lights/Light";
-import {AndroidLink} from "../modules/android-link/AndroidLink";
+import React, { PureComponent } from 'react';
+import { StoreState } from '../../store/reducer';
+import { connect, ConnectedProps } from 'react-redux';
+import AppBoard from '../modules/app-board/AppBoard';
+import Module from '../modules/Module';
+import { getApp } from './components';
 
-interface StateProps {
-    current?: string
-}
+import '../modules/external/android-link/AndroidLink';
+import '../modules/internal/encoder/Encoder';
+import '../modules/external/lights/Light';
+import '../modules/internal/renamer/Renamer';
 
-interface DispatchProps {
 
-}
-
-const mapStateToProps = (state: StoreState) => {
-    console.log("mapStateToProps", state);
-    return {
-        current: state.components.selected
-    }
-};
-const mapDispatchToProps = (dispatch: Function) => {
-    return {}
-};
-
-interface Props extends StateProps, DispatchProps {
+interface Props extends ConnectedProps<typeof connector> {
 
 }
 
 interface State {
-    selectedComponent?: string
 }
 
 class Router extends PureComponent<Props, State> {
 
-    public static componentMap = {
-        [Renamer.info.name]: Renamer,
-        [Encoder.info.name]: Encoder,
-        [Light.info.name]: Light,
-        [AndroidLink.info.name]: AndroidLink
-    }
-
-    state = {
-        selectedComponent: undefined
-    }
-
-
     render() {
-        const comp = Router.componentMap[this.props.current ?? ""];
+        const comp = getApp(this.props.current);
         if (comp !== undefined) {
-            return <Module info={comp.info}>
-                {React.createElement(comp, {})}
-            </Module>
+            return <Module info={comp}>
+                <comp.component />
+            </Module>;
         } else {
-            return <AppBoard/>
+            return <AppBoard />;
         }
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Router);
+const mapStateToProps = (state: StoreState) => {
+    console.log('mapStateToProps', state.components.selected);
+    return {
+        current: state.components.selected
+    };
+};
+
+const mapDispatchToProps = (dispatch: Function) => ({});
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+
+export default connector(Router);

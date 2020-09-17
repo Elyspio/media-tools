@@ -1,12 +1,13 @@
-import {app, BrowserWindow} from 'electron';
+process.noAsar = true;
+import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 
 let win: BrowserWindow | null;
-
 const installExtensions = async () => {
     const installer = require('electron-devtools-installer');
     const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
+    // const extensions = [];
     const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
 
     return Promise.all(
@@ -20,13 +21,16 @@ const createWindow = async () => {
     }
 
     win = new BrowserWindow({
-        width: 800, height: 600, webPreferences: {
+        width: 800,
+        height: 600,
+        webPreferences: {
             nodeIntegration: true,
+            enableRemoteModule: true
         },
         minWidth: 800,
         hasShadow: true,
-        frame: false
-
+        frame: false,
+        useContentSize: true
     });
 
     if (process.env.NODE_ENV !== 'production') {

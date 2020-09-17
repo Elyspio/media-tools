@@ -1,10 +1,11 @@
-import React, {Component} from 'react';
-import './AppBoard.scss'
-import {StoreState} from "../../../store/reducer";
-import {connect} from "react-redux";
-import {ModuleDescription, setCurrent} from "../../../store/module/components/action";
-import Router from "../../router/Router";
-import {Button} from "@material-ui/core";
+import React from 'react';
+import './AppBoard.scss';
+import { StoreState } from '../../../store/reducer';
+import { connect } from 'react-redux';
+import { ModuleDescription, setCurrent } from '../../../store/module/components/action';
+import { Button } from '@material-ui/core';
+import { listApp } from '../../router/components';
+import Tooltip from '@material-ui/core/Tooltip';
 
 interface StateProps {
     components: ModuleDescription[]
@@ -18,37 +19,35 @@ const mapStateToProps = (state: StoreState) => ({});
 const mapDispatchToProps = (dispatch: Function) => {
     return {
         setCurrent: (componentName: string) => {
-            dispatch(setCurrent(componentName))
+            dispatch(setCurrent(componentName));
         }
-    }
+    };
 };
 
 interface Props extends DispatchProps, StateProps {
 
 }
 
-interface State {
 
-}
+function AppBoard(props: Props) {
 
-class AppBoard extends Component<Props, State> {
-    render() {
 
-        const apps = Object.keys(Router.componentMap).map(key => Router.componentMap[key]["info"])
-        console.log(apps);
-        return (
-            <div className={"AppBoard"}>
-                {apps.map(app =>
-                    <Button color={"primary"} size={"large"}
-                            className={"app"}
-                            variant={"outlined"}
-                            onClick={() => this.props.setCurrent(app.name)}
-                            key={app.name}>{app.name}
+    const apps = listApp();
+
+    return (
+        <div className={'AppBoard'}>
+            {apps.map(app =>
+                <Tooltip title={app.description ?? ''} key={app.name}>
+                    <Button color={app.external ? 'secondary' : 'primary'} size={'large'}
+                            className={'app'}
+                            variant={'outlined'}
+                            onClick={() => props.setCurrent(app.name)}
+                    >{app.name}
                     </Button>
-                )}
-            </div>
-        );
-    }
+                </Tooltip>
+            )}
+        </div>
+    );
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppBoard) as any;

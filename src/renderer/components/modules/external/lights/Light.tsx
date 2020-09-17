@@ -1,17 +1,14 @@
-import React, {Component} from 'react';
-import {ModuleDescription} from "../../../store/module/components/action";
-import "./Light.scss"
+import React, { Component } from 'react';
+import './Light.scss';
+import { Register } from '../../../../decorators/Module';
 
 interface State {
     url?: string
 }
 
+@Register({ name: 'Light', external: true })
 export class Light extends Component<{}, State> {
 
-    public static info: ModuleDescription = {
-        name: "Lights",
-        description: "toto"
-    }
 
     state = {
         url: undefined
@@ -19,22 +16,22 @@ export class Light extends Component<{}, State> {
 
     async componentDidMount() {
         try {
-            await this.fetchTimeout("http://aero.elyspio.fr", 100);
+            await this.fetchTimeout('http://aero.elyspio.fr', 100);
             this.setState({
-                url: "http://aero.elyspio.fr"
-            })
+                url: 'http://aero.elyspio.fr'
+            });
         } catch (e) {
             this.setState({
-                url: "http://pi.elyspio.fr"
-            })
+                url: 'http://pi.elyspio.fr'
+            });
         }
     }
 
     render() {
         if (this.state.url) {
-            return <iframe className={"Light"}
+            return <iframe className={'Light'}
                            src={this.state.url}
-                           frameBorder="0"/>
+                           frameBorder="0" />;
         }
         return null;
     }

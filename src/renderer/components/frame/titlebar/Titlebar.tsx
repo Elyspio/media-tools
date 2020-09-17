@@ -1,11 +1,11 @@
-import React, {Component} from 'react';
-import './Titlebar.scss'
-import {Button} from "@material-ui/core";
+import React, { Component } from 'react';
+import './Titlebar.scss';
+import { Button } from '@material-ui/core';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import RemoveIcon from '@material-ui/icons/Remove';
 
-import {remote} from "electron";
+import { remote } from 'electron';
 
 interface State {
     fullscreen: boolean
@@ -16,26 +16,26 @@ class Titlebar extends Component<{}, State> {
 
     state = {
         fullscreen: remote.getCurrentWindow().isFullScreen()
-    }
+    };
 
     render() {
 
         let minimize;
         if (this.state.fullscreen) {
             minimize = <Button
-                onClick={() => this.goFullscreen(false)}><FullscreenExitIcon/></Button>
+                onClick={() => this.goFullscreen(false)}><FullscreenExitIcon /></Button>;
         } else {
             minimize = <Button
-                onClick={() => this.goFullscreen(true)}><FullscreenIcon/></Button>
+                onClick={() => this.goFullscreen(true)}><FullscreenIcon /></Button>;
         }
 
         return (
-            <div className={"Titlebar"}>
-                <span className={"title"}>Media App</span>
+            <div className={'Titlebar'}>
+                <span className={'title'}>Media App</span>
                 <div>
-                    <Button onClick={this.minimize}><RemoveIcon/></Button>
+                    <Button onClick={this.minimize}><RemoveIcon /></Button>
                     {minimize}
-                    <Button className={"close"} onClick={this.close}>X</Button>
+                    <Button className={'close'} onClick={this.close}>X</Button>
                 </div>
 
             </div>
@@ -43,7 +43,7 @@ class Titlebar extends Component<{}, State> {
     }
 
     private close(): void {
-        remote.app.quit()
+        remote.app.quit();
         remote.process.exit(0);
     }
 
@@ -55,7 +55,7 @@ class Titlebar extends Component<{}, State> {
         remote.getCurrentWindow().setFullScreen(state);
         this.setState({
             fullscreen: state
-        })
+        });
     }
 }
 

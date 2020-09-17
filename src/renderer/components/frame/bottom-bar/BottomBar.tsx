@@ -1,8 +1,8 @@
-import React, {Component} from 'react';
-import './BottomBar.scss'
-import {SystemService} from "../../../../main/services/system/system";
-import {Box} from "@material-ui/core";
-import Paper from "@material-ui/core/Paper";
+import React, { Component } from 'react';
+import './BottomBar.scss';
+import { SystemService } from '../../../../main/services/system/system';
+import { Box } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
 
 
 interface State {
@@ -13,12 +13,12 @@ interface State {
 
 class BottomBar extends Component<{}, State> {
 
-    state: State = {}
+    state: State = {};
 
     private timeoutId?: NodeJS.Timeout;
 
     componentDidMount() {
-        this.timeoutId = setInterval(this.getData, 1000)
+        this.timeoutId = setInterval(this.getData, 1000);
     }
 
     componentWillUnmount() {
@@ -28,29 +28,29 @@ class BottomBar extends Component<{}, State> {
     render() {
 
         const format = (number?: number) => {
-            let str = "0";
+            let str = '0';
             if (number) {
                 str = number.toFixed(2);
-                if (number < 0) str = "0" + str;
+                if (number < 0) str = '0' + str;
             }
 
-            return str + "%";
-        }
+            return str + '%';
+        };
 
 
         return (
-            <Paper className={"BottomBar"}>
-                <Box className={"item"}>
-                    <span className={"label"}>CPU</span>
-                    <span className={"value"}>{format(this.state.cpuLoad)}</span>
+            <Paper className={'BottomBar'}>
+                <Box className={'item'}>
+                    <span className={'label'}>CPU</span>
+                    <span className={'value'}>{format(this.state.cpuLoad)}</span>
                 </Box>
-                <Box className={"item"}>
-                    <span className={"label"}>GPU Encode</span>
-                    <span className={"value"}>{format(this.state.gpuLoad?.encode)}</span>
+                <Box className={'item'}>
+                    <span className={'label'}>GPU Encode</span>
+                    <span className={'value'}>{format(this.state.gpuLoad?.encode)}</span>
                 </Box>
-                <Box className={"item"}>
-                    <span className={"label"}>MEM</span>
-                    <span className={"value"}>{format(this.state.memLoad)}</span>
+                <Box className={'item'}>
+                    <span className={'label'}>MEM</span>
+                    <span className={'value'}>{format(this.state.memLoad)}</span>
                 </Box>
 
             </Paper>
@@ -62,15 +62,15 @@ class BottomBar extends Component<{}, State> {
         const data = await Promise.all([
             systemService.cpuLoad(),
             systemService.gpuLoad(),
-            systemService.memoryUsed(),
-        ])
+            systemService.memoryUsed()
+        ]);
 
         this.setState({
             cpuLoad: data[0],
             gpuLoad: data[1],
             memLoad: data[2].current
-        })
-    }
+        });
+    };
 
 
 }

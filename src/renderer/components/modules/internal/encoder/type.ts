@@ -29,7 +29,7 @@ export interface Stream {
     codec_name: FFProbeFileFormat;
     codec_long_name: string;
     profile: string;
-    codec_type: "video" | "audio";
+    codec_type: 'video' | 'audio';
     codec_time_base: string;
     codec_tag_string: string;
     codec_tag: string;
@@ -76,8 +76,8 @@ export interface StreamTags {
 }
 
 export type Encoder = {
-    format: "x265" | "x264",
-    type: "CPU" | "GPU",
+    format: 'x265' | 'x264',
+    type: 'CPU' | 'GPU',
     value: {
         ffmpeg: string,
         ffprobe: FFProbeFileFormat
@@ -85,21 +85,37 @@ export type Encoder = {
 }
 export const encoders: Encoder[] = [
     {
-        format: "x265",
-        type: "CPU",
+        format: 'x265',
+        type: 'CPU',
         value: {
-            ffmpeg: "libx265",
-            ffprobe: "hevc"
+            ffmpeg: 'libx265',
+            ffprobe: 'hevc'
         }
     },
     {
-        format: "x265",
-        type: "GPU",
+        format: 'x265',
+        type: 'GPU',
         value: {
-            ffmpeg: "hevc_nvenc",
-            ffprobe: "hevc"
+            ffmpeg: 'hevc_nvenc',
+            ffprobe: 'hevc'
         }
     }
-]
+];
 
-export type FFProbeFileFormat = "hevc" | "h264";
+export type FFProbeFileFormat = 'hevc' | 'h264';
+
+
+export type File = {
+    path: string,
+    name: string
+};
+
+export interface Media {
+    file: File,
+    property: MediaData,
+}
+
+export type ProcessData = {
+    media: Media,
+    percentage: number
+};

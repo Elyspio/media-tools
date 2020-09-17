@@ -1,21 +1,22 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import {Provider} from 'react-redux';
+import { Provider } from 'react-redux';
 
 import Application from './components/Application';
-import {store} from './store';
-import {createMuiTheme, MuiThemeProvider} from "@material-ui/core";
+import { store } from './store';
+import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 // @ts-ignore
-import style from "./App.scss"
+import * as style from './App.scss';
 
 // Create main element
 const mainElement = document.createElement('div');
-mainElement.classList.add("root");
+mainElement.classList.add('root');
 document.body.appendChild(mainElement);
+console.log(style);
 
 const theme = createMuiTheme({
     palette: {
-        type: "dark",
+        type: 'dark',
         primary: {
             main: style.primary
         },
@@ -27,13 +28,13 @@ const theme = createMuiTheme({
             paper: style.background
         }
     }
-})
+});
 
 
 ReactDOM.render(
     <MuiThemeProvider theme={theme}>
         <Provider store={store}>
-            <Application/>
+            <Application />
         </Provider>
     </MuiThemeProvider>,
     mainElement

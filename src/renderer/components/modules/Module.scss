@@ -24,6 +24,10 @@
 
 	}
 
+	> *:not(.bar) {
+		max-height: 82vh;
+	}
+
 
 }
 

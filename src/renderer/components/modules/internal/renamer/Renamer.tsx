@@ -1,27 +1,28 @@
 import React from 'react';
-import {StoreState} from "../../../store/reducer";
-import {connect} from "react-redux";
-import {ModuleDescription} from "../../../store/module/components/action";
-import Button from "@material-ui/core/Button";
-import {TextField} from "@material-ui/core";
-import "./Renamer.scss"
-import {promises as fs} from "fs"
-import LinearProgress from "@material-ui/core/LinearProgress";
-import * as path from "path";
+import { StoreState } from '../../../../store/reducer';
+import { connect } from 'react-redux';
+import Button from '@material-ui/core/Button';
+import { TextField } from '@material-ui/core';
+import './Renamer.scss';
+import { promises as fs } from 'fs';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import * as path from 'path';
+import { SelectFolder } from '../../../common/os';
+import { Register } from '../../../../decorators/Module';
+
 
 interface StateProps {
-
 }
 
 interface DispatchProps {
-
 }
 
+
 const mapStateToProps = (state: StoreState) => {
-    return {}
+    return {};
 };
 const mapDispatchToProps = (dispatch: Function) => {
-    return {}
+    return {};
 };
 
 
@@ -38,18 +39,13 @@ interface State {
 }
 
 interface Episode {
-    file: File,
+    file: string,
     num: number,
     extension: string
 }
 
-
+@Register({ name: 'Renamer' })
 export class Renamer extends React.Component<{}, State> {
-
-    public static info: ModuleDescription = {
-        name: "Renamer",
-        description: "toto"
-    }
 
 
     constructor(props: {}) {
@@ -57,7 +53,7 @@ export class Renamer extends React.Component<{}, State> {
         this.state = {
             episodes: [],
             replaceOptions: {}
-        }
+        };
     }
 
     render() {
@@ -65,22 +61,22 @@ export class Renamer extends React.Component<{}, State> {
         if (this.state.episodes.length > 0) {
             options = <div className="options">
                 <div className="classic">
-                    <TextField label={"Futur nom"} onChange={this.onNameChange}
-                               error={!(this.state.name !== undefined && this.state.name.length > 0)}/>
+                    <TextField label={'Futur nom'} onChange={this.onNameChange}
+                               error={!(this.state.name !== undefined && this.state.name.length > 0)} />
                     <p>Début: {this.state.min}</p>
                     <p>Fin: {this.state.max}</p>
-                    <Button color={"primary"} onClick={() => this.rename()}>
+                    <Button color={'primary'} onClick={() => this.rename()}>
                         Rename files
                     </Button>
                 </div>
 
                 <div className="replace-char">
-                    <TextField id={"episode-example-name"} disabled label={"Example"}
-                               value={this.state.episodes[0].file.name}/>
-                    <div className={"actions"}>
-                        <TextField onChange={this.setSearchChar} label={"Search"}/>
-                        <TextField onChange={this.setReplaceChar} label={"Replace with"}/>
-                        <Button color={"primary"} onClick={this.replaceChar}>Replace</Button>
+                    <TextField id={'episode-example-name'} disabled label={'Example'}
+                               value={this.state.episodes[0].file} />
+                    <div className={'actions'}>
+                        <TextField onChange={this.setSearchChar} label={'Search'} />
+                        <TextField onChange={this.setReplaceChar} label={'Replace with'} />
+                        <Button color={'primary'} onClick={this.replaceChar}>Replace</Button>
                     </div>
 
                 </div>
@@ -88,30 +84,21 @@ export class Renamer extends React.Component<{}, State> {
             </div>;
         }
 
-        let progresion = null
+        let progresion = null;
         if (this.state.percentage) {
-            console.log("percent", this.state.percentage, this.state.episodes.length, this.state.percentage as number / this.state.episodes.length * 100)
-            progresion = <div className={"progress"}>
+            console.log('percent', this.state.percentage, this.state.episodes.length, this.state.percentage as number / this.state.episodes.length * 100);
+            progresion = <div className={'progress'}>
                 <LinearProgress
                     variant="determinate"
-                    value={this.state.percentage as number / this.state.episodes.length * 100}/>
-            </div>
+                    value={this.state.percentage as number / this.state.episodes.length * 100} />
+            </div>;
 
         }
 
 
         return (
-            <div className={"Renamer"}>
-                <Button className={"header"} color={"primary"}>
-                    <label htmlFor="fileInput">
-                        Select files
-                    </label>
-                </Button>
-                <input type={"file"} multiple={true}
-                       id={"fileInput"}
-                       style={{display: "none"}}
-                       onChange={this.onFileSelect}/>
-
+            <div className={'Renamer'}>
+                <SelectFolder onChange={this.onFileSelect} mode={'file'} />
                 {options}
                 {progresion}
 
@@ -122,48 +109,45 @@ export class Renamer extends React.Component<{}, State> {
     private onNameChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
         this.setState({
             name: e.target.value
-        })
-    }
-    private onFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files: File[] = [];
-        if (e.target.files) {
-            for (let i = 0; i < e.target.files.length; i++) {
-                files.push(e.target.files[i])
-            }
+        });
+    };
+    private onFileSelect = (files: string[]) => {
+        if (files.length) {
 
-            const trim = (str: string) => str.replace(/-_/g, " ").replace(".", " . ")
 
-            let fileNames = files.map(f => trim(f.name));
+            const trim = (str: string) => str.replace(/-_/g, ' ').replace('.', ' . ');
+
+            let fileNames = files.map(trim);
 
             let numberIndex = this.findNumIndex(fileNames);
 
-            console.log("numberIndex", numberIndex);
-            let splited = fileNames.map(file => file.split(" "));
+            console.log('numberIndex', numberIndex);
+            let spited = fileNames.map(file => file.split(' '));
             console.log(fileNames);
             const episodes: Episode[] = fileNames.map((name, index) => ({
-                file: files.find(file => trim(file.name) === name) as File,
-                num: Number.parseInt(splited[index][numberIndex]),
+                file: files.find(file => trim(file) === name) as string,
+                num: Number.parseInt(spited[index][numberIndex]),
                 extension: this.findExtension(name) as string
-            }))
+            }));
             console.log(episodes);
 
-            const min = episodes.reduce((ep1, ep2) => ep1.num < ep2.num ? ep1 : ep2).num
-            const max = episodes.reduce((ep1, ep2) => ep1.num > ep2.num ? ep1 : ep2).num
+            const min = episodes.reduce((ep1, ep2) => ep1.num < ep2.num ? ep1 : ep2).num;
+            const max = episodes.reduce((ep1, ep2) => ep1.num > ep2.num ? ep1 : ep2).num;
 
             this.setState({
                 episodes: episodes,
                 min,
                 max
-            })
+            });
         }
 
-    }
+    };
 
     private findNumIndex = (filenames: string[]) => {
-        console.log("filenames", filenames);
+        console.log('filenames', filenames);
         if (filenames.length === 1) {
-            const splited = filenames[0].split(" ");
-            let i = 0
+            const splited = filenames[0].split(' ');
+            let i = 0;
             for (; i < splited.length; i++) {
                 if (!Number.isNaN(Number(splited[i]))) {
                     return i;
@@ -171,7 +155,7 @@ export class Renamer extends React.Component<{}, State> {
             }
         }
         if (filenames.length > 1) {
-            const splited = filenames.map(file => file.split(" "));
+            const splited = filenames.map(file => file.split(' '));
             const littleOne = splited.reduce((a, b) => a.length < b.length ? a : b);
             for (let index = 0; index < littleOne.length; index++) {
                 if (Number.isNaN(Number(splited[0][index]))) continue;
@@ -181,14 +165,14 @@ export class Renamer extends React.Component<{}, State> {
         }
 
         return -1;
-    }
+    };
 
     private findExtension = (filename: string) => {
-        const last = filename.split(" ").pop();
+        const last = filename.split(' ').pop();
         if (last) {
             let index: number = -1;
             for (let i = last.length; i > 0; i--) {
-                if (last[i] === ".") {
+                if (last[i] === '.') {
                     index = i;
                     break;
                 }
@@ -197,23 +181,27 @@ export class Renamer extends React.Component<{}, State> {
         }
         return undefined;
 
-    }
+    };
 
     private rename = async (): Promise<any> => {
+
+        if (this.state.min === undefined || this.state.max === undefined) return Promise.reject();
 
         if (!(this.state.name !== undefined && this.state.name.length > 0)) return Promise.reject();
         this.setState({
             percentage: 0
-        })
+        });
         return Promise.all(this.state.episodes.map((episode: Episode) => {
             return new Promise(async resolve => {
-                await fs.rename(episode.file.path, `${path.dirname(episode.file.path)}${path.sep}${this.state.name} ${episode.num}.${episode.extension}`)
+                // @ts-ignore
+                const num = this.padWithZeros(episode.num, this.state.max.toString().length);
+                await fs.rename(episode.file, `${path.dirname(episode.file)}${path.sep}${this.state.name} ${num}.${episode.extension}`);
                 this.setState(prev => ({
                     percentage: (prev.percentage ?? 0) + 1
-                }), resolve)
-            })
-        }))
-    }
+                }), resolve);
+            });
+        }));
+    };
 
     private setReplaceChar = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
         e.persist();
@@ -223,8 +211,8 @@ export class Renamer extends React.Component<{}, State> {
                 ...prev.replaceOptions,
                 replaceWith: e.target.value
             }
-        }))
-    }
+        }));
+    };
 
     private setSearchChar = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
         e.persist();
@@ -234,8 +222,8 @@ export class Renamer extends React.Component<{}, State> {
                 ...prev.replaceOptions,
                 search: e.target.value
             }
-        }))
-    }
+        }));
+    };
 
     private replaceChar = async () => {
 
@@ -243,23 +231,32 @@ export class Renamer extends React.Component<{}, State> {
 
             this.setState({
                 percentage: 0
-            })
+            });
 
             for (const episode of this.state.episodes) {
 
-                const newFileName = episode.file.name.replace(new RegExp(this.escapeRegex(this.state.replaceOptions.search), "g"), this.state.replaceOptions.replaceWith)
-                await fs.rename(episode.file.path, path.join(path.dirname(episode.file.path), newFileName));
+                const newFileName = episode.file.replace(new RegExp(this.escapeRegex(this.state.replaceOptions.search), 'g'), this.state.replaceOptions.replaceWith);
+                await fs.rename(episode.file, path.join(path.dirname(episode.file), newFileName));
                 this.setState(prev => ({
                     percentage: (prev.percentage ?? 0) + 1
-                }))
+                }));
             }
         }
     };
 
     private escapeRegex = (str: string) => {
-        return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
-    }
+        return str.replace(/[\-\[\]\/{}()*+?.\\^$|]/g, '\\$&');
+    };
 
+
+    private padWithZeros(number: number, length: number) {
+        let n: string = '' + number;
+        while (n.length < length) {
+            n = '0' + n;
+        }
+        return n;
+
+    }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Renamer);
