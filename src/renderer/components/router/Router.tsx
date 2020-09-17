@@ -8,6 +8,7 @@ import { getApp } from './components';
 import '../modules/external/android-link/AndroidLink';
 import '../modules/internal/encoder/Encoder';
 import '../modules/external/lights/Light';
+import '../modules/internal/purge/Purge';
 import '../modules/internal/renamer/Renamer';
 
 
