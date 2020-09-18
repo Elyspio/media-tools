@@ -1,6 +1,6 @@
 {
 	"name": "media-tools",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"description": "template for Electron with ReactJs rendering in TypeScript",
 	"main": "./dist/main.js",
 	"scripts": {
@@ -13,7 +13,7 @@
 		"prestart": "npm run build",
 		"start": "electron .",
 		"postinstall": "electron-builder install-app-deps",
-		"release": "npm run build && electron-builder -wl"
+		"release": "npm run build && electron-builder -w"
 	},
 	"build": {
 		"productName": "Media Tools",
@@ -32,10 +32,6 @@
 		"win": {
 			"target": "nsis"
 		}
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+ssh://git@github.com:Elyspio/media-tools.git"
 	},
 	"author": {
 		"name": "Jonathan Guichard",

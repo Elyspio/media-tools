@@ -1,6 +1,4 @@
 import React from 'react';
-import { StoreState } from '../../../../store/reducer';
-import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import { TextField } from '@material-ui/core';
 import './Renamer.scss';
@@ -9,21 +7,6 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import * as path from 'path';
 import { SelectFolder } from '../../../common/os';
 import { Register } from '../../../../decorators/Module';
-
-
-interface StateProps {
-}
-
-interface DispatchProps {
-}
-
-
-const mapStateToProps = (state: StoreState) => {
-    return {};
-};
-const mapDispatchToProps = (dispatch: Function) => {
-    return {};
-};
 
 
 interface State {
@@ -65,7 +48,7 @@ export class Renamer extends React.Component<{}, State> {
                                error={!(this.state.name !== undefined && this.state.name.length > 0)} />
                     <p>Début: {this.state.min}</p>
                     <p>Fin: {this.state.max}</p>
-                    <Button color={'primary'} onClick={() => this.rename()}>
+                    <Button color={'secondary'} onClick={() => this.rename()}>
                         Rename files
                     </Button>
                 </div>
@@ -76,7 +59,7 @@ export class Renamer extends React.Component<{}, State> {
                     <div className={'actions'}>
                         <TextField onChange={this.setSearchChar} label={'Search'} />
                         <TextField onChange={this.setReplaceChar} label={'Replace with'} />
-                        <Button color={'primary'} onClick={this.replaceChar}>Replace</Button>
+                        <Button color={'secondary'} onClick={this.replaceChar}>Replace</Button>
                     </div>
 
                 </div>
@@ -189,7 +172,8 @@ export class Renamer extends React.Component<{}, State> {
 
         if (!(this.state.name !== undefined && this.state.name.length > 0)) return Promise.reject();
         this.setState({
-            percentage: 0
+            percentage: 0,
+            episodes: []
         });
         return Promise.all(this.state.episodes.map((episode: Episode) => {
             return new Promise(async resolve => {
@@ -259,4 +243,4 @@ export class Renamer extends React.Component<{}, State> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Renamer);
+export default Renamer;

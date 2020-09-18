@@ -11,7 +11,7 @@ export class DialogService {
     public async selectFolder(returnFiles?: boolean) {
 
         const path = await dialog.showOpenDialog({
-            properties: ['openFile', 'multiSelections']
+            properties: ['openDirectory']
         });
 
         if (path.canceled) return null;

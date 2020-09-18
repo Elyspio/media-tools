@@ -1,6 +1,4 @@
 import React from 'react';
-import { StoreState } from '../../../../store/reducer';
-import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import { InputLabel, MenuItem, Select } from '@material-ui/core';
 import { encoders, File, Media, ProcessData } from './type';
@@ -12,35 +10,26 @@ import Process from './Process';
 import './Encoder.scss';
 import { Register } from '../../../../decorators/Module';
 import { SelectFolder } from '../../../common/os';
-
-interface StateProps {
-
-}
-
-interface DispatchProps {
-
-}
-
-const mapStateToProps = (state: StoreState) => {
-    return {};
-};
-const mapDispatchToProps = (dispatch: Function) => {
-    return {};
-};
+import { Services } from '../../../../../main/services';
+import { Alert } from '@material-ui/lab';
+import AlertTitle from '@material-ui/lab/AlertTitle';
+import Link from '@material-ui/core/Link';
 
 
 interface State {
     medias: Media[]
     format: string
-    process: ProcessData[]
+    process: ProcessData[],
+    isSoftInstalled?: boolean
 }
 
 
 interface Props {
 }
 
-@Register({ name: 'Encoder' })
+@Register({ name: 'Encoder', description: 'Encode video in different format' })
 export class Encoder extends React.Component<Props, State> {
+
 
     constructor(props: {}) {
         super(props);
@@ -49,6 +38,12 @@ export class Encoder extends React.Component<Props, State> {
             format: 'hvec_nvenc',
             process: []
         };
+    }
+
+    async componentDidMount() {
+        this.setState({
+            isSoftInstalled: await Services.media.isFFmpegInstalled()
+        });
     }
 
     render() {
@@ -75,7 +70,7 @@ export class Encoder extends React.Component<Props, State> {
 
 
             actions = <div className="actions">
-                <Button color={'primary'} onClick={this.encode}>
+                <Button color={'secondary'} onClick={this.encode}>
                     Encode Files
                 </Button>
             </div>;
@@ -91,29 +86,44 @@ export class Encoder extends React.Component<Props, State> {
 
         return (
             <div className={'Encoder'}>
-                <SelectFolder onChange={this.onFileSelect} mode={'file'} showSelected />
-                {options}
-                {actions}
-                {process}
+
+                {this.state.isSoftInstalled === true && <>
+                    <SelectFolder onChange={this.onFileSelect} mode={'file'} showSelected />
+                    {options}
+                    {actions}
+                    {process}
+                </>}
+
+
+                {this.state.isSoftInstalled === false && <>
+                    <Alert severity="error">
+                        <AlertTitle>This module requires FFmpeg</AlertTitle>
+                        It can be downloaded <Link  href="https://ffmpeg.org/download.html">here</Link>
+                    </Alert>
+                </>}
+
+                {this.state.isSoftInstalled === undefined && <>
+                    <Alert severity="info">
+                        <AlertTitle>Please wait</AlertTitle>
+                        Checking if FFmpeg is installed
+                    </Alert>
+                </>}
+
+
             </div>
         );
     }
 
-
     private setStateAsync = (newState: ((prevState: Readonly<State>, props: Readonly<Props>) => State) | (Pick<State, any> | State | null)) => new Promise((resolve) => this.setState(newState, resolve));
 
-    private onFormatChange = (e: React.ChangeEvent<{ name?: string; value: any }>) => {
-        const encoder = encoders.find(encoder => encoder.value.ffmpeg === e.target.value);
-        const process: ProcessData[] = this.state.medias.filter(media => media.property.streams.find(s => s.codec_type = 'video')?.codec_name !== encoder?.value.ffprobe).map(media => ({
-            percentage: 0,
-            media
-        }));
+    private onFormatChange = async (e: React.ChangeEvent<{ name?: string; value: any }>) => {
 
 
-        this.setState({
-            format: e.target.value,
-            process
+        await this.setStateAsync({
+            format: e.target.value
         });
+
+        this.updateProcess();
     };
 
     private onFileSelect = async (result: string[]) => {
@@ -127,6 +137,10 @@ export class Encoder extends React.Component<Props, State> {
         this.setState({
             medias: media
         });
+
+        if (this.state.format) {
+            this.updateProcess();
+        }
 
     };
 
@@ -173,6 +187,20 @@ export class Encoder extends React.Component<Props, State> {
         });
     };
 
+    private updateProcess = () => {
+        const encoder = encoders.find(encoder => encoder.value.ffmpeg === this.state.format);
+        const process: ProcessData[] = this.state.medias
+            .filter(media => media.property.streams.find(s => s.codec_type = 'video')?.codec_name !== encoder?.value.ffprobe)
+            .map(media => ({
+                percentage: 0,
+                media
+            }));
+        this.setState({
+            process
+        });
+
+    };
+
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Encoder);
+export default Encoder;

@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { HTMLAttributes } from 'react';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { Services } from '../../../main/services';
 import './os.scss';
 
-type Props = {
+type Props = Omit<HTMLAttributes<any>, 'onChange'> & {
     showSelected?: boolean,
 } & (SelectFile | SelectFolder)
 
@@ -52,7 +52,7 @@ export function SelectFolder(props: Props) {
             <Button className={'header'} color={'primary'} onClick={openDialog} variant={'outlined'}>
                 {
                     props.mode === 'folder'
-                        ? <p>Select folder</p>
+                        ? <> Select folder </>
                         : <label htmlFor={'select-file-id'}>Select files</label>
                 }
             </Button>
