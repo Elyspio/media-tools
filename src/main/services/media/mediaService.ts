@@ -3,7 +3,7 @@ import { exec as _exec, spawn } from 'child_process';
 import { File, Media, Stream } from '../../../renderer/components/modules/internal/encoder/type';
 import { EventEmitter } from 'events';
 import * as path from 'path';
-import { Utils } from '../utils/util';
+import { isInstalled } from '../../util';
 
 
 export class MediaService {
@@ -18,7 +18,7 @@ export class MediaService {
     }
 
     public async isFFmpegInstalled() {
-        return Utils.isInstalled('ffmpeg');
+        return isInstalled('ffmpeg');
     }
 
     public async convert(input: Media, format: string, options?: { outputPath: string }) {

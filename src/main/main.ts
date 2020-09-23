@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
+import { checkUpdate } from './util/updater';
 
 let win: BrowserWindow | null;
 const installExtensions = async () => {
@@ -13,6 +14,8 @@ const installExtensions = async () => {
         extensions.map(name => installer.default(installer[name], forceDownload))
     ).catch(console.log); // eslint-disable-line no-console
 };
+
+
 
 const createWindow = async () => {
     if (process.env.NODE_ENV !== 'production') {

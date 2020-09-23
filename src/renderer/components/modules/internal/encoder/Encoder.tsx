@@ -64,7 +64,8 @@ export class Encoder extends React.Component<Props, State> {
                     onChange={this.onFormatChange}
                 >
                     {encoders.map(encoder => <MenuItem
-                        value={encoder.value.ffmpeg} key={encoder.value.ffmpeg}>{encoder.type} - {encoder.format}</MenuItem>)}
+                        value={encoder.value.ffmpeg} key={encoder.value.ffmpeg}>{encoder.type} - {encoder.format}
+                    </MenuItem>)}
                 </Select>
             </div>;
 

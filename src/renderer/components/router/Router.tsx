@@ -6,10 +6,11 @@ import Module from '../modules/Module';
 import { getApp } from './components';
 
 import '../modules/external/android-link/AndroidLink';
-import '../modules/internal/encoder/Encoder';
 import '../modules/external/lights/Light';
+import '../modules/internal/encoder/Encoder';
 import '../modules/internal/purge/Purge';
 import '../modules/internal/renamer/Renamer';
+import '../modules/internal/updater/Updater';
 
 
 interface Props extends ConnectedProps<typeof connector> {

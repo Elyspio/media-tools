@@ -1,97 +1,100 @@
 {
-	"name": "media-tools",
-	"version": "0.0.6",
-	"description": "template for Electron with ReactJs rendering in TypeScript",
-	"main": "./dist/main.js",
-	"scripts": {
-		"build-main": "cross-env NODE_ENV=production webpack --config config/webpack.main.prod.config.js",
-		"build-renderer": "cross-env NODE_ENV=production webpack --config config/webpack.renderer.prod.config.js",
-		"build": "npm run build-main && npm run build-renderer",
-		"start-renderer-dev": "webpack-dev-server --config config/webpack.renderer.dev.config.js",
-		"start-main-dev": "webpack --config config/webpack.main.config.js && nodemon  -e ts,json --watch src/main -x \"electron ./dist/main.js\"",
-		"start-dev": "cross-env START_HOT=1 npm run start-renderer-dev",
-		"prestart": "npm run build",
-		"start": "electron .",
-		"postinstall": "electron-builder install-app-deps",
-		"release": "npm run build && electron-builder -w"
-	},
-	"build": {
-		"productName": "Media Tools",
-		"appId": "fr.elyspio.media-tools",
-		"directories": {
-			"output": "release"
-		},
-		"files": [
-			"dist/",
-			"node_modules/",
-			"package.json"
-		],
-		"linux": {
-			"target": "deb"
-		},
-		"win": {
-			"target": "nsis"
-		}
-	},
-	"author": {
-		"name": "Jonathan Guichard",
-		"email": "jona.guich69@gmail.com"
-	},
-	"license": "MIT",
-	"devDependencies": {
-		"@babel/core": "^7.11.6",
-		"@babel/plugin-proposal-class-properties": "^7.10.4",
-		"@babel/plugin-proposal-decorators": "^7.10.5",
-		"@babel/polyfill": "^7.11.5",
-		"@babel/preset-env": "^7.11.5",
-		"@babel/preset-react": "^7.10.4",
-		"@babel/preset-typescript": "^7.10.4",
-		"@hot-loader/react-dom": "^16.13.0",
-		"@types/electron-devtools-installer": "^2.2.0",
-		"@types/material-ui": "^0.21.8",
-		"@types/react": "^16.9.49",
-		"@types/react-dom": "^16.9.8",
-		"@types/react-redux": "^7.1.9",
-		"@types/redux-logger": "^3.0.8",
-		"@types/webpack-env": "^1.15.2",
-		"@types/xml2js": "^0.4.5",
-		"babel-loader": "^8.1.0",
-		"cross-env": "^7.0.2",
-		"css-loader": "^3",
-		"electron": "^10.1.2",
-		"electron-builder": "^22.8.0",
-		"electron-devtools-installer": "^3.1.1",
-		"file-loader": "^6.1.0",
-		"fork-ts-checker-webpack-plugin": "^4.1.6",
-		"html-webpack-plugin": "^4.4.1",
-		"image-webpack-loader": "^7.0.0",
-		"node-sass": "^4.14.1",
-		"nodemon": "^2.0.4",
-		"prettier": "^2.1.1",
-		"react-hot-loader": "^4.12.21",
-		"redux-devtools-extension": "^2.13.8",
-		"redux-logger": "^3.0.6",
-		"sass-loader": "^8.0.2",
-		"source-map-loader": "^1.1.0",
-		"style-loader": "^1.2.1",
-		"typescript": "latest",
-		"webpack": "^4.44.1",
-		"webpack-cli": "^3.3.12",
-		"webpack-dev-server": "^3.11.0",
-		"webpack-merge": "^5.1.4"
-	},
-	"dependencies": {
-		"@babel/plugin-transform-typescript": "^7.11.0",
-		"@material-ui/core": "^4.11.0",
-		"@material-ui/icons": "^4.9.1",
-		"@material-ui/lab": "^4.0.0-alpha.56",
-		"@reduxjs/toolkit": "^1.4.0",
-		"fs-extra": "^9.0.1",
-		"react": "^16.13.1",
-		"react-dom": "^16.13.1",
-		"react-redux": "^7.2.1",
-		"redux": "^4.0.5",
-		"systeminformation": "4.27.3",
-		"xml-js": "^1.6.11"
-	}
+    "name": "media-tools",
+    "version": "0.6.0",
+    "description": "template for Electron with ReactJs rendering in TypeScript",
+    "main": "./dist/main.js",
+    "scripts": {
+        "build-main": "cross-env NODE_ENV=production webpack --config config/webpack.main.prod.config.js",
+        "build-renderer": "cross-env NODE_ENV=production webpack --config config/webpack.renderer.prod.config.js",
+        "build": "npm run build-main && npm run build-renderer",
+        "start-renderer-dev": "webpack-dev-server --config config/webpack.renderer.dev.config.js",
+        "start-main-dev": "webpack --config config/webpack.main.config.js && nodemon  -e ts,json --watch src/main -x \"electron ./dist/main.js\"",
+        "start-dev": "cross-env START_HOT=1 npm run start-renderer-dev",
+        "prestart": "npm run build",
+        "start": "electron .",
+        "postinstall": "electron-builder install-app-deps",
+        "release": "ts-node --project config/tsconfig.json config/release.ts"
+    },
+    "build": {
+        "productName": "Media Tools",
+        "appId": "fr.elyspio.media-tools",
+        "directories": {
+            "output": "release"
+        },
+        "files": [
+            "dist/",
+            "node_modules/",
+            "package.json"
+        ],
+        "linux": {
+            "target": "deb"
+        },
+        "win": {
+            "target": "nsis"
+        }
+    },
+    "author": {
+        "name": "Jonathan Guichard",
+        "email": "jona.guich69@gmail.com"
+    },
+    "license": "MIT",
+    "devDependencies": {
+        "@babel/core": "^7.11.6",
+        "@babel/plugin-proposal-class-properties": "^7.10.4",
+        "@babel/plugin-proposal-decorators": "^7.10.5",
+        "@babel/polyfill": "^7.11.5",
+        "@babel/preset-env": "^7.11.5",
+        "@babel/preset-react": "^7.10.4",
+        "@babel/preset-typescript": "^7.10.4",
+        "@hot-loader/react-dom": "^16.13.0",
+        "@types/electron-devtools-installer": "^2.2.0",
+        "@types/material-ui": "^0.21.8",
+        "@types/node-fetch": "^2.5.7",
+        "@types/react": "^16.9.49",
+        "@types/react-dom": "^16.9.8",
+        "@types/react-redux": "^7.1.9",
+        "@types/redux-logger": "^3.0.8",
+        "@types/webpack-env": "^1.15.2",
+        "@types/xml2js": "^0.4.5",
+        "babel-loader": "^8.1.0",
+        "cross-env": "^7.0.2",
+        "css-loader": "^3",
+        "electron": "^10.1.2",
+        "electron-builder": "^22.8.0",
+        "electron-devtools-installer": "^3.1.1",
+        "file-loader": "^6.1.0",
+        "fork-ts-checker-webpack-plugin": "^4.1.6",
+        "html-webpack-plugin": "^4.4.1",
+        "image-webpack-loader": "^7.0.0",
+        "node-sass": "^4.14.1",
+        "nodemon": "^2.0.4",
+        "prettier": "^2.1.1",
+        "react-hot-loader": "^4.12.21",
+        "redux-devtools-extension": "^2.13.8",
+        "redux-logger": "^3.0.6",
+        "sass-loader": "^8.0.2",
+        "source-map-loader": "^1.1.0",
+        "style-loader": "^1.2.1",
+        "ts-node": "^9.0.0",
+        "typescript": "latest",
+        "webpack": "^4.44.1",
+        "webpack-cli": "^3.3.12",
+        "webpack-dev-server": "^3.11.0",
+        "webpack-merge": "^5.1.4"
+    },
+    "dependencies": {
+        "@babel/plugin-transform-typescript": "^7.11.0",
+        "@material-ui/core": "^4.11.0",
+        "@material-ui/icons": "^4.9.1",
+        "@material-ui/lab": "^4.0.0-alpha.56",
+        "@reduxjs/toolkit": "^1.4.0",
+        "fs-extra": "^9.0.1",
+        "react": "^16.13.1",
+        "react-dom": "^16.13.1",
+        "react-redux": "^7.2.1",
+        "redux": "^4.0.5",
+        "systeminformation": "4.27.3",
+        "xml-js": "^1.6.11",
+        "axios": "^0.20.0"
+    }
 }

@@ -7,12 +7,14 @@ import { store } from './store';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 // @ts-ignore
 import * as style from './App.scss';
+import { checkUpdate } from '../main/util/updater';
 
 // Create main element
 
 const css = document.createElement('link');
 css.rel = 'stylesheet';
 css.href = 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap';
+
 
 
 const mainElement = document.createElement('div');
