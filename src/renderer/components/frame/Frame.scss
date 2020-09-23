@@ -10,7 +10,7 @@
 	flex-direction: column;
 	grid-template-rows: $titlebarHeight 1fr;
 
-	.main {
+	> .main {
 		display: flex;
 		width: 100vw;
 		height: 100%;

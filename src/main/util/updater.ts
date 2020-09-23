@@ -3,50 +3,56 @@ import axios from 'axios';
 import * as config from '../../config/update';
 import { app_name } from '../../config/update';
 import { platform } from 'os';
-import { writeFile } from 'fs-extra';
+import { ensureDir, writeFile } from 'fs-extra';
 import * as path from 'path';
 import { spawnAsync } from './index';
 import { store } from '../../renderer/store';
-import { setDownloadPercentage } from '../../renderer/store/module/updater/action';
+import { setDownloadPercentage, setServerLatestVersion } from '../../renderer/store/module/updater/action';
 import { setCurrent } from '../../renderer/store/module/components/action';
 
 const { app, dialog } = remote;
 
 
-const getVersion = (): 'windows' | 'linux' | undefined => {
+const getPlatform = (): 'windows' | 'linux' | undefined => {
     let plat: any;
     if (platform() === 'win32') plat = 'windows';
     else if (platform() === 'linux') plat = 'linux';
     return plat;
 };
 
+export function getVersion() {
+    return process.env.NODE_ENV === 'production'
+        ? app.getVersion()
+        : process.env.npm_package_version as string;
+}
 
 export async function checkUpdate() {
 
-    const version = process.env.NODE_ENV === 'production'
-        ? app.getVersion()
-        : process.env.npm_package_version as string;
 
-    const plat = getVersion();
+    const version = getVersion();
+
+    const plat = getPlatform();
 
 
     const call = await axios.get(`${config.updateServer}${config.app_name}/${plat}/version/`);
+
+    store.dispatch(setServerLatestVersion(call.data));
 
     const current = version.split('.').map(x => parseInt(x));
     const server = call.data.split('.').map((x: string) => parseInt(x));
 
 
-    if (true || server[0] > current[0] || server[1] > current[1] || server[2] > current[2]) {
+    if (server[0] > current[0] || server[1] > current[1] || server[2] > current[2]) {
 
         const response = await dialog.showMessageBox({ title: 'Update', message: 'A new version is available', buttons: ['Download', 'Cancel'] });
 
         if (response.response === 0) {
-            store.dispatch(setCurrent("Updater"))
-            const installerPath = await downloadUpdate();
+            store.dispatch(setCurrent('Updater'));
+            await downloadUpdate();
 
             const response = await dialog.showMessageBox({ title: 'Update', message: 'Application is ready to update', buttons: ['Install', 'Cancel'] });
             if (response.response === 0) {
-                await installUpdate(installerPath);
+                await installUpdate();
             }
 
 
@@ -60,24 +66,25 @@ export async function checkUpdate() {
 
 }
 
+const pathToInstaller = path.join(process.env.USERPROFILE as string, 'temp', app_name + '.exe');
 
 export async function downloadUpdate() {
-    const plat = getVersion();
+    const plat = getPlatform();
     const bin = await axios.get(`${config.updateServer}${config.app_name}/${plat}`, {
         responseType: 'arraybuffer',
         onDownloadProgress: progressEvent => {
-            store.dispatch(setDownloadPercentage(progressEvent.loaded * 100 / progressEvent.total))
+            store.dispatch(setDownloadPercentage(progressEvent.loaded * 100 / progressEvent.total));
         }
     });
-    const p = path.join(process.env.USERPROFILE as string, 'temp', app_name + '.exe');
-    await writeFile(p, bin);
-    return p;
+    await ensureDir(path.dirname(pathToInstaller));
+    await writeFile(pathToInstaller, bin);
+    return pathToInstaller;
 }
 
 
-async function installUpdate(installerPath: string) {
-    const filename = path.basename(installerPath);
-    const dir = path.dirname(filename);
+export async function installUpdate() {
+    const filename = path.basename(pathToInstaller);
+    const dir = path.dirname(pathToInstaller);
     await spawnAsync(filename, { stdio: 'inherit', detached: true, cwd: dir });
     app.quit();
 }
