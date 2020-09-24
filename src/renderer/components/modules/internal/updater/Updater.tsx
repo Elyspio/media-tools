@@ -33,7 +33,7 @@ class Updater extends React.Component<ReduxTypes> {
         const size = {
             circle: '15rem',
             title: '1.3rem',
-            percentage: '2rem'
+            percentage: '1.7rem'
         };
 
         return (

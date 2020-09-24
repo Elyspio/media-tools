@@ -1,7 +1,7 @@
 import { remote } from 'electron';
 import axios from 'axios';
 import * as config from '../../config/update';
-import { app_name } from '../../config/update';
+import { app_name, updateRefreshRate } from '../../config/update';
 import { platform } from 'os';
 import { ensureDir, writeFile } from 'fs-extra';
 import * as path from 'path';
@@ -63,7 +63,7 @@ export async function checkUpdate() {
         console.debug('You are running on the latest version');
     }
 
-
+    setTimeout(checkUpdate, updateRefreshRate)
 }
 
 const pathToInstaller = path.join(process.env.USERPROFILE as string, 'temp', app_name + '.exe');
@@ -76,8 +76,9 @@ export async function downloadUpdate() {
             store.dispatch(setDownloadPercentage(progressEvent.loaded * 100 / progressEvent.total));
         }
     });
+    const data = new Buffer(bin.data);
     await ensureDir(path.dirname(pathToInstaller));
-    await writeFile(pathToInstaller, bin);
+    await writeFile(pathToInstaller, data);
     return pathToInstaller;
 }
 

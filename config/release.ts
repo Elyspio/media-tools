@@ -9,6 +9,7 @@ const packageJson = path.join(__dirname, '..', 'package.json');
 
 const main = async () => {
     let pkg = JSON.parse((await readFile(packageJson)).toString());
+    const originalPkg = {...pkg}
     let [major, minor, build] = pkg.version.split('.').map((str: string) => Number.parseInt(str));
     minor += 1;
     let version = [major, minor, build].join('.');
@@ -24,12 +25,17 @@ const main = async () => {
 
     try {
 
+        await updatePackageJson(pkg);
         await spawnAsync(`yarn build && ${electronBuilderBin} -w --publish never`, { cwd: path.dirname(packageJson), ignoreErrors: [1], color: true });
+        await updatePackageJson(originalPkg);
 
         const outputFolder = path.resolve(path.dirname(packageJson), pkg.build.directories.output);
         const files = await readdir(outputFolder);
-        console.log(outputFolder, files);
         const installerPath = files.find(f => f.slice(f.length - 4) === '.exe' && f.includes(version)) as string;
+
+        if(!installerPath) {
+            throw new Error(`Could not find installer: ` + JSON.stringify({version, files}));
+        }
 
         const installerData = await readFile(path.join(outputFolder, installerPath));
 
@@ -41,6 +47,7 @@ const main = async () => {
         }, {
             maxBodyLength: arrayData.length * 10,
             maxContentLength: arrayData.length * 10,
+            onUploadProgress: console.log
         });
 
         console.log(call.status);
