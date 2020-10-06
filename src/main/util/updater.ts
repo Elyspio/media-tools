@@ -63,7 +63,7 @@ export async function checkUpdate() {
         console.debug('You are running on the latest version');
     }
 
-    setTimeout(checkUpdate, updateRefreshRate)
+    setTimeout(checkUpdate, updateRefreshRate);
 }
 
 const pathToInstaller = path.join(process.env.USERPROFILE as string, 'temp', app_name + '.exe');

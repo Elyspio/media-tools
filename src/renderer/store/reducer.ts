@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 
 import { ComponentsState, reducer as componentsReducer } from './module/components/reducer';
-import { UpdateSatte, reducer as updaterReducer } from './module/updater/reducer';
+import { reducer as updaterReducer, UpdateSatte } from './module/updater/reducer';
 
 export interface StoreState {
     components: ComponentsState;

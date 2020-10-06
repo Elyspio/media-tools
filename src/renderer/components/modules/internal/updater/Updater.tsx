@@ -7,7 +7,7 @@ import { Dispatch } from 'redux';
 import { connect, ConnectedProps } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import { checkUpdate, downloadUpdate, getVersion, installUpdate } from '../../../../../main/util/updater';
-import { Typography , Paper} from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 
 interface State {
 
@@ -28,7 +28,7 @@ class Updater extends React.Component<ReduxTypes> {
 
     render() {
 
-        const { progress, serverVersion} = this.props;
+        const { progress, serverVersion } = this.props;
 
         const size = {
             circle: '15rem',
@@ -39,8 +39,8 @@ class Updater extends React.Component<ReduxTypes> {
         return (
             <div className={'Updater'}>
 
-                <div className={"info"}>
-                    <Typography variant={"h5"} component={"p"} className={"version-title"} >Versions</Typography>
+                <div className={'info'}>
+                    <Typography variant={'h5'} component={'p'} className={'version-title'}>Versions</Typography>
                     <div>
                         <Typography><span className="label">App:</span> {getVersion()}</Typography>
                         <Typography><span className="label">Server:</span> {serverVersion}</Typography>
@@ -61,8 +61,6 @@ class Updater extends React.Component<ReduxTypes> {
 
                     </div>
                 </div>
-
-
 
 
             </div>

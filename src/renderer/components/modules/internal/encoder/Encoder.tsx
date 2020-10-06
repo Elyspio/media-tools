@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import { InputLabel, MenuItem, Select } from '@material-ui/core';
+import { DialogContent, DialogContentText, DialogTitle, InputLabel, MenuItem, Select } from '@material-ui/core';
 import { encoders, File, Media, ProcessData } from './type';
 import { MediaService } from '../../../../../main/services/media/mediaService';
 import * as fs from 'fs-extra';
@@ -14,20 +14,56 @@ import { Services } from '../../../../../main/services';
 import { Alert } from '@material-ui/lab';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import Link from '@material-ui/core/Link';
+import { withContext } from '../../../common/hoc/withContext';
+import DialogActions from '@material-ui/core/DialogActions';
 
 
 interface State {
     medias: Media[]
     format: string
     process: ProcessData[],
-    isSoftInstalled?: boolean
+    isSoftInstalled?: boolean,
 }
 
 
 interface Props {
 }
 
-@Register({ name: 'Encoder', description: 'Encode video in different format' })
+const actions = {
+
+}
+
+const menu = withContext({
+    items: [
+        {
+            label: 'toto',
+            show: () => ({close}) =>  {
+                return <div>
+                    <DialogTitle id="responsive-dialog-title">{'Action when processes are finished'}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Let Google help apps determine location. This means sending anonymous location data to
+                            Google, even when no apps are running.
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button autoFocus onClick={close} color="secondary">
+                            Cancel
+                        </Button>
+                        <Button onClick={close} color="primary">
+                            Sleep
+                        </Button>
+                        <Button onClick={close} color="primary" autoFocus>
+                            Shutdown
+                        </Button>
+                    </DialogActions>
+                </div>;
+            }
+        }
+    ]
+});
+
+@Register({ name: 'Encoder', description: 'Encode video in different format' }, menu)
 export class Encoder extends React.Component<Props, State> {
 
 
@@ -93,13 +129,14 @@ export class Encoder extends React.Component<Props, State> {
                     {options}
                     {actions}
                     {process}
+
                 </>}
 
 
                 {this.state.isSoftInstalled === false && <>
                     <Alert severity="error">
                         <AlertTitle>This module requires FFmpeg</AlertTitle>
-                        It can be downloaded <Link  href="https://ffmpeg.org/download.html">here</Link>
+                        It can be downloaded <Link href="https://ffmpeg.org/download.html">here</Link>
                     </Alert>
                 </>}
 
@@ -109,7 +146,6 @@ export class Encoder extends React.Component<Props, State> {
                         Checking if FFmpeg is installed
                     </Alert>
                 </>}
-
 
             </div>
         );
@@ -146,7 +182,8 @@ export class Encoder extends React.Component<Props, State> {
     };
 
     private encode = async (): Promise<any> => {
-        for (let media of this.state.medias) {
+
+        for (let [i, media] of this.state.medias.entries()) {
             const output = await this.encodeFile(media);
             const old = path.join(path.dirname(media.file.path), 'old');
             await fs.ensureDir(old);
@@ -204,4 +241,4 @@ export class Encoder extends React.Component<Props, State> {
 
 }
 
-export default Encoder;
+
