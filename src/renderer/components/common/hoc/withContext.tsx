@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 import { Menu } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import Dialog from '@material-ui/core/Dialog';
+import { InferableComponentEnhancerWithProps } from 'react-redux';
 
 
 type ContextProps = {
@@ -9,7 +10,8 @@ type ContextProps = {
         label: string
         show?: () => (param: { close: () => void }) => ReactNode,
         action?: () => void
-    }>
+    }>,
+    redux?: InferableComponentEnhancerWithProps<{}, {}>
 }
 
 function extract<T = any>(init?: T) {
@@ -48,7 +50,6 @@ export function withContext(config: ContextProps) {
                     });
                 }
 
-
                 onClicks.push(() => setPos(undefined));
 
                 return <MenuItem key={item.label} onClick={() => onClicks.forEach(f => f())}>{item.label}</MenuItem>;
@@ -62,8 +63,15 @@ export function withContext(config: ContextProps) {
                     top: e.clientY
                 });
             };
+
+
+            const memo = React.useMemo(() => {
+                return React.createElement(config.redux ? config.redux(WrappedComponent) : WrappedComponent, props);
+            }, []);
+
+
             return <div onContextMenu={onContextMenu} style={{ height: '100%' }}>
-                <WrappedComponent {...props} />
+                {memo}
                 <Menu
                     anchorReference="anchorPosition"
                     anchorPosition={pos}
@@ -76,11 +84,15 @@ export function withContext(config: ContextProps) {
                 <Dialog open={modal.open.get}>
                     {
                         // @ts-ignore
-                        modal.component.get && modal.component.get({close: handleClose})
+                        modal.component.get && modal.component.get({ close: handleClose })
                     }
                 </Dialog>
             </div>;
+
+
         };
+
     };
+
 }
 

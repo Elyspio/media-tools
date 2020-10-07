@@ -1,8 +1,8 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { setOnFinishAction, setProcessStatus, updateProcessPercentage} from './action';
+import { setOnFinishAction, setProcessStatus, updateProcessPercentage } from './action';
 
 export interface EncoderState {
-    onFinishAction?: "sleep" | "shutdown",
+    onFinishAction?: 'sleep' | 'shutdown',
     processes?: {
         finished: number,
         total: number
@@ -20,7 +20,7 @@ export const reducer = createReducer<EncoderState>(defaultState, builder => {
         state.processes = action.payload;
     }));
     builder.addCase(updateProcessPercentage, ((state, action) => {
-        if(state.processes) {
+        if (state.processes) {
             state.processes = {
                 ...state.processes,
                 finished: action.payload

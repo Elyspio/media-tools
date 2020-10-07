@@ -16,7 +16,17 @@ import AlertTitle from '@material-ui/lab/AlertTitle';
 import Link from '@material-ui/core/Link';
 import { withContext } from '../../../common/hoc/withContext';
 import DialogActions from '@material-ui/core/DialogActions';
+import { connect, ConnectedProps } from 'react-redux';
+import { Dispatch } from 'redux';
+import { StoreState } from '../../../../store/reducer';
 
+
+const mapStateToProps = (state: StoreState) => ({});
+
+const mapDispatchToProps = (dispatch: Dispatch) => ({});
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+type ReduxTypes = ConnectedProps<typeof connector>;
 
 interface State {
     medias: Media[]
@@ -25,19 +35,14 @@ interface State {
     isSoftInstalled?: boolean,
 }
 
-
-interface Props {
-}
-
-const actions = {
-
+interface Props extends ReduxTypes {
 }
 
 const menu = withContext({
     items: [
         {
             label: 'toto',
-            show: () => ({close}) =>  {
+            show: () => ({ close }) => {
                 return <div>
                     <DialogTitle id="responsive-dialog-title">{'Action when processes are finished'}</DialogTitle>
                     <DialogContent>
@@ -60,14 +65,14 @@ const menu = withContext({
                 </div>;
             }
         }
-    ]
+    ],
+    redux: connector
 });
 
 @Register({ name: 'Encoder', description: 'Encode video in different format' }, menu)
 export class Encoder extends React.Component<Props, State> {
 
-
-    constructor(props: {}) {
+    constructor(props: Props) {
         super(props);
         this.state = {
             medias: [],
