@@ -84,7 +84,7 @@ export function withContext(config: ContextProps) {
                 <Dialog open={modal.open.get}>
                     {
                         // @ts-ignore
-                        modal.component.get && modal.component.get({ close: handleClose })
+                        modal.component.get && modal.component.get({ close: handleClose})
                     }
                 </Dialog>
             </div>;

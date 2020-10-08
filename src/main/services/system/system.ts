@@ -38,4 +38,12 @@ export class SystemService {
             memory: parse(use.memory_util._text)
         };
     }
+
+
+    public shutdown = () => exec("shutdown -s -t 0");
+
+    public sleep = () => exec("rundll32.exe powrprof.dll,SetSuspendState 0,1,0");
+
+    public hibernate = () => exec("rundll32.exe powrprof.dll,SetSuspendState Hibernate");
+
 }

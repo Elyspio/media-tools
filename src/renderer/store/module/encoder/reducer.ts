@@ -1,17 +1,23 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { setOnFinishAction, setProcessStatus, updateProcessPercentage } from './action';
 
+
+export const onFinishActionList = <const>["Sleep", "Shutdown", "Hibernate", "None"]
+
+
 export interface EncoderState {
-    onFinishAction?: 'sleep' | 'shutdown',
+    onFinishAction?: typeof onFinishActionList[number],
     processes?: {
         finished: number,
         total: number
     }
 }
 
-const defaultState: EncoderState = {};
+const defaultState: EncoderState = {
+    onFinishAction: "None"
+};
 
-export const reducer = createReducer<EncoderState>(defaultState, builder => {
+export const reducer  = createReducer<EncoderState>(defaultState, builder => {
 
     builder.addCase(setOnFinishAction, ((state, action) => {
         state.onFinishAction = action.payload;

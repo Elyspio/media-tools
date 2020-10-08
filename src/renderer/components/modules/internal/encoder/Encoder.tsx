@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import { DialogContent, DialogContentText, DialogTitle, InputLabel, MenuItem, Select } from '@material-ui/core';
+import { InputLabel, MenuItem, Select } from '@material-ui/core';
 import { encoders, File, Media, ProcessData } from './type';
 import { MediaService } from '../../../../../main/services/media/mediaService';
 import * as fs from 'fs-extra';
@@ -15,13 +15,15 @@ import { Alert } from '@material-ui/lab';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import Link from '@material-ui/core/Link';
 import { withContext } from '../../../common/hoc/withContext';
-import DialogActions from '@material-ui/core/DialogActions';
 import { connect, ConnectedProps } from 'react-redux';
 import { Dispatch } from 'redux';
 import { StoreState } from '../../../../store/reducer';
+import OnFinishAction from './OnFinishAction';
 
 
-const mapStateToProps = (state: StoreState) => ({});
+const mapStateToProps = (state: StoreState) => ({
+    action: state.encoder.onFinishAction
+});
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({});
 
@@ -41,29 +43,8 @@ interface Props extends ReduxTypes {
 const menu = withContext({
     items: [
         {
-            label: 'toto',
-            show: () => ({ close }) => {
-                return <div>
-                    <DialogTitle id="responsive-dialog-title">{'Action when processes are finished'}</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                            Let Google help apps determine location. This means sending anonymous location data to
-                            Google, even when no apps are running.
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button autoFocus onClick={close} color="secondary">
-                            Cancel
-                        </Button>
-                        <Button onClick={close} color="primary">
-                            Sleep
-                        </Button>
-                        <Button onClick={close} color="primary" autoFocus>
-                            Shutdown
-                        </Button>
-                    </DialogActions>
-                </div>;
-            }
+            label: 'Action',
+            show: () => ({close}) => <OnFinishAction close={close} />
         }
     ],
     redux: connector
@@ -194,6 +175,12 @@ export class Encoder extends React.Component<Props, State> {
             await fs.ensureDir(old);
             await fs.move(media.file.path, path.join(old, media.file.name));
             await fs.move(output, media.file.path);
+        }
+
+        switch (this.props.action) {
+            case "Shutdown": return Services.system.shutdown()
+            case "Sleep": return Services.system.sleep()
+            case "Hibernate": return Services.system.hibernate()
         }
     };
 
