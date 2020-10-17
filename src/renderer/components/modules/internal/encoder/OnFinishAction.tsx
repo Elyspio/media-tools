@@ -1,7 +1,7 @@
 import { store } from '../../../../store';
 import { DialogContent, DialogContentText, DialogTitle, InputLabel, MenuItem, Select } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
-import { setOnFinishAction } from '../../../../store/module/encoder/action';
+import { runOnFinishAction, setOnFinishAction } from '../../../../store/module/encoder/action';
 import { onFinishActionList } from '../../../../store/module/encoder/reducer';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
@@ -31,6 +31,7 @@ function OnFinishAction(props: { close: () => void } & ReduxTypes) {
         close();
     }
 
+    const values = [...onFinishActionList].sort(s => s === "None" ? -1 : 1);
     return <div>
         <DialogTitle id="responsive-dialog-title">{'Action when processes are finished'}</DialogTitle>
         <DialogContent>
@@ -43,11 +44,18 @@ function OnFinishAction(props: { close: () => void } & ReduxTypes) {
                     onChange={e =>  setCurrent(e.target.value as any)}
                     label="Action"
                 >
-                    {[...onFinishActionList].sort().map(l => <MenuItem value={l} key={l}>{l}</MenuItem>)}
+                    {values.map(l => <MenuItem value={l} key={l}>{l}</MenuItem>)}
                 </Select>
             </FormControl>
         </DialogContent>
         <DialogActions>
+
+            {process.env.NODE_ENV !== "production" && current !== "None" &&  <Button
+                variant={"outlined"}
+                onClick={() => runOnFinishAction(current)}>
+                Force action
+            </Button>}
+
             <Button autoFocus onClick={close} color="secondary">
                 Cancel
             </Button>

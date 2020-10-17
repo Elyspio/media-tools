@@ -27,7 +27,7 @@ interface Episode {
     extension: string
 }
 
-@Register({ name: 'Renamer' })
+@Register({ name: 'Renamer',  path: "/renamer", show: true})
 export class Renamer extends React.Component<{}, State> {
 
 

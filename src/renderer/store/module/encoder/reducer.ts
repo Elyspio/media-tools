@@ -2,7 +2,7 @@ import { createReducer } from '@reduxjs/toolkit';
 import { setOnFinishAction, setProcessStatus, updateProcessPercentage } from './action';
 
 
-export const onFinishActionList = <const>["Sleep", "Shutdown", "Hibernate", "None"]
+export const onFinishActionList = <const>["Sleep", "Shutdown", "Hibernate", "Lock", "None"]
 
 
 export interface EncoderState {

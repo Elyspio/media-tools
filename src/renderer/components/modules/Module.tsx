@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { ModuleDescription, setCurrent } from '../../store/module/components/action';
 import { IconButton, Typography } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { connect } from 'react-redux';
-
+import { ModuleDescription } from '../../store/module/router/reducer';
 import './Module.scss';
+import { setPath } from '../../store/module/router/action';
+import { StoreState } from '../../store/reducer';
 
 type ModuleProps = {
     info: ModuleDescription
@@ -27,9 +28,13 @@ class Module extends React.Component<ModuleProps & { backHistory: Function }> {
 }
 
 
+const mapStateToProps = (state: StoreState) => ({
+    info: state.routing.routes[state.routing.path]
+})
+
 const mapDispatchToProps = (dispatch: Function) => ({
-    backHistory: () => dispatch(setCurrent(undefined))
+    backHistory: () => dispatch(setPath("/"))
 });
 
-export default connect(null, mapDispatchToProps)(Module) as any;
+export default connect(mapStateToProps, mapDispatchToProps)(Module) as any;
 

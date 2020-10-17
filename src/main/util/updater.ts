@@ -1,15 +1,15 @@
 import { remote } from 'electron';
 import axios from 'axios';
 import * as config from '../../config/update';
-import { app_name, updateRefreshRate } from '../../config/update';
+import { app_name, pathToInstaller, updateRefreshRate } from '../../config/update';
 import { platform } from 'os';
 import { ensureDir, writeFile } from 'fs-extra';
 import * as path from 'path';
 import { spawnAsync } from './index';
 import { store } from '../../renderer/store';
 import { setDownloadPercentage, setServerLatestVersion } from '../../renderer/store/module/updater/action';
-import { setCurrent } from '../../renderer/store/module/components/action';
-
+import { spawn } from "child_process"
+import { setPath } from '../../renderer/store/module/router/action';
 const { app, dialog } = remote;
 
 
@@ -47,7 +47,7 @@ export async function checkUpdate() {
         const response = await dialog.showMessageBox({ title: 'Update', message: 'A new version is available', buttons: ['Download', 'Cancel'] });
 
         if (response.response === 0) {
-            store.dispatch(setCurrent('Updater'));
+            store.dispatch(setPath('Updater'));
             await downloadUpdate();
 
             const response = await dialog.showMessageBox({ title: 'Update', message: 'Application is ready to update', buttons: ['Install', 'Cancel'] });
@@ -66,7 +66,6 @@ export async function checkUpdate() {
     setTimeout(checkUpdate, updateRefreshRate);
 }
 
-const pathToInstaller = path.join(process.env.USERPROFILE as string, 'temp', app_name + '.exe');
 
 export async function downloadUpdate() {
     const plat = getPlatform();
@@ -86,6 +85,6 @@ export async function downloadUpdate() {
 export async function installUpdate() {
     const filename = path.basename(pathToInstaller);
     const dir = path.dirname(pathToInstaller);
-    await spawnAsync(filename, { stdio: 'inherit', detached: true, cwd: dir });
+    spawn(filename, {detached: true, windowsHide: true})
     app.quit();
 }

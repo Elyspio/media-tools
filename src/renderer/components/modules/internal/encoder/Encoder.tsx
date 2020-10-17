@@ -19,6 +19,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { Dispatch } from 'redux';
 import { StoreState } from '../../../../store/reducer';
 import OnFinishAction from './OnFinishAction';
+import { runOnFinishAction } from '../../../../store/module/encoder/action';
 
 
 const mapStateToProps = (state: StoreState) => ({
@@ -44,13 +45,18 @@ const menu = withContext({
     items: [
         {
             label: 'Action',
-            show: () => ({close}) => <OnFinishAction close={close} />
+            show: () => ({ close }) => <OnFinishAction close={close} />
         }
     ],
     redux: connector
 });
 
-@Register({ name: 'Encoder', description: 'Encode video in different format' }, menu)
+@Register({
+    name: 'Encoder',
+    description: 'Encode video in different format',
+    path: '/encoder',
+    show: true
+}, menu)
 export class Encoder extends React.Component<Props, State> {
 
     constructor(props: Props) {
@@ -177,11 +183,8 @@ export class Encoder extends React.Component<Props, State> {
             await fs.move(output, media.file.path);
         }
 
-        switch (this.props.action) {
-            case "Shutdown": return Services.system.shutdown()
-            case "Sleep": return Services.system.sleep()
-            case "Hibernate": return Services.system.hibernate()
-        }
+        await runOnFinishAction();
+
     };
 
     private encodeFile = (file: Media): Promise<string> => {

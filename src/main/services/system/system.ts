@@ -46,4 +46,7 @@ export class SystemService {
 
     public hibernate = () => exec("rundll32.exe powrprof.dll,SetSuspendState Hibernate");
 
+    public lock = () => exec("rundll32.exe user32.dll,LockWorkStation");
+
+
 }

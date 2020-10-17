@@ -2,7 +2,7 @@ import { spawn, SpawnOptions } from 'child_process';
 import { platform } from 'os';
 
 export const spawnAsync = async (command: string, options?: Partial<SpawnOptions> & { ignoreErrors?: number[], color?: boolean }) => {
-    const child = spawn(`cmd.exe`, ['/c', `${command}`], { ...options, stdio: 'inherit' });
+    const child = spawn(`cmd.exe`, ['/c', `${command}`], { stdio: 'inherit', ...options,  });
 
     let data = '';
     let error = '';

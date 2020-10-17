@@ -23,7 +23,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({});
 const connector = connect(mapStateToProps, mapDispatchToProps);
 type ReduxTypes = ConnectedProps<typeof connector>;
 
-@Register({ name: 'Updater' }, connector)
+@Register({ name: 'Updater', path: '/updater', show: true }, connector)
 class Updater extends React.Component<ReduxTypes> {
 
     render() {

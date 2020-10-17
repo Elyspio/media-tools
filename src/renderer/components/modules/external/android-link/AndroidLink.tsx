@@ -5,7 +5,7 @@ import { Register } from '../../../../decorators/Module';
 interface State {
 }
 
-@Register({ name: 'AndroidLink', external: true })
+@Register({ name: 'AndroidLink', external: true, path: "/android-link", show: false})
 export class AndroidLink extends Component<{}, State> {
     state = {};
 
