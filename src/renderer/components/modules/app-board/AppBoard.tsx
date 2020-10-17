@@ -6,13 +6,25 @@ import { Button } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
 import { Register } from '../../../decorators/Module';
 import { setPath } from '../../../store/module/router/action';
-import { ModuleDescription } from '../../../store/module/router/reducer';
+import { withContext } from '../../common/hoc/withContext';
+import AppBoardContextMenu from './AppBoardContextMenu';
 
 
-const mapStateToProps = (state: StoreState) => ({
-    apps: Object.values(state.routing.routes)
+const mapStateToProps = (state: StoreState) => {
+    const config = state.config.current;
 
-});
+    let apps = Object.values(state.routing.routes);
+    if (!config.appboard.show.includes('hidden')) apps = apps.filter(app => app.show);
+    if (!config.appboard.show.includes('external')) apps = apps.filter(app => !app.external);
+    if (!config.appboard.show.includes('internal')) apps = apps.filter(app => app.external);
+
+    apps.sort((a1, a2) => a1.name.localeCompare(a2.name))
+
+    return ({
+        apps: apps
+
+    });
+};
 const mapDispatchToProps = (dispatch: Function) => {
     return {
         setCurrent: (path: string) => {
@@ -23,14 +35,24 @@ const mapDispatchToProps = (dispatch: Function) => {
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
-@Register({ name: 'AppBoard',  path: "/", show: false }, connector)
+const menu = withContext({
+    items: [
+        {
+            label: 'Filter',
+            show: () => ({ close }) => <AppBoardContextMenu close={close} />
+        }
+    ],
+    redux: connector
+});
+
+@Register({ name: 'AppBoard', path: '/', show: false }, menu)
 class AppBoard extends React.Component<ConnectedProps<typeof connector>> {
     render() {
 
 
         return (
             <div className={'AppBoard'}>
-                {this.props.apps.filter(x => x.show !== false).map(app =>
+                {this.props.apps.map(app =>
                     <Tooltip title={app.description ?? ''} key={app.name}>
                         <Button color={app.external ? 'secondary' : 'primary'} size={'large'}
                                 className={'app'}
