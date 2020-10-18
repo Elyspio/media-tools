@@ -5,7 +5,8 @@ import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import RemoveIcon from '@material-ui/icons/Remove';
 
-import { remote } from 'electron';
+import { BrowserWindow, remote } from 'electron';
+import { getVersion } from '../../../../main/util/updater';
 
 interface State {
     fullscreen: boolean
@@ -31,7 +32,7 @@ class Titlebar extends Component<{}, State> {
 
         return (
             <div className={'Titlebar'}>
-                <span className={'title'}>Media App</span>
+                <span className={'title'} >Media App</span>
                 <div>
                     <Button onClick={this.minimize}><RemoveIcon /></Button>
                     {minimize}
@@ -43,8 +44,13 @@ class Titlebar extends Component<{}, State> {
     }
 
     private close(): void {
-        remote.app.quit();
-        remote.process.exit(0);
+        if(remote.BrowserWindow.getAllWindows().length > 1) {
+            remote.getCurrentWindow().close();
+        }
+        else {
+            remote.app.quit();
+            process.exit(0);
+        }
     }
 
     private minimize(): void {
