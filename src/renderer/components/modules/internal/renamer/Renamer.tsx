@@ -1,12 +1,12 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
 import { TextField } from '@material-ui/core';
-import './Renamer.scss';
 import { promises as fs } from 'fs';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import * as path from 'path';
 import { SelectFolder } from '../../../common/os';
 import { Register } from '../../../../decorators/Module';
+import './Renamer.scss';
 
 
 interface State {
@@ -219,7 +219,7 @@ export class Renamer extends React.Component<{}, State> {
 
             for (const episode of this.state.episodes) {
 
-                const newFileName = episode.file.replace(new RegExp(this.escapeRegex(this.state.replaceOptions.search), 'g'), this.state.replaceOptions.replaceWith);
+                const newFileName = path.basename(episode.file).replace(new RegExp(this.escapeRegex(this.state.replaceOptions.search), 'g'), this.state.replaceOptions.replaceWith);
                 await fs.rename(episode.file, path.join(path.dirname(episode.file), newFileName));
                 this.setState(prev => ({
                     percentage: (prev.percentage ?? 0) + 1

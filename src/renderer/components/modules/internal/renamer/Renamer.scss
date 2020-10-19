@@ -1,9 +1,9 @@
-$marginTopBetweenComponent: 2rem;
+$marginTopBetweenComponent: 1.75rem;
 
 $btnLeftMargin: 0.5rem;
 
 .Renamer {
-
+	height: 100%;
 	.header {
 		margin-bottom: 1.5rem;
 	}
@@ -41,9 +41,11 @@ $btnLeftMargin: 0.5rem;
 			align-items: center;
 		}
 
-		.progress {
-			margin-top: $marginTopBetweenComponent;
-		}
+
+	}
+
+	.progress {
+		margin-top: $marginTopBetweenComponent;
 	}
 
 }
