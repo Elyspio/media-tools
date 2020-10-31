@@ -1,24 +1,45 @@
 import * as fs from 'fs-extra';
 import { configMainFile, defaultConfiguration } from '../../../config/configuration';
+import { getVersion } from '../../util/updater';
+import { remote} from 'electron';
 
 
-export const AppboardVisibityValues = {
+export const BaseConfig = {
     appboard: {
         show: ['external', 'internal', 'hidden'] as const
-    }
+    },
+
 };
 
-export type AppboardVisibity = 'external' | 'internal' | 'hidden';
 
 
 export interface Configuration {
+    version: string,
     appboard: {
-        show: AppboardVisibity[]
+        show: typeof BaseConfig["appboard"]["show"][number][]
+    },
+    frame: {
+        show: {
+            resourceUtilization: boolean
+        }
     }
 }
 
 
 export class ConfigurationService {
+
+    private static mergeConfig(obj: Configuration) {
+        const runningVersion = remote.app.getVersion();
+        if(runningVersion !== obj.version) {
+            console.log("Configuration file are outdated, merging with default config");
+            obj = {
+                ...defaultConfiguration,
+                ...obj,
+                version: runningVersion
+            }
+        }
+        return obj;
+    }
 
     public get(async = true): Promise<Configuration> | Configuration {
 
@@ -28,17 +49,18 @@ export class ConfigurationService {
                     await this.set(defaultConfiguration);
                 }
                 const str = await fs.readFile(configMainFile).then(x => x.toString());
-                return JSON.parse(str);
+                let obj: Configuration = JSON.parse(str);
+                return ConfigurationService.mergeConfig(obj);
             });
         } else {
             if (!fs.pathExistsSync(configMainFile)) {
                 this.set(defaultConfiguration, true);
             }
             const str = fs.readFileSync(configMainFile).toString();
-            return JSON.parse(str);
+            const obj: Configuration = JSON.parse(str);
+            return ConfigurationService.mergeConfig(obj);
+
         }
-
-
     }
 
     public set(config: Configuration, async = true) {

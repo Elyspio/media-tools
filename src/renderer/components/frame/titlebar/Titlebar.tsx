@@ -4,50 +4,55 @@ import { Button } from '@material-ui/core';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import RemoveIcon from '@material-ui/icons/Remove';
-
-import { BrowserWindow, remote } from 'electron';
-import { getVersion } from '../../../../main/util/updater';
+import SettingsIcon from '@material-ui/icons/Settings';
+import { remote } from 'electron';
+import Settings from './Settings';
 
 interface State {
-    fullscreen: boolean
+    fullscreen: boolean,
+    settingModalOpened: boolean
+
+}
+
+interface Props {
+    title?: string
 }
 
 
-class Titlebar extends Component<{}, State> {
+class Titlebar extends Component<Props, State> {
 
-    state = {
-        fullscreen: remote.getCurrentWindow().isFullScreen()
+    state: State = {
+        fullscreen: remote.getCurrentWindow().isFullScreen(),
+        settingModalOpened: false
     };
 
     render() {
-
-        let minimize;
-        if (this.state.fullscreen) {
-            minimize = <Button
-                onClick={() => this.goFullscreen(false)}><FullscreenExitIcon /></Button>;
-        } else {
-            minimize = <Button
-                onClick={() => this.goFullscreen(true)}><FullscreenIcon /></Button>;
-        }
-
+        const {settingModalOpened} = this.state;
         return (
             <div className={'Titlebar'}>
-                <span className={'title'} >Media App</span>
+                <span className={'title'}>{this.props.title || remote.getCurrentWindow().title}</span>
                 <div>
+                    <Button onClick={this.toggleModal}><SettingsIcon fontSize={'small'} /></Button>
                     <Button onClick={this.minimize}><RemoveIcon /></Button>
-                    {minimize}
+                    <Button
+                        onClick={() => this.goFullscreen(!this.state.fullscreen)}>
+                        {this.state.fullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+                    </Button>
                     <Button className={'close'} onClick={this.close}>X</Button>
                 </div>
-
+                <Settings close={this.toggleModal} isOpen={settingModalOpened}/>
             </div>
         );
     }
 
+    private toggleModal = () => {
+        this.setState(prev => ({settingModalOpened: !prev.settingModalOpened}))
+    }
+
     private close(): void {
-        if(remote.BrowserWindow.getAllWindows().length > 1) {
+        if (remote.BrowserWindow.getAllWindows().length > 1) {
             remote.getCurrentWindow().close();
-        }
-        else {
+        } else {
             remote.app.quit();
             process.exit(0);
         }

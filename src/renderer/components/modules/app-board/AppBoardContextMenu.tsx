@@ -6,17 +6,15 @@ import { DialogContent, DialogTitle, InputLabel, MenuItem, Select } from '@mater
 import FormControl from '@material-ui/core/FormControl';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
-import { runOnFinishAction } from '../../../store/module/encoder/action';
 import { setConfig } from '../../../store/module/configuration/action';
-import { ConfigurationRouter, reducer } from '../../../store/module/configuration/reducer';
-import { AppboardVisibity, AppboardVisibityValues, Configuration } from '../../../../main/services/configuration/configurationService';
+import { BaseConfig, Configuration } from '../../../../main/services/configuration/configurationService';
 
 const mapStateToProps = (state: StoreState) => ({
     config: state.config.current
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setShowed: (elem: AppboardVisibity[], config: Configuration) => dispatch(setConfig({
+    setShowed: (elem: Configuration['appboard']['show'], config: Configuration) => dispatch(setConfig({
         ...config, appboard: {
             ...config.appboard,
             show: elem
@@ -27,7 +25,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 const connector = connect(mapStateToProps, mapDispatchToProps);
 type ReduxTypes = ConnectedProps<typeof connector>;
 
-type Props = ReduxTypes & {close: () => void};
+type Props = ReduxTypes & { close: () => void };
 
 function AppBoardContextMenu({ config, setShowed, close }: Props) {
 
@@ -46,7 +44,7 @@ function AppBoardContextMenu({ config, setShowed, close }: Props) {
                         label="Show"
                         multiple={true}
                     >
-                        {AppboardVisibityValues.appboard.show.map(l => <MenuItem value={l} key={l}>{l}</MenuItem>)}
+                        {BaseConfig.appboard.show.map(l => <MenuItem value={l} key={l}>{l}</MenuItem>)}
                     </Select>
                 </FormControl>
             </DialogContent>

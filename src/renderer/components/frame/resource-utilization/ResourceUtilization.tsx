@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './BottomBar.scss';
+import './ResourceUtilization.scss';
 import { SystemService } from '../../../../main/services/system/system';
 import { Box } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
@@ -11,7 +11,7 @@ interface State {
     memLoad?: number
 }
 
-class BottomBar extends Component<{}, State> {
+class ResourceUtilization extends Component<{}, State> {
 
     state: State = {};
 
@@ -39,7 +39,7 @@ class BottomBar extends Component<{}, State> {
 
 
         return (
-            <Paper className={'BottomBar'}>
+            <Paper className={'ResourceUtilization'}>
                 <Box className={'item'}>
                     <span className={'label'}>CPU</span>
                     <span className={'value'}>{format(this.state.cpuLoad)}</span>
@@ -75,4 +75,4 @@ class BottomBar extends Component<{}, State> {
 
 }
 
-export default BottomBar;
+export default ResourceUtilization;

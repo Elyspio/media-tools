@@ -1,6 +1,6 @@
 @import "src/renderer/variables";
 
-.BottomBar {
+.ResourceUtilization {
 	display: flex;
 	justify-content: space-evenly;
 	-webkit-app-region: drag;
@@ -15,8 +15,6 @@
 
 
 	.item {
-
-
 		display: flex;
 		justify-content: center;
 		align-items: center;
