@@ -6,7 +6,7 @@ interface State {
     url?: string
 }
 
-@Register({ name: 'Light', external: true , path: "/light", show: false})
+@Register({ name: 'Light', external: true, path: '/light', show: { appboard: true, name: true } })
 export class Light extends Component<{}, State> {
 
 

@@ -4,19 +4,20 @@ import { connect, ConnectedProps } from 'react-redux';
 import Module from '../modules/Module';
 import { setPath } from '../../store/module/router/action';
 import { getComponent } from '../../store/module/router/reducer';
+import { getUriParam } from '../../util/url';
 
 
 interface Props extends ConnectedProps<typeof connector> {}
 
 function Router(props: Props) {
 
-    let params = (new URL(document.location.href)).searchParams;
-    let route = params.get('route');
-    if(route) {
+    const route = getUriParam('route', {});
+
+    if (route) {
         props.setPath(route);
     }
 
-    if(!props.current) return null;
+    if (!props.current) return null;
 
     return <Module info={props.current}>
         <props.current />

@@ -27,7 +27,7 @@ interface Episode {
     extension: string
 }
 
-@Register({ name: 'Renamer',  path: "/renamer", show: true})
+@Register({ name: 'Renamer', path: '/renamer', show: { appboard: true, name: true } })
 export class Renamer extends React.Component<{}, State> {
 
 
@@ -220,6 +220,7 @@ export class Renamer extends React.Component<{}, State> {
             for (const episode of this.state.episodes) {
 
                 const newFileName = path.basename(episode.file).replace(new RegExp(this.escapeRegex(this.state.replaceOptions.search), 'g'), this.state.replaceOptions.replaceWith);
+                console.log(JSON.parse(JSON.stringify(this.state)));
                 await fs.rename(episode.file, path.join(path.dirname(episode.file), newFileName));
                 this.setState(prev => ({
                     percentage: (prev.percentage ?? 0) + 1

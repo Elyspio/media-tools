@@ -32,7 +32,7 @@ class Titlebar extends Component<Props, State> {
             <div className={'Titlebar'}>
                 <span className={'title'}>{this.props.title || remote.getCurrentWindow().title}</span>
                 <div>
-                    <Button onClick={this.toggleModal}><SettingsIcon fontSize={'small'} /></Button>
+                    <Button onClick={this.toggleModal}><SettingsIcon htmlColor={'#555555'} fontSize={'small'} /></Button>
                     <Button onClick={this.minimize}><RemoveIcon /></Button>
                     <Button
                         onClick={() => this.goFullscreen(!this.state.fullscreen)}>

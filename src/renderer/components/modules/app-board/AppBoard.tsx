@@ -14,7 +14,7 @@ const mapStateToProps = (state: StoreState) => {
     const config = state.config.current;
 
     let apps = Object.values(state.routing.routes);
-    if (!config.appboard.show.includes('hidden')) apps = apps.filter(app => app.show);
+    if (!config.appboard.show.includes('hidden')) apps = apps.filter(app => app.show.appboard);
     if (!config.appboard.show.includes('external')) apps = apps.filter(app => !app.external);
     if (!config.appboard.show.includes('internal')) apps = apps.filter(app => app.external);
 
@@ -45,7 +45,7 @@ const menu = withContext({
     redux: connector
 });
 
-@Register({ name: 'AppBoard', path: '/', show: false }, menu)
+@Register({ name: 'AppBoard', path: '/', show: { appboard: false, name: false } }, menu)
 class AppBoard extends React.Component<ConnectedProps<typeof connector>> {
     render() {
 

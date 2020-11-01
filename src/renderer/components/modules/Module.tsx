@@ -6,25 +6,33 @@ import { ModuleDescription } from '../../store/module/router/reducer';
 import './Module.scss';
 import { setPath } from '../../store/module/router/action';
 import { StoreState } from '../../store/reducer';
+import { createWindowCustomOption } from '../../../main/services/dialog/dialogService';
+import { getUriParam } from '../../util/url';
 
 type ModuleProps = {
-    info: ModuleDescription
+    info: ModuleDescription,
+    children: any
 }
 
 
-class Module extends React.Component<ModuleProps & { backHistory: Function }> {
-    render() {
-        return <div className={'Module'}>
-            <div className="bar">
-                <IconButton className={'backBtn'}
-                            onClick={() => this.props.backHistory()}>
-                    <ArrowBackIcon />
-                </IconButton>
-                <Typography variant={'h5'} className="title">{this.props.info.name}</Typography>
-            </div>
-            {this.props.children}
-        </div>;
-    }
+function Module(props: ModuleProps & { backHistory: Function }) {
+
+
+    const options = getUriParam<createWindowCustomOption>('options', { json: true }) ?? {
+        modal: false
+    };
+
+    return <div className={'Module'}>
+        {!options.modal && props.info.show.name && <div className="bar">
+            <IconButton className={'backBtn'}
+                        onClick={() => props.backHistory()}>
+                <ArrowBackIcon />
+            </IconButton>
+            {props.info.show.name && <Typography variant={'h5'} className="title">{props.info.name}</Typography>}
+        </div>}
+
+        {props.children}
+    </div>;
 }
 
 

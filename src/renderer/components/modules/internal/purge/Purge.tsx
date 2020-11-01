@@ -32,7 +32,7 @@ interface State {
 const defaultAmount = 30;
 let exclusions = ['node_modules', '.git', '.expo', '.bit'];
 
-@Register({ name: 'Purge', description: 'Remove files that match pattern ' ,  path: "/purge", show: true})
+@Register({ name: 'Purge', description: 'Removes files that match a pattern ', path: '/purge', show: { appboard: true, name: true } })
 export class Purge extends Component<{}, State> {
 
     state: State = {
