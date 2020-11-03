@@ -1,6 +1,11 @@
 import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
+import { windowOption } from '../config/main';
+
+
+app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');
+app.commandLine.appendSwitch('disable-site-isolation-trials')
 
 let win: BrowserWindow | null;
 const installExtensions = async () => {
@@ -20,17 +25,10 @@ const createWindow = async () => {
         await installExtensions();
     }
 
+
+
     win = new BrowserWindow({
-        width: 800,
-        height: 600,
-        webPreferences: {
-            nodeIntegration: true,
-            enableRemoteModule: true
-        },
-        minWidth: 800,
-        hasShadow: true,
-        frame: false,
-        useContentSize: true
+        ...windowOption
     });
 
     if (process.env.NODE_ENV !== 'production') {

@@ -5,10 +5,12 @@ const requires = [
     'external/android-link/AndroidLink',
     'external/lights/Light',
     'internal/encoder/Encoder',
+    'internal/encoder/Recap',
     'internal/purge/Purge',
+    'internal/projects/Projects',
     'internal/renamer/Renamer',
     'internal/updater/Updater',
-    "app-board/AppBoard"
+    'app-board/AppBoard'
 ];
 
 for (const c of requires) {
@@ -24,10 +26,12 @@ export type ModuleDescription = {
     external?: boolean
     component: ReactComponent,
     path: string,
-    /**
-     * if this module will be shown in AppBoard
-     */
-    show: boolean
+    show: {
+        // if this module will be shown in AppBoard
+        appboard: boolean,
+        // if it will be showed at top of the page
+        name: boolean
+    }
 }
 
 export interface RouterState {

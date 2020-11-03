@@ -1,5 +1,7 @@
 import { promises as fs } from 'fs';
 import * as path from 'path';
+import { Readable } from 'stream';
+import { Extract } from 'unzipper';
 
 export class FilesService {
 
@@ -86,9 +88,27 @@ export class FilesService {
 
     }
 
-
     public escapePath = (path: string) => path.replace(/\\/g, '\\\\');
 
     private isDir = async (path: string) => (await fs.lstat(path)).isDirectory();
+
+
+    /**
+     * Unzip data to a directory
+     * @param data
+     * @param output
+     */
+    public async unzip(data: ArrayBuffer, output: string) {
+        const readable = new Readable();
+        readable._read = () => {
+        }; // _read is required but you can noop it
+        readable.push(data);
+        readable.push(null);
+
+        return readable
+            .pipe(Extract({ path: './test', verbose: true }))
+            .promise();
+
+    }
 
 }

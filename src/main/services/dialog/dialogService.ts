@@ -3,9 +3,9 @@ import * as fs from 'fs-extra';
 import path, { join } from 'path';
 import url from 'url';
 import { windowOption } from '../../../config/main';
+import { store } from '../../../renderer/store';
 
 const { dialog, BrowserWindow } = require('electron').remote;
-
 
 export class DialogService {
     /**
@@ -29,16 +29,18 @@ export class DialogService {
 
     }
 
-    public async createWindow(target: string, option?: Partial<BrowserWindowConstructorOptions>) {
+
+    public async createWindow(target: string, frame: createWindowCustomOption, option?: Partial<BrowserWindowConstructorOptions>) {
         const win = new BrowserWindow({
             ...windowOption,
             ...option
         });
 
-        const search = `route=${target}`;
+
+        const search = `route=${target}&options=${JSON.stringify(frame)}&store=${JSON.stringify(store.getState())}`;
+        const param = 'data=' + btoa(search);
         if (process.env.NODE_ENV !== 'production') {
-            process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = '1'; // eslint-disable-line require-atomic-updates
-            return win.loadURL(`http://localhost:2003/?${search}`);
+            return win.loadURL(`http://localhost:2003/?${param}`);
         } else {
             return win.loadURL(
                 url.format({
@@ -57,3 +59,13 @@ export class DialogService {
 
 }
 
+
+export type createWindowCustomOption = {
+    title?: string,
+    top?: boolean,
+    bottom?: boolean,
+    /**
+     * overrides top and bottom options
+     */
+    modal?: boolean
+}

@@ -6,7 +6,7 @@ export const windowOption : BrowserWindowConstructorOptions= {
     webPreferences: {
         nodeIntegration: true,
         enableRemoteModule: true,
-        webSecurity: false
+        webSecurity: false,
     },
     hasShadow: true,
     frame: false,
@@ -14,3 +14,5 @@ export const windowOption : BrowserWindowConstructorOptions= {
 
 
 };
+
+export const appName = "media-tools"
