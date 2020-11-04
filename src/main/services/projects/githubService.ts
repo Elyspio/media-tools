@@ -2,6 +2,7 @@ import { Octokit } from '@octokit/rest';
 import { Repository, Template } from './types';
 import { Services } from '../index';
 import * as path from 'path';
+import { githubToken } from '../../../config/projects.private';
 
 const github = new Octokit({
     log: {
@@ -10,7 +11,7 @@ const github = new Octokit({
         info: console.info,
         warn: console.warn
     },
-    auth: '51dbb84586c1201a6611258620b228dcfa5c035d',
+    auth: githubToken,
     userAgent: 'appName',
     previews: ['baptiste-preview']
 });
@@ -29,6 +30,4 @@ export class GithubService {
 
         await Services.files.unzip(data, path.resolve(__dirname, "aze"));
     }
-
-
 }

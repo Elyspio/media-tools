@@ -4,63 +4,37 @@
 	position: relative;
 
 
-	.preview-title {
-		margin: 2rem 1.5rem 0 0;
-	}
+	.row {
 
-	.itemCount {
-		font-size: small;
-		opacity: 90%;
-		font-family: "Fira Code Retina";
-	}
+		margin: 3rem 0;
 
+		//#name {
+		//	width: 30%;
+		//}
+		//
+		//#description {
+		//	width: 70%;
+		//}
 
-	.preview-items {
-		overflow-y: auto;
-		overflow-x: hidden;
-		max-height: 36vh;
-
-		* > {
-			margin-bottom: 0.2rem;
-		}
-	}
-
-	.filter {
-		display: flex;
-		margin-top: 2rem;
-
-		label {
-			// height: 12px;
-		}
-
-		> div {
+		.MuiInputBase-formControl {
 			margin-right: 2rem;
 		}
 
+		.switch {
+			color: rgba(255, 255, 255, 0.7);
+			margin-left: 0;
+			margin-right: 1rem;
+			margin-top: 0.75rem;
+			text-align: left;
+
+			> span.MuiFormControlLabel-label {
+				width: 4rem;
+			}
+		}
+
+		&.docker {
+		}
 	}
 
-
-	.RemoveBtn {
-		position: absolute;
-		bottom: 1.5rem;
-	}
-
-
-	.actions {
-		display: flex;
-	}
 }
 
-
-.exclude {
-	input[type="checkbox"], span {
-		padding-top: 4px;
-		padding-bottom: 4px;
-
-	}
-
-
-	.item {
-		font-size: small;
-	}
-}

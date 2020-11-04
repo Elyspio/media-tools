@@ -118,3 +118,6 @@ export interface Permissions {
 export interface Template extends Repository {
     is_template: true
 }
+
+
+export type Feature = "web-front" | "web-back" | "mobile" | "watch" | "desktop"
