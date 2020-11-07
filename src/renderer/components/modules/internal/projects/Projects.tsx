@@ -15,7 +15,7 @@ import { RepositoryBuilder } from '../../../../../main/services/projects/reposit
 
 interface State {
     folder?: string
-    use: Feature[],
+    use: string[],
     features: Feature[]
     name: string,
     readme: boolean,
@@ -85,7 +85,7 @@ export class Projects extends Component<{}, State> {
                             input={<Input />}
                             onChange={e => this.handleChange('use', e.target.value)}
                         >
-                            {features.map(name => (
+                            {features.map(({ name }) => (
                                 <MenuItem key={name} value={name} className={'exclude'}>
                                     <Checkbox checked={use.some(i => i === name)} color={'secondary'} />
                                     <Typography className={'item'}>{name}</Typography>
@@ -97,7 +97,7 @@ export class Projects extends Component<{}, State> {
                     <Box className="docker row">
                         <div>
                             <FormControlLabel
-                                control={<Checkbox checked={!!docker} onChange={(e) => this.handleChange('docker', e.target.checked)} name="checkedA" />}
+                                control={<Checkbox checked={!!docker} color={"default"} onChange={(e) => this.handleChange('docker', e.target.checked)} name="checkedA" />}
                                 labelPlacement={'start'}
                                 label="Docker"
                                 className={'switch'}
@@ -105,7 +105,7 @@ export class Projects extends Component<{}, State> {
 
                             {docker && <TextField
                                 label={'Docker name'}
-                                error={name.length === 0}
+                                error={typeof docker === "string" && docker.length === 0}
                                 defaultValue={name}
                                 style={{ width: '70%' }}
                                 onChange={e => this.handleChange('docker', e.target.value)}
@@ -113,7 +113,7 @@ export class Projects extends Component<{}, State> {
                         </div>
                         <div>
                             <FormControlLabel
-                                control={<Checkbox checked={readme} onChange={(e) => this.handleChange('readme', e.target.checked)} name="checkedA" />}
+                                control={<Checkbox checked={readme} color={"default"} onChange={(e) => this.handleChange('readme', e.target.checked)} name="checkedA" />}
                                 labelPlacement={'start'}
                                 label="Readme"
                                 className={'switch'}
@@ -125,10 +125,13 @@ export class Projects extends Component<{}, State> {
                         onChange={(val) => this.handleChange('folder', val)}
                         mode={'folder'}
                         showSelected
+                        variant={"outlined"}
+                        color={'default'}
+
                     />
 
                     <Button
-                        color={'secondary'}
+                        color={'primary'}
                         className={'RemoveBtn'}
                         variant={'outlined'}
                         onClick={this.create}>
@@ -141,12 +144,12 @@ export class Projects extends Component<{}, State> {
 
 
     create = () => {
-        const { description, docker, name, readme, use, folder } = this.state;
+        const { description, docker, name, readme, use, folder, features } = this.state;
         const builder = new RepositoryBuilder();
 
         builder.githubName = name;
         builder.description = description ?? undefined;
-        use.forEach(builder.use);
+        use.forEach(f => builder.use(features.find(ff => f === ff.name) as Feature));
 
         if (docker) builder.dockerName = docker as string;
         if (readme) builder.addReadme();

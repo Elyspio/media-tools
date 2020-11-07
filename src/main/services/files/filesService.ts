@@ -1,4 +1,5 @@
 import { promises as fs } from 'fs';
+import * as fse from "fs-extra"
 import * as path from 'path';
 import { Readable } from 'stream';
 import { Extract } from 'unzipper';
@@ -102,13 +103,20 @@ export class FilesService {
         const readable = new Readable();
         readable._read = () => {
         }; // _read is required but you can noop it
-        readable.push(data);
+        readable.push(Buffer.from(data));
         readable.push(null);
 
         return readable
-            .pipe(Extract({ path: './test', verbose: true }))
+            .pipe(Extract({ path: output }))
             .promise();
 
     }
 
+    public async moveContent(src: string, dest: string) {
+        const files = await fse.readdir(src);
+        await Promise.all(
+            files.map(f => fse.move(path.join(src, f), path.join(dest, f)))
+        )
+        await fs.rmdir(src, {recursive: true});
+    }
 }

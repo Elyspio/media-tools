@@ -1,7 +1,7 @@
 import { spawn, SpawnOptions } from 'child_process';
 import { platform } from 'os';
 
-export const spawnAsync = async (command: string, options?: Partial<SpawnOptions> & { ignoreErrors?: number[], color?: boolean }) => {
+export const spawnAsync = async (command: string, options?: Partial<SpawnOptions> & { ignoreErrors?: boolean, color?: boolean }) => {
     const child = spawn(`cmd.exe`, ['/c', `${command}`], { stdio: 'inherit', ...options,  });
 
     let data = '';
@@ -11,8 +11,8 @@ export const spawnAsync = async (command: string, options?: Partial<SpawnOptions
         child.on('close', resolve);
     });
 
-    if (exitCode !== 0 && (!options?.ignoreErrors || !options.ignoreErrors.includes(exitCode))) {
-        throw new Error(`subprocess error exit ${exitCode}, ${error}`);
+    if (exitCode !== 0 && (!options?.ignoreErrors)) {
+        throw new Error(`subprocess error exit ${exitCode} for command ${command}, ${JSON.stringify(error)}`);
     }
 
     return data;

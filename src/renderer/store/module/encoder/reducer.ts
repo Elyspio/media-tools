@@ -1,8 +1,10 @@
 import { createReducer } from '@reduxjs/toolkit';
+import { store } from '../..';
 import { setOnFinishAction, setProcessStatus, updateProcessPercentage } from './action';
+import { Services } from '../../../../main/services';
 
 
-export const onFinishActionList = <const>["Sleep", "Shutdown", "Hibernate", "Lock", "None"]
+export const onFinishActionList = <const>['Sleep', 'Shutdown', 'Hibernate', 'Lock', 'None'];
 
 
 export interface EncoderState {
@@ -14,10 +16,25 @@ export interface EncoderState {
 }
 
 const defaultState: EncoderState = {
-    onFinishAction: "None"
+    onFinishAction: 'None'
 };
 
-export const reducer  = createReducer<EncoderState>(defaultState, builder => {
+
+export const getOnFinishAction = () => {
+
+    const actions: { [key in typeof onFinishActionList[number]]: () => any } = {
+        Hibernate: Services.system.hibernate,
+        Lock: Services.system.lock,
+        Shutdown: Services.system.shutdown,
+        Sleep: Services.system.sleep,
+        None: () => {
+        }
+    };
+
+    return actions[store.getState().encoder.onFinishAction ?? 'None'];
+};
+
+export const reducer = createReducer<EncoderState>(defaultState, builder => {
 
     builder.addCase(setOnFinishAction, ((state, action) => {
         state.onFinishAction = action.payload;

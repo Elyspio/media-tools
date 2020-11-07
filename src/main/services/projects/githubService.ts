@@ -2,7 +2,13 @@ import { Octokit } from '@octokit/rest';
 import { Repository, Template } from './types';
 import { Services } from '../index';
 import * as path from 'path';
-import { githubToken } from '../../../config/projects.private';
+import * as fs from 'fs-extra';
+import { github as githubConf } from '../../../config/projects.private';
+import {execSync} from "child_process"
+import simpleGit, { SimpleGit } from 'simple-git';
+
+
+
 
 const github = new Octokit({
     log: {
@@ -11,7 +17,7 @@ const github = new Octokit({
         info: console.info,
         warn: console.warn
     },
-    auth: githubToken,
+    auth: githubConf.token,
     userAgent: 'appName',
     previews: ['baptiste-preview']
 });
@@ -19,15 +25,37 @@ const github = new Octokit({
 
 export class GithubService {
 
+    constructor(private log?: boolean) {
+    }
+
     public async getTemplates(username?: string): Promise<Template[]> {
-        const func = username ? () => github.repos.listForUser({ username: username}) : () => github.repos.listForAuthenticatedUser();
+        const func = username ? () => github.repos.listForUser({ username: username, per_page: 1000 }) : () => github.repos.listForAuthenticatedUser({ per_page: 1000 });
         const { data }: { data: Repository[] } = await func();
         return data.filter(x => x.is_template).sort((x, y) => x.full_name.localeCompare(y.full_name)) as Template[];
     }
 
     public async clone(options: { owner: string, repo: string, output: string }) {
-        const {data}: {data: ArrayBuffer }  = await github.repos.downloadArchive({ owner: options.owner, repo: options.repo, archive_format: 'zipball', ref: 'master' });
+        const { data }: { data: ArrayBuffer } = await github.repos.downloadArchive({ ref: 'master', repo: options.repo, owner: options.owner, archive_format: 'zipball' });
+        await Services.files.unzip(data, path.resolve(__dirname, options.output));
+        const innerDir = await fs.readdir(options.output);
+        await Services.files.moveContent(path.join(options.output, innerDir[0]), options.output);
+    }
 
-        await Services.files.unzip(data, path.resolve(__dirname, "aze"));
+    public async init(folder: string, name: string, description?: string) {
+        const git: SimpleGit = simpleGit(folder);
+        console.log(1);
+        await git.init();
+        console.log(12);
+        const info = await github.repos.createForAuthenticatedUser({ name, description });
+        console.log(13);
+        await git.addRemote("origin", info.data.html_url);
+        console.log(14);
+        await git.add(".");
+        console.log(15);
+        await git.commit("Initial commit");
+        console.log(16);
+        //await git.raw(["push", "--set-upstream", "origin", "master"]);
+        await execSync("git push --set-upstream origin master")
+        console.log(17);
     }
 }

@@ -8,6 +8,7 @@ import { store } from '../../../renderer/store';
 const { dialog, BrowserWindow } = require('electron').remote;
 
 export class DialogService {
+
     /**
      *
      * @param returnFiles flag to make the function return files in the folder

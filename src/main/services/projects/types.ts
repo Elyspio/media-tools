@@ -119,5 +119,12 @@ export interface Template extends Repository {
     is_template: true
 }
 
+export enum FeatureOptions {
+    wrap, // wrap files to a folder
+}
 
-export type Feature = "web-front" | "web-back" | "mobile" | "watch" | "desktop"
+export type Feature = {
+    name: "web-front" | "web-back" | "mobile" | "watch" | "desktop",
+    use: string[],
+    options?: FeatureOptions[]
+}
