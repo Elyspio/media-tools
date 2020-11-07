@@ -1,7 +1,8 @@
 import { Feature } from './types';
 import { Services } from '../index';
 import * as path from 'path';
-
+import * as fs from "fs-extra"
+import {EOL} from "os"
 export class ProjectBuilder {
 
     private config: {
@@ -58,8 +59,15 @@ export class ProjectBuilder {
             const content = [
                 "# " + this.config.github,
                 "",
-                "Bootstraped from [media-tools] project()"
-            ]
+                'Bootstraped from [media-tools ]("https://github.com/Elyspio/media-tools") project',
+                "",
+                "Features included: ",
+                ...this.config.features.map(f => `- ${f.name}`),
+                "",
+                "",
+                this.config.description
+            ];
+            await fs.writeFile(path.join(projectPath, "readme.md"), content.join(EOL))
         }
 
     }
