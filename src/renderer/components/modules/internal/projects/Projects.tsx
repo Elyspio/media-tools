@@ -11,7 +11,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { Register } from '../../../../decorators/Module';
 import { Services } from '../../../../../main/services';
 import { Feature } from '../../../../../main/services/projects/types';
-import { RepositoryBuilder } from '../../../../../main/services/projects/repositoryBuilder';
+import { ProjectBuilder } from '../../../../../main/services/projects/projectBuilder';
 
 interface State {
     folder?: string
@@ -145,13 +145,13 @@ export class Projects extends Component<{}, State> {
 
     create = () => {
         const { description, docker, name, readme, use, folder, features } = this.state;
-        const builder = new RepositoryBuilder();
+        const builder = new ProjectBuilder();
 
         builder.githubName = name;
         builder.description = description ?? undefined;
         use.forEach(f => builder.use(features.find(ff => f === ff.name) as Feature));
 
-        if (docker) builder.dockerName = docker as string;
+        if (docker) builder.dockerName = typeof docker === "string" ? docker: name;
         if (readme) builder.addReadme();
 
         builder.build(folder as string);

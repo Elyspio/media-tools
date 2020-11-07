@@ -26,7 +26,7 @@ const main = async () => {
     try {
 
         await updatePackageJson(pkg);
-        await spawnAsync(`yarn build && ${electronBuilderBin} -w --publish never`, { cwd: path.dirname(packageJson), ignoreErrors: [1], color: true });
+        await spawnAsync(`yarn build && ${electronBuilderBin} -w --publish never`, { cwd: path.dirname(packageJson), ignoreErrors: true, color: true });
         await updatePackageJson(originalPkg);
 
         const outputFolder = path.resolve(path.dirname(packageJson), pkg.build.directories.output);

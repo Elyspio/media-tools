@@ -1,8 +1,8 @@
 import { Feature } from './types';
 import { Services } from '../index';
-import path from 'path';
+import * as path from 'path';
 
-export class RepositoryBuilder {
+export class ProjectBuilder {
 
     private config: {
         github: string,
@@ -39,18 +39,28 @@ export class RepositoryBuilder {
         if (!output) throw new Error('No output provided');
         if (!this.config.github) throw new Error('No name provided, please set githubName property');
 
-
         // features
         const getFeatures = this.config.features.map(f => Services.projects.feature.get(f, path.join(output, f.name)));
         const paths = this.config.features.map(f => path.join(output, f.name));
         await Promise.all(getFeatures);
-        console.log('paths', paths);
         const projectPath = path.join(output, this.config.github);
         await Services.projects.feature.merge(paths, projectPath);
 
         // github
         await Services.projects.github.init(projectPath, this.config.github, this.config.description);
 
+        // docker
+        if(this.config.docker) {
+            await Services.projects.docker.addDockerSupport(this.config.docker, this.config.description ?? "", this.config.features, projectPath);
+        }
+
+        if(this.config.readme) {
+            const content = [
+                "# " + this.config.github,
+                "",
+                "Bootstraped from [media-tools] project()"
+            ]
+        }
 
     }
 

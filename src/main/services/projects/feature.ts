@@ -5,7 +5,7 @@ import { github } from '../../../config/projects.private';
 import * as fs from 'fs-extra';
 import { ensureDir, writeFile } from 'fs-extra';
 import { promises as ofs } from 'fs';
-import path from 'path';
+import* as  path from 'path';
 import * as os from 'os';
 
 

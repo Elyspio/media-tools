@@ -1,13 +1,10 @@
-import { Octokit } from '@octokit/rest';
-import { Repository, Template } from './types';
-import { Services } from '../index';
+import {Octokit} from '@octokit/rest';
+import {Repository, Template} from './types';
+import {Services} from '../index';
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import { github as githubConf } from '../../../config/projects.private';
-import {execSync} from "child_process"
-import simpleGit, { SimpleGit } from 'simple-git';
-
-
+import {github as githubConf} from '../../../config/projects.private';
+import {spawnBinary} from "../../util"
 
 
 const github = new Octokit({
@@ -35,27 +32,25 @@ export class GithubService {
     }
 
     public async clone(options: { owner: string, repo: string, output: string }) {
-        const { data }: { data: ArrayBuffer } = await github.repos.downloadArchive({ ref: 'master', repo: options.repo, owner: options.owner, archive_format: 'zipball' });
+        const {data}: { data: ArrayBuffer } = await github.repos.downloadArchive({ref: 'master', repo: options.repo, owner: options.owner, archive_format: 'zipball'});
         await Services.files.unzip(data, path.resolve(__dirname, options.output));
         const innerDir = await fs.readdir(options.output);
         await Services.files.moveContent(path.join(options.output, innerDir[0]), options.output);
     }
 
+    /**
+     * @return the url of the remote
+     * @param folder
+     * @param name
+     * @param description
+     */
     public async init(folder: string, name: string, description?: string) {
-        const git: SimpleGit = simpleGit(folder);
-        console.log(1);
-        await git.init();
-        console.log(12);
-        const info = await github.repos.createForAuthenticatedUser({ name, description });
-        console.log(13);
-        await git.addRemote("origin", info.data.html_url);
-        console.log(14);
-        await git.add(".");
-        console.log(15);
-        await git.commit("Initial commit");
-        console.log(16);
-        //await git.raw(["push", "--set-upstream", "origin", "master"]);
-        await execSync("git push --set-upstream origin master")
-        console.log(17);
+        const info = await github.repos.createForAuthenticatedUser({name, description});
+        await spawnBinary("git", ['init',], folder)
+        await spawnBinary("git", ["add", '.',], folder)
+        await spawnBinary("git", ['commit', '-m', 'Initial commit'], folder)
+        await spawnBinary("git", ["remote", "add", "origin", info.data.html_url], folder)
+        await spawnBinary("git", ['push', '--set-upstream', 'origin', 'master'], folder)
+        return info.data.html_url;
     }
 }
