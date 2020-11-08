@@ -6,7 +6,7 @@ import { ModuleDescription } from "../../store/module/router/reducer";
 import "./Module.scss";
 import { setPath } from "../../store/module/router/action";
 import { StoreState } from "../../store/reducer";
-import { createWindowCustomOption } from "../../../main/services/dialog/dialogService";
+import { createWindowCustomOption } from "../../../main/services/electron/dialogService";
 import { getUriParam } from "../../util/url";
 
 type ModuleProps = {

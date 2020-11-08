@@ -13,9 +13,9 @@ import { setPath } from "../../renderer/store/module/router/action";
 const { app, dialog } = remote;
 
 
-const getPlatform = (): "windows" | "linux" | undefined => {
+const getPlatform = (): "electron" | "linux" | undefined => {
 	let plat: any;
-	if (platform() === "win32") plat = "windows";
+	if (platform() === "win32") plat = "electron";
 	else if (platform() === "linux") plat = "linux";
 	return plat;
 };
@@ -34,34 +34,40 @@ export async function checkUpdate() {
 	const plat = getPlatform();
 
 
-	const call = await axios.get(`${config.updateServer}${config.app_name}/${plat}/version/`);
+	try {
 
-	store.dispatch(setServerLatestVersion(call.data));
+		const call: { data: { date: string, val: string } } = await axios.get(`${config.updateServer}${config.app_name}/${plat}/version/`);
 
-	const current = version.split(".").map(x => parseInt(x));
-	const server = call.data.split(".").map((x: string) => parseInt(x));
+		store.dispatch(setServerLatestVersion(call.data.val));
+
+		const current = version.split(".").map(x => parseInt(x));
+		const server = call.data.val.split(".").map((x: string) => parseInt(x));
 
 
-	if (server[0] > current[0] || server[1] > current[1] || server[2] > current[2]) {
+		if (server[0] > current[0] || server[1] > current[1] || server[2] > current[2]) {
 
-		const response = await dialog.showMessageBox({ title: "Update", message: "A new version is available", buttons: ["Download", "Cancel"] });
+			const response = await dialog.showMessageBox({ title: "Update", message: "A new version is available", buttons: ["Download", "Cancel"] });
 
-		if (response.response === 0) {
-			store.dispatch(setPath("/updater"));
-			await downloadUpdate();
-
-			const response = await dialog.showMessageBox({ title: "Update", message: "Application is ready to update", buttons: ["Install", "Cancel"] });
 			if (response.response === 0) {
-				await installUpdate();
+				store.dispatch(setPath("/updater"));
+				await downloadUpdate();
+
+				const response = await dialog.showMessageBox({ title: "Update", message: "Application is ready to update", buttons: ["Install", "Cancel"] });
+				if (response.response === 0) {
+					await installUpdate();
+				}
+
+
+			} else {
+				console.debug("User does not want to update");
 			}
-
-
 		} else {
-			console.debug("User does not want to update");
+			console.debug("You are running on the latest version");
 		}
-	} else {
-		console.debug("You are running on the latest version");
+	} catch (e) {
+		console.log("checkUpdate", e)
 	}
+
 
 	setTimeout(checkUpdate, updateRefreshRate);
 }

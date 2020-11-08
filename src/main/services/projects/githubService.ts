@@ -43,9 +43,10 @@ export class GithubService {
 	 * @param folder
 	 * @param name
 	 * @param description
+	 * @param isTemplate
 	 */
-	public async init(folder: string, name: string, description?: string) {
-		const info = await github.repos.createForAuthenticatedUser({ name, description });
+	public async init(folder: string, name: string, description?: string, isTemplate?: boolean) {
+		const info = await github.repos.createForAuthenticatedUser({ name, description, is_template: isTemplate });
 		await spawnBinary("git", ["init"], folder);
 		await spawnBinary("git", ["add", "."], folder);
 		await spawnBinary("git", ["commit", "-m", "Initial commit"], folder);

@@ -1,5 +1,6 @@
 import { spawn, SpawnOptions } from "child_process";
 import { platform } from "os";
+import * as process from "process";
 
 
 export const spawnBinary = async (binary: string, param: string[], folder: string, log?: boolean) => {
@@ -12,7 +13,7 @@ export const spawnBinary = async (binary: string, param: string[], folder: strin
 		if (log) console.log(`stderr: ${data}`);
 	});
 
-	return await new Promise((resolve) => {
+	return await new Promise<void>((resolve) => {
 		child.on("close", (code) => {
 			console.log(`child process exited with code ${code}`);
 			resolve();
@@ -36,7 +37,7 @@ export const spawnAsync = async (command: string, options?: Partial<SpawnOptions
 	const exitCode: number = await new Promise((resolve) => {
 		child.on("close", (code) => {
 			console.log(`child process exited with code ${code}`);
-			resolve()
+			resolve(code)
 		});
 	});
 
@@ -53,17 +54,19 @@ export async function isInstalled(app: string) {
 	let command = "";
 	switch (platform()) {
 		case "win32":
-			command = `where ${app}`;
+			command = `where`;
 			break;
 		case "linux":
-			command = `which ${app}`;
+			command = `which`;
 			break;
 	}
 
 	try {
-		await spawnAsync(command);
+		await spawnBinary(command, [app], process.cwd());
+		console.log("OK");
 		return true;
 	} catch (e) {
+		console.log("FAUX", e);
 		return false;
 	}
 

@@ -75,7 +75,7 @@ export class DockerService {
 			"{common}",
 			"# Check if we are running on WSL (use Powershell to increase performances a lot)",
 			`if [ "$(uname -r | sed -n 's/.*\\( *Microsoft *\\).*/\\1/ip')" = 'microsoft' ]; then`,
-			"{windows}",
+			"{electron}",
 			"else",
 			"{linux}",
 			"fi",
@@ -101,19 +101,19 @@ export class DockerService {
 				throw "You need 'web-back' feature to use docker support";
 			}
 			common.push(...featureContent["web-front"].common);
-			windows.push(...featureContent["web-front"].platformDiff.map(str => `powershell.exe ${str}`));
+			windows.push(...featureContent["web-front"].platformDiff.map(str => `powershell.exe "${str}"`));
 			linux.push(...featureContent["web-front"].platformDiff);
 		}
 
 		if (features.find(f => f.name === "web-back")) {
 			common.push(...featureContent["web-back"].common);
-			windows.push(...featureContent["web-back"].platformDiff.map(str => `powershell.exe ${str}`));
+			windows.push(...featureContent["web-back"].platformDiff.map(str => `powershell.exe "${str}"`));
 			linux.push(...featureContent["web-back"].platformDiff);
 		}
 
 		const returned = content
 			.replace("{common}", common.join(EOL))
-			.replace("{windows}", windows.join(EOL))
+			.replace("{electron}", windows.join(EOL))
 			.replace("{linux}", linux.join(EOL));
 
 		return fs.writeFile(output, returned);

@@ -7,25 +7,27 @@ import { EOL } from "os";
 export class ProjectBuilder {
 
 	private config: {
-		github: string,
+		name: string,
+		github?: string,
 		description?: string,
 		readme?: boolean,
 		features: Feature[],
 		docker?: string;
+		template?: boolean,
 	} = {
-		github: "",
-		features: []
+		name: "",
+		features: [],
 	};
 
 	public set description(des: string) {
 		this.config.description = des;
 	}
 
-	public set githubName(val: string) {
+	public set github(val: string) {
 		this.config.github = val;
 	}
 
-	public set dockerName(val: string) {
+	public set docker(val: string) {
 		this.config.docker = val;
 	}
 
@@ -37,19 +39,16 @@ export class ProjectBuilder {
 		this.config.readme = true;
 	}
 
+
 	public async build(output: string) {
 		if (!output) throw new Error("No output provided");
-		if (!this.config.github) throw new Error("No name provided, please set githubName property");
 
 		// features
 		const getFeatures = this.config.features.map(f => Services.projects.feature.get(f, path.join(output, f.name)));
 		const paths = this.config.features.map(f => path.join(output, f.name));
 		await Promise.all(getFeatures);
-		const projectPath = path.join(output, this.config.github);
+		const projectPath = path.join(output, this.config.name);
 		await Services.projects.feature.merge(paths, projectPath);
-
-		// github
-		await Services.projects.github.init(projectPath, this.config.github, this.config.description);
 
 		// docker
 		if (this.config.docker) {
@@ -60,19 +59,30 @@ export class ProjectBuilder {
 			const content = [
 				"# " + this.config.github,
 				"",
-				"Bootstraped from [media-tools ](\"https://github.com/Elyspio/media-tools\") project",
+				"Bootstrapped with [media-tools](\"https://github.com/Elyspio/media-tools\") project",
 				"",
+				...(this.config.features.length ?  [
 				"Features included: ",
 				...this.config.features.map(f => `- ${f.name}`),
-				"",
+				""]: []),
 				"",
 				this.config.description
 			];
 			await fs.writeFile(path.join(projectPath, "readme.md"), content.join(EOL));
 		}
 
+		// github
+
+		if(this.config.github) {
+			await Services.projects.github.init(projectPath, this.config.github, this.config.description, this.config.template);
+		}
+
+
 	}
 
 
+	isTemplate() {
+		this.config.template = true;
+	}
 }
 

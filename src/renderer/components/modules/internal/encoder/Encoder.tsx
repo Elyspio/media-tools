@@ -55,7 +55,6 @@ const menu = withContext({
 	name: "Encoder",
 	description: "Encodes video in different format",
 	path: "/encoder",
-	show: { appboard: true, name: true }
 }, menu)
 export class Encoder extends React.Component<Props, State> {
 
@@ -70,7 +69,7 @@ export class Encoder extends React.Component<Props, State> {
 
 	async componentDidMount() {
 		this.setState({
-			isSoftInstalled: await Services.media.isFFmpegInstalled()
+			isSoftInstalled: await Services.media.convert.isFFmpegInstalled()
 		});
 	}
 
@@ -143,7 +142,7 @@ export class Encoder extends React.Component<Props, State> {
 		);
 	}
 
-	private setStateAsync = (newState: ((prevState: Readonly<State>, props: Readonly<Props>) => State) | (Pick<State, any> | State | null)) => new Promise((resolve) => this.setState(newState, resolve));
+	private setStateAsync = (newState: ((prevState: Readonly<State>, props: Readonly<Props>) => State) | (Pick<State, any> | State | null)) => new Promise<void>((resolve) => this.setState(newState, () => resolve()));
 
 	private onFormatChange = async (e: React.ChangeEvent<{ name?: string; value: any }>) => {
 

@@ -30,6 +30,19 @@ class Settings extends React.Component<OwnProps> {
 	};
 
 
+	toggleResize = (dimension: keyof Configuration["frame"]["resize"], state: boolean) => {
+		this.props.setConfig({
+			...this.props.config,
+			frame: {
+				...this.props.config.frame,
+				resize: {
+					...this.props.config.frame.resize,
+					[dimension]: state
+				}
+			}
+		});
+	};
+
 	render() {
 		let { close, isOpen, config } = this.props;
 		return <Dialog
@@ -46,13 +59,29 @@ class Settings extends React.Component<OwnProps> {
 						<ListItemSecondaryAction>
 							<Switch
 								edge="end"
-								inputProps={{ "aria-labelledby": "switch-list-label-wifi" }}
-								defaultChecked={config.frame.show.resourceUtilization}
+								checked={config.frame.show.resourceUtilization}
 								onChange={e => this.toggleResources(e.target.checked)}
 							/>
 						</ListItemSecondaryAction>
 					</ListItem>
 				</List>
+
+				<List subheader={<ListSubheader color={"primary"}>Resize</ListSubheader>}>
+
+					{Object.keys(config.frame.resize).map((key) => (
+						<ListItem>
+							<ListItemText primary={key[0].toUpperCase() + key.slice(1)} />
+							<ListItemSecondaryAction>
+								<Switch
+									edge="end"
+									checked={config.frame.resize[key as keyof Configuration["frame"]["resize"]]}
+									onChange={e => this.toggleResize(key as keyof Configuration["frame"]["resize"], e.target.checked)}
+								/>
+							</ListItemSecondaryAction>
+						</ListItem>
+					))}
+				</List>
+
 			</DialogContent>
 		</Dialog>;
 	}

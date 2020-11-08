@@ -10,6 +10,7 @@ const requires = [
 	"internal/projects/Projects",
 	"internal/renamer/Renamer",
 	"internal/updater/Updater",
+	"internal/torrent/Torrent",
 	"app-board/AppBoard"
 ];
 
@@ -31,8 +32,13 @@ export type ModuleDescription = {
 		appboard: boolean,
 		// if it will be showed at top of the page
 		name: boolean
+	},
+	autoResize: {
+		width: boolean,
+		height: boolean
 	}
 }
+
 
 export interface RouterState {
 	path: string,

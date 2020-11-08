@@ -2,8 +2,27 @@ import { addRoute } from "../store/module/router/action";
 import { store } from "../store";
 import { addComponent, ModuleDescription } from "../store/module/router/reducer";
 
-export function Register(info: Omit<ModuleDescription, "component">, connector?: Function) {
-	store.dispatch(addRoute({ ...info, component: info.name }));
+
+
+type Info = Omit<ModuleDescription, "component">;
+
+
+export const defaultModuleDescription = {
+	autoResize: {
+		height: false,
+		width: false
+	},
+	show: {
+		name: true,
+		appboard: true
+	}
+}
+
+type Must = Omit<Info, keyof typeof defaultModuleDescription> & Partial<typeof defaultModuleDescription>
+
+
+export function Register(info: Must, connector?: Function) {
+	store.dispatch(addRoute({ ...defaultModuleDescription, ...info, component: info.name }));
 	return function(target: any) {
 		console.log("Registering component", { name: info.name, component: target.name });
 		const component = connector ? connector(target) : target;

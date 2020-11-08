@@ -6,7 +6,7 @@ import FullscreenIcon from "@material-ui/icons/Fullscreen";
 import RemoveIcon from "@material-ui/icons/Remove";
 import SettingsIcon from "@material-ui/icons/Settings";
 import { remote } from "electron";
-import Settings from "./Settings";
+import Settings from "../settings/Settings";
 
 interface State {
 	fullscreen: boolean,

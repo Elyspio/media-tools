@@ -20,13 +20,19 @@ interface State {
 	name: string,
 	readme: boolean,
 	docker?: boolean | string,
+	github?: boolean | string,
 	loading: boolean,
 	description: string
 	template: boolean
 }
 
 
-@Register({ name: "Projects", description: "Create projects from projects repositories ", path: "/projects", show: { appboard: true, name: true } })
+@Register({
+	name: "Projects",
+	description: "Create projects from projects repositories",
+	path: "/projects",
+	autoResize: { height: true, width: false }
+})
 export class Projects extends Component<{}, State> {
 
 	state: State = {
@@ -49,7 +55,7 @@ export class Projects extends Component<{}, State> {
 
 	render() {
 
-		const { use, features, loading, docker, name, readme, description, template } = this.state;
+		const { use, features, loading, docker, name, readme, description, template, github } = this.state;
 
 		return (
 			<Container className="Projects">
@@ -59,7 +65,7 @@ export class Projects extends Component<{}, State> {
 
 					<Box className={"row"}>
 						<TextField
-							label={"Github name"}
+							label={"Folder name"}
 							error={name.length === 0}
 							style={{ width: "30%" }} value={name}
 							onChange={e => this.handleChange("name", e.target.value)}
@@ -109,17 +115,9 @@ export class Projects extends Component<{}, State> {
 							</div>
 
 
-							<div className={"option"}>
-								<FormControlLabel
-									control={<Checkbox checked={template} color={"default"} onChange={(e) => this.handleChange("template", e.target.checked)} name="template" />}
-									labelPlacement={"start"}
-									label="Template"
-									className={"switch"}
-								/>
-							</div>
 						</div>
 
-						<div className={"docker"}>
+						<div className={"option"}>
 							<FormControlLabel
 								control={<Checkbox checked={!!docker} color={"default"} onChange={(e) => this.handleChange("docker", e.target.checked)} name="docker" />}
 								labelPlacement={"start"}
@@ -131,9 +129,39 @@ export class Projects extends Component<{}, State> {
 								label={"Docker name"}
 								error={typeof docker === "string" && docker.length === 0}
 								defaultValue={name}
-								style={{ width: "70%" }}
+								style={{ width: "50%" }}
 								onChange={e => this.handleChange("docker", e.target.value)}
 							/>}
+						</div>
+
+						<div className={"option"}>
+							<FormControlLabel
+								control={<Checkbox checked={!!github} color={"default"} onChange={(e) => this.handleChange("github", e.target.checked)} name="github" />}
+								labelPlacement={"start"}
+								label="Github"
+								className={"switch"}
+							/>
+
+							{github && <TextField
+								label={"Github name"}
+								error={typeof github === "string" && github.length === 0}
+								defaultValue={name}
+								style={{ width: "50%" }}
+								onChange={e => this.handleChange("github", e.target.value)}
+							/>}
+
+							{github && <FormControlLabel
+								control={<Checkbox
+									checked={template}
+									color={"default"}
+									onChange={(e) => this.handleChange("template", e.target.checked)}
+									name="Template" />
+								}
+								labelPlacement={"start"}
+								label="Template"
+								className={"switch"}
+							/>}
+
 						</div>
 
 					</Box>
@@ -163,16 +191,16 @@ export class Projects extends Component<{}, State> {
 
 
 	create = () => {
-		const { description, docker, name, readme, use, folder, features } = this.state;
+		const { description, docker, name, readme, use, folder, features, template } = this.state;
 		const builder = new ProjectBuilder();
 
-		builder.githubName = name;
+		builder.github = name;
 		builder.description = description ?? undefined;
 		use.forEach(f => builder.use(features.find(ff => f === ff.name) as Feature));
 
-		if (docker) builder.dockerName = typeof docker === "string" ? docker : name;
+		if (docker) builder.docker = typeof docker === "string" ? docker : name;
 		if (readme) builder.addReadme();
-
+		if (template) builder.isTemplate();
 		return builder.build(folder as string);
 	};
 

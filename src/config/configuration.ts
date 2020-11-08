@@ -15,6 +15,10 @@ export const defaultConfiguration: Configuration = {
 	frame: {
 		show: {
 			resourceUtilization: false
+		},
+		resize: {
+			height: false,
+			width: false
 		}
 	}
 };

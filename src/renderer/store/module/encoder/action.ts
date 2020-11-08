@@ -15,7 +15,7 @@ export async function runOnFinishAction() {
 	const notification = new Notification("Affiche un nouvel écran", {});
 
 	notification.onclick = () => {
-		Services.dialog.createWindow("/encoder/recap", {
+		Services.electron.dialog.createWindow("/encoder/recap", {
 				title: "Encoder action summary",
 				top: true,
 				modal: true

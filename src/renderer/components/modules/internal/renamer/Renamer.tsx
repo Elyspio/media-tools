@@ -27,7 +27,7 @@ interface Episode {
 	extension: string
 }
 
-@Register({ name: "Renamer", path: "/renamer", show: { appboard: true, name: true } })
+@Register({ name: "Renamer", path: "/renamer"})
 export class Renamer extends React.Component<{}, State> {
 
 
@@ -176,13 +176,13 @@ export class Renamer extends React.Component<{}, State> {
 			episodes: []
 		});
 		return Promise.all(this.state.episodes.map((episode: Episode) => {
-			return new Promise(async resolve => {
+			return new Promise<void>(async resolve => {
 				// @ts-ignore
 				const num = this.padWithZeros(episode.num, this.state.max.toString().length);
 				await fs.rename(episode.file, `${path.dirname(episode.file)}${path.sep}${this.state.name} ${num}.${episode.extension}`);
 				this.setState(prev => ({
 					percentage: (prev.percentage ?? 0) + 1
-				}), resolve);
+				}), () => resolve());
 			});
 		}));
 	};
@@ -244,4 +244,3 @@ export class Renamer extends React.Component<{}, State> {
 	}
 }
 
-export default Renamer;
