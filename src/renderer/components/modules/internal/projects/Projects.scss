@@ -3,18 +3,24 @@
 	width: 100%;
 	position: relative;
 
+	.options {
+		max-height: 30vh;
+		overflow-y: auto;
+
+		.simple-options {
+			display: grid;
+			grid-template-columns: repeat(6, 1fr);
+			grid-template-rows: auto;
+		}
+
+
+
+	}
+
 
 	.row {
 
-		margin: 3rem 0;
-
-		//#name {
-		//	width: 30%;
-		//}
-		//
-		//#description {
-		//	width: 70%;
-		//}
+		margin: 2.5rem 0;
 
 		.MuiInputBase-formControl {
 			margin-right: 2rem;
@@ -34,6 +40,11 @@
 
 		&.docker {
 		}
+	}
+
+	.bottom {
+		position: fixed;
+		bottom: 2rem;
 	}
 
 }

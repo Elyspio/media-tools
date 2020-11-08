@@ -1,11 +1,11 @@
-import axios from 'axios';
+import axios from "axios";
 
 
 export class AjaxService {
-    bypassCors = {
-        get: <T>(endpoint: string, params?: any) =>  axios.get<T>(endpoint, { params: params }),
-        post: <T>(endpoint: string, params?: any) =>  axios.post<T>(endpoint, { params: params }),
-        put: <T>(endpoint: string, params?: any) =>  axios.put<T>(endpoint, { params: params }),
-        delete: <T>(endpoint: string, params?: any) =>  axios.delete<T>(endpoint, { params: params }),
-    };
+	bypassCors = {
+		get: <T>(endpoint: string, params?: any) => axios.get<T>(endpoint, { params: params }),
+		post: <T>(endpoint: string, params?: any) => axios.post<T>(endpoint, { params: params }),
+		put: <T>(endpoint: string, params?: any) => axios.put<T>(endpoint, { params: params }),
+		delete: <T>(endpoint: string, params?: any) => axios.delete<T>(endpoint, { params: params })
+	};
 }
