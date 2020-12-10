@@ -23,6 +23,10 @@ export class ProjectBuilder {
 		this.config.description = des;
 	}
 
+	public set name(name: string) {
+		this.config.name = name;
+	}
+
 	public set github(val: string) {
 		this.config.github = val;
 	}
@@ -50,16 +54,12 @@ export class ProjectBuilder {
 		const projectPath = path.join(output, this.config.name);
 		await Services.projects.feature.merge(paths, projectPath);
 
-		// docker
-		if (this.config.docker) {
-			await Services.projects.docker.addDockerSupport(this.config.docker, this.config.description ?? "", this.config.features, projectPath);
-		}
-
+		// readme
 		if (this.config.readme) {
 			const content = [
 				"# " + this.config.github,
 				"",
-				"Bootstrapped with [media-tools](\"https://github.com/Elyspio/media-tools\") project",
+				"Bootstrapped with [media-tools](https://github.com/Elyspio/media-tools) project",
 				"",
 				...(this.config.features.length ?  [
 				"Features included: ",
@@ -72,9 +72,13 @@ export class ProjectBuilder {
 		}
 
 		// github
-
 		if(this.config.github) {
 			await Services.projects.github.init(projectPath, this.config.github, this.config.description, this.config.template);
+		}
+
+		// docker
+		if (this.config.docker) {
+			await Services.projects.docker.addDockerSupport(this.config.docker, this.config.description ?? "", this.config.features, projectPath);
 		}
 
 

@@ -19,8 +19,8 @@ interface State {
 	features: Feature[]
 	name: string,
 	readme: boolean,
-	docker?: boolean | string,
-	github?: boolean | string,
+	docker: boolean | string,
+	github: boolean | string,
 	loading: boolean,
 	description: string
 	template: boolean
@@ -41,6 +41,7 @@ export class Projects extends Component<{}, State> {
 		docker: false,
 		loading: true,
 		readme: false,
+		github: false,
 		description: "",
 		name: "",
 		template: false
@@ -191,16 +192,19 @@ export class Projects extends Component<{}, State> {
 
 
 	create = () => {
-		const { description, docker, name, readme, use, folder, features, template } = this.state;
+		const { description, docker, github, name, readme, use, folder, features, template } = this.state;
 		const builder = new ProjectBuilder();
 
-		builder.github = name;
+		builder.name = name;
 		builder.description = description ?? undefined;
 		use.forEach(f => builder.use(features.find(ff => f === ff.name) as Feature));
 
 		if (docker) builder.docker = typeof docker === "string" ? docker : name;
+		if (github) builder.github = typeof github === "string" ? github : name;
 		if (readme) builder.addReadme();
 		if (template) builder.isTemplate();
+
+
 		return builder.build(folder as string);
 	};
 
