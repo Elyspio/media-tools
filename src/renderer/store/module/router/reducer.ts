@@ -11,11 +11,12 @@ const requires = [
 	"internal/renamer/Renamer",
 	"internal/updater/Updater",
 	"internal/torrent/Torrent",
+	"internal/config/Config",
 	"app-board/AppBoard"
 ];
 
 for (const c of requires) {
-	import(`../../../components/modules/${c}`);
+	import(`../../../components/modules/${c}.tsx`);
 }
 
 type ReactComponent = any;
