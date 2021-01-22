@@ -90,5 +90,6 @@ export class ConfigurationService {
 			fs.writeFileSync(configMainFile, JSON.stringify(defaultConfiguration));
 			store.dispatch(setConfig(defaultConfiguration));
 		}
+		return;
 	}
 }

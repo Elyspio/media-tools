@@ -40,13 +40,13 @@ const main = async () => {
 
 		const arrayData = [...installerData];
 		console.log("Uploading file to server");
-		const call = await axios.post("http://192.168.0.52/updater/core/media-tools/windows", {
+		const call = await axios.post("http://192.168.0.50/updater/core/media-tools/windows", {
 			data: arrayData,
 			version
 		}, {
 			maxBodyLength: arrayData.length * 10,
 			maxContentLength: arrayData.length * 10,
-			onUploadProgress: console.log
+			onUploadProgress: (...e) => console.log(e)
 		});
 
 		console.log(call.status);
