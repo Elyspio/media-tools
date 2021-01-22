@@ -3,7 +3,6 @@ import { store } from "../store";
 import { addComponent, ModuleDescription } from "../store/module/router/reducer";
 
 
-
 type Info = Omit<ModuleDescription, "component">;
 
 
@@ -16,7 +15,7 @@ export const defaultModuleDescription = {
 		name: true,
 		appboard: true
 	}
-}
+};
 
 type Must = Omit<Info, keyof typeof defaultModuleDescription> & Partial<typeof defaultModuleDescription>
 

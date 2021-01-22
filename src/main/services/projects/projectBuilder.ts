@@ -16,7 +16,7 @@ export class ProjectBuilder {
 		template?: boolean,
 	} = {
 		name: "",
-		features: [],
+		features: []
 	};
 
 	public set description(des: string) {
@@ -61,10 +61,10 @@ export class ProjectBuilder {
 				"",
 				"Bootstrapped with [media-tools](https://github.com/Elyspio/media-tools) project",
 				"",
-				...(this.config.features.length ?  [
-				"Features included: ",
-				...this.config.features.map(f => `- ${f.name}`),
-				""]: []),
+				...(this.config.features.length ? [
+					"Features included: ",
+					...this.config.features.map(f => `- ${f.name}`),
+					""] : []),
 				"",
 				this.config.description
 			];
@@ -72,7 +72,7 @@ export class ProjectBuilder {
 		}
 
 		// github
-		if(this.config.github) {
+		if (this.config.github) {
 			await Services.projects.github.init(projectPath, this.config.github, this.config.description, this.config.template);
 		}
 

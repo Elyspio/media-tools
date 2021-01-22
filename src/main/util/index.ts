@@ -5,18 +5,22 @@ import * as process from "process";
 
 export const spawnBinary = async (binary: string, param: string[], folder: string, log?: boolean) => {
 	const child = spawn(binary, param, { cwd: folder });
-	child.stdout.on("data", (data) => {
-		if (log) console.log(`stdout: ${data}`);
-	});
+	let stdout = "", stderr = "";
 
-	child.stderr.on("data", (data) => {
-		if (log) console.log(`stderr: ${data}`);
-	});
+	if (child.stdout)
+		child.stdout.on("data", (data) => {
+			stdout += data.toString();
+		});
 
-	return await new Promise<void>((resolve) => {
+	if (child.stderr)
+		child.stderr.on("data", (data) => {
+			stderr += data.toString();
+		});
+
+	return new Promise<{ code: number, stdout: string, stderr: string }>((resolve) => {
 		child.on("close", (code) => {
-			console.log(`child process exited with code ${code}`);
-			resolve();
+			console.log(`child process exited with code ${code}`, { binary, param, folder, stdout, stderr, code });
+			resolve({ code, stdout, stderr });
 		});
 	});
 };
@@ -24,25 +28,24 @@ export const spawnBinary = async (binary: string, param: string[], folder: strin
 export const spawnAsync = async (command: string, options?: Partial<SpawnOptions> & { ignoreErrors?: boolean, color?: boolean }) => {
 	const child = spawn(`cmd.exe`, ["/c", ...command.split(" ")], { stdio: "inherit", ...options });
 
+	let stdout = "", stderr = "";
+
 	if (child.stdout)
 		child.stdout.on("data", (data) => {
-			console.log(`stdout: ${data.toString()}`);
+			stdout += data.toString();
 		});
 
 	if (child.stderr)
 		child.stderr.on("data", (data) => {
-			console.log(`stderr: ${data.toString()}`);
+			stderr += data.toString();
 		});
 
 	const exitCode: number = await new Promise((resolve) => {
 		child.on("close", (code) => {
-			console.log(`child process exited with code ${code}`);
-			resolve(code)
+			resolve(code);
 		});
 	});
 
-
-	// @ts-ignore
 	if (exitCode !== 0 && (!options?.ignoreErrors)) {
 		throw new Error(`subprocess error exit ${exitCode} for command ${command}`);
 	}
@@ -61,12 +64,10 @@ export async function isInstalled(app: string) {
 			break;
 	}
 
+
 	try {
-		await spawnBinary(command, [app], process.cwd());
-		console.log("OK");
-		return true;
+		return (await spawnBinary(command, [app], process.cwd())).stderr.length === 0;
 	} catch (e) {
-		console.log("FAUX", e);
 		return false;
 	}
 

@@ -10,7 +10,7 @@ import { EOL } from "os";
 export class DockerService {
 	public addDockerSupport = async (dockerName: string, description: string, features: Feature[], projectRoot: string) => {
 		const dockerFolder = path.join(projectRoot, "docker");
-		fs.mkdir(dockerFolder);
+		await fs.mkdir(dockerFolder);
 		await Promise.all([
 			this.createRepository(dockerName, description, description),
 			this.addDockerfile(features, path.join(dockerFolder, "DockerFile")),

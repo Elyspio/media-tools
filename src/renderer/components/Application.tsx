@@ -19,9 +19,9 @@ class Application extends React.Component<ReduxTypes> {
 
 		if (this.props.current.autoResize.width || this.props.current.autoResize.height) {
 			const config = await Services.configuration.get();
-			// @ts-ignore 
+			// @ts-ignore
 			const dim: (keyof Configuration["frame"]["resize"])[] = [...Object.keys(config.frame.resize)].filter(k => config.frame.resize[k] && this.props.current.autoResize[k] === true);
- 			const delta = await Services.electron.window.isUnderSized(dim);
+			const delta = await Services.electron.window.isUnderSized(dim);
 			if (dim.map(d => delta[d]).some(v => v > 0)) {
 				await Services.electron.window.resize(delta);
 			}

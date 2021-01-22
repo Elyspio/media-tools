@@ -1,6 +1,8 @@
 import * as fs from "fs-extra";
 import { configMainFile, defaultConfiguration } from "../../../config/configuration";
 import { remote } from "electron";
+import { store } from "../../../renderer/store";
+import { setConfig } from "../../../renderer/store/module/configuration/action";
 
 
 export const BaseConfig = {
@@ -24,7 +26,11 @@ export interface Configuration {
 			height: boolean,
 			width: boolean
 		}
+	},
+	endpoints: {
+		lightManager: string
 	}
+
 }
 
 
@@ -70,6 +76,19 @@ export class ConfigurationService {
 			return fs.writeFile(configMainFile, JSON.stringify(config));
 		} else {
 			return fs.writeFileSync(configMainFile, JSON.stringify(config));
+		}
+	}
+
+	public regenerate(async = true) {
+		if (async) {
+			return new Promise<void>(async resolve => {
+				await fs.writeFile(configMainFile, JSON.stringify(defaultConfiguration));
+				store.dispatch(setConfig(defaultConfiguration));
+				resolve();
+			});
+		} else {
+			fs.writeFileSync(configMainFile, JSON.stringify(defaultConfiguration));
+			store.dispatch(setConfig(defaultConfiguration));
 		}
 	}
 }

@@ -1,5 +1,4 @@
 import { Configuration } from "../configuration/configurationService";
-import { ModuleDescription, RouterState } from "../../../renderer/store/module/router/reducer";
 
 const { BrowserWindow } = require("electron").remote;
 type Dimensions = (keyof Configuration["frame"]["resize"])[];
@@ -35,7 +34,7 @@ export class WindowService {
 	public async resize(delta: { width: number, height: number }, windowId = 1) {
 		const window = BrowserWindow.getFocusedWindow(windowId);
 
-		if(window) {
+		if (window) {
 			const [width, height] = window.getSize();
 
 			for (let i = 0; i < 20; i++) {

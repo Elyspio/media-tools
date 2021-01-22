@@ -1,6 +1,6 @@
 import { DialogService } from "./electron/dialogService";
 import { MediaService } from "./media/mediaService";
-import {TorrentService } from "./media/torrentService";
+import { TorrentService } from "./media/torrentService";
 import { SystemService } from "./system/system";
 import { FilesService } from "./files/filesService";
 import { ConfigurationService } from "./configuration/configurationService";
@@ -15,7 +15,7 @@ export const Services = {
 		dialog: new DialogService(),
 		window: new WindowService()
 	},
-	media: {convert: new MediaService(), torrent: new TorrentService() },
+	media: { convert: new MediaService(), torrent: new TorrentService() },
 	system: new SystemService(),
 	files: new FilesService(),
 	configuration: new ConfigurationService(),

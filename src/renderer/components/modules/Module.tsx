@@ -18,6 +18,8 @@ type ModuleProps = {
 function Module(props: ModuleProps & { backHistory: Function }) {
 
 
+	console.log("MODULE", props);
+
 	const options = getUriParam<createWindowCustomOption>("options", { json: true }) ?? {
 		modal: false
 	};

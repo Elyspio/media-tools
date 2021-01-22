@@ -20,5 +20,8 @@ export const defaultConfiguration: Configuration = {
 			height: false,
 			width: false
 		}
+	},
+	endpoints: {
+		lightManager: "https://elyspio.fr/light-manager/"
 	}
 };

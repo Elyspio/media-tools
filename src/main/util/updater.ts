@@ -13,10 +13,11 @@ import { setPath } from "../../renderer/store/module/router/action";
 const { app, dialog } = remote;
 
 
-const getPlatform = (): "electron" | "linux" | undefined => {
+const getPlatform = (): "windows" | "linux" | undefined => {
 	let plat: any;
-	if (platform() === "win32") plat = "electron";
+	if (platform() === "win32") plat = "windows";
 	else if (platform() === "linux") plat = "linux";
+	else throw Error("Unsupported platform");
 	return plat;
 };
 
@@ -26,8 +27,13 @@ export function getVersion() {
 		: process.env.npm_package_version as string;
 }
 
-export async function checkUpdate() {
 
+const getServerUrl = () => {
+	return store.getState().updater.serverUrl;
+};
+
+
+export async function checkUpdate() {
 
 	const version = getVersion();
 
@@ -36,7 +42,7 @@ export async function checkUpdate() {
 
 	try {
 
-		const call: { data: { date: string, val: string } } = await axios.get(`${config.updateServer}${config.app_name}/${plat}/version/`);
+		const call: { data: { date: string, val: string } } = await axios.get(`${getServerUrl()}${config.app_name}/${plat}/version/`);
 
 		store.dispatch(setServerLatestVersion(call.data.val));
 
@@ -65,7 +71,7 @@ export async function checkUpdate() {
 			console.debug("You are running on the latest version");
 		}
 	} catch (e) {
-		console.log("checkUpdate", e)
+		console.log("checkUpdate", e);
 	}
 
 
@@ -75,7 +81,7 @@ export async function checkUpdate() {
 
 export async function downloadUpdate() {
 	const plat = getPlatform();
-	const bin = await axios.get(`${config.updateServer}${config.app_name}/${plat}`, {
+	const bin = await axios.get(`${getServerUrl()}${config.app_name}/${plat}`, {
 		responseType: "arraybuffer",
 		onDownloadProgress: progressEvent => {
 			store.dispatch(setDownloadPercentage(progressEvent.loaded * 100 / progressEvent.total));

@@ -54,7 +54,7 @@ const menu = withContext({
 @Register({
 	name: "Encoder",
 	description: "Encodes video in different format",
-	path: "/encoder",
+	path: "/encoder"
 }, menu)
 export class Encoder extends React.Component<Props, State> {
 
