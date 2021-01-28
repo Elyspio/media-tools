@@ -21,7 +21,7 @@ document.body.appendChild(mainElement);
 document.head.appendChild(css);
 console.log(style);
 
-const theme = createMuiTheme({
+export const theme = createMuiTheme({
 	overrides: {
 		MuiTooltip: {
 			tooltip: {
