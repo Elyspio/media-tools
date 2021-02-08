@@ -7,7 +7,7 @@ const requires = [
 	"internal/encoder/Encoder",
 	"internal/encoder/Recap",
 	"internal/purge/Purge",
-	"internal/projects/Projects",
+	"internal/projects/Vpn",
 	"internal/renamer/Renamer",
 	"internal/updater/Updater",
 	"internal/torrent/Torrent",

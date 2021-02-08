@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "./Projects.scss";
+import "./Vpn.scss";
 import { SelectFolder } from "../../../common/os";
 import TextField from "@material-ui/core/TextField";
 import { Button, Container, FormControlLabel, Input, MenuItem, Typography } from "@material-ui/core";
@@ -28,9 +28,9 @@ interface State {
 
 
 @Register({
-	name: "Projects",
+	name: "Vpn",
 	description: "Create projects from projects repositories",
-	path: "/projects",
+	path: "/vpn",
 	autoResize: { height: true, width: false }
 })
 export class Vpn extends Component<{}, State> {

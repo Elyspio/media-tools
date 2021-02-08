@@ -9,6 +9,7 @@ import { AjaxService } from "./ajax/ajaxService";
 import { FeatureService } from "./projects/feature";
 import { DockerService } from "./projects/dockerService";
 import { WindowService } from "./electron/windowService";
+import { VpnService } from "./vpn/vpnService";
 
 export const Services = {
 	electron: {
@@ -24,5 +25,6 @@ export const Services = {
 		feature: new FeatureService(),
 		docker: new DockerService()
 	},
-	ajax: new AjaxService()
+	ajax: new AjaxService(),
+	vpn: new VpnService()
 };
