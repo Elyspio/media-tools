@@ -17,9 +17,9 @@ import Link from "@material-ui/core/Link";
 import { withContext } from "../../../common/hoc/withContext";
 import { connect, ConnectedProps } from "react-redux";
 import { Dispatch } from "redux";
-import { StoreState } from "../../../../store/reducer";
 import OnFinishAction from "./OnFinishAction";
 import { runOnFinishAction } from "../../../../store/module/encoder/action";
+import { StoreState } from "../../../../store";
 
 
 const mapStateToProps = (state: StoreState) => ({
@@ -53,7 +53,7 @@ const menu = withContext({
 
 @Register({
 	name: "Encoder",
-	description: "Encodes video in different format",
+	description: "Encode video in different formats",
 	path: "/encoder"
 }, menu)
 export class Encoder extends React.Component<Props, State> {

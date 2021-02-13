@@ -57,7 +57,7 @@ export class Vpn extends Component<{}, State> {
 	render() {
 
 		const { use, features, loading, docker, name, readme, description, template, github } = this.state;
-
+		console.log("dirname", __dirname);
 		return (
 			<Container className="Projects">
 				{loading && <CircularProgress color={"secondary"} size={"2rem"} />}

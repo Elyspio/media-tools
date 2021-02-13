@@ -1,12 +1,12 @@
 import * as React from "react";
 import { connect, ConnectedProps } from "react-redux";
 import { Dispatch } from "redux";
-import { StoreState } from "../../../../store/reducer";
 import { Register } from "../../../../decorators/Module";
 import "./Recap.scss";
 import Container from "@material-ui/core/Container";
 import OnFinishAction from "./OnFinishAction";
 import Typography from "@material-ui/core/Typography";
+import { StoreState } from "../../../../store";
 
 const mapStateToProps = (state: StoreState) => ({ onFinishAction: state.encoder.onFinishAction });
 

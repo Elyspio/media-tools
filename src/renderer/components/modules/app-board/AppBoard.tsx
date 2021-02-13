@@ -1,6 +1,5 @@
 import React from "react";
 import "./AppBoard.scss";
-import { StoreState } from "../../../store/reducer";
 import { connect, ConnectedProps } from "react-redux";
 import { Button } from "@material-ui/core";
 import Tooltip from "@material-ui/core/Tooltip";
@@ -8,6 +7,7 @@ import { Register } from "../../../decorators/Module";
 import { setPath } from "../../../store/module/router/action";
 import { withContext } from "../../common/hoc/withContext";
 import AppBoardContextMenu from "./AppBoardContextMenu";
+import { StoreState } from "../../../store";
 
 
 const mapStateToProps = (state: StoreState) => {

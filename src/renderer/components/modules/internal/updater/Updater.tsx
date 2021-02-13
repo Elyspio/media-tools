@@ -2,7 +2,6 @@ import React from "react";
 import "./Updater.scss";
 import { Register } from "../../../../decorators/Module";
 import { CircularProgressWithLabel } from "../../../common/progress";
-import { StoreState } from "../../../../store/reducer";
 import { Dispatch } from "redux";
 import { connect, ConnectedProps } from "react-redux";
 import Button from "@material-ui/core/Button";
@@ -10,6 +9,7 @@ import { checkUpdate, downloadUpdate, getVersion, installUpdate } from "../../..
 import { Typography } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import { setServerUrl } from "../../../../store/module/updater/action";
+import { StoreState } from "../../../../store";
 
 const mapStateToProps = (state: StoreState) => ({
 	progress: state.updater.download,
@@ -28,7 +28,7 @@ type State = {
 const connector = connect(mapStateToProps, mapDispatchToProps);
 type ReduxTypes = ConnectedProps<typeof connector>;
 
-@Register({ name: "Updater", path: "/updater" }, connector)
+@Register({ name: "Updater", path: "/updater", description: "Check for update and apply it" }, connector)
 class Updater extends React.Component<ReduxTypes, State> {
 
 

@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import "./Light.scss";
 import { Register } from "../../../../decorators/Module";
 import { connect, ConnectedProps } from "react-redux";
-import { StoreState } from "../../../../store/reducer";
 import { Dispatch } from "redux";
+import { StoreState } from "../../../../store";
 
 interface State {
 	url?: string

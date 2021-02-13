@@ -1,13 +1,23 @@
 import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
-import { rootReducer, StoreState } from "./reducer";
 import { logger } from "redux-logger";
 import { getUriParam } from "../util/url";
+import { reducer as updaterReducer } from "./module/updater/reducer";
+import { reducer as encoderReducer } from "./module/encoder/reducer";
+import { reducer as routerReducer } from "./module/router/reducer";
+import { reducer as vpnReducer } from "./module/vpn/reducer";
+import { reducer as configurationRouter } from "./module/configuration/reducer";
 
 
-export const store = configureStore<StoreState>({
-	reducer: rootReducer,
-	// @ts-ignore
+export const store = configureStore({
+	reducer: {
+		updater: updaterReducer,
+		encoder: encoderReducer,
+		routing: routerReducer,
+		config: configurationRouter,
+		vpn: vpnReducer
+	},
 	middleware: [...getDefaultMiddleware(), logger],
-	preloadedState: getUriParam<StoreState>("store", { json: true, remove: true }) ?? undefined
+	preloadedState: getUriParam("store", { json: true, remove: true }) ?? undefined
 });
 
+export type StoreState = ReturnType<typeof store.getState>

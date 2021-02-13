@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { connect, ConnectedProps } from "react-redux";
 import { Dispatch } from "redux";
-import { StoreState } from "../../../../store/reducer";
 import { Register } from "../../../../decorators/Module";
 import Container from "@material-ui/core/Container";
 import { TreeItem, TreeView } from "@material-ui/lab";
@@ -10,6 +9,7 @@ import { Divider } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import "./Config.scss";
 import { Services } from "../../../../../main/services";
+import { StoreState } from "../../../../store";
 
 const mapStateToProps = (state: StoreState) => ({ config: state.config.current });
 

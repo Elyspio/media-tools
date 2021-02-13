@@ -6,7 +6,7 @@ import ResourceUtilization from "./resource-utilization/ResourceUtilization";
 import { getUriParam } from "../../util/url";
 import { connect, ConnectedProps } from "react-redux";
 import { Dispatch } from "redux";
-import { StoreState } from "../../store/reducer";
+import { StoreState } from "../../store";
 
 type Props = ReduxTypes & {
 	children: ReactNode

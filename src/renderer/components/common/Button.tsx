@@ -14,10 +14,16 @@ export function Button(props: Props) {
 
 	const newColors = ["error", "warning"];
 
+	const muiButton = <MuiButton {...props} color={props.color as ButtonProps["color"]} />;
+
+	if (props.color === undefined || props.color === "inherit" || props.color === "default") {
+		return muiButton;
+	}
+
 	if (newColors.includes(props.color)) {
 		t.palette = {
 			...theme.palette,
-			primary: theme.palette[props.color],
+			primary: theme.palette[props.color]
 		};
 	}
 
@@ -25,7 +31,5 @@ export function Button(props: Props) {
 		<ThemeProvider theme={t}>
 			<MuiButton {...props} color={"primary"} />
 		</ThemeProvider>
-	) : (
-		<MuiButton {...props} color={props.color as ButtonProps["color"]} />
-	);
+	) : muiButton;
 }

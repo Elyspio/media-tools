@@ -1,4 +1,4 @@
-import { store } from "../../../../store";
+import { store, StoreState } from "../../../../store";
 import { DialogContent, DialogTitle, InputLabel, MenuItem, Select } from "@material-ui/core";
 import FormControl from "@material-ui/core/FormControl";
 import { runOnFinishAction, setOnFinishAction } from "../../../../store/module/encoder/action";
@@ -6,7 +6,6 @@ import { onFinishActionList } from "../../../../store/module/encoder/reducer";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import React from "react";
-import { StoreState } from "../../../../store/reducer";
 import { Dispatch } from "redux";
 import { connect, ConnectedProps } from "react-redux";
 

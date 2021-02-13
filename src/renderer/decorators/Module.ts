@@ -20,12 +20,17 @@ export const defaultModuleDescription = {
 type Must = Omit<Info, keyof typeof defaultModuleDescription> & Partial<typeof defaultModuleDescription>
 
 
-export function Register(info: Must, connector?: Function) {
+export function Register(info: Must, ...connector: Function[]) {
 	store.dispatch(addRoute({ ...defaultModuleDescription, ...info, component: info.name }));
 	return function(target: any) {
 		console.log("Registering component", { name: info.name, component: target.name });
-		const component = connector ? connector(target) : target;
-		addComponent(info.path, component);
+
+		let ret = target;
+		connector.reverse().forEach(f => {
+			ret = f(ret);
+		})
+
+		addComponent(info.path, ret);
 		return target;
 	};
 }

@@ -1,5 +1,4 @@
 import * as React from "react";
-import { StoreState } from "../../../store/reducer";
 import { Dispatch } from "redux";
 import { connect, ConnectedProps } from "react-redux";
 import { DialogContent, DialogTitle, InputLabel, MenuItem, Select } from "@material-ui/core";
@@ -8,6 +7,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import { setConfig } from "../../../store/module/configuration/action";
 import { BaseConfig, Configuration } from "../../../../main/services/configuration/configurationService";
+import { StoreState } from "../../../store";
 
 const mapStateToProps = (state: StoreState) => ({
 	config: state.config.current

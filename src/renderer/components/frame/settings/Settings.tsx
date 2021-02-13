@@ -1,12 +1,12 @@
 import { connect, ConnectedProps } from "react-redux";
 import { Dispatch } from "redux";
-import { StoreState } from "../../../store/reducer";
 import { Dialog, DialogContent, DialogTitle, List, ListItem, ListItemText, ListSubheader, Switch } from "@material-ui/core";
 import React from "react";
 import "./Settings.scss";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import { Configuration } from "../../../../main/services/configuration/configurationService";
 import { setConfig } from "../../../store/module/configuration/action";
+import { StoreState } from "../../../store";
 
 type OwnProps = ReduxTypes & {
 	isOpen: boolean,

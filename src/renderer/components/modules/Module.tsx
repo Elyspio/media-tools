@@ -1,22 +1,15 @@
 import * as React from "react";
 import { IconButton, Typography } from "@material-ui/core";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import { connect } from "react-redux";
-import { ModuleDescription } from "../../store/module/router/reducer";
+import { connect, ConnectedProps } from "react-redux";
 import "./Module.scss";
 import { setPath } from "../../store/module/router/action";
-import { StoreState } from "../../store/reducer";
 import { createWindowCustomOption } from "../../../main/services/electron/dialogService";
 import { getUriParam } from "../../util/url";
-
-type ModuleProps = {
-	info: ModuleDescription,
-	children: any
-}
+import { StoreState } from "../../store";
 
 
-function Module(props: ModuleProps & { backHistory: Function }) {
-
+function Module(props: ConnectedProps<typeof connector> & { children?: any }) {
 
 	console.log("MODULE", props);
 
@@ -33,7 +26,8 @@ function Module(props: ModuleProps & { backHistory: Function }) {
 			{props.info.show.name && <Typography variant={"h5"} className="title">{props.info.name}</Typography>}
 		</div>}
 
-		{props.children}
+			{props.children}
+
 	</div>;
 }
 
@@ -46,5 +40,6 @@ const mapDispatchToProps = (dispatch: Function) => ({
 	backHistory: () => dispatch(setPath("/"))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Module) as any;
+let connector = connect(mapStateToProps, mapDispatchToProps);
+export default connector(Module);
 

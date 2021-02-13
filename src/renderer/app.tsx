@@ -7,6 +7,7 @@ import { store } from "./store";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 // @ts-ignore
 import * as style from "./App.scss";
+import { SnackbarProvider } from "notistack";
 
 // Create main element
 
@@ -46,11 +47,13 @@ export const theme = createMuiTheme({
 
 
 ReactDOM.render(
-	<MuiThemeProvider theme={theme}>
-		<Provider store={store}>
-			<Application />
-		</Provider>
-	</MuiThemeProvider>,
-	mainElement
+	<SnackbarProvider maxSnack={3}>
+		<MuiThemeProvider theme={theme}>
+			<Provider store={store}>
+				<Application />
+			</Provider>
+		</MuiThemeProvider>
+	</SnackbarProvider>
+	,mainElement
 );
 

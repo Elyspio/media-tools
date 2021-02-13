@@ -5,9 +5,9 @@ import React from "react";
 import { remote } from "electron";
 import { Services } from "../../main/services";
 import { Configuration } from "../../main/services/configuration/configurationService";
-import { StoreState } from "../store/reducer";
 import { connect, ConnectedProps } from "react-redux";
 import { Dispatch } from "redux";
+import { StoreState } from "../store";
 
 const { BrowserWindow } = remote;
 
