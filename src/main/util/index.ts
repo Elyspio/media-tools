@@ -16,7 +16,7 @@ export const spawnBinary = async (binary: string, param: string[], folder: strin
 			stderr += data.toString();
 		});
 
-	return new Promise<{ code: number, stdout: string, stderr: string }>((resolve) => {
+	return new Promise<{ code: number | null, stdout: string, stderr: string }>((resolve) => {
 		child.on("close", (code) => {
 			console.log(`child process exited with code ${code}`, { binary, param, folder, stdout, stderr, code });
 			resolve({ code, stdout, stderr });
@@ -39,7 +39,7 @@ export const spawnAsync = async (command: string, options?: Partial<SpawnOptions
 			stderr += data.toString();
 		});
 
-	const exitCode: number = await new Promise((resolve) => {
+	const exitCode: number | null = await new Promise((resolve) => {
 		child.on("close", (code) => {
 			resolve(code);
 		});

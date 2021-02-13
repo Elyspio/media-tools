@@ -37,25 +37,7 @@ const main = async () => {
 		}
 
 		const installerData = await readFile(path.join(outputFolder, installerPath));
-
-		const arrayData = [...installerData];
-		console.log("Uploading file to server");
-		const call = await axios.post("http://192.168.0.50/updater/core/media-tools/windows", {
-			data: arrayData,
-			version
-		}, {
-			maxBodyLength: arrayData.length * 10,
-			maxContentLength: arrayData.length * 10,
-			onUploadProgress: (...e) => console.log(e)
-		});
-
-		console.log(call.status);
-
-		if (call.status !== 200) {
-			throw new Error(`${call.status}`);
-		}
-
-		console.log("sent to server");
+		await send(version, [...installerData])
 		await updatePackageJson(pkg);
 	} catch (e) {
 		console.error("ERROR", e.message);
@@ -66,6 +48,42 @@ const main = async () => {
 
 
 main();
+
+
+async function send(version: string, data: number[]) {
+
+	return new Promise<void>(async resolve => {
+		try {
+			console.log("Uploading file to server");
+
+			const call = await axios.post("https://elyspio.fr/updater/core/media-tools/windows", {
+				data: data,
+				version
+			}, {
+				maxBodyLength: data.length * 10,
+				maxContentLength: data.length * 10,
+				onUploadProgress: (...e) => console.log(e)
+			});
+
+			console.log(call.status);
+
+			if (call.status !== 200) {
+				throw new Error(`${call.status}`);
+			}
+			resolve();
+
+			console.log("sent to server");
+		} catch (e) {
+			console.error("Error will sending:", e.message)
+			console.error("Trying again in 500ms");
+			setTimeout(() => {
+				resolve(send(version, data))
+			}, 500)
+		}
+	})
+}
+
+
 
 
 // "release": "npm run build && util-builder -w"

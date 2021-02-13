@@ -1,4 +1,4 @@
-# Media tools
+# Elytools
 
 An app to automatize actions that I was doing too often
 
