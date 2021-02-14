@@ -1,4 +1,4 @@
-import { Feature, FeatureOptions } from "../main/services/projects/types";
+import { Feature, FeatureOptions } from "../../main/services/projects/types";
 
 export const featureMap: { [key in string]: Feature[] } = {
 	"254979456": [{ name: "desktop", use: ["src", "config", "test", "package.json", "readme.md", ".gitignore"], options: [FeatureOptions.wrap] }],

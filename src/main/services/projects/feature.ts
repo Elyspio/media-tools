@@ -1,7 +1,7 @@
 import { Feature, FeatureOptions } from "./types";
 import { Services } from "../index";
-import { featureMap } from "../../../config/projects";
-import { github } from "../../../config/projects.private";
+import { featureMap } from "../../../config/projects/projects";
+import { github } from "../../../config/projects/projects.private";
 import * as fs from "fs-extra";
 import { ensureDir, writeFile } from "fs-extra";
 import { promises as ofs } from "fs";

@@ -4,6 +4,8 @@ import { File, Media, Stream } from "../../../renderer/components/modules/intern
 import { EventEmitter } from "events";
 import * as path from "path";
 import { isInstalled } from "../../util";
+import { setFFmpegInstalled, setProgress } from "../../../renderer/store/module/media/reducer";
+import { store } from "../../../renderer/store";
 
 
 export class MediaService {
@@ -17,8 +19,10 @@ export class MediaService {
 		}
 	}
 
-	public async isFFmpegInstalled() {
-		return isInstalled("ffmpeg");
+	public async checkIfFFmpegInstalled() {
+		const bool = await isInstalled("ffmpeg");
+		store.dispatch(setFFmpegInstalled(bool));
+		return bool;
 	}
 
 	public async convert(input: Media, format: string, options?: { outputPath: string }) {
@@ -30,7 +34,7 @@ export class MediaService {
 				input.property = await this.getInfo(input.file);
 			}
 
-			const stream = input.property.streams.find(stream => stream.codec_type = "video") as Stream;
+			const stream = input.property.streams.find(stream => stream.codec_type === "video") as Stream;
 			let parts = stream.avg_frame_rate.split("/");
 			const framerate = Number.parseFloat(parts[0]) / Number.parseFloat(parts[1]);
 
@@ -43,7 +47,9 @@ export class MediaService {
 			process.stdout.on("error", (e) => console.error("process.stdout", e.toString()));
 			process.stdout.on("data", (chunk: string) => {
 				const obj = this.getFFMpegProgress(chunk);
-				s.emit("progress", obj.frame / nbFrames * 100);
+				let percentage = obj.frame / nbFrames * 100;
+				s.emit("progress", percentage);
+				store.dispatch(setProgress({ media: input, percentage }));
 			});
 
 
@@ -54,6 +60,10 @@ export class MediaService {
 			console.error(e);
 			throw e;
 		}
+
+	}
+
+	public async rename() {
 
 	}
 

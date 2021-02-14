@@ -1,6 +1,6 @@
 import axios from "axios";
-import { yggtorrentUrl } from "../../../config/torents";
-import { credentials } from "../../../config/torents.private";
+import { yggtorrentUrl } from "../../../config/media/torents";
+import { credentials } from "../../../config/media/torents.private";
 
 export class TorrentService {
 	public async search(name: string) {

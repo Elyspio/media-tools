@@ -1,6 +1,6 @@
 // @ts-ignore
 import dockerHubAPI from "docker-hub-api";
-import { docker } from "../../../config/projects.private";
+import { docker } from "../../../config/projects/projects.private";
 import { Feature } from "./types";
 import * as fs from "fs-extra";
 import * as path from "path";

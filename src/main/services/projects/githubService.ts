@@ -3,7 +3,7 @@ import { Repository, Template } from "./types";
 import { Services } from "../index";
 import * as path from "path";
 import * as fs from "fs-extra";
-import { github as githubConf } from "../../../config/projects.private";
+import { github as githubConf } from "../../../config/projects/projects.private";
 import { spawnBinary } from "../../util";
 
 
