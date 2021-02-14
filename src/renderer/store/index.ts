@@ -6,7 +6,7 @@ import { reducer as encoderReducer } from "./module/encoder/reducer";
 import { reducer as routerReducer } from "./module/router/reducer";
 import { reducer as vpnReducer } from "./module/vpn/reducer";
 import { reducer as configurationRouter } from "./module/configuration/reducer";
-import { mediaSlice } from "./module/media/reducer";
+import { mediaSlice } from "./module/media";
 
 
 export const store = configureStore({

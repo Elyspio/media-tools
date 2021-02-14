@@ -79,28 +79,10 @@ export type Encoder = {
 	format: "x265" | "x264",
 	type: "CPU" | "GPU",
 	value: {
-		ffmpeg: string,
+		ffmpeg: "libx265" | "hevc_nvenc",
 		ffprobe: FFProbeFileFormat
 	}
 }
-export const encoders: Encoder[] = [
-	{
-		format: "x265",
-		type: "CPU",
-		value: {
-			ffmpeg: "libx265",
-			ffprobe: "hevc"
-		}
-	},
-	{
-		format: "x265",
-		type: "GPU",
-		value: {
-			ffmpeg: "hevc_nvenc",
-			ffprobe: "hevc"
-		}
-	}
-];
 
 export type FFProbeFileFormat = "hevc" | "h264";
 
