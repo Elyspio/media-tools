@@ -21,7 +21,7 @@ import OnFinishAction from "./OnFinishAction";
 import { runOnFinishAction } from "../../../../store/module/encoder/action";
 import { StoreState } from "../../../../store";
 import { encoders } from "../../../../../config/media/encoder";
-import { setFormat, setMedias, setProcess, setProgress } from "../../../../store/module/media/reducer";
+import { setFormat, setMedias, setProcess, setProgress } from "../../../../store/module/media";
 
 
 const mapStateToProps = (state: StoreState) => ({

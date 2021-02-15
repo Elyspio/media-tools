@@ -4,7 +4,7 @@ import { File, Media, Stream } from "../../../renderer/components/modules/intern
 import { EventEmitter } from "events";
 import * as path from "path";
 import { isInstalled } from "../../util";
-import { setFFmpegInstalled, setProgress } from "../../../renderer/store/module/media/reducer";
+import { setFFmpegInstalled, setProgress } from "../../../renderer/store/module/media";
 import { store } from "../../../renderer/store";
 
 

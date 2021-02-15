@@ -1,6 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { setConfigurationFile, setStdioOutput } from "./action";
-import { vpnConfig } from "../../../../config/vpn.private";
+import { vpnConfig } from "../../../../config/networks/vpn.private";
 
 
 export interface VpnState {

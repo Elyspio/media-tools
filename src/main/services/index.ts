@@ -9,8 +9,9 @@ import { AjaxService } from "./ajax/ajaxService";
 import { FeatureService } from "./projects/feature";
 import { DockerService } from "./projects/dockerService";
 import { WindowService } from "./electron/windowService";
-import { OpenVpnService } from "./vpn/openVpnService";
-import { NordVpnService } from "./vpn/nordvpnService";
+import { OpenVpnService } from "./network/openVpnService";
+import { NordVpnService } from "./network/nordvpnService";
+import { NetworkService } from "./network/networkService";
 
 export const Services = {
 	electron: {
@@ -27,8 +28,9 @@ export const Services = {
 		docker: new DockerService()
 	},
 	ajax: new AjaxService(),
-	vpn: {
+	networks: {
 		openvpn: new OpenVpnService(),
-		nordvpn: new NordVpnService()
+		nordvpn: new NordVpnService(),
+		network: new NetworkService()
 	}
 };

@@ -1,7 +1,7 @@
 import { app, BrowserWindow } from "electron";
 import * as path from "path";
 import * as url from "url";
-import { windowOption } from "../config/main";
+import { windowOption } from "../config/electron";
 
 
 app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");

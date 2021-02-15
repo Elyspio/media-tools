@@ -1,5 +1,5 @@
 import { isInstalled } from "../../util";
-import { vpnConfig } from "../../../config/vpn.private";
+import { vpnConfig } from "../../../config/networks/vpn.private";
 import { spawn } from "child_process";
 import { EventManager } from "../../util/events";
 

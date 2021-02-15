@@ -1,7 +1,7 @@
-import { spawn, SpawnOptions } from "child_process";
+import { spawn, SpawnOptions, exec as _exec } from "child_process";
 import { platform } from "os";
 import * as process from "process";
-
+import {promisify} from "util"
 export const spawnBinary = async (binary: string, param: string[], folder: string, log?: boolean) => {
 	const child = spawn(binary, param, { cwd: folder });
 	let stdout = "", stderr = "";
@@ -50,6 +50,10 @@ export const spawnAsync = async (command: string, options?: Partial<SpawnOptions
 	}
 
 };
+
+
+export  const exec = promisify(_exec)
+
 
 export async function isInstalled(app: string) {
 

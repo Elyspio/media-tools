@@ -2,51 +2,24 @@
 	height: 100%;
 	width: 100%;
 	position: relative;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-evenly;
+	align-items: start;
 
-	.options {
-		max-height: 30vh;
-		overflow-y: auto;
-
-		.simple-options {
-			display: grid;
-			grid-template-columns: repeat(6, 1fr);
-			grid-template-rows: auto;
-		}
-
+	> * {
+		width: 30vw;
 	}
 
-
-	.option {
-		display: flex;
-	}
-
-	.row {
-
-		margin: 2.5rem 0;
-
-		.MuiInputBase-formControl {
-			margin-right: 2rem;
-		}
-
-		.switch {
-			color: rgba(255, 255, 255, 0.7);
-			margin-left: 0;
-			margin-right: 1rem;
-			margin-top: 0.75rem;
-			text-align: left;
-
-			> span.MuiFormControlLabel-label {
-				width: 4rem;
-			}
-		}
-
-		&.docker {
+	.item {
+		.btns {
+			display: flex;
+			justify-content: space-evenly;
 		}
 	}
 
-	.bottom {
-		position: fixed;
-		bottom: 2rem;
+	.divider {
+		margin: 1rem;
 	}
 
 }
