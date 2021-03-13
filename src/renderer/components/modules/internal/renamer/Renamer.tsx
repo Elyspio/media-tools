@@ -7,6 +7,8 @@ import * as path from "path";
 import { SelectFolder } from "../../../common/os";
 import { Register } from "../../../../decorators/Module";
 import "./Renamer.scss";
+import { getAppParams } from "../../../../../main/util/args";
+import { Services } from "../../../../../main/services";
 
 
 interface State {
@@ -30,6 +32,15 @@ interface Episode {
 @Register({ name: "Renamer", path: "/renamer" })
 export class Renamer extends React.Component<{}, State> {
 
+
+	async componentDidMount() {
+		const appParams = getAppParams();
+		console.log("params", appParams);
+		if (appParams.folder) {
+			const files = await Services.files.list(appParams.folder);
+			await this.onFileSelect(files);
+		}
+	}
 
 	constructor(props: {}) {
 		super(props);
@@ -95,8 +106,8 @@ export class Renamer extends React.Component<{}, State> {
 		});
 	};
 	private onFileSelect = (files: string[]) => {
+		console.log("files", files);
 		if (files.length) {
-
 
 			const trim = (str: string) => str.replace(/-_/g, " ").replace(".", " . ");
 

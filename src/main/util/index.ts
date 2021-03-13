@@ -2,6 +2,7 @@ import { spawn, SpawnOptions, exec as _exec } from "child_process";
 import { platform } from "os";
 import * as process from "process";
 import {promisify} from "util"
+import {remote} from "electron"
 export const spawnBinary = async (binary: string, param: string[], folder: string, log?: boolean) => {
 	const child = spawn(binary, param, { cwd: folder });
 	let stdout = "", stderr = "";
@@ -75,3 +76,5 @@ export async function isInstalled(app: string) {
 	}
 
 }
+
+

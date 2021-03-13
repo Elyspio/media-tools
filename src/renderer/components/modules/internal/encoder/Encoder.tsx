@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
 import { InputLabel, MenuItem, Select } from "@material-ui/core";
-import { File, Media, ProcessData, Encoder as IEncoder } from "./type";
+import { File, Media, ProcessData } from "./type";
 import { MediaService } from "../../../../../main/services/media/mediaService";
 import * as fs from "fs-extra";
 import * as path from "path";
@@ -22,6 +22,7 @@ import { runOnFinishAction } from "../../../../store/module/encoder/action";
 import { StoreState } from "../../../../store";
 import { encoders } from "../../../../../config/media/encoder";
 import { setFormat, setMedias, setProcess, setProgress } from "../../../../store/module/media";
+import { getAppParams } from "../../../../../main/util/args";
 
 
 const mapStateToProps = (state: StoreState) => ({
@@ -63,6 +64,11 @@ export class Encoder extends React.Component<Props> {
 
 	async componentDidMount() {
 		await Services.media.convert.checkIfFFmpegInstalled();
+
+		const appParams = getAppParams();
+		if (appParams.folder) {
+			await this.onFileSelect(await Services.files.list(appParams.folder));
+		}
 	}
 
 	render() {
@@ -72,7 +78,7 @@ export class Encoder extends React.Component<Props> {
 		let processUi = null;
 
 
-		const {encoder, process, medias} = this.props.media
+		const { encoder, process, medias } = this.props.media;
 
 		if (medias.length > 0) {
 
@@ -179,9 +185,9 @@ export class Encoder extends React.Component<Props> {
 
 			const process = this.props.media.process.find(p => p.media.file.path === media.file.path);
 
-			if(!process) throw `Invalid State, could not found in store a media with type="${media.file.path}"`
+			if (!process) throw `Invalid State, could not found in store a media with type="${media.file.path}"`;
 
-			this.props.setProgress({...process, percentage: 0})
+			this.props.setProgress({ ...process, percentage: 0 });
 
 			const outputPath = path.join(path.dirname(media.file.path), "current.mkv");
 			const s = await new MediaService().convert(media, this.props.media.encoder.format, { outputPath: outputPath });
@@ -189,7 +195,7 @@ export class Encoder extends React.Component<Props> {
 				console.log("receving progress", percentage);
 			});
 			s.on("finished", async () => {
-				this.props.setProgress({...process, percentage: 100})
+				this.props.setProgress({ ...process, percentage: 100 });
 				resolve(outputPath);
 			});
 		});

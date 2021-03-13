@@ -15,7 +15,7 @@ export class SystemService {
 	}
 
 	public async cpuLoad(): Promise<number> {
-		return (await currentLoad()).currentload;
+		return (await currentLoad()).currentLoad;
 	}
 
 	public async memoryUsed(): Promise<{ total: number, current: number }> {

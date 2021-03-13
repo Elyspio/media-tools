@@ -2,6 +2,7 @@ import { app, BrowserWindow } from "electron";
 import * as path from "path";
 import * as url from "url";
 import { windowOption } from "../config/electron";
+import {remote} from "electron"
 
 
 app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
@@ -25,7 +26,6 @@ const createWindow = async () => {
 		await installExtensions();
 	}
 
-
 	win = new BrowserWindow({
 		...windowOption
 	});
@@ -34,8 +34,6 @@ const createWindow = async () => {
 		process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "1"; // eslint-disable-line require-atomic-updates
 		win.loadURL(`http://localhost:2003`);
 	} else {
-
-		console.log(__dirname, path.join(__dirname, "index.html"))
 
 		win.loadURL(
 			url.format({
@@ -58,7 +56,6 @@ const createWindow = async () => {
 	});
 };
 
-app.on("ready", createWindow);
 
 app.on("window-all-closed", () => {
 	if (process.platform !== "darwin") {
@@ -71,3 +68,23 @@ app.on("activate", () => {
 		createWindow();
 	}
 });
+
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+	app.quit();
+} else {
+	app.on("second-instance", (event, commandLine, workingDirectory) => {
+		// Someone tried to run a second instance, we should focus our window.
+
+		const currentWindow = require("electron").remote.getCurrentWindow();
+
+		if (currentWindow) {
+			if (currentWindow.isMinimized()) currentWindow.restore();
+			currentWindow.focus();
+		}
+	});
+
+	// Create myWindow, load the rest of the app, etc...
+	app.on("ready", createWindow);
+}
