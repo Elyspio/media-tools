@@ -77,11 +77,9 @@ if (!gotTheLock) {
 	app.on("second-instance", (event, commandLine, workingDirectory) => {
 		// Someone tried to run a second instance, we should focus our window.
 
-		const currentWindow = require("electron").remote.getCurrentWindow();
-
-		if (currentWindow) {
-			if (currentWindow.isMinimized()) currentWindow.restore();
-			currentWindow.focus();
+		if (win) {
+			if (win.isMinimized()) win.restore();
+			win.focus();
 		}
 	});
 
