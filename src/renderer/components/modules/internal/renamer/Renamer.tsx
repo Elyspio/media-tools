@@ -109,7 +109,10 @@ export class Renamer extends React.Component<{}, State> {
 		console.log("files", files);
 		if (files.length) {
 
-			const trim = (str: string) => str.replace(/-_/g, " ").replace(".", " . ");
+			const trim = (str: string) => str
+				.replace(/-_/g, " ")
+				.replace(/\./g, " . ")
+				.replace(/([0-9]*)E([0-9]+)/g, "$1 E $2");
 
 			let fileNames = files.map(trim);
 
