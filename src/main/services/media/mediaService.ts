@@ -63,10 +63,6 @@ export class MediaService {
 
 	}
 
-	public async rename() {
-
-	}
-
 	private getFFMpegProgress(chunk: string): FFMPpegProgress {
 		const data = chunk.toString().split("\n").map(line => line.split("="));
 		return {

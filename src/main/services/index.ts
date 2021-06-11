@@ -1,17 +1,16 @@
-import { DialogService } from "./electron/dialogService";
-import { MediaService } from "./media/mediaService";
-import { TorrentService } from "./media/torrentService";
-import { SystemService } from "./system/system";
-import { FilesService } from "./files/filesService";
-import { ConfigurationService } from "./configuration/configurationService";
-import { GithubService } from "./projects/githubService";
-import { AjaxService } from "./ajax/ajaxService";
-import { FeatureService } from "./projects/feature";
-import { DockerService } from "./projects/dockerService";
-import { WindowService } from "./electron/windowService";
-import { OpenVpnService } from "./network/openVpnService";
-import { NordVpnService } from "./network/nordvpnService";
-import { NetworkService } from "./network/networkService";
+import {DialogService} from "./electron/dialogService";
+import {MediaService} from "./media/mediaService";
+import {SystemService} from "./system/system";
+import {FilesService} from "./files/filesService";
+import {ConfigurationService} from "./configuration/configurationService";
+import {GithubService} from "./projects/githubService";
+import {FeatureService} from "./projects/feature";
+import {DockerService} from "./projects/dockerService";
+import {WindowService} from "./electron/windowService";
+import {OpenVpnService} from "./network/openVpnService";
+import {NordVpnService} from "./network/nordvpnService";
+import {NetworkService} from "./network/networkService";
+import {TorrentService} from "./media/torrentService";
 
 export const Services = {
 	electron: {
@@ -27,7 +26,6 @@ export const Services = {
 		feature: new FeatureService(),
 		docker: new DockerService()
 	},
-	ajax: new AjaxService(),
 	networks: {
 		openvpn: new OpenVpnService(),
 		nordvpn: new NordVpnService(),

@@ -31,8 +31,8 @@ export class WindowService {
 		});
 	}
 
-	public async resize(delta: { width: number, height: number }, windowId = 1) {
-		const window = BrowserWindow.getFocusedWindow(windowId);
+	public async resize(delta: { width: number, height: number }) {
+		const window = BrowserWindow.getFocusedWindow();
 
 		if (window) {
 			const [width, height] = window.getSize();
