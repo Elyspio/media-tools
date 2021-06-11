@@ -28,10 +28,10 @@ module.exports = merge(baseConfig, {
 						"@babel/preset-react"
 					],
 					plugins: [
-						["@babel/plugin-proposal-decorators", { legacy: true }],
+						["@babel/plugin-proposal-decorators", { legacy: true, loose: true}],
 						["@babel/plugin-proposal-class-properties", { loose: true }],
-						["@babel/plugin-transform-typescript", { allowNamespaces: true }]
-					
+						["@babel/plugin-transform-typescript", { allowNamespaces: true, loose: true }]
+
 					]
 				}
 			},

@@ -27,7 +27,7 @@ const main = async () => {
 		// await copy(path.join(__dirname, "..", "src"), path.join(__dirname, "..", "build-config"));
 
 		await updatePackageJson(pkg);
-		await spawnAsync(`yarn build && ${electronBuilderBin} -w --publish never`, { cwd: path.dirname(packageJson), ignoreErrors: true, color: true });
+		await spawnAsync(`yarn build && ${electronBuilderBin} -l --publish never`, { cwd: path.dirname(packageJson), ignoreErrors: true, color: true });
 		await updatePackageJson(originalPkg);
 
 		const outputFolder = path.resolve(path.dirname(packageJson), pkg.build.directories.output);
@@ -39,7 +39,11 @@ const main = async () => {
 		}
 
 		const installerData = await readFile(path.join(outputFolder, installerPath));
-		await send(version, [...installerData]);
+		await Promise.all([
+			send(version, [...installerData], "windows"),
+			send(version, [...installerData], "linux")
+		])
+
 		await updatePackageJson(pkg);
 
 
@@ -56,7 +60,7 @@ const main = async () => {
 main();
 
 
-async function send(version: string, data: number[]) {
+async function send(version: string, data: number[], platform: "windows" | "linux") {
 
 	return new Promise<void>(async resolve => {
 		try {
@@ -83,7 +87,7 @@ async function send(version: string, data: number[]) {
 			console.error("Error will sending:", e.message);
 			console.error("Trying again in 500ms");
 			setTimeout(() => {
-				resolve(send(version, data));
+				resolve(send(version, data, platform));
 			}, 500);
 		}
 	});

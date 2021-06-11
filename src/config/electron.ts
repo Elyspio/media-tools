@@ -6,13 +6,12 @@ export const windowOption: BrowserWindowConstructorOptions = {
 	webPreferences: {
 		nodeIntegration: true,
 		enableRemoteModule: true,
-		webSecurity: false
+		webSecurity: false,
+		contextIsolation: false
 	},
 	hasShadow: true,
 	frame: false,
 	resizable: true
-
-
 };
 
 export const appName = "media-tools";
