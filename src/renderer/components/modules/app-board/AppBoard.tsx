@@ -47,7 +47,7 @@ const menu = withContext({
 
 @Register({ name: "AppBoard", path: "/", show: { appboard: false, name: false } }, menu)
 class AppBoard extends React.Component<ConnectedProps<typeof connector>> {
-	render() {
+	override render() {
 
 
 		return (

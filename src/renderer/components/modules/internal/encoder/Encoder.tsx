@@ -62,7 +62,7 @@ const menu = withContext({
 export class Encoder extends React.Component<Props> {
 
 
-	async componentDidMount() {
+	override async componentDidMount() {
 		await Services.media.convert.checkIfFFmpegInstalled();
 
 		const appParams = getAppParams();
@@ -71,7 +71,7 @@ export class Encoder extends React.Component<Props> {
 		}
 	}
 
-	render() {
+	override render() {
 
 		let actionsUi = null;
 		let optionsUi = null;

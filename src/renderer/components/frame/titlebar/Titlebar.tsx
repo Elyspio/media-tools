@@ -21,12 +21,12 @@ interface Props {
 
 class Titlebar extends Component<Props, State> {
 
-	state: State = {
+	override state: State = {
 		fullscreen: remote.getCurrentWindow().isFullScreen(),
 		settingModalOpened: false
 	};
 
-	render() {
+	override render() {
 		const { settingModalOpened } = this.state;
 		return (
 			<div className={"Titlebar"}>

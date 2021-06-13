@@ -33,7 +33,7 @@ interface Episode {
 export class Renamer extends React.Component<{}, State> {
 
 
-	async componentDidMount() {
+	override async  componentDidMount() {
 		const appParams = getAppParams();
 		console.log("params", appParams);
 		if (appParams.folder) {
@@ -50,7 +50,7 @@ export class Renamer extends React.Component<{}, State> {
 		};
 	}
 
-	render() {
+	override render() {
 		let options: JSX.Element | null = null;
 		if (this.state.episodes.length > 0) {
 			options = <div className="options">

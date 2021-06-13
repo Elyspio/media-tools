@@ -24,11 +24,11 @@ type ReduxTypes = ConnectedProps<typeof connector>;
 export class Light extends Component<ReduxTypes> {
 
 
-	async componentDidMount() {
+	override async componentDidMount() {
 
 	}
 
-	render() {
+	override render() {
 		return <iframe
 			className={"Light"}
 			src={this.props.url}

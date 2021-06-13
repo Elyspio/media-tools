@@ -35,7 +35,7 @@ let exclusions = ["node_modules", ".git", ".expo", ".bit"];
 @Register({ name: "Purge", description: "Removes files that match a pattern ", path: "/purge" })
 export class Purge extends Component<{}, State> {
 
-	state: State = {
+	override state: State = {
 		match: "",
 		folder: undefined,
 		preview: {
@@ -51,7 +51,7 @@ export class Purge extends Component<{}, State> {
 
 	private items: HTMLDivElement | null = null;
 
-	render() {
+	override render() {
 
 		let { folder, match, preview, loading, alert } = this.state;
 

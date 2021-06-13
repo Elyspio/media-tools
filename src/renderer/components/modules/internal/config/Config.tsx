@@ -30,7 +30,7 @@ export class Config extends Component<ReduxTypes> {
 
 	node = 0;
 
-	render() {
+	override render() {
 		const { config } = this.props;
 		this.node = 0;
 		return (

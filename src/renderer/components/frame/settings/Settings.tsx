@@ -43,7 +43,7 @@ class Settings extends React.Component<OwnProps> {
 		});
 	};
 
-	render() {
+	override render() {
 		let { close, isOpen, config } = this.props;
 		return <Dialog
 			open={isOpen}

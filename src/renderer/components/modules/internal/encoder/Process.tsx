@@ -11,7 +11,7 @@ interface Props {
 
 
 class Process extends Component<Props> {
-	render() {
+	override render() {
 		const { data } = this.props;
 		return (
 			<ListItem className={"Process"}>

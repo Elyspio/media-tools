@@ -46,7 +46,7 @@ class Recap extends React.Component<Props & ReduxTypes, State> {
 
 	}
 
-	render() {
+	override render() {
 		return (
 			<Container className={"Recap"}>
 				<Typography>Time before action: {this.state.timeleft}s</Typography>

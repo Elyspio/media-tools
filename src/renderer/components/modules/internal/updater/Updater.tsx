@@ -47,7 +47,7 @@ class Updater extends React.Component<ReduxTypes, State> {
 	};
 
 
-	render() {
+	override render() {
 
 		const { progress, serverVersion } = this.props;
 

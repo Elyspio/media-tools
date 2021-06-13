@@ -23,7 +23,7 @@
 		"sourceMap": true,
 		/* Generates corresponding '.map' file. */
 		// "outFile": "./",                       /* Concatenate and emit output to single file. */
-		"outDir": "./dist",
+		"outDir": "../dist",
 		/* Redirect output structure to the directory. */
 		// "rootDir": "./",                       /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
 		"removeComments": true,
@@ -36,6 +36,7 @@
 		/* Transpile each file as a separate module (similar to 'ts.transpileModule'). */
 		"resolveJsonModule": true,
 		"esModuleInterop": true,
+		"noImplicitOverride": true,
 		/* Strict Type-Checking Options */
 		"strict": true,
 		/* Enable all strict type-checking options. */

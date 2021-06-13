@@ -13,19 +13,19 @@ interface State {
 
 class ResourceUtilization extends Component<{}, State> {
 
-	state: State = {};
+	override state: State = {};
 
 	private timeoutId?: NodeJS.Timeout;
 
-	componentDidMount() {
+	override componentDidMount() {
 		this.timeoutId = setInterval(this.getData, 1000);
 	}
 
-	componentWillUnmount() {
+	override componentWillUnmount() {
 		clearInterval(this.timeoutId as NodeJS.Timeout);
 	}
 
-	render() {
+	override render() {
 
 		const format = (number?: number) => {
 			let str = "0";

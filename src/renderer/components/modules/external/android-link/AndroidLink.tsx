@@ -7,11 +7,11 @@ interface State {
 
 @Register({ name: "AndroidLink", external: true, path: "/android-link", show: { appboard: true, name: true } })
 export class AndroidLink extends Component<{}, State> {
-	state = {};
+	override state = {};
 
 	private url = "http://elyspi:5002?theme=dark&no_drawer=true";
 
-	render() {
+	override render() {
 		return <iframe className={"AndroidLink"}
 		               src={this.url}
 		               frameBorder="0" />;

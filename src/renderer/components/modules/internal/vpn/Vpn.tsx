@@ -42,7 +42,7 @@ type State = {
 }, connector, withSnackbar)
 export class Vpn extends Component<ReduxTypes & ProviderContext, State> {
 
-    state: State = {
+    override state: State = {
         connected: {
             openvpn: false,
             nordvpn: false
@@ -81,12 +81,12 @@ export class Vpn extends Component<ReduxTypes & ProviderContext, State> {
         }
     };
 
-    async componentDidMount() {
+    override async componentDidMount() {
         setInterval(() => this.actualizeVpnStatus(), 1000);
         await this.actualizeVpnStatus();
     }
 
-    render() {
+    override render() {
 
 
         return (

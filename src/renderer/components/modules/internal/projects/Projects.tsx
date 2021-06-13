@@ -35,7 +35,7 @@ interface State {
 })
 export class Vpn extends Component<{}, State> {
 
-	state: State = {
+	override state: State = {
 		use: [],
 		features: [],
 		docker: false,
@@ -47,14 +47,14 @@ export class Vpn extends Component<{}, State> {
 		template: false
 	};
 
-	async componentDidMount() {
+	override async  componentDidMount() {
 		this.setState({
 			features: await Services.projects.feature.getAvailableFeature(),
 			loading: false
 		});
 	}
 
-	render() {
+	override render() {
 
 		const { use, features, loading, docker, name, readme, description, template, github } = this.state;
 		console.log("dirname", __dirname);
