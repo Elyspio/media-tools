@@ -1,11 +1,11 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import "./Titlebar.scss";
-import { Button } from "@material-ui/core";
+import {Button} from "@material-ui/core";
 import FullscreenExitIcon from "@material-ui/icons/FullscreenExit";
 import FullscreenIcon from "@material-ui/icons/Fullscreen";
 import RemoveIcon from "@material-ui/icons/Remove";
 import SettingsIcon from "@material-ui/icons/Settings";
-import { remote } from "electron";
+import {remote} from "electron";
 import Settings from "../settings/Settings";
 
 interface State {
@@ -27,26 +27,26 @@ class Titlebar extends Component<Props, State> {
 	};
 
 	override render() {
-		const { settingModalOpened } = this.state;
+		const {settingModalOpened} = this.state;
 		return (
 			<div className={"Titlebar"}>
 				<span className={"title"}>{this.props.title || remote.getCurrentWindow().title}</span>
 				<div>
-					<Button onClick={this.toggleModal}><SettingsIcon htmlColor={"#555555"} fontSize={"small"} /></Button>
-					<Button onClick={this.minimize}><RemoveIcon /></Button>
+					<Button onClick={this.toggleModal}><SettingsIcon htmlColor={"#555555"} fontSize={"small"}/></Button>
+					<Button onClick={this.minimize}><RemoveIcon/></Button>
 					<Button
 						onClick={() => this.goFullscreen(!this.state.fullscreen)}>
-						{this.state.fullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+						{this.state.fullscreen ? <FullscreenExitIcon/> : <FullscreenIcon/>}
 					</Button>
 					<Button className={"close"} onClick={this.close}>X</Button>
 				</div>
-				<Settings close={this.toggleModal} isOpen={settingModalOpened} />
+				<Settings close={this.toggleModal} isOpen={settingModalOpened}/>
 			</div>
 		);
 	}
 
 	private toggleModal = () => {
-		this.setState(prev => ({ settingModalOpened: !prev.settingModalOpened }));
+		this.setState(prev => ({settingModalOpened: !prev.settingModalOpened}));
 	};
 
 	private close(): void {

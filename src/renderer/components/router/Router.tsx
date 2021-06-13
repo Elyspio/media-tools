@@ -1,10 +1,10 @@
 import React from "react";
-import { connect, ConnectedProps } from "react-redux";
+import {connect, ConnectedProps} from "react-redux";
 import Module from "../modules/Module";
-import { setPath } from "../../store/module/router/action";
-import { getComponent } from "../../store/module/router/reducer";
-import { getUriParam } from "../../util/url";
-import { StoreState } from "../../store";
+import {setPath} from "../../store/module/router/action";
+import {getComponent} from "../../store/module/router/reducer";
+import {getUriParam} from "../../util/url";
+import {StoreState} from "../../store";
 
 
 interface Props extends ConnectedProps<typeof connector> {
@@ -21,7 +21,7 @@ function Router(props: Props) {
 	if (!props.current) return null;
 
 	return <Module>
-		<props.current />
+		<props.current/>
 	</Module>;
 }
 

@@ -1,9 +1,10 @@
 import {promises as fs} from "fs";
 import * as fse from "fs-extra";
-import {PathLike, WatchListener} from "fs-extra";
+import {WatchListener} from "fs-extra";
 import * as path from "path";
 import {Readable} from "stream";
 import {Extract} from "unzipper";
+
 
 export class FilesService {
 
@@ -120,16 +121,18 @@ export class FilesService {
 
 	public watch(folder: string, action: WatchListener<string>) {
 		console.debug("Watch folder", folder);
+
 		let fsWatcher = fse.watch(folder, {recursive: true, encoding: "utf8"}, (event, filename) => {
-			action(event, path.join(folder, filename))
+			console.debug("new action", {event, filename})
+			action(event, filename)
 		});
-		return () => fsWatcher.close()
+		return () => {
+			console.debug("Unwatch folder", folder);
+			fsWatcher.close();
+		}
 	}
 
 	private isDir = async (path: string) => (await fs.lstat(path)).isDirectory();
-
-
-
 
 
 }

@@ -1,8 +1,8 @@
-import { Feature } from "./types";
-import { Services } from "../index";
+import {Feature} from "./types";
+import {Services} from "../index";
 import * as path from "path";
 import * as fs from "fs-extra";
-import { EOL } from "os";
+import {EOL} from "os";
 
 export class ProjectBuilder {
 

@@ -1,7 +1,7 @@
-import { Button as MuiButton, ButtonProps } from "@material-ui/core";
-import { ThemeProvider } from "@material-ui/core/styles";
+import {Button as MuiButton, ButtonProps} from "@material-ui/core";
+import {ThemeProvider} from "@material-ui/core/styles";
 import React from "react";
-import { theme } from "../../app";
+import {theme} from "../../app";
 
 type NewColors = "error" | "warning";
 
@@ -10,11 +10,11 @@ interface Props extends Omit<ButtonProps, "color"> {
 }
 
 export function Button(props: Props) {
-	const t = { ...theme };
+	const t = {...theme};
 
 	const newColors = ["error", "warning"];
 
-	const muiButton = <MuiButton {...props} color={props.color as ButtonProps["color"]} />;
+	const muiButton = <MuiButton {...props} color={props.color as ButtonProps["color"]}/>;
 
 	if (props.color === undefined || props.color === "inherit" || props.color === "default") {
 		return muiButton;
@@ -29,7 +29,7 @@ export function Button(props: Props) {
 
 	return newColors.includes(props.color) ? (
 		<ThemeProvider theme={t}>
-			<MuiButton {...props} color={"primary"} />
+			<MuiButton {...props} color={"primary"}/>
 		</ThemeProvider>
 	) : muiButton;
 }

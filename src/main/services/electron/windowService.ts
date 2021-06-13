@@ -1,6 +1,6 @@
-import { Configuration } from "../configuration/configurationService";
+import {Configuration} from "../configuration/configurationService";
 
-const { BrowserWindow } = require("electron").remote;
+const {BrowserWindow} = require("electron").remote;
 type Dimensions = (keyof Configuration["frame"]["resize"])[];
 
 export class WindowService {

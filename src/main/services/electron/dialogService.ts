@@ -1,11 +1,11 @@
-import { BrowserWindowConstructorOptions } from "electron";
+import {BrowserWindowConstructorOptions} from "electron";
 import * as fs from "fs-extra";
-import path, { join } from "path";
+import path, {join} from "path";
 import url from "url";
-import { windowOption } from "../../../config/electron";
-import { store } from "../../../renderer/store";
+import {windowOption} from "../../../config/electron";
+import {store} from "../../../renderer/store";
 
-const { dialog, BrowserWindow } = require("electron").remote;
+const {dialog, BrowserWindow} = require("electron").remote;
 
 export class DialogService {
 

@@ -26,6 +26,7 @@
 
 	> *:not(.bar) {
 		max-height: 82vh;
+		overflow-y: hidden;
 	}
 
 

@@ -1,14 +1,14 @@
 import * as React from "react";
-import { connect, ConnectedProps } from "react-redux";
-import { Dispatch } from "redux";
-import { Register } from "../../../../decorators/Module";
+import {connect, ConnectedProps} from "react-redux";
+import {Dispatch} from "redux";
+import {Register} from "../../../../decorators/Module";
 import "./Recap.scss";
 import Container from "@material-ui/core/Container";
 import OnFinishAction from "./OnFinishAction";
 import Typography from "@material-ui/core/Typography";
-import { StoreState } from "../../../../store";
+import {StoreState} from "../../../../store";
 
-const mapStateToProps = (state: StoreState) => ({ onFinishAction: state.encoder.onFinishAction });
+const mapStateToProps = (state: StoreState) => ({onFinishAction: state.encoder.onFinishAction});
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({});
 
@@ -24,7 +24,7 @@ export interface State {
 	timeleft: number
 }
 
-@Register({ name: "Encoder Recap", path: "/encoder/recap", show: { appboard: false, name: true } }, connector)
+@Register({name: "Encoder Recap", path: "/encoder/recap", show: {appboard: false, name: true}}, connector)
 class Recap extends React.Component<Props & ReduxTypes, State> {
 
 	constructor(props: Props & ReduxTypes) {
@@ -51,7 +51,7 @@ class Recap extends React.Component<Props & ReduxTypes, State> {
 			<Container className={"Recap"}>
 				<Typography>Time before action: {this.state.timeleft}s</Typography>
 				<OnFinishAction close={() => {
-				}} />
+				}}/>
 			</Container>
 		);
 	}

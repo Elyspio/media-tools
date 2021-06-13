@@ -1,4 +1,4 @@
-import {currentLoad, mem} from "systeminformation";
+import {currentLoad, mem, processes} from "systeminformation";
 import {exec as _exec} from "child_process";
 import {promisify} from "util";
 import {xml2js} from "xml-js";
@@ -40,7 +40,6 @@ export class SystemService {
 		};
 	}
 
-
 	public shutdown = () => exec("shutdown -s -t 0");
 
 	public sleep = () => exec("rundll32.exe powrprof.dll,SetSuspendState 0,1,0");
@@ -48,7 +47,6 @@ export class SystemService {
 	public hibernate = () => exec("rundll32.exe powrprof.dll,SetSuspendState Hibernate");
 
 	public lock = () => exec("rundll32.exe user32.dll,LockWorkStation");
-
 
 	public async getDownloadFolder() {
 
@@ -98,5 +96,11 @@ export class SystemService {
 
 
 	}
+
+	public async isAppStarted(name: string) {
+		const apps = await processes()
+		return apps.list.some(app => app.name.includes(name))
+	}
+
 
 }

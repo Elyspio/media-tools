@@ -1,6 +1,6 @@
-import { createReducer } from "@reduxjs/toolkit";
-import { setDownloadPercentage, setServerLatestVersion, setServerUrl } from "./action";
-import { updateServer } from "../../../../config/update";
+import {createReducer} from "@reduxjs/toolkit";
+import {setDownloadPercentage, setServerLatestVersion, setServerUrl} from "./action";
+import {updateServer} from "../../../../config/update";
 
 export interface UpdateState {
 	download?: number,

@@ -1,7 +1,7 @@
-import { isInstalled } from "../../util";
-import { vpnConfig } from "../../../config/networks/vpn";
-import { spawn } from "child_process";
-import { EventManager } from "../../util/events";
+import {isInstalled} from "../../util";
+import {vpnConfig} from "../../../config/networks/vpn";
+import {spawn} from "child_process";
+import {EventManager} from "../../util/events";
 
 type StatusListener = "connected" | "disconnected"
 type StdioListener = string
@@ -20,6 +20,10 @@ export class OpenVpnService extends EventManager<["data", "status"], [StdioListe
 		return isInstalled("openvpn");
 	}
 
+	async isConnected(): Promise<boolean> {
+		return false;
+	}
+
 	public connect() {
 
 		if (!OpenVpnService.isClientInstalled()) {
@@ -27,7 +31,7 @@ export class OpenVpnService extends EventManager<["data", "status"], [StdioListe
 		}
 
 		if (!OpenVpnService.spawned) {
-			OpenVpnService.spawned = spawn("openvpn --config " + vpnConfig.configFile, { stdio: "pipe" });
+			OpenVpnService.spawned = spawn("openvpn --config " + vpnConfig.configFile, {stdio: "pipe"});
 			OpenVpnService.spawned.stdout?.on("data", args => {
 				this.stdout.push(args.toString());
 				this.emit("data", this.stdout.join());

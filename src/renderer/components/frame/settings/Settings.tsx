@@ -1,12 +1,12 @@
-import { connect, ConnectedProps } from "react-redux";
-import { Dispatch } from "redux";
-import { Dialog, DialogContent, DialogTitle, List, ListItem, ListItemText, ListSubheader, Switch } from "@material-ui/core";
+import {connect, ConnectedProps} from "react-redux";
+import {Dispatch} from "redux";
+import {Dialog, DialogContent, DialogTitle, List, ListItem, ListItemText, ListSubheader, Switch} from "@material-ui/core";
 import React from "react";
 import "./Settings.scss";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import { Configuration } from "../../../../main/services/configuration/configurationService";
-import { setConfig } from "../../../store/module/configuration/action";
-import { StoreState } from "../../../store";
+import {Configuration} from "../../../../main/services/configuration/configurationService";
+import {setConfig} from "../../../store/module/configuration/action";
+import {StoreState} from "../../../store";
 
 type OwnProps = ReduxTypes & {
 	isOpen: boolean,
@@ -44,7 +44,7 @@ class Settings extends React.Component<OwnProps> {
 	};
 
 	override render() {
-		let { close, isOpen, config } = this.props;
+		let {close, isOpen, config} = this.props;
 		return <Dialog
 			open={isOpen}
 			onClose={close}
@@ -55,7 +55,7 @@ class Settings extends React.Component<OwnProps> {
 			<DialogContent className={"Settings"}>
 				<List subheader={<ListSubheader color={"primary"}>Frame</ListSubheader>}>
 					<ListItem>
-						<ListItemText primary="Show resource utilization" />
+						<ListItemText primary="Show resource utilization"/>
 						<ListItemSecondaryAction>
 							<Switch
 								edge="end"
@@ -69,8 +69,8 @@ class Settings extends React.Component<OwnProps> {
 				<List subheader={<ListSubheader color={"primary"}>Resize</ListSubheader>}>
 
 					{Object.keys(config.frame.resize).map((key) => (
-						<ListItem>
-							<ListItemText primary={key[0].toUpperCase() + key.slice(1)} />
+						<ListItem key={key}>
+							<ListItemText primary={key[0].toUpperCase() + key.slice(1)}/>
 							<ListItemSecondaryAction>
 								<Switch
 									edge="end"

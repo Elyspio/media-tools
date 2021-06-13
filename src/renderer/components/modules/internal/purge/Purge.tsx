@@ -1,16 +1,17 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import "./Purge.scss";
-import { SelectFolder } from "../../../common/os";
-import { Services } from "../../../../../main/services";
+import {SelectFolder} from "../../../common/os";
+import {Services} from "../../../../../main/services";
 import TextField from "@material-ui/core/TextField";
-import { Button, Container, Input, MenuItem, Typography } from "@material-ui/core";
+import {Button, Container, Input, MenuItem, Typography} from "@material-ui/core";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import Box from "@material-ui/core/Box";
 import Checkbox from "@material-ui/core/Checkbox";
-import { Alert, Color } from "@material-ui/lab";
-import { Register } from "../../../../decorators/Module";
+import {Alert, Color} from "@material-ui/lab";
+import {Register} from "../../../../decorators/Module";
+import {Logger} from "../../../../../main/util/logger";
 
 interface State {
 	match: string,
@@ -32,8 +33,9 @@ interface State {
 const defaultAmount = 30;
 let exclusions = ["node_modules", ".git", ".expo", ".bit"];
 
-@Register({ name: "Purge", description: "Removes files that match a pattern ", path: "/purge" })
+@Register({name: "Purge", description: "Removes files that match a pattern ", path: "/purge"})
 export class Purge extends Component<{}, State> {
+
 
 	override state: State = {
 		match: "",
@@ -47,63 +49,64 @@ export class Purge extends Component<{}, State> {
 
 		loading: false
 	};
+	private logger = Logger(Purge);
 	private onMatchTimeout?: NodeJS.Timeout;
 
 	private items: HTMLDivElement | null = null;
 
 	override render() {
 
-		let { folder, match, preview, loading, alert } = this.state;
+		let {folder, match, preview, loading, alert} = this.state;
 
 		return (
 			<Container className="Purge">
-				<SelectFolder onChange={this.onFolderSelect} mode={"folder"} showSelected />
-				{loading && <CircularProgress color={"secondary"} size={"2rem"} />}
+				<SelectFolder onChange={this.onFolderSelect} mode={"folder"} showSelected/>
+				{loading && <CircularProgress color={"secondary"} size={"2rem"}/>}
 
 				{!loading && folder && <>
 
-					<Box className="filter">
-						<TextField label={"Match"} onChange={this.onMatchChange} />
+                    <Box className="filter">
+                        <TextField label={"Match"} onChange={this.onMatchChange}/>
 
-						<Box className={"exclusion"}>
-							<InputLabel id="ignoreContentLabel">Ignore content from</InputLabel>
-							<Select
-								labelId="ignoreContentLabel"
-								id="ignoreContentSelect"
-								multiple
-								MenuProps={{ variant: "menu" }}
-								value={preview.exclude}
-								renderValue={(selected: any) => selected.join(", ")}
-								input={<Input />}
-								onChange={this.changePreviewExclusion}
-							>
+                        <Box className={"exclusion"}>
+                            <InputLabel id="ignoreContentLabel">Ignore content from</InputLabel>
+                            <Select
+                                labelId="ignoreContentLabel"
+                                id="ignoreContentSelect"
+                                multiple
+                                MenuProps={{variant: "menu"}}
+                                value={preview.exclude}
+                                renderValue={(selected: any) => selected.join(", ")}
+                                input={<Input/>}
+                                onChange={this.changePreviewExclusion}
+                            >
 								{exclusions.map((name) => (
 									<MenuItem key={name} value={name} className={"exclude"}>
-										<Checkbox checked={preview.exclude.includes(name)} color={"secondary"} />
+										<Checkbox checked={preview.exclude.includes(name)} color={"secondary"}/>
 										<Typography className={"item"}>{name}</Typography>
 									</MenuItem>
 								))}
-							</Select>
-						</Box>
-					</Box>
+                            </Select>
+                        </Box>
+                    </Box>
 
 
-					<Typography className={"preview-title"} variant={"h6"}>Preview <span className={"itemCount"}>( {preview.filtered.length} / {preview.raw.length} )</span>
-					</Typography>
-					<Container>
-						<div onScroll={this.onPreviewScroll} className={"preview-items"} ref={r => this.items = r}>
+                    <Typography className={"preview-title"} variant={"h6"}>Preview <span className={"itemCount"}>( {preview.filtered.length} / {preview.raw.length} )</span>
+                    </Typography>
+                    <Container>
+                        <div onScroll={this.onPreviewScroll} className={"preview-items"} ref={r => this.items = r}>
 							{preview.filtered.slice(0, preview.amount).map(f => <Typography noWrap key={f}><span title={f}>{f}</span></Typography>)}
-						</div>
-					</Container>
+                        </div>
+                    </Container>
 					{match && <div className={"actions"}>
-						<Button color={"secondary"} className={"RemoveBtn"} variant={"outlined"} onClick={this.remove}>Remove</Button>
+                        <Button color={"secondary"} className={"RemoveBtn"} variant={"outlined"} onClick={this.remove}>Remove</Button>
 
 						{alert && <div>
 							{<Alert severity={alert.severity}>{alert.message}</Alert>}
-						</div>}
+                        </div>}
 
-					</div>}
-				</>}
+                    </div>}
+                </>}
 
 
 			</Container>
@@ -113,14 +116,14 @@ export class Purge extends Component<{}, State> {
 	private filter = (folders: string[], match: string) => {
 
 		let regExp = new RegExp(match);
-		console.time("filter");
+		this.logger.time("filter");
 		let filtered = folders.filter((f) => f.match(regExp));
-		console.timeEnd("filter");
+		this.logger.timeEnd("filter");
 		return filtered;
 	};
 
 	private onMatchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		console.log("c");
+		this.logger.log("c");
 		let match = e.target.value;
 
 		this.setState(prev => ({
@@ -143,13 +146,13 @@ export class Purge extends Component<{}, State> {
 	};
 
 	private onFolderSelect = async (folder: string) => {
-		console.time("folders");
+		this.logger.time("folders");
 		this.setState({
 			loading: true
 		});
 
 		const folders = await Services.files.list(folder, ["node_modules", ".git", ".expo", ".bit"]);
-		console.timeEnd("folders");
+		this.logger.timeEnd("folders");
 
 		this.setState(prev => ({
 			...prev,
@@ -172,7 +175,7 @@ export class Purge extends Component<{}, State> {
 
 			const nbNodesToDelete = this.state.preview.filtered.length;
 
-			await Services.files.deleteNodes(this.state.preview.filtered.map(c => ({ type: "folder", path: c })));
+			await Services.files.deleteNodes(this.state.preview.filtered.map(c => ({type: "folder", path: c})));
 			await this.onFolderSelect(this.state.folder as string);
 			this.setState(prev => ({
 				...prev,
@@ -193,7 +196,7 @@ export class Purge extends Component<{}, State> {
 
 
 		setTimeout(() => {
-			this.setState(prev => ({ ...prev, alert: undefined }));
+			this.setState(prev => ({...prev, alert: undefined}));
 		}, 50000);
 
 

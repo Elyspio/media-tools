@@ -1,7 +1,7 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import "./ResourceUtilization.scss";
-import { SystemService } from "../../../../main/services/system/system";
-import { Box } from "@material-ui/core";
+import {SystemService} from "../../../../main/services/system/system";
+import {Box} from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
 
 

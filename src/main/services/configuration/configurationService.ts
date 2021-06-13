@@ -1,8 +1,8 @@
 import * as fs from "fs-extra";
-import { configMainFile, defaultConfiguration } from "../../../config/configuration";
-import { remote } from "electron";
-import { store } from "../../../renderer/store";
-import { setConfig } from "../../../renderer/store/module/configuration/action";
+import {configMainFile, defaultConfiguration} from "../../../config/configuration";
+import {remote} from "electron";
+import {store} from "../../../renderer/store";
+import {setConfig} from "../../../renderer/store/module/configuration/action";
 
 
 export const BaseConfig = {

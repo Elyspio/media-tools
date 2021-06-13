@@ -1,5 +1,5 @@
-import { createAction, createSlice } from "@reduxjs/toolkit";
-import { Encoder, Media, ProcessData } from "../../components/modules/internal/encoder/type";
+import {createAction, createSlice} from "@reduxjs/toolkit";
+import {Encoder, Media, ProcessData} from "../../components/modules/internal/encoder/type";
 
 
 export const setMedias = createAction<Media[]>("setMedia");
@@ -37,7 +37,7 @@ export const mediaSlice = createSlice({
 	name: "media",
 	initialState,
 	reducers: {},
-	extraReducers: ({ addCase }) => {
+	extraReducers: ({addCase}) => {
 		addCase(setMedias, (state, action) => {
 			state.medias = action.payload;
 		});

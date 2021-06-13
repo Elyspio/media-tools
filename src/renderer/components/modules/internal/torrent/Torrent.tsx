@@ -1,43 +1,57 @@
-import React from "react";
-import { Services } from "../../../../../main/services";
-import { Register } from "../../../../decorators/Module";
+import React, {useCallback, useEffect, useState} from "react";
+import {Services} from "../../../../../main/services";
+import {register} from "../../../../decorators/Module";
 import {Grid} from "@material-ui/core";
-import  "./Torrent.scss"
-import { Button } from "../../../common/Button";
-@Register({ name: "Torrent", path: "/torrent" })
-class Torrent extends React.Component {
+import "./Torrent.scss"
+import {Button} from "../../../common/Button";
+import TorrentList from "./TorrentList";
+import AppNotStarted from "./AppNotStarted";
+import {useAsyncEffect} from "../../../../hooks/useAsyncEffect";
+import AddNewTorrent from "./AddNewTorrent";
 
-	private stopWatchingFolder?: CallableFunction
 
-	async componentDidMount() {
+let stopWatchingFolder: Function
+
+const Torrent = () => {
+
+
+	const [addingTorrent, setAddingTorrent] = useState<string>();
+
+	const onTorrentAdded = React.useCallback((filename) => {
+		setAddingTorrent(filename);
+	}, [])
+
+
+	// region didMount
+
+	useEffect(() => () => stopWatchingFolder && stopWatchingFolder(), [])
+
+	useAsyncEffect(async () => {
 		let downloadFolder = await Services.system.getDownloadFolder();
-		this.stopWatchingFolder = Services.files.watch(downloadFolder, (event, filename) => {
-			if(filename.endsWith(".torrent")) {
-				this.onTorrentAdded(filename);
+		stopWatchingFolder = Services.files.watch(downloadFolder, (filename) => {
+			if (filename.endsWith(".torrent")) {
+				onTorrentAdded(filename);
 			}
 		})
-	}
+	}, [])
+
+	// endregion didMount
 
 
-	onTorrentAdded = (file: string) => {
-		console.log("new torrent", file)
-	}
+	const gotoYggTorrent = useCallback(() => {
+		Services.system.open("https://yggtorrent.li/")
+	}, [])
 
-	componentWillUnmount() {
-		if(this.stopWatchingFolder)  {
-			this.stopWatchingFolder()
-		}
-	}
+	return <Grid className={"Torrent"}>
+		<AppNotStarted/>
+		{addingTorrent && <AddNewTorrent name={addingTorrent} clear={() => setAddingTorrent(undefined)}/>}
 
-	gotoYggTorrent = async () => {
-		await Services.system.open("https://yggtorrent.li/")
-	}
-
-	render() {
-		return <Grid className={"Torrent"}>
-			<Button color={"primary"} onClick={this.gotoYggTorrent}>Search torrent</Button>
-		</Grid>;
-	}
+		<Button color={"primary"} onClick={gotoYggTorrent}>Search torrent</Button>
+		<div style={{margin: "1rem"}}/>
+		<TorrentList/>
+	</Grid>;
 }
+
+register(Torrent, {name: "Torrent", path: "/torrent"})
 
 

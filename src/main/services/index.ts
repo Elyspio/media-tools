@@ -9,7 +9,6 @@ import {DockerService} from "./projects/dockerService";
 import {WindowService} from "./electron/windowService";
 import {OpenVpnService} from "./network/openVpnService";
 import {NordVpnService} from "./network/nordvpnService";
-import {NetworkService} from "./network/networkService";
 import {TorrentService} from "./media/torrentService";
 
 export const Services = {
@@ -17,7 +16,7 @@ export const Services = {
 		dialog: new DialogService(),
 		window: new WindowService()
 	},
-	media: { convert: new MediaService(), torrent: new TorrentService() },
+	media: {convert: new MediaService(), torrent: new TorrentService()},
 	system: new SystemService(),
 	files: new FilesService(),
 	configuration: new ConfigurationService(),
@@ -29,6 +28,5 @@ export const Services = {
 	networks: {
 		openvpn: new OpenVpnService(),
 		nordvpn: new NordVpnService(),
-		network: new NetworkService()
 	}
 };

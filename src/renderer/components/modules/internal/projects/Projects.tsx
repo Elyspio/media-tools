@@ -1,17 +1,18 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import "./Projects.scss";
-import { SelectFolder } from "../../../common/os";
+import {SelectFolder} from "../../../common/os";
 import TextField from "@material-ui/core/TextField";
-import { Button, Container, FormControlLabel, Input, MenuItem, Typography } from "@material-ui/core";
+import {Button, Container, FormControlLabel, Input, MenuItem, Typography} from "@material-ui/core";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import Box from "@material-ui/core/Box";
 import Checkbox from "@material-ui/core/Checkbox";
-import { Register } from "../../../../decorators/Module";
-import { Services } from "../../../../../main/services";
-import { Feature } from "../../../../../main/services/projects/types";
-import { ProjectBuilder } from "../../../../../main/services/projects/projectBuilder";
+import {Register} from "../../../../decorators/Module";
+import {Services} from "../../../../../main/services";
+import {Feature} from "../../../../../main/services/projects/types";
+import {ProjectBuilder} from "../../../../../main/services/projects/projectBuilder";
+import {Logger} from "../../../../../main/util/logger";
 
 interface State {
 	folder?: string
@@ -31,7 +32,7 @@ interface State {
 	name: "Projects",
 	description: "Create projects from projects repositories",
 	path: "/projects",
-	autoResize: { height: true, width: false }
+	autoResize: {height: true, width: false}
 })
 export class Vpn extends Component<{}, State> {
 
@@ -46,8 +47,9 @@ export class Vpn extends Component<{}, State> {
 		name: "",
 		template: false
 	};
+	private logger = Logger(Vpn)
 
-	override async  componentDidMount() {
+	override async componentDidMount() {
 		this.setState({
 			features: await Services.projects.feature.getAvailableFeature(),
 			loading: false
@@ -56,143 +58,143 @@ export class Vpn extends Component<{}, State> {
 
 	override render() {
 
-		const { use, features, loading, docker, name, readme, description, template, github } = this.state;
-		console.log("dirname", __dirname);
+		const {use, features, loading, docker, name, readme, description, template, github} = this.state;
+		this.logger.log("dirname", __dirname);
 		return (
 			<Container className="Projects">
-				{loading && <CircularProgress color={"secondary"} size={"2rem"} />}
+				{loading && <CircularProgress color={"secondary"} size={"2rem"}/>}
 
 				{!loading && <>
 
-					<Box className={"row"}>
-						<TextField
-							label={"Folder name"}
-							error={name.length === 0}
-							style={{ width: "30%" }} value={name}
-							onChange={e => this.handleChange("name", e.target.value)}
-						/>
+                    <Box className={"row"}>
+                        <TextField
+                            label={"Folder name"}
+                            error={name.length === 0}
+                            style={{width: "30%"}} value={name}
+                            onChange={e => this.handleChange("name", e.target.value)}
+                        />
 
-						<TextField
-							label={"Description"}
-							value={description}
-							id={"description"}
-							style={{ width: "70%" }}
-							onChange={e => this.handleChange("description", e.target.value)}
-						/>
-					</Box>
+                        <TextField
+                            label={"Description"}
+                            value={description}
+                            id={"description"}
+                            style={{width: "70%"}}
+                            onChange={e => this.handleChange("description", e.target.value)}
+                        />
+                    </Box>
 
 
-					<Box className={"row"}>
-						<InputLabel id="ignoreContentLabel">Use features</InputLabel>
-						<Select
-							labelId="ignoreContentLabel"
-							id="ignoreContentSelect"
-							multiple
-							MenuProps={{ variant: "menu" }}
-							value={use}
-							renderValue={(selected: any) => selected.join(" ")}
-							input={<Input />}
-							onChange={e => this.handleChange("use", e.target.value)}
-						>
-							{features.map(({ name }) => (
+                    <Box className={"row"}>
+                        <InputLabel id="ignoreContentLabel">Use features</InputLabel>
+                        <Select
+                            labelId="ignoreContentLabel"
+                            id="ignoreContentSelect"
+                            multiple
+                            MenuProps={{variant: "menu"}}
+                            value={use}
+                            renderValue={(selected: any) => selected.join(" ")}
+                            input={<Input/>}
+                            onChange={e => this.handleChange("use", e.target.value)}
+                        >
+							{features.map(({name}) => (
 								<MenuItem key={name} value={name} className={"exclude"}>
-									<Checkbox checked={use.some(i => i === name)} color={"secondary"} />
+									<Checkbox checked={use.some(i => i === name)} color={"secondary"}/>
 									<Typography className={"item"}>{name}</Typography>
 								</MenuItem>
 							))}
-						</Select>
-					</Box>
+                        </Select>
+                    </Box>
 
-					<Box className="options row">
-						<Typography color={"primary"}>Options</Typography>
-						<div className="simple-options">
-							<div className={"option"}>
-								<FormControlLabel
-									control={<Checkbox checked={readme} color={"default"} onChange={(e) => this.handleChange("readme", e.target.checked)} name="readme" />}
-									labelPlacement={"start"}
-									label="Readme"
-									className={"switch"}
-								/>
-							</div>
+                    <Box className="options row">
+                        <Typography color={"primary"}>Options</Typography>
+                        <div className="simple-options">
+                            <div className={"option"}>
+                                <FormControlLabel
+                                    control={<Checkbox checked={readme} color={"default"} onChange={(e) => this.handleChange("readme", e.target.checked)} name="readme"/>}
+                                    labelPlacement={"start"}
+                                    label="Readme"
+                                    className={"switch"}
+                                />
+                            </div>
 
 
-						</div>
+                        </div>
 
-						<div className={"option"}>
-							<FormControlLabel
-								control={<Checkbox checked={!!docker} color={"default"} onChange={(e) => this.handleChange("docker", e.target.checked)} name="docker" />}
-								labelPlacement={"start"}
-								label="Docker"
-								className={"switch"}
-							/>
+                        <div className={"option"}>
+                            <FormControlLabel
+                                control={<Checkbox checked={!!docker} color={"default"} onChange={(e) => this.handleChange("docker", e.target.checked)} name="docker"/>}
+                                labelPlacement={"start"}
+                                label="Docker"
+                                className={"switch"}
+                            />
 
 							{docker && <TextField
-								label={"Docker name"}
-								error={typeof docker === "string" && docker.length === 0}
-								defaultValue={name}
-								style={{ width: "50%" }}
-								onChange={e => this.handleChange("docker", e.target.value)}
-							/>}
-						</div>
+                                label={"Docker name"}
+                                error={typeof docker === "string" && docker.length === 0}
+                                defaultValue={name}
+                                style={{width: "50%"}}
+                                onChange={e => this.handleChange("docker", e.target.value)}
+                            />}
+                        </div>
 
-						<div className={"option"}>
-							<FormControlLabel
-								control={<Checkbox checked={!!github} color={"default"} onChange={(e) => this.handleChange("github", e.target.checked)} name="github" />}
-								labelPlacement={"start"}
-								label="Github"
-								className={"switch"}
-							/>
+                        <div className={"option"}>
+                            <FormControlLabel
+                                control={<Checkbox checked={!!github} color={"default"} onChange={(e) => this.handleChange("github", e.target.checked)} name="github"/>}
+                                labelPlacement={"start"}
+                                label="Github"
+                                className={"switch"}
+                            />
 
 							{github && <TextField
-								label={"Github name"}
-								error={typeof github === "string" && github.length === 0}
-								defaultValue={name}
-								style={{ width: "50%" }}
-								onChange={e => this.handleChange("github", e.target.value)}
-							/>}
+                                label={"Github name"}
+                                error={typeof github === "string" && github.length === 0}
+                                defaultValue={name}
+                                style={{width: "50%"}}
+                                onChange={e => this.handleChange("github", e.target.value)}
+                            />}
 
 							{github && <FormControlLabel
-								control={<Checkbox
+                                control={<Checkbox
 									checked={template}
 									color={"default"}
 									onChange={(e) => this.handleChange("template", e.target.checked)}
-									name="Template" />
+									name="Template"/>
 								}
-								labelPlacement={"start"}
-								label="Template"
-								className={"switch"}
-							/>}
+                                labelPlacement={"start"}
+                                label="Template"
+                                className={"switch"}
+                            />}
 
-						</div>
+                        </div>
 
-					</Box>
+                    </Box>
 
-					<div className="bottom">
-						<SelectFolder
-							onChange={(val) => this.handleChange("folder", val)}
-							mode={"folder"}
-							showSelected
-							variant={"outlined"}
-							color={"default"}
+                    <div className="bottom">
+                        <SelectFolder
+                            onChange={(val) => this.handleChange("folder", val)}
+                            mode={"folder"}
+                            showSelected
+                            variant={"outlined"}
+                            color={"default"}
 
-						/>
+                        />
 
-						<Button
-							color={"primary"}
-							className={"RemoveBtn"}
-							variant={"outlined"}
-							onClick={this.create}>
-							Create repository
-						</Button>
-					</div>
-				</>}
+                        <Button
+                            color={"primary"}
+                            className={"RemoveBtn"}
+                            variant={"outlined"}
+                            onClick={this.create}>
+                            Create repository
+                        </Button>
+                    </div>
+                </>}
 			</Container>
 		);
 	}
 
 
 	create = () => {
-		const { description, docker, github, name, readme, use, folder, features, template } = this.state;
+		const {description, docker, github, name, readme, use, folder, features, template} = this.state;
 		const builder = new ProjectBuilder();
 
 		builder.name = name;

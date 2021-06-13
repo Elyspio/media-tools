@@ -1,5 +1,5 @@
-import { createReducer } from "@reduxjs/toolkit";
-import { addRoute, setPath } from "./action";
+import {createReducer} from "@reduxjs/toolkit";
+import {addRoute, setPath} from "./action";
 
 const requires = [
 	"external/android-link/AndroidLink",

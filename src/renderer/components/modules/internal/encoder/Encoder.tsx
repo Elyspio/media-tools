@@ -1,28 +1,29 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
-import { InputLabel, MenuItem, Select } from "@material-ui/core";
-import { File, Media, ProcessData } from "./type";
-import { MediaService } from "../../../../../main/services/media/mediaService";
+import {InputLabel, MenuItem, Select} from "@material-ui/core";
+import {File, Media, ProcessData} from "./type";
+import {MediaService} from "../../../../../main/services/media/mediaService";
 import * as fs from "fs-extra";
 import * as path from "path";
 import List from "@material-ui/core/List";
 import Process from "./Process";
 import "./Encoder.scss";
-import { Register } from "../../../../decorators/Module";
-import { SelectFolder } from "../../../common/os";
-import { Services } from "../../../../../main/services";
-import { Alert } from "@material-ui/lab";
+import {Register} from "../../../../decorators/Module";
+import {SelectFolder} from "../../../common/os";
+import {Services} from "../../../../../main/services";
+import {Alert} from "@material-ui/lab";
 import AlertTitle from "@material-ui/lab/AlertTitle";
 import Link from "@material-ui/core/Link";
-import { withContext } from "../../../common/hoc/withContext";
-import { connect, ConnectedProps } from "react-redux";
-import { Dispatch } from "redux";
+import {withContext} from "../../../common/hoc/withContext";
+import {connect, ConnectedProps} from "react-redux";
+import {Dispatch} from "redux";
 import OnFinishAction from "./OnFinishAction";
-import { runOnFinishAction } from "../../../../store/module/encoder/action";
-import { StoreState } from "../../../../store";
-import { encoders } from "../../../../../config/media/encoder";
-import { setFormat, setMedias, setProcess, setProgress } from "../../../../store/module/media";
-import { getAppParams } from "../../../../../main/util/args";
+import {runOnFinishAction} from "../../../../store/module/encoder/action";
+import {StoreState} from "../../../../store";
+import {encoders} from "../../../../../config/media/encoder";
+import {setFormat, setMedias, setProcess, setProgress} from "../../../../store/module/media";
+import {getAppParams} from "../../../../../main/util/args";
+import {Logger} from "../../../../../main/util/logger";
 
 
 const mapStateToProps = (state: StoreState) => ({
@@ -48,7 +49,7 @@ const menu = withContext({
 	items: [
 		{
 			label: "Action",
-			show: () => ({ close }) => <OnFinishAction close={close} />
+			show: () => ({close}) => <OnFinishAction close={close}/>
 		}
 	],
 	redux: connector
@@ -61,6 +62,8 @@ const menu = withContext({
 }, menu)
 export class Encoder extends React.Component<Props> {
 
+
+	private logger = Logger(Encoder)
 
 	override async componentDidMount() {
 		await Services.media.convert.checkIfFFmpegInstalled();
@@ -78,7 +81,7 @@ export class Encoder extends React.Component<Props> {
 		let processUi = null;
 
 
-		const { encoder, process, medias } = this.props.media;
+		const {encoder, process, medias} = this.props.media;
 
 		if (medias.length > 0) {
 
@@ -108,7 +111,7 @@ export class Encoder extends React.Component<Props> {
 
 		if (process) {
 			processUi = <List className={"processes"}>
-				{process.map(p => <Process key={p.media.file.name} data={p} />)}
+				{process.map(p => <Process key={p.media.file.name} data={p}/>)}
 			</List>;
 		}
 
@@ -118,27 +121,27 @@ export class Encoder extends React.Component<Props> {
 			<div className={"Encoder"}>
 
 				{softInstalled === true && <>
-					<SelectFolder onChange={this.onFileSelect} mode={"file"} showSelected />
+                    <SelectFolder onChange={this.onFileSelect} mode={"file"} showSelected/>
 					{optionsUi}
 					{actionsUi}
 					{processUi}
 
-				</>}
+                </>}
 
 
 				{softInstalled === false && <>
-					<Alert severity="error">
-						<AlertTitle>This module requires FFmpeg</AlertTitle>
-						It can be downloaded <Link href="https://ffmpeg.org/download.html">here</Link>
-					</Alert>
-				</>}
+                    <Alert severity="error">
+                        <AlertTitle>This module requires FFmpeg</AlertTitle>
+                        It can be downloaded <Link href="https://ffmpeg.org/download.html">here</Link>
+                    </Alert>
+                </>}
 
 				{softInstalled === undefined && <>
-					<Alert severity="info">
-						<AlertTitle>Please wait</AlertTitle>
-						Checking if FFmpeg is installed
-					</Alert>
-				</>}
+                    <Alert severity="info">
+                        <AlertTitle>Please wait</AlertTitle>
+                        Checking if FFmpeg is installed
+                    </Alert>
+                </>}
 
 			</div>
 		);
@@ -151,7 +154,7 @@ export class Encoder extends React.Component<Props> {
 	};
 
 	private onFileSelect = async (result: string[]) => {
-		const files: File[] = result.map(f => ({ name: f.slice(f.lastIndexOf(path.sep)), path: f }));
+		const files: File[] = result.map(f => ({name: f.slice(f.lastIndexOf(path.sep)), path: f}));
 
 		const media: Media[] = await Promise.all(files.map(async (file) => ({
 			file: file,
@@ -168,7 +171,7 @@ export class Encoder extends React.Component<Props> {
 
 	private encode = async (): Promise<any> => {
 
-		for (const { media } of this.props.media.process) {
+		for (const {media} of this.props.media.process) {
 			const output = await this.encodeFile(media);
 			const old = path.join(path.dirname(media.file.path), "old");
 			await fs.ensureDir(old);
@@ -187,15 +190,15 @@ export class Encoder extends React.Component<Props> {
 
 			if (!process) throw `Invalid State, could not found in store a media with type="${media.file.path}"`;
 
-			this.props.setProgress({ ...process, percentage: 0 });
+			this.props.setProgress({...process, percentage: 0});
 
 			const outputPath = path.join(path.dirname(media.file.path), "current.mkv");
-			const s = await new MediaService().convert(media, this.props.media.encoder.format, { outputPath: outputPath });
+			const s = await new MediaService().convert(media, this.props.media.encoder.format, {outputPath: outputPath});
 			s.on("progress", async (percentage) => {
-				console.log("receving progress", percentage);
+				this.logger.log("receving progress", percentage);
 			});
 			s.on("finished", async () => {
-				this.props.setProgress({ ...process, percentage: 100 });
+				this.props.setProgress({...process, percentage: 100});
 				resolve(outputPath);
 			});
 		});

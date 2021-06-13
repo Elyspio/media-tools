@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import { ListItem } from "@material-ui/core";
+import React, {Component} from "react";
+import {ListItem} from "@material-ui/core";
 import "./Process.scss";
 import Typography from "@material-ui/core/Typography";
 import LinearProgress from "@material-ui/core/LinearProgress";
-import { ProcessData } from "./type";
+import {ProcessData} from "./type";
 
 interface Props {
 	data: ProcessData
@@ -12,7 +12,7 @@ interface Props {
 
 class Process extends Component<Props> {
 	override render() {
-		const { data } = this.props;
+		const {data} = this.props;
 		return (
 			<ListItem className={"Process"}>
 				<Typography
@@ -22,7 +22,7 @@ class Process extends Component<Props> {
 				<LinearProgress
 					className={"bar"}
 					variant="determinate"
-					value={data.percentage} />
+					value={data.percentage}/>
 				<p>{data.percentage.toFixed(2)}%</p>
 			</ListItem>
 		);

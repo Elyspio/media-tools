@@ -1,13 +1,12 @@
 import React from "react";
 import Frame from "./frame/Frame";
 import Router from "./router/Router";
-import { checkUpdate } from "../../main/util/updater";
-import { remote } from "electron";
-import { Services } from "../../main/services";
-import { Configuration } from "../../main/services/configuration/configurationService";
-import { connect, ConnectedProps } from "react-redux";
-import { Dispatch } from "redux";
-import { StoreState } from "../store";
+import {checkUpdate} from "../../main/util/updater";
+import {Services} from "../../main/services";
+import {Configuration} from "../../main/services/configuration/configurationService";
+import {connect, ConnectedProps} from "react-redux";
+import {Dispatch} from "redux";
+import {StoreState} from "../store";
 
 class Application extends React.Component<ReduxTypes> {
 
@@ -36,7 +35,7 @@ class Application extends React.Component<ReduxTypes> {
 
 		return (
 			<Frame>
-				<Router />
+				<Router/>
 			</Frame>
 		);
 	}

@@ -1,7 +1,7 @@
-import { createReducer } from "@reduxjs/toolkit";
-import { setConfig } from "./action";
-import { Services } from "../../../../main/services";
-import { Configuration } from "../../../../main/services/configuration/configurationService";
+import {createReducer} from "@reduxjs/toolkit";
+import {setConfig} from "./action";
+import {Services} from "../../../../main/services";
+import {Configuration} from "../../../../main/services/configuration/configurationService";
 
 
 export interface ConfigurationRouter {

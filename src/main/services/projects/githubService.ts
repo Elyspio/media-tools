@@ -1,10 +1,10 @@
-import { Octokit } from "@octokit/rest";
-import { Repository, Template } from "./types";
-import { Services } from "../index";
+import {Octokit} from "@octokit/rest";
+import {Repository, Template} from "./types";
+import {Services} from "../index";
 import * as path from "path";
 import * as fs from "fs-extra";
-import { github as githubConf } from "../../../config/projects/projects.private";
-import { spawnBinary } from "../../util";
+import {github as githubConf} from "../../../config/projects/projects.private";
+import {spawnBinary} from "../../util";
 
 
 const github = new Octokit({
@@ -26,15 +26,15 @@ export class GithubService {
 	}
 
 	public async getTemplates(username?: string): Promise<Template[]> {
-		const func = username ? () => github.repos.listForUser({ username: username, per_page: 1000 }) : () => github.repos.listForAuthenticatedUser({ per_page: 1000 });
+		const func = username ? () => github.repos.listForUser({username: username, per_page: 1000}) : () => github.repos.listForAuthenticatedUser({per_page: 1000});
 		// @ts-ignore
-		const { data }: { data: Repository[] } = await func();
+		const {data}: { data: Repository[] } = await func();
 		return data.filter(x => x.is_template).sort((x, y) => x.full_name.localeCompare(y.full_name)) as Template[];
 	}
 
 	public async clone(options: { owner: string, repo: string, output: string }) {
 		// @ts-ignore
-		const { data }: { data: ArrayBuffer } = await github.repos.downloadArchive({ ref: "master", repo: options.repo, owner: options.owner, archive_format: "zipball" });
+		const {data}: { data: ArrayBuffer } = await github.repos.downloadZipballArchive({ref: "master", repo: options.repo, owner: options.owner, archive_format: "zipball"});
 		await Services.files.unzip(data, path.resolve(__dirname, options.output));
 		const innerDir = await fs.readdir(options.output);
 		await Services.files.moveContent(path.join(options.output, innerDir[0]), options.output);
@@ -48,7 +48,7 @@ export class GithubService {
 	 * @param isTemplate
 	 */
 	public async init(folder: string, name: string, description?: string, isTemplate?: boolean) {
-		const info = await github.repos.createForAuthenticatedUser({ name, description, is_template: isTemplate });
+		const info = await github.repos.createForAuthenticatedUser({name, description, is_template: isTemplate});
 		await spawnBinary("git", ["init"], folder);
 		await spawnBinary("git", ["add", "."], folder);
 		await spawnBinary("git", ["commit", "-m", "Initial commit"], folder);

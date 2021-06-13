@@ -1,32 +1,35 @@
 import * as React from "react";
-import { IconButton, Typography } from "@material-ui/core";
+import {IconButton, Typography} from "@material-ui/core";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import { connect, ConnectedProps } from "react-redux";
+import {connect, ConnectedProps} from "react-redux";
 import "./Module.scss";
-import { setPath } from "../../store/module/router/action";
-import { createWindowCustomOption } from "../../../main/services/electron/dialogService";
-import { getUriParam } from "../../util/url";
-import { StoreState } from "../../store";
+import {setPath} from "../../store/module/router/action";
+import {createWindowCustomOption} from "../../../main/services/electron/dialogService";
+import {getUriParam} from "../../util/url";
+import {StoreState} from "../../store";
+import {Logger} from "../../../main/util/logger";
 
 
 function Module(props: ConnectedProps<typeof connector> & { children?: any }) {
 
-	console.log("MODULE", props);
+	const logger = Logger(Module);
 
-	const options = getUriParam<createWindowCustomOption>("options", { json: true }) ?? {
+	logger.log("MODULE", props);
+
+	const options = getUriParam<createWindowCustomOption>("options", {json: true}) ?? {
 		modal: false
 	};
 
 	return <div className={"Module"}>
 		{!options.modal && props.info.show.name && <div className="bar">
-			<IconButton className={"backBtn"}
-			            onClick={() => props.backHistory()}>
-				<ArrowBackIcon />
-			</IconButton>
+            <IconButton className={"backBtn"}
+                        onClick={() => props.backHistory()}>
+                <ArrowBackIcon/>
+            </IconButton>
 			{props.info.show.name && <Typography variant={"h5"} className="title">{props.info.name}</Typography>}
-		</div>}
+        </div>}
 
-			{props.children}
+		{props.children}
 
 	</div>;
 }

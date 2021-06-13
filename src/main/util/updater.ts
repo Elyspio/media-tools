@@ -1,17 +1,20 @@
-import { remote } from "electron";
+import {remote} from "electron";
 import axios from "axios";
 import * as config from "../../config/update";
-import { pathToInstaller, updateRefreshRate } from "../../config/update";
-import { platform } from "os";
-import { ensureDir, writeFile } from "fs-extra";
+import {pathToInstaller, updateRefreshRate} from "../../config/update";
+import {platform} from "os";
+import {ensureDir, writeFile} from "fs-extra";
 import * as path from "path";
-import { store } from "../../renderer/store";
-import { setDownloadPercentage, setServerLatestVersion } from "../../renderer/store/module/updater/action";
-import { spawn } from "child_process";
-import { setPath } from "../../renderer/store/module/router/action";
+import {store} from "../../renderer/store";
+import {setDownloadPercentage, setServerLatestVersion} from "../../renderer/store/module/updater/action";
+import {spawn} from "child_process";
+import {setPath} from "../../renderer/store/module/router/action";
+import {Logger} from "./logger";
 
-const { app, dialog } = remote;
+const {app, dialog} = remote;
 
+
+const logger = Logger("Updater")
 
 const getPlatform = (): "windows" | "linux" | undefined => {
 	let plat: any;
@@ -52,26 +55,26 @@ export async function checkUpdate() {
 
 		if (server[0] > current[0] || server[1] > current[1] || server[2] > current[2]) {
 
-			const response = await dialog.showMessageBox({ title: "Update", message: "A new version is available", buttons: ["Download", "Cancel"] });
+			const response = await dialog.showMessageBox({title: "Update", message: "A new version is available", buttons: ["Download", "Cancel"]});
 
 			if (response.response === 0) {
 				store.dispatch(setPath("/updater"));
 				await downloadUpdate();
 
-				const response = await dialog.showMessageBox({ title: "Update", message: "Application is ready to update", buttons: ["Install", "Cancel"] });
+				const response = await dialog.showMessageBox({title: "Update", message: "Application is ready to update", buttons: ["Install", "Cancel"]});
 				if (response.response === 0) {
 					await installUpdate();
 				}
 
 
 			} else {
-				console.debug("User does not want to update");
+				logger.debug("User does not want to update");
 			}
 		} else {
-			console.debug("You are running on the latest version");
+			logger.debug("You are running on the latest version");
 		}
 	} catch (e) {
-		console.log("checkUpdate", e);
+		logger.error("checkUpdate", e);
 	}
 
 
@@ -97,7 +100,7 @@ export async function downloadUpdate() {
 export async function installUpdate() {
 	const filename = path.basename(pathToInstaller);
 	const dir = path.dirname(pathToInstaller);
-	const p = spawn(filename, { detached: true, stdio: "ignore", cwd: dir });
+	const p = spawn(filename, {detached: true, stdio: "ignore", cwd: dir});
 	p.unref();
 	app.quit();
 }

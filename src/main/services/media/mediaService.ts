@@ -1,17 +1,17 @@
-import { promisify } from "util";
-import { exec as _exec, spawn } from "child_process";
-import { File, Media, Stream } from "../../../renderer/components/modules/internal/encoder/type";
-import { EventEmitter } from "events";
+import {promisify} from "util";
+import {exec as _exec, spawn} from "child_process";
+import {File, Media, Stream} from "../../../renderer/components/modules/internal/encoder/type";
+import {EventEmitter} from "events";
 import * as path from "path";
-import { isInstalled } from "../../util";
-import { setFFmpegInstalled, setProgress } from "../../../renderer/store/module/media";
-import { store } from "../../../renderer/store";
+import {isInstalled} from "../../util";
+import {setFFmpegInstalled, setProgress} from "../../../renderer/store/module/media";
+import {store} from "../../../renderer/store";
 
 
 export class MediaService {
 	public async getInfo(file: File) {
 		try {
-			const { stdout } = await exec(`ffprobe.exe  -v quiet -print_format json -show_format -show_streams "${file.path}"`);
+			const {stdout} = await exec(`ffprobe.exe  -v quiet -print_format json -show_format -show_streams "${file.path}"`);
 			return JSON.parse(stdout);
 		} catch (e) {
 			console.error(e);
@@ -28,7 +28,7 @@ export class MediaService {
 	public async convert(input: Media, format: string, options?: { outputPath: string }) {
 		try {
 			const outputPath = options?.outputPath ?? path.join(__dirname, "output.mkv");
-			const process = spawn("ffmpeg.exe", ["-y", "-i", input.file.path, "-map", "0", "-c:v", format, "-progress", "-", "-nostats", outputPath], { stdio: "pipe" });
+			const process = spawn("ffmpeg.exe", ["-y", "-i", input.file.path, "-map", "0", "-c:v", format, "-progress", "-", "-nostats", outputPath], {stdio: "pipe"});
 			const s = new EventEmitter();
 			if (input.property === undefined) {
 				input.property = await this.getInfo(input.file);
@@ -49,7 +49,7 @@ export class MediaService {
 				const obj = this.getFFMpegProgress(chunk);
 				let percentage = obj.frame / nbFrames * 100;
 				s.emit("progress", percentage);
-				store.dispatch(setProgress({ media: input, percentage }));
+				store.dispatch(setProgress({media: input, percentage}));
 			});
 
 

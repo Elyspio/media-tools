@@ -1,7 +1,7 @@
-import { createReducer } from "@reduxjs/toolkit";
-import { store } from "../..";
-import { setOnFinishAction, setProcessStatus, updateProcessPercentage } from "./action";
-import { Services } from "../../../../main/services";
+import {createReducer} from "@reduxjs/toolkit";
+import {store} from "../..";
+import {setOnFinishAction, setProcessStatus, updateProcessPercentage} from "./action";
+import {Services} from "../../../../main/services";
 
 
 export const onFinishActionList = <const>["Sleep", "Shutdown", "Hibernate", "Lock", "None"];

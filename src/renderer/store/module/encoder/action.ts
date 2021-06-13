@@ -1,6 +1,6 @@
-import { createAction as _createAction } from "@reduxjs/toolkit";
-import { EncoderState } from "./reducer";
-import { Services } from "../../../../main/services";
+import {createAction as _createAction} from "@reduxjs/toolkit";
+import {EncoderState} from "./reducer";
+import {Services} from "../../../../main/services";
 
 
 const createAction = <T>(type: string) => _createAction<T>(`encoder/${type}`);

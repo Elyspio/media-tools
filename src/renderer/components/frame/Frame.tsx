@@ -1,12 +1,12 @@
-import React, { ReactNode } from "react";
+import React, {ReactNode} from "react";
 import "./Frame.scss";
-import { Paper } from "@material-ui/core";
+import {Paper} from "@material-ui/core";
 import Titlebar from "./titlebar/Titlebar";
 import ResourceUtilization from "./resource-utilization/ResourceUtilization";
-import { getUriParam } from "../../util/url";
-import { connect, ConnectedProps } from "react-redux";
-import { Dispatch } from "redux";
-import { StoreState } from "../../store";
+import {getUriParam} from "../../util/url";
+import {connect, ConnectedProps} from "react-redux";
+import {Dispatch} from "redux";
+import {StoreState} from "../../store";
 
 type Props = ReduxTypes & {
 	children: ReactNode
@@ -14,7 +14,7 @@ type Props = ReduxTypes & {
 
 function Frame(props: Props) {
 
-	const options = getUriParam("options", { json: true }) ?? {
+	const options = getUriParam("options", {json: true}) ?? {
 		bottom: props.config.current.frame.show.resourceUtilization,
 		top: true
 	};
@@ -24,9 +24,9 @@ function Frame(props: Props) {
 	</div>;
 	return (
 		<Paper square className={"Frame"}>
-			{options.top && <Titlebar title={options.title} />}
+			{options.top && <Titlebar title={options.title}/>}
 			{main}
-			{options.bottom && <ResourceUtilization />}
+			{options.bottom && <ResourceUtilization/>}
 		</Paper>
 	);
 }

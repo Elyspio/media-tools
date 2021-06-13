@@ -1,19 +1,19 @@
-import { readdir, readFile, remove, writeFile } from "fs-extra";
+import {readdir, readFile, remove, writeFile} from "fs-extra";
 import axios from "axios";
 import * as path from "path";
-import { spawnAsync } from "../src/main/util";
+import {spawnAsync} from "../src/main/util";
 
 const packageJson = path.join(__dirname, "..", "package.json");
 
 
 const main = async () => {
 	let pkg = JSON.parse((await readFile(packageJson)).toString());
-	const originalPkg = { ...pkg };
+	const originalPkg = {...pkg};
 	let [major, minor, build] = pkg.version.split(".").map((str: string) => Number.parseInt(str));
 	minor += 1;
 	let version = [major, minor, build].join(".");
-	pkg = { ...pkg, version };
-	const updatePackageJson = (pkg: any) => writeFile(packageJson, JSON.stringify({ ...pkg }, undefined, 4));
+	pkg = {...pkg, version};
+	const updatePackageJson = (pkg: any) => writeFile(packageJson, JSON.stringify({...pkg}, undefined, 4));
 
 
 	const nodeBinaries = path.resolve(path.dirname(packageJson), "node_modules", ".bin");
@@ -27,7 +27,7 @@ const main = async () => {
 		// await copy(path.join(__dirname, "..", "src"), path.join(__dirname, "..", "build-config"));
 
 		await updatePackageJson(pkg);
-		await spawnAsync(`yarn build && ${electronBuilderBin} -l --publish never`, { cwd: path.dirname(packageJson), ignoreErrors: true, color: true });
+		await spawnAsync(`yarn build && ${electronBuilderBin} -l --publish never`, {cwd: path.dirname(packageJson), ignoreErrors: true, color: true});
 		await updatePackageJson(originalPkg);
 
 		const outputFolder = path.resolve(path.dirname(packageJson), pkg.build.directories.output);
@@ -35,7 +35,7 @@ const main = async () => {
 		const installerPath = files.find(f => f.slice(f.length - 4) === ".exe" && f.includes(version)) as string;
 
 		if (!installerPath) {
-			throw new Error(`Could not find installer: ` + JSON.stringify({ version, files }));
+			throw new Error(`Could not find installer: ` + JSON.stringify({version, files}));
 		}
 
 		const installerData = await readFile(path.join(outputFolder, installerPath));
