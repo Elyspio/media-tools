@@ -29,6 +29,7 @@ function AddNewTorrent(props: { name: string, clear: () => void }) {
 			new Notification({
 				title: `Starting to download ${props.name}`,
 			}).show()
+			props.clear();
 		}
 
 	};

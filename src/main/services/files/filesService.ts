@@ -123,6 +123,7 @@ export class FilesService {
 		console.debug("Watch folder", folder);
 
 		let fsWatcher = fse.watch(folder, {recursive: true, encoding: "utf8"}, (event, filename) => {
+			filename = path.join(folder, filename);
 			console.debug("new action", {event, filename})
 			action(event, filename)
 		});

@@ -17,7 +17,7 @@ const Torrent = () => {
 
 	const [addingTorrent, setAddingTorrent] = useState<string>();
 
-	const onTorrentAdded = React.useCallback((filename) => {
+	const onTorrentAdded = React.useCallback((filename: string) => {
 		setAddingTorrent(filename);
 	}, [])
 
@@ -28,7 +28,7 @@ const Torrent = () => {
 
 	useAsyncEffect(async () => {
 		let downloadFolder = await Services.system.getDownloadFolder();
-		stopWatchingFolder = Services.files.watch(downloadFolder, (filename) => {
+		stopWatchingFolder = Services.files.watch(downloadFolder, (event: any, filename: string) => {
 			if (filename.endsWith(".torrent")) {
 				onTorrentAdded(filename);
 			}
