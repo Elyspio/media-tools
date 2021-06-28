@@ -22,6 +22,7 @@ export const defaultConfiguration: Configuration = {
 		}
 	},
 	endpoints: {
-		lightManager: "https://elyspio.fr/light-manager/"
+		lightManager: "https://elyspio.fr/light-manager/",
+		homeAssistant: "https://ha.elyspio.fr"
 	}
 };

@@ -116,14 +116,12 @@ export class Purge extends Component<{}, State> {
 	private filter = (folders: string[], match: string) => {
 
 		let regExp = new RegExp(match);
-		this.logger.time("filter");
 		let filtered = folders.filter((f) => f.match(regExp));
-		this.logger.timeEnd("filter");
 		return filtered;
 	};
 
 	private onMatchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		this.logger.log("c");
+		this.logger.info("c");
 		let match = e.target.value;
 
 		this.setState(prev => ({
@@ -146,13 +144,11 @@ export class Purge extends Component<{}, State> {
 	};
 
 	private onFolderSelect = async (folder: string) => {
-		this.logger.time("folders");
 		this.setState({
 			loading: true
 		});
 
 		const folders = await Services.files.list(folder, ["node_modules", ".git", ".expo", ".bit"]);
-		this.logger.timeEnd("folders");
 
 		this.setState(prev => ({
 			...prev,

@@ -103,7 +103,6 @@ Object.values(columns).forEach(col => {
 	col["sortable"] = false;
 })
 
-columns.priority.sortable = true;
 columns.name.headerAlign = columns.name.align = "left"
 
 const allColumns = [
@@ -150,6 +149,7 @@ const TorrentList = () => {
 	return (
 		<Box className={"TorrentList"}>
 			<DataGrid
+				sortModel={[{sort: "asc", field: "priority"}]}
 				isRowSelectable={() => false}
 				sortingMode={"client"}
 				rows={rows}

@@ -32,7 +32,7 @@ function AppBoardContextMenu({config, setShowed, close}: Props) {
 
 	return (
 		<div>
-			<DialogTitle id="responsive-dialog-title">{"Action when processes are finished"}</DialogTitle>
+			<DialogTitle id="responsive-dialog-title">Filter applications</DialogTitle>
 			<DialogContent>
 				<FormControl variant="outlined" fullWidth>
 					<InputLabel id="demo-simple-select-outlined-label">Show</InputLabel>

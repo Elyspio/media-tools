@@ -6,21 +6,18 @@ import Application from "./components/Application";
 import {store} from "./store";
 import {createMuiTheme, MuiThemeProvider} from "@material-ui/core/styles";
 // @ts-ignore
-import {default as style} from "./App.scss";
+import * as  style from "./App.scss";
 import "./App.scss";
 import {SnackbarProvider} from "notistack";
 import {Logger} from "../main/util/logger";
 
-// Create main element
 downloadFont("https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap");
 
 
-const logger = Logger(function App() {
-})
+const logger = Logger("App")
+logger.info("style", style);
 
-logger.log("style", style);
-
-
+// Create main element
 const mainElement = document.createElement("div");
 mainElement.classList.add("root");
 document.body.appendChild(mainElement);

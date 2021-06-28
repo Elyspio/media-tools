@@ -7,7 +7,6 @@ import {connect, ConnectedProps} from "react-redux";
 import Button from "@material-ui/core/Button";
 import {checkUpdate, downloadUpdate, getVersion, installUpdate} from "../../../../../main/util/updater";
 import {Typography} from "@material-ui/core";
-import TextField from "@material-ui/core/TextField";
 import {setServerUrl} from "../../../../store/module/updater/action";
 import {StoreState} from "../../../../store";
 
@@ -32,21 +31,6 @@ type ReduxTypes = ConnectedProps<typeof connector>;
 class Updater extends React.Component<ReduxTypes, State> {
 
 
-	constructor(props: ReduxTypes) {
-		super(props);
-		this.state = {
-			serverUrl: props.serverUrl
-		};
-	}
-
-
-	changeServerUrl = (url: string) => {
-		this.setState({
-			serverUrl: url
-		});
-	};
-
-
 	override render() {
 
 		const {progress, serverVersion} = this.props;
@@ -67,18 +51,6 @@ class Updater extends React.Component<ReduxTypes, State> {
 						<Typography className={"input"}>
 							<span className="label">Version:</span>
 							<span className="content">{serverVersion}</span>
-						</Typography>
-						<Typography className={"input"}>
-							<span className="label">Endpoint:</span>
-							<div className={"content"}>
-								<TextField
-									value={this.state.serverUrl}
-									id={"description"}
-									onChange={e => this.changeServerUrl(e.target.value)}
-								/>
-								<Button onClick={() => this.props.setServerUrl(this.state.serverUrl)}>Save</Button>
-							</div>
-
 						</Typography>
 					</div>
 

@@ -28,7 +28,8 @@ export interface Configuration {
 		}
 	},
 	endpoints: {
-		lightManager: string
+		lightManager: string,
+		homeAssistant: string
 	}
 
 }

@@ -14,8 +14,6 @@ function Module(props: ConnectedProps<typeof connector> & { children?: any }) {
 
 	const logger = Logger(Module);
 
-	logger.log("MODULE", props);
-
 	const options = getUriParam<createWindowCustomOption>("options", {json: true}) ?? {
 		modal: false
 	};

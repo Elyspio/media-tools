@@ -7,6 +7,7 @@ import {reducer as routerReducer} from "./module/router/reducer";
 import {reducer as vpnReducer} from "./module/vpn/reducer";
 import {reducer as configurationRouter} from "./module/configuration/reducer";
 import {mediaSlice} from "./module/media";
+import {TypedUseSelectorHook, useSelector} from "react-redux";
 
 
 export const store = configureStore({
@@ -24,3 +25,5 @@ export const store = configureStore({
 });
 
 export type StoreState = ReturnType<typeof store.getState>
+
+export const useAppSelector: TypedUseSelectorHook<StoreState> = useSelector

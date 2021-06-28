@@ -27,7 +27,7 @@ const logger = Logger("Module")
 export function Register(info: Must, ...connector: Function[]) {
 	store.dispatch(addRoute({...defaultModuleDescription, ...info, component: info.name}));
 	return function (target: any) {
-		logger.log("Registering component", {name: info.name, component: target.name});
+		logger.info("Registering component", {name: info.name, component: target.name});
 
 		let ret = target;
 		connector.reverse().forEach(f => {
@@ -41,11 +41,11 @@ export function Register(info: Must, ...connector: Function[]) {
 
 export function register(WrappedComponent: React.ComponentType, info: Must) {
 	store.dispatch(addRoute({...defaultModuleDescription, ...info, component: info.name}));
-	logger.log("Registering component", {name: info.name, component: WrappedComponent.name});
+	logger.info("Registering component", {name: info.name, component: WrappedComponent.name});
 
 	let comp = class extends React.Component {
 		override render() {
-			logger.log("register", this);
+			logger.info("register", this);
 			// Enrobe le composant initial dans un conteneur, sans le modifier. Mieux !
 			return <WrappedComponent {...this.props} />;
 		}

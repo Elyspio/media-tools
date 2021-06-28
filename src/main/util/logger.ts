@@ -1,22 +1,15 @@
-import {Logger as ILogger, LoggerManager} from "typescript-logger"
+import {Logger as ILogger} from "@tsed/logger"
 
+export const Logger = (name: string | Function) => {
 
-type TimeFunction = (str?: string) => void
+	let current = typeof name === "string" ? name : name.name;
+	const logger = new ILogger(current)
 
-export const Logger = (funcOrString: Function | string) => {
-	let name = typeof funcOrString === "string" ? funcOrString : funcOrString.name;
-	let logger = LoggerManager.create(name);
+	logger.appenders
+		.set("stdout", {type: "stdout", levels: ["debug", "info", "trace", "warn"]})
+		.set("stderr", {type: "stderr", levels: ["fatal", "error", "warn"]})
+		.set("console", {type: "console"})
 
-	// @ts-ignore
-	logger.time = (str?: string) => console.time(`${name}${str ? `: ${str}` : ""}`)
-	// @ts-ignore
-	logger.timeEnd = (str?: string) => console.timeEnd(`${name}${str ? `: ${str}` : ""}`)
-	// @ts-ignore
-	logger.timeLog = (str?: string) => console.timeLog(`${name}${str ? `: ${str}` : ""}`)
+	return logger;
+};
 
-	return logger as ILogger & {
-		time: TimeFunction,
-		timeEnd: TimeFunction,
-		timeLog: TimeFunction
-	};
-}

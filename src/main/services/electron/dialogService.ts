@@ -30,7 +30,6 @@ export class DialogService {
 
 	}
 
-
 	public async createWindow(target: string, frame: createWindowCustomOption, option?: Partial<BrowserWindowConstructorOptions>) {
 		const win = new BrowserWindow({
 			...windowOption,

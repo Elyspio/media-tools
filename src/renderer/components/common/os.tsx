@@ -32,7 +32,7 @@ export function SelectFolder(props: Props) {
 	async function openDialog() {
 		if (props.mode === "folder") {
 			let choice = await Services.electron.dialog.selectFolder(false);
-			logger.log("files", files);
+			logger.info("files", files);
 
 			if (choice !== null) {
 				props.onChange(choice?.folder as string);

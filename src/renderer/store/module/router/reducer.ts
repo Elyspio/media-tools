@@ -4,6 +4,7 @@ import {addRoute, setPath} from "./action";
 const requires = [
 	"external/android-link/AndroidLink",
 	"external/lights/Light",
+	"external/home-assistant/HomeAssistant",
 	"internal/encoder/Encoder",
 	"internal/encoder/Recap",
 	"internal/purge/Purge",

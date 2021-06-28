@@ -45,7 +45,7 @@ export class Renamer extends React.Component<{}, State> {
 
 	override async componentDidMount() {
 		const appParams = getAppParams();
-		this.logger.log("params", appParams);
+		this.logger.info("params", appParams);
 		if (appParams.folder) {
 			const files = await Services.files.list(appParams.folder);
 			await this.onFileSelect(files);
@@ -82,7 +82,7 @@ export class Renamer extends React.Component<{}, State> {
 
 		let progresion = null;
 		if (this.state.percentage) {
-			this.logger.log("percent", this.state.percentage, this.state.episodes.length, this.state.percentage as number / this.state.episodes.length * 100);
+			this.logger.info("percent", this.state.percentage, this.state.episodes.length, this.state.percentage as number / this.state.episodes.length * 100);
 			progresion = <div className={"progress"}>
 				<LinearProgress
 					variant="determinate"
@@ -108,7 +108,7 @@ export class Renamer extends React.Component<{}, State> {
 		});
 	};
 	private onFileSelect = (files: string[]) => {
-		this.logger.log("files", files);
+		this.logger.info("files", files);
 		if (files.length) {
 
 			const trim = (str: string) => str
@@ -120,15 +120,15 @@ export class Renamer extends React.Component<{}, State> {
 
 			let numberIndex = this.findNumIndex(fileNames);
 
-			this.logger.log("numberIndex", numberIndex);
+			this.logger.info("numberIndex", numberIndex);
 			let spited = fileNames.map(file => file.split(" "));
-			this.logger.log("fileNames", fileNames);
+			this.logger.info("fileNames", fileNames);
 			const episodes: Episode[] = fileNames.map((name, index) => ({
 				file: files.find(file => trim(file) === name) as string,
 				num: Number.parseInt(spited[index][numberIndex]),
 				extension: this.findExtension(name) as string
 			}));
-			this.logger.log("episodes", episodes);
+			this.logger.info("episodes", episodes);
 
 			const min = episodes.reduce((ep1, ep2) => ep1.num < ep2.num ? ep1 : ep2).num;
 			const max = episodes.reduce((ep1, ep2) => ep1.num > ep2.num ? ep1 : ep2).num;
@@ -143,7 +143,7 @@ export class Renamer extends React.Component<{}, State> {
 	};
 
 	private findNumIndex = (filenames: string[]) => {
-		this.logger.log("filenames", filenames);
+		this.logger.info("filenames", filenames);
 		if (filenames.length === 1) {
 			const splited = filenames[0].split(" ");
 			let i = 0;
@@ -236,7 +236,7 @@ export class Renamer extends React.Component<{}, State> {
 			for (const episode of this.state.episodes) {
 
 				const newFileName = path.basename(episode.file).replace(new RegExp(this.escapeRegex(this.state.replaceOptions.search), "g"), this.state.replaceOptions.replaceWith);
-				this.logger.log(JSON.parse(JSON.stringify(this.state)));
+				this.logger.info(JSON.parse(JSON.stringify(this.state)));
 				await fs.rename(episode.file, path.join(path.dirname(episode.file), newFileName));
 				this.setState(prev => ({
 					percentage: (prev.percentage ?? 0) + 1

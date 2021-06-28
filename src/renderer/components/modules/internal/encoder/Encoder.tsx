@@ -195,7 +195,7 @@ export class Encoder extends React.Component<Props> {
 			const outputPath = path.join(path.dirname(media.file.path), "current.mkv");
 			const s = await new MediaService().convert(media, this.props.media.encoder.format, {outputPath: outputPath});
 			s.on("progress", async (percentage) => {
-				this.logger.log("receving progress", percentage);
+				this.logger.info("receving progress", percentage);
 			});
 			s.on("finished", async () => {
 				this.props.setProgress({...process, percentage: 100});

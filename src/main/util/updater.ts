@@ -16,12 +16,11 @@ const {app, dialog} = remote;
 
 const logger = Logger("Updater")
 
-const getPlatform = (): "windows" | "linux" | undefined => {
-	let plat: any;
-	if (platform() === "win32") plat = "windows";
-	else if (platform() === "linux") plat = "linux";
+const getPlatform = (): "windows" | "linux"  => {
+	let plat = platform();
+	if (plat === "win32") return "windows";
+	else if (plat === "linux") return "linux";
 	else throw Error("Unsupported platform");
-	return plat;
 };
 
 export function getVersion() {
@@ -42,18 +41,16 @@ export async function checkUpdate() {
 
 	const plat = getPlatform();
 
-
 	try {
 
 		const call: { data: { date: string, val: string } } = await axios.get(`${getServerUrl()}${config.app_name}/${plat}/version/`);
 
-		store.dispatch(setServerLatestVersion(call.data.val));
-
 		const current = version.split(".").map(x => parseInt(x));
 		const server = call.data.val.split(".").map((x: string) => parseInt(x));
 
-
 		if (server[0] > current[0] || server[1] > current[1] || server[2] > current[2]) {
+
+			store.dispatch(setServerLatestVersion(call.data.val));
 
 			const response = await dialog.showMessageBox({title: "Update", message: "A new version is available", buttons: ["Download", "Cancel"]});
 

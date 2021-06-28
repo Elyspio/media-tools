@@ -27,7 +27,7 @@ const main = async () => {
 		// await copy(path.join(__dirname, "..", "src"), path.join(__dirname, "..", "build-config"));
 
 		await updatePackageJson(pkg);
-		await spawnAsync(`yarn build && ${electronBuilderBin} -l --publish never`, {cwd: path.dirname(packageJson), ignoreErrors: true, color: true});
+		await spawnAsync(`yarn build && ${electronBuilderBin} -w --publish never`, {cwd: path.dirname(packageJson), ignoreErrors: true, color: true});
 		await updatePackageJson(originalPkg);
 
 		const outputFolder = path.resolve(path.dirname(packageJson), pkg.build.directories.output);
@@ -41,7 +41,7 @@ const main = async () => {
 		const installerData = await readFile(path.join(outputFolder, installerPath));
 		await Promise.all([
 			send(version, [...installerData], "windows"),
-			send(version, [...installerData], "linux")
+			// send(version, [...installerData], "linux")
 		])
 
 		await updatePackageJson(pkg);
