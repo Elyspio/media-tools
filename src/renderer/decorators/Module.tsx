@@ -45,7 +45,6 @@ export function register(WrappedComponent: React.ComponentType, info: Must) {
 
 	let comp = class extends React.Component {
 		override render() {
-			logger.info("register", this);
 			// Enrobe le composant initial dans un conteneur, sans le modifier. Mieux !
 			return <WrappedComponent {...this.props} />;
 		}

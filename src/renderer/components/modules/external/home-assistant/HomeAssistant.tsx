@@ -4,14 +4,14 @@ import {useAppSelector} from "../../../../store";
 import "./HomeAssistant.scss";
 
 
-const HomeAssistant = () => {
+function HomeAssistant ()  {
 
 	const url = useAppSelector(s => s.config.current.endpoints.homeAssistant)
 
 	return <iframe src={url} frameBorder={0} className={"HomeAssistant"}/>
 }
 
-export default register(HomeAssistant, {
+register(HomeAssistant, {
 	name: "Home Assistant",
 	external: true,
 	path: "/home-assistant",
