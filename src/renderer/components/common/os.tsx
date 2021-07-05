@@ -64,7 +64,7 @@ export function SelectFolder(props: Props) {
 
 			<input type="file" multiple id={"select-file-id"} hidden={true} onChange={onFileChange}/>
 
-			{props.showSelected && <Typography variant={"caption"} noWrap>{files}</Typography>}
+			{props.showSelected && <Typography variant={"caption"} className={"files"} noWrap>{files}</Typography>}
 
 		</div>
 	);

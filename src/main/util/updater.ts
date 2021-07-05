@@ -16,7 +16,7 @@ const {app, dialog} = remote;
 
 const logger = Logger("Updater")
 
-const getPlatform = (): "windows" | "linux"  => {
+const getPlatform = (): "windows" | "linux" => {
 	let plat = platform();
 	if (plat === "win32") return "windows";
 	else if (plat === "linux") return "linux";

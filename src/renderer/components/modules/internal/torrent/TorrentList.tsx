@@ -1,14 +1,21 @@
 import React, {useMemo} from 'react';
-import {Box, Typography} from "@material-ui/core";
-import {DataGrid, GridColumns} from "@material-ui/data-grid";
+import {Box, Menu, MenuItem, Typography} from "@material-ui/core";
+import {DataGrid, GridCellParams, GridColumns} from "@material-ui/data-grid";
 import {useAsyncState} from "../../../../hooks/useAsyncState";
 import {Services} from "../../../../../main/services";
 import {Torrent, TorrentState} from "@ctrl/qbittorrent/dist/types";
 import {useAppDimension} from "../../../../../main/util/hooks";
+import * as dayjs from "dayjs";
+import "dayjs/plugin/duration";
+
+const duration = require('dayjs/plugin/duration')
+const relativeTime = require('dayjs/plugin/relativeTime')
+
+dayjs.extend(duration)
+dayjs.extend(relativeTime)
 
 const keys = ["id", "name", "dlspeed", "progress", "eta", "size", "state", "priority"] as const
 type Keys = typeof keys[number];
-
 
 function getTorrentStateStr(state: TorrentState) {
 	switch (state) {
@@ -49,7 +56,6 @@ function getTorrentStateStr(state: TorrentState) {
 	return ["", undefined]
 }
 
-
 const columns: Record<Keys, GridColumns[number] & { field: Keys }> = {
 	id: {field: 'id', headerName: 'id', width: 0, hide: true,},
 	priority: {
@@ -85,7 +91,12 @@ const columns: Record<Keys, GridColumns[number] & { field: Keys }> = {
 	},
 	eta: {
 		field: 'eta', headerName: 'ETA', width: 120, renderCell: params => {
-			return params.value !== 8640000 ? params.value : "N/A";
+			let value = params.value === 8640000 ? "N/A"
+				: dayjs.duration(params.value as number, "seconds").humanize();
+
+			console.log(value);
+
+			return value
 		}
 	},
 	size: {
@@ -95,7 +106,6 @@ const columns: Record<Keys, GridColumns[number] & { field: Keys }> = {
 		}
 	},
 }
-
 
 Object.values(columns).forEach(col => {
 	col["align"] ??= "right";
@@ -120,17 +130,27 @@ const smallColumns = [
 	columns.id,
 	columns.priority,
 	columns.name,
+	columns.state,
 	columns.progress
 ]
 
+type  PopoverInfo = {
+	mouseX?:  number,
+	mouseY?:  number,
+	torrent?:  Record<Keys, any>
+};
+
+const initialPopoverPosition: PopoverInfo = {}
 
 const TorrentList = () => {
 
+	const [popoverPosition, setPopoverPosition] = React.useState(initialPopoverPosition);
 
-	const {data} = useAsyncState(Services.media.torrent.list, [], 1000);
+	const {data, reload} = useAsyncState(Services.media.torrent.list, [], 1000);
+
+	const {width} = useAppDimension();
 
 	const rows = useMemo<{ [key in Keys]: any }[]>(() => {
-
 		return data.map((torrent: Torrent) => ({
 			name: torrent.name,
 			dlspeed: torrent.dlspeed,
@@ -143,8 +163,29 @@ const TorrentList = () => {
 		}))
 	}, [data]);
 
-	const {width} = useAppDimension();
+	const onCellClick = React.useCallback((torrent: GridCellParams, event: React.MouseEvent) => {
+		event.preventDefault();
+		setPopoverPosition({
+			mouseX: event.clientX - 2,
+			mouseY: event.clientY - 4,
+			torrent: torrent.row as any
+		});
+	}, [])
 
+	const handleClose = React.useCallback(async (item?: "resume" | "pause" | "delete") => {
+		setPopoverPosition(initialPopoverPosition);
+		const func = {
+			resume: Services.media.torrent.resume,
+			pause: Services.media.torrent.pause,
+			delete: Services.media.torrent.delete,
+		}
+
+		if(item) {
+			await func[item](popoverPosition.torrent!!.id)
+			await reload();
+		}
+
+	}, [popoverPosition]);
 
 	return (
 		<Box className={"TorrentList"}>
@@ -152,9 +193,26 @@ const TorrentList = () => {
 				sortModel={[{sort: "asc", field: "priority"}]}
 				isRowSelectable={() => false}
 				sortingMode={"client"}
+				onCellClick={onCellClick}
 				rows={rows}
 				columns={width > 1000 ? allColumns : smallColumns}
 			/>
+
+			{popoverPosition.mouseY && popoverPosition.mouseX && <Menu
+                keepMounted
+                open={true}
+                onClose={() => handleClose()}
+                anchorReference="anchorPosition"
+                anchorPosition={
+					{top: popoverPosition.mouseY, left: popoverPosition.mouseX}
+				}
+            >
+                <MenuItem onClick={() => handleClose("resume")}>Resume</MenuItem>
+                <MenuItem onClick={() => handleClose("pause")}>Pause</MenuItem>
+                <MenuItem onClick={() => handleClose("delete")}>Delete</MenuItem>
+            </Menu>}
+
+
 		</Box>
 	);
 };

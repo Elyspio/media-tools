@@ -4,7 +4,7 @@ import {useAppSelector} from "../../../../store";
 import "./HomeAssistant.scss";
 
 
-function HomeAssistant ()  {
+function HomeAssistant() {
 
 	const url = useAppSelector(s => s.config.current.endpoints.homeAssistant)
 
@@ -12,7 +12,7 @@ function HomeAssistant ()  {
 }
 
 register(HomeAssistant, {
-	name: "Home Assistant",
+	name: "Home",
 	external: true,
 	path: "/home-assistant",
 	show: {

@@ -30,7 +30,7 @@ export function useAsyncState<T>(func: UseAsyncStateParams<T>, defaultValue: T, 
 
 	return {
 		data: data ?? defaultValue,
-		reload: handle,
+		reload: () => handle(func),
 	}
 
 

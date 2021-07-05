@@ -22,11 +22,15 @@ export class TorrentService {
 		return client.listTorrents();
 	}
 
-	start(hash: string) {
+	resume(hash: string) {
 		return client.resumeTorrent(hash)
 	}
 
-	stop() {
+	pause(hash: string) {
+		return client.pauseTorrent(hash)
+	}
 
+	delete(hash: string) {
+		return client.removeTorrent(hash, true)
 	}
 }

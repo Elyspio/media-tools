@@ -123,9 +123,8 @@ export class Encoder extends React.Component<Props> {
 				{softInstalled === true && <>
                     <SelectFolder onChange={this.onFileSelect} mode={"file"} showSelected/>
 					{optionsUi}
-					{actionsUi}
 					{processUi}
-
+					{actionsUi}
                 </>}
 
 

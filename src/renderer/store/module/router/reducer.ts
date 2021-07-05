@@ -2,7 +2,6 @@ import {createReducer} from "@reduxjs/toolkit";
 import {addRoute, setPath} from "./action";
 
 const requires = [
-	"external/android-link/AndroidLink",
 	"external/lights/Light",
 	"external/home-assistant/HomeAssistant",
 	"internal/encoder/Encoder",
