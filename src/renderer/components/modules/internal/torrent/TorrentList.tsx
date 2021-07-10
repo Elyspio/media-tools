@@ -135,9 +135,9 @@ const smallColumns = [
 ]
 
 type  PopoverInfo = {
-	mouseX?:  number,
-	mouseY?:  number,
-	torrent?:  Record<Keys, any>
+	mouseX?: number,
+	mouseY?: number,
+	torrent?: Record<Keys, any>
 };
 
 const initialPopoverPosition: PopoverInfo = {}
@@ -180,7 +180,7 @@ const TorrentList = () => {
 			delete: Services.media.torrent.delete,
 		}
 
-		if(item) {
+		if (item) {
 			await func[item](popoverPosition.torrent!!.id)
 			await reload();
 		}

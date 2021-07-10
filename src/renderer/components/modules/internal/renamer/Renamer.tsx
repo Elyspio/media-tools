@@ -1,8 +1,7 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
-import {TextField} from "@material-ui/core";
+import {TextField, Typography} from "@material-ui/core";
 import {promises as fs} from "fs";
-import LinearProgress from "@material-ui/core/LinearProgress";
 import * as path from "path";
 import {SelectFolder} from "../../../common/os";
 import {Register} from "../../../../decorators/Module";
@@ -14,10 +13,9 @@ import {Logger} from "../../../../../main/util/logger";
 
 interface State {
 	episodes: Episode[]
-	name?: string,
+	name: string,
 	min?: number,
 	max?: number,
-	percentage?: number,
 	replaceOptions: {
 		search?: string,
 		replaceWith?: string
@@ -33,15 +31,12 @@ interface Episode {
 @Register({name: "Renamer", path: "/renamer"})
 export class Renamer extends React.Component<{}, State> {
 
-	private logger = Logger(Renamer);
-
-	constructor(props: {}) {
-		super(props);
-		this.state = {
-			episodes: [],
-			replaceOptions: {}
-		};
+	override state: State = {
+		episodes: [],
+		replaceOptions: {},
+		name: "",
 	}
+	private logger = Logger(Renamer);
 
 	override async componentDidMount() {
 		const appParams = getAppParams();
@@ -53,26 +48,63 @@ export class Renamer extends React.Component<{}, State> {
 	}
 
 	override render() {
+
+		const {name, episodes, min, max, replaceOptions} = this.state;
+
 		let options: JSX.Element | null = null;
-		if (this.state.episodes.length > 0) {
+		if (episodes.length > 0) {
 			options = <div className="options">
+
 				<div className="classic">
-					<TextField label={"Futur nom"} onChange={this.onNameChange}
-					           error={!(this.state.name !== undefined && this.state.name.length > 0)}/>
-					<p>Début: {this.state.min}</p>
-					<p>Fin: {this.state.max}</p>
-					<Button color={"secondary"} onClick={() => this.rename()}>
-						Rename files
-					</Button>
+					<TextField
+						id={"renamer-new-name-input"}
+						label={"Futur nom"}
+						onChange={this.onNameChange}
+						error={!(name !== undefined && name.length > 0)}
+					/>
+
+					<div className="nums">
+						<Typography className={"line"} variant={"overline"}>Début: {min}</Typography>
+						<Typography className={"line"} variant={"overline"}>Fin: {max}</Typography>
+					</div>
+
 				</div>
 
+				<div className="example">
+					<TextField
+						className={"line"}
+						disabled
+						label={"Origin"}
+						value={episodes[0].file}/>
+
+					<TextField
+						className={"line"}
+						disabled
+						label={"Renamed"}
+						value={this.getNewEpisodeName(episodes[0], "1")}/>
+				</div>
+
+				<Button
+					color={"secondary"}
+					onClick={() => this.rename()}
+					disabled={name.length === 0}
+				>
+					Rename files
+				</Button>
+
 				<div className="replace-char">
-					<TextField id={"episode-example-name"} disabled label={"Example"}
-					           value={this.state.episodes[0].file}/>
+
 					<div className={"actions"}>
 						<TextField onChange={this.setSearchChar} label={"Search"}/>
 						<TextField onChange={this.setReplaceChar} label={"Replace with"}/>
-						<Button color={"secondary"} onClick={this.replaceChar}>Replace</Button>
+						<Button
+							variant={"outlined"}
+							color={"secondary"}
+							onClick={this.replaceChar}
+							disabled={(replaceOptions.search?.length ?? 0) === 0}
+						>
+							Replace char
+						</Button>
 					</div>
 
 				</div>
@@ -80,24 +112,10 @@ export class Renamer extends React.Component<{}, State> {
 			</div>;
 		}
 
-		let progresion = null;
-		if (this.state.percentage) {
-			this.logger.info("percent", this.state.percentage, this.state.episodes.length, this.state.percentage as number / this.state.episodes.length * 100);
-			progresion = <div className={"progress"}>
-				<LinearProgress
-					variant="determinate"
-					value={this.state.percentage as number / this.state.episodes.length * 100}/>
-			</div>;
-
-		}
-
-
 		return (
 			<div className={"Renamer"}>
 				<SelectFolder onChange={this.onFileSelect} mode={"file"}/>
 				{options}
-				{progresion}
-
 			</div>
 		);
 	}
@@ -136,11 +154,13 @@ export class Renamer extends React.Component<{}, State> {
 			this.setState({
 				episodes: episodes,
 				min,
-				max
+				max,
 			});
 		}
 
 	};
+
+	// region rename
 
 	private findNumIndex = (filenames: string[]) => {
 		this.logger.info("filenames", filenames);
@@ -182,26 +202,33 @@ export class Renamer extends React.Component<{}, State> {
 
 	};
 
+	private getNewEpisodeName = (episode: State["episodes"][number], num: string) => {
+		const name = this.state.name.trim();
+		return `${path.dirname(episode.file)}${path.sep}${name} ${num}.${episode.extension}`
+	}
+
 	private rename = async (): Promise<any> => {
 
 		if (this.state.min === undefined || this.state.max === undefined) return Promise.reject();
 
-		if (!(this.state.name !== undefined && this.state.name.length > 0)) return Promise.reject();
+		let name = this.state.name?.trim();
+		if (!(name !== undefined && name?.length > 0)) return Promise.reject();
 		this.setState({
-			percentage: 0,
 			episodes: []
 		});
 		return Promise.all(this.state.episodes.map((episode: Episode) => {
 			return new Promise<void>(async resolve => {
-				// @ts-ignore
-				const num = this.padWithZeros(episode.num, this.state.max.toString().length);
-				await fs.rename(episode.file, `${path.dirname(episode.file)}${path.sep}${this.state.name} ${num}.${episode.extension}`);
-				this.setState(prev => ({
-					percentage: (prev.percentage ?? 0) + 1
-				}), () => resolve());
+				const num = this.padWithZeros(episode.num, this.state.max!!.toString().length);
+				await fs.rename(episode.file, this.getNewEpisodeName(episode, num));
+				resolve();
 			});
 		}));
 	};
+
+	// endregion rename
+
+	// region replace char
+
 
 	private setReplaceChar = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
 		e.persist();
@@ -227,23 +254,21 @@ export class Renamer extends React.Component<{}, State> {
 
 	private replaceChar = async () => {
 
-		if (this.state.replaceOptions.replaceWith && this.state.replaceOptions.search) {
+		let {replaceWith, search} = this.state.replaceOptions;
 
-			this.setState({
-				percentage: 0
-			});
-
-			for (const episode of this.state.episodes) {
-
-				const newFileName = path.basename(episode.file).replace(new RegExp(this.escapeRegex(this.state.replaceOptions.search), "g"), this.state.replaceOptions.replaceWith);
+		await Promise.all(this.state.episodes.map(async episode => {
+			if (replaceWith && search) {
+				const newFileName = path.basename(episode.file).replace(new RegExp(this.escapeRegex(search), "g"), replaceWith);
 				this.logger.info(JSON.parse(JSON.stringify(this.state)));
 				await fs.rename(episode.file, path.join(path.dirname(episode.file), newFileName));
-				this.setState(prev => ({
-					percentage: (prev.percentage ?? 0) + 1
-				}));
 			}
-		}
+		}))
+
 	};
+
+	// endregion replace char
+
+	// region utils
 
 	private escapeRegex = (str: string) => {
 		return str.replace(/[\-\[\]\/{}()*+?.\\^$|]/g, "\\$&");
@@ -256,7 +281,8 @@ export class Renamer extends React.Component<{}, State> {
 			n = "0" + n;
 		}
 		return n;
-
 	}
+
+	// endregion utils
 }
 

@@ -27,9 +27,11 @@ export function SelectFolder(props: Props) {
 
 	const [files, setFiles] = React.useState<string>("");
 
+	const inputRef = React.useRef<HTMLInputElement>(null);
+
 	const logger = useLogger();
 
-	async function openDialog() {
+	async function openDialog(e: React.MouseEvent) {
 		if (props.mode === "folder") {
 			let choice = await Services.electron.dialog.selectFolder(false);
 			logger.info("files", files);
@@ -39,6 +41,12 @@ export function SelectFolder(props: Props) {
 			}
 			setFiles(choice ? choice.folder : "");
 		}
+		if (props.mode === "file") {
+			inputRef.current?.click();
+		}
+
+		e.stopPropagation();
+		e.preventDefault();
 	}
 
 	function onFileChange(e: any) {
@@ -62,7 +70,7 @@ export function SelectFolder(props: Props) {
 				}
 			</Button>
 
-			<input type="file" multiple id={"select-file-id"} hidden={true} onChange={onFileChange}/>
+			<input type="file" multiple id={"select-file-id"} ref={inputRef} hidden={true} onChange={onFileChange}/>
 
 			{props.showSelected && <Typography variant={"caption"} className={"files"} noWrap>{files}</Typography>}
 

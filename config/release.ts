@@ -44,6 +44,9 @@ const main = async () => {
 			// send(version, [...installerData], "linux")
 		])
 
+		await spawnAsync(`git tag v${version} && git push --tags`)
+
+
 		await updatePackageJson(pkg);
 
 
