@@ -6,7 +6,7 @@ import {MediaService} from "../../../../../main/services/media/mediaService";
 import * as fs from "fs-extra";
 import * as path from "path";
 import List from "@material-ui/core/List";
-import Process from "./Process";
+import Process from "./process/Process";
 import "./Encoder.scss";
 import {Register} from "../../../../decorators/Module";
 import {SelectFolder} from "../../../common/os";
@@ -16,26 +16,31 @@ import AlertTitle from "@material-ui/lab/AlertTitle";
 import Link from "@material-ui/core/Link";
 import {withContext} from "../../../common/hoc/withContext";
 import {connect, ConnectedProps} from "react-redux";
-import {Dispatch} from "redux";
+import {bindActionCreators, Dispatch} from "redux";
 import OnFinishAction from "./OnFinishAction";
 import {runOnFinishAction} from "../../../../store/module/encoder/action";
 import {StoreState} from "../../../../store";
 import {encoders} from "../../../../../config/media/encoder";
-import {setFormat, setMedias, setProcess, setProgress} from "../../../../store/module/media";
 import {getAppParams} from "../../../../../main/util/args";
 import {Logger} from "../../../../../main/util/logger";
+import {setCurrentProcess, setFormat, setMedias, setProcess, setProgress, stopCurrentProcess} from "../../../../store/module/media/media.action";
 
 
 const mapStateToProps = (state: StoreState) => ({
 	action: state.encoder.onFinishAction,
-	media: state.media
+	media: state.media,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-	setProcess: (process: ProcessData[]) => dispatch(setProcess(process)),
-	setMedias: (process: Media[]) => dispatch(setMedias(process)),
-	setFormat: (format: StoreState["media"]["encoder"]["format"]) => dispatch(setFormat(format)),
-	setProgress: (process: ProcessData) => dispatch(setProgress(process))
+	dispatch: bindActionCreators({
+		setProcess,
+		setMedias,
+		setFormat,
+		setProgress,
+		setCurrentProcess,
+		stopCurrentProcess,
+	}, dispatch)
+
 });
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
@@ -102,8 +107,8 @@ export class Encoder extends React.Component<Props> {
 
 
 			actionsUi = <div className="actions">
-				<Button color={"secondary"} onClick={this.encode}>
-					Encode Files
+				<Button color={"secondary"} onClick={this.doAction}>
+					{this.props.media.encoder.currentProcessPid ? "Stop" : "Encode Files"}
 				</Button>
 			</div>;
 		}
@@ -121,26 +126,26 @@ export class Encoder extends React.Component<Props> {
 			<div className={"Encoder"}>
 
 				{softInstalled === true && <>
-                    <SelectFolder onChange={this.onFileSelect} mode={"file"} showSelected/>
+					<SelectFolder onChange={this.onFileSelect} mode={"file"} showSelected/>
 					{optionsUi}
 					{processUi}
 					{actionsUi}
-                </>}
+				</>}
 
 
 				{softInstalled === false && <>
-                    <Alert severity="error">
-                        <AlertTitle>This module requires FFmpeg</AlertTitle>
-                        It can be downloaded <Link href="https://ffmpeg.org/download.html">here</Link>
-                    </Alert>
-                </>}
+					<Alert severity="error">
+						<AlertTitle>This module requires FFmpeg</AlertTitle>
+						It can be downloaded <Link href="https://ffmpeg.org/download.html">here</Link>
+					</Alert>
+				</>}
 
 				{softInstalled === undefined && <>
-                    <Alert severity="info">
-                        <AlertTitle>Please wait</AlertTitle>
-                        Checking if FFmpeg is installed
-                    </Alert>
-                </>}
+					<Alert severity="info">
+						<AlertTitle>Please wait</AlertTitle>
+						Checking if FFmpeg is installed
+					</Alert>
+				</>}
 
 			</div>
 		);
@@ -148,7 +153,7 @@ export class Encoder extends React.Component<Props> {
 
 
 	private onFormatChange = async (e: React.ChangeEvent<{ name?: string; value: any }>) => {
-		this.props.setFormat(e.target.value);
+		this.props.dispatch.setFormat(e.target.value);
 		this.updateProcess();
 	};
 
@@ -160,7 +165,7 @@ export class Encoder extends React.Component<Props> {
 			property: await new MediaService().getInfo(file)
 		})));
 
-		this.props.setMedias(media);
+		this.props.dispatch.setMedias(media);
 
 		if (this.props.media.encoder.format) {
 			this.updateProcess(media);
@@ -168,18 +173,21 @@ export class Encoder extends React.Component<Props> {
 
 	};
 
-	private encode = async (): Promise<any> => {
+	private doAction = async (): Promise<void> => {
 
-		for (const {media} of this.props.media.process) {
-			const output = await this.encodeFile(media);
-			const old = path.join(path.dirname(media.file.path), "old");
-			await fs.ensureDir(old);
-			await fs.move(media.file.path, path.join(old, media.file.name));
-			await fs.move(output, media.file.path);
+		if (this.props.media.encoder.currentProcessPid) {
+			this.stopEncoding();
+		} else {
+			for (const {media} of this.props.media.process) {
+				const output = await this.encodeFile(media);
+				const old = path.join(path.dirname(media.file.path), "old");
+				await fs.ensureDir(old);
+				await fs.move(media.file.path, path.join(old, media.file.name));
+				await fs.move(output, media.file.path);
+			}
+
+			await runOnFinishAction();
 		}
-
-		await runOnFinishAction();
-
 	};
 
 	private encodeFile = (media: Media): Promise<string> => {
@@ -189,17 +197,23 @@ export class Encoder extends React.Component<Props> {
 
 			if (!process) throw `Invalid State, could not found in store a media with type="${media.file.path}"`;
 
-			this.props.setProgress({...process, percentage: 0});
+			this.props.dispatch.setProgress({...process, percentage: 0});
 
 			const outputPath = path.join(path.dirname(media.file.path), "current.mkv");
-			const s = await new MediaService().convert(media, this.props.media.encoder.format, {outputPath: outputPath});
+			const [s, createdProcess] = await new MediaService().convert(media, this.props.media.encoder.format, {outputPath: outputPath});
+
+			this.props.dispatch.setCurrentProcess(createdProcess);
+
 			s.on("progress", async (percentage) => {
 				this.logger.info("receving progress", percentage);
 			});
+
 			s.on("finished", async () => {
-				this.props.setProgress({...process, percentage: 100});
+				this.props.dispatch.setProgress({...process, percentage: 100});
 				resolve(outputPath);
 			});
+
+			this.setState({})
 		});
 	};
 
@@ -212,8 +226,13 @@ export class Encoder extends React.Component<Props> {
 				media
 			}));
 
-		this.props.setProcess(process);
+		this.props.dispatch.setProcess(process);
 	};
+
+
+	private stopEncoding = () => {
+		this.props.dispatch.stopCurrentProcess();
+	}
 
 }
 

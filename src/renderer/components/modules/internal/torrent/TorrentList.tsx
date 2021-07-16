@@ -199,18 +199,18 @@ const TorrentList = () => {
 			/>
 
 			{popoverPosition.mouseY && popoverPosition.mouseX && <Menu
-                keepMounted
-                open={true}
-                onClose={() => handleClose()}
-                anchorReference="anchorPosition"
-                anchorPosition={
+				keepMounted
+				open={true}
+				onClose={() => handleClose()}
+				anchorReference="anchorPosition"
+				anchorPosition={
 					{top: popoverPosition.mouseY, left: popoverPosition.mouseX}
 				}
-            >
-                <MenuItem onClick={() => handleClose("resume")}>Resume</MenuItem>
-                <MenuItem onClick={() => handleClose("pause")}>Pause</MenuItem>
-                <MenuItem onClick={() => handleClose("delete")}>Delete</MenuItem>
-            </Menu>}
+			>
+				<MenuItem onClick={() => handleClose("resume")}>Resume</MenuItem>
+				<MenuItem onClick={() => handleClose("pause")}>Pause</MenuItem>
+				<MenuItem onClick={() => handleClose("delete")}>Delete</MenuItem>
+			</Menu>}
 
 
 		</Box>

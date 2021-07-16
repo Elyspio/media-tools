@@ -4,8 +4,8 @@ import {File, Media, Stream} from "../../../renderer/components/modules/internal
 import {EventEmitter} from "events";
 import * as path from "path";
 import {isInstalled} from "../../util";
-import {setFFmpegInstalled, setProgress} from "../../../renderer/store/module/media";
 import {store} from "../../../renderer/store";
+import {setFFmpegInstalled, setProgress} from "../../../renderer/store/module/media/media.action";
 
 
 export class MediaService {
@@ -25,7 +25,7 @@ export class MediaService {
 		return bool;
 	}
 
-	public async convert(input: Media, format: string, options?: { outputPath: string }) {
+	public async convert(input: Media, format: string, options?: { outputPath: string }): Promise<[EventEmitter, ReturnType<typeof spawn>]> {
 		try {
 			const outputPath = options?.outputPath ?? path.join(__dirname, "output.mkv");
 			const process = spawn("ffmpeg.exe", ["-y", "-i", input.file.path, "-map", "0", "-c:v", format, "-progress", "-", "-nostats", outputPath], {stdio: "pipe"});
@@ -54,7 +54,7 @@ export class MediaService {
 
 
 			process.on("close", () => s.emit("finished", outputPath));
-			return s;
+			return [s, process];
 
 		} catch (e) {
 			console.error(e);

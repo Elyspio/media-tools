@@ -1,25 +1,15 @@
-import {createAction, createSlice} from "@reduxjs/toolkit";
-import {Encoder, Media, ProcessData} from "../../components/modules/internal/encoder/type";
-
-
-export const setMedias = createAction<Media[]>("setMedia");
-
-
-// Encoder
-
-export const setFormat = createAction<Encoder["value"]["ffmpeg"]>("setFormat");
-export const setFFmpegInstalled = createAction<boolean>("setFFmpegInstalled");
-export const setProcess = createAction<ProcessData[]>("setProcess");
-export const setProgress = createAction<ProcessData>("setProgress");
+import {createSlice} from "@reduxjs/toolkit";
+import {Encoder, Media, ProcessData} from "../../../components/modules/internal/encoder/type";
+import {encodingProcess, setCurrentProcess, setFFmpegInstalled, setFormat, setMedias, setProcess, setProgress} from "./media.action";
 
 
 export type MediaState = {
 	medias: Media[]
 	process: ProcessData[],
-
 	encoder: {
 		format: Encoder["value"]["ffmpeg"]
 		isSoftInstalled?: boolean,
+		currentProcessPid?: number
 	}
 }
 
@@ -32,6 +22,7 @@ const initialState: MediaState = {
 	}
 
 };
+
 
 export const mediaSlice = createSlice({
 	name: "media",
@@ -60,6 +51,16 @@ export const mediaSlice = createSlice({
 				process.percentage = action.payload.percentage;
 			}
 		});
+
+
+		addCase(setCurrentProcess, (state, action) => {
+			state.encoder.currentProcessPid = action.payload?.pid;
+			if (action.payload) {
+				encodingProcess.current = action.payload;
+			} else {
+				encodingProcess.current = undefined;
+			}
+		})
 
 	}
 });

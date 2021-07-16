@@ -6,7 +6,7 @@ import {reducer as encoderReducer} from "./module/encoder/reducer";
 import {reducer as routerReducer} from "./module/router/reducer";
 import {reducer as vpnReducer} from "./module/vpn/reducer";
 import {reducer as configurationRouter} from "./module/configuration/reducer";
-import {mediaSlice} from "./module/media";
+import {mediaSlice} from "./module/media/media.reducer";
 import {TypedUseSelectorHook, useSelector} from "react-redux";
 
 
@@ -20,7 +20,14 @@ export const store = configureStore({
 		media: mediaSlice.reducer
 	},
 	devTools: process.env.NODE_ENV === "development",
-	middleware: [...getDefaultMiddleware(), logger],
+	middleware: [
+		...getDefaultMiddleware({
+			serializableCheck: {
+				ignoredActions: ["media/setCurrentProcess"]
+			}
+		}),
+		logger
+	],
 	preloadedState: getUriParam("store", {json: true, remove: true}) ?? undefined
 });
 
