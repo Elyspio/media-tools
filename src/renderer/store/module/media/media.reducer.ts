@@ -1,6 +1,6 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {Encoder, Media, ProcessData} from "../../../components/modules/internal/encoder/type";
-import {encodingProcess, setCurrentProcess, setFFmpegInstalled, setFormat, setMedias, setProcess, setProgress} from "./media.action";
+import {encodingProcess, setCurrentProcess, setFFmpegInstalled, setFormat, setMedias, setProcesses, setProgress} from "./media.action";
 
 
 export type MediaState = {
@@ -41,7 +41,7 @@ export const mediaSlice = createSlice({
 			state.encoder.isSoftInstalled = action.payload;
 		});
 
-		addCase(setProcess, (state, action) => {
+		addCase(setProcesses, (state, action) => {
 			state.process = action.payload;
 		});
 

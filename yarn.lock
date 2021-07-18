@@ -1356,13 +1356,6 @@
   resolved "https://registry.yarnpkg.com/@tsconfig/node16/-/node16-1.0.1.tgz#a6ca6a9a0ff366af433f42f5f0e124794ff6b8f1"
   integrity sha512-FTgBI767POY/lKNDNbIzgAX6miIDBs6NTCbdlDb8TrWovHsSvaVIZDlTqym29C6UqhzwcJx4CYr+AlrMywA0cA==
 
-"@tsed/logger-seq@^5.15.0":
-  version "5.15.0"
-  resolved "https://registry.yarnpkg.com/@tsed/logger-seq/-/logger-seq-5.15.0.tgz#b22985b79f1a05474c606cfa5bd40028f60d77fa"
-  integrity sha512-alU5BMhzSS+/htc6Xjhnhz7lSlo4AgTqO12CVyi68IoHq5ue/Mby2rqjU1eK2oLV/Gnt0WV3iKZUOspa2fXhXw==
-  dependencies:
-    seq-logging "0.5.0"
-
 "@tsed/logger@^5.15.0":
   version "5.15.0"
   resolved "https://registry.yarnpkg.com/@tsed/logger/-/logger-5.15.0.tgz#ae9506d684adad1b05c2b00db4708cf96dc4cca5"
@@ -8417,11 +8410,6 @@ send@0.17.1:
     on-finished "~2.3.0"
     range-parser "~1.2.1"
     statuses "~1.5.0"
-
-seq-logging@0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/seq-logging/-/seq-logging-0.5.0.tgz#774d251852ceb9de03020243239bbe832035c6c0"
-  integrity sha512-j6rGQTuWTEONEeMVO1Mmjsc5P8r1NVGU/V70VxcKJGDL4n5MpYITcNM99+DHEfwx1D6QizURn+xmFpMIR6ETFA==
 
 serialize-error@^7.0.1:
   version "7.0.1"

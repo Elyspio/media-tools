@@ -1,4 +1,4 @@
-import {readdir, readFile, remove, writeFile} from "fs-extra";
+import {readdir, readFile, remove, writeFile, rm} from "fs-extra";
 import axios from "axios";
 import * as path from "path";
 import {spawnAsync} from "../src/main/util";
@@ -54,6 +54,13 @@ const main = async () => {
 
 	} catch (e) {
 		console.error("ERROR", e.message);
+	}
+	finally {
+		await Promise.all([
+			rm(path.join(__dirname, "..", "dist"), {force: true, recursive: true}),
+			rm(path.join(__dirname, "..", "release"), {force: true, recursive: true})
+		])
+		console.log("Cleaned")
 	}
 
 

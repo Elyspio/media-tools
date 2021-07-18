@@ -23,7 +23,7 @@ import {StoreState} from "../../../../store";
 import {encoders} from "../../../../../config/media/encoder";
 import {getAppParams} from "../../../../../main/util/args";
 import {Logger} from "../../../../../main/util/logger";
-import {setCurrentProcess, setFormat, setMedias, setProcess, setProgress, stopCurrentProcess} from "../../../../store/module/media/media.action";
+import {setCurrentProcess, setFormat, setMedias, setProcesses, setProgress, stopCurrentProcess} from "../../../../store/module/media/media.action";
 
 
 const mapStateToProps = (state: StoreState) => ({
@@ -33,7 +33,7 @@ const mapStateToProps = (state: StoreState) => ({
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
 	dispatch: bindActionCreators({
-		setProcess,
+		setProcesses,
 		setMedias,
 		setFormat,
 		setProgress,
@@ -154,7 +154,7 @@ export class Encoder extends React.Component<Props> {
 
 	private onFormatChange = async (e: React.ChangeEvent<{ name?: string; value: any }>) => {
 		this.props.dispatch.setFormat(e.target.value);
-		this.updateProcess();
+		this.setProcesses();
 	};
 
 	private onFileSelect = async (result: string[]) => {
@@ -168,7 +168,7 @@ export class Encoder extends React.Component<Props> {
 		this.props.dispatch.setMedias(media);
 
 		if (this.props.media.encoder.format) {
-			this.updateProcess(media);
+			this.setProcesses(media);
 		}
 
 	};
@@ -206,6 +206,7 @@ export class Encoder extends React.Component<Props> {
 
 			s.on("progress", async (percentage) => {
 				this.logger.info("receving progress", percentage);
+
 			});
 
 			s.on("finished", async () => {
@@ -217,7 +218,7 @@ export class Encoder extends React.Component<Props> {
 		});
 	};
 
-	private updateProcess = (media?: Media[]) => {
+	private setProcesses = (media?: Media[]) => {
 		const encoder = encoders.find(encoder => encoder.value.ffmpeg === this.props.media.encoder.format);
 		const process: ProcessData[] = (media ?? this.props.media.medias)
 			.filter(media => media.property.streams.find(s => s.codec_type === "video")?.codec_name !== encoder?.value.ffprobe)
@@ -226,7 +227,8 @@ export class Encoder extends React.Component<Props> {
 				media
 			}));
 
-		this.props.dispatch.setProcess(process);
+
+		this.props.dispatch.setProcesses(process);
 	};
 
 

@@ -1,27 +1,74 @@
-import React from "react";
-import {ListItem} from "@material-ui/core";
+import React, {useRef} from "react";
+import {Grid, ListItem} from "@material-ui/core";
 import "./Process.scss";
 import Typography from "@material-ui/core/Typography";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import {ProcessData} from "../type";
+import {Dayjs} from "dayjs";
+import {formatDuration} from "../../../../../util/date";
+
+const dayjs = require("dayjs");
+
+const duration = require('dayjs/plugin/duration')
+const relativeTime = require('dayjs/plugin/relativeTime')
+const updateLocal = require('dayjs/plugin/updateLocale')
+
+dayjs.extend(duration)
+dayjs.extend(relativeTime)
+dayjs.extend(updateLocal);
+
 
 interface Props {
 	data: ProcessData
 }
 
 
-function Process(props: Props) {
-	const {data} = props;
+function Process({data}: Props) {
+
+	const ref = useRef<Dayjs | null>(null);
+
+	const eta = React.useMemo(() => {
+		if (data.percentage === 0) return "Queued"
+		if (data.percentage > 0 && ref.current === null) {
+			ref.current = dayjs();
+
+		}
+		if (data.percentage === 100) {
+			ref.current = null;
+			return "Done"
+		}
+
+		const nbSeconds = dayjs().diff(ref.current, "seconds");
+
+		const timeToWait = ((100 - data.percentage) * nbSeconds) / data.percentage
+		return formatDuration(dayjs.duration(timeToWait, "seconds"));
+
+	}, [data.percentage, data.media.file.path])
+
 	return <ListItem className={"Process"}>
-		<Typography
-			className={"name"}
-			title={data.media.file.name}>{data.media.file.name}
-		</Typography>
-		<LinearProgress
-			className={"bar"}
-			variant="determinate"
-			value={data.percentage}/>
-		<p>{data.percentage.toFixed(2)}%</p>
+		<Grid container direction={"row"} spacing={2}>
+			<Grid item xs={4}>
+				<Typography
+					className={"name"}
+					title={data.media.file.name}>{data.media.file.name}
+				</Typography>
+			</Grid>
+
+			<Grid item xs>
+				<LinearProgress
+					className={"bar"}
+					variant="determinate"
+					title={data.percentage.toString()}
+					value={data.percentage}/>
+			</Grid>
+
+			<Grid item xs={2}>
+				<Typography color={"textPrimary"}>{data.percentage.toFixed(2)}%</Typography>
+			</Grid>
+			<Grid item xs={4}>
+				<Typography color={"textPrimary"} noWrap>{eta}</Typography>
+			</Grid>
+		</Grid>
 	</ListItem>;
 }
 

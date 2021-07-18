@@ -12,7 +12,11 @@ export interface EncoderState {
 	processes?: {
 		finished: number,
 		total: number
-	}
+	},
+	/**
+	 *
+	 */
+	eta?: number
 }
 
 const defaultState: EncoderState = {
