@@ -1,6 +1,6 @@
 {
     "name": "elytools",
-    "version": "0.78.0",
+    "version": "0.81.0",
     "description": "template for Electron with ReactJs rendering in TypeScript",
     "main": "./dist/main.js",
     "scripts": {

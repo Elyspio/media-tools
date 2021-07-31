@@ -60,6 +60,7 @@ export class Renamer extends React.Component<{}, State> {
 						id={"renamer-new-name-input"}
 						label={"Futur nom"}
 						onChange={this.onNameChange}
+						fullWidth
 						error={!(name !== undefined && name.length > 0)}
 					/>
 
