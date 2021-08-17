@@ -2,7 +2,7 @@ import React from "react";
 import Button from "@material-ui/core/Button";
 import {InputLabel, MenuItem, Select} from "@material-ui/core";
 import {File, Media, ProcessData} from "./type";
-import {MediaService} from "../../../../../main/services/media/mediaService";
+import {MediaService} from "../../../../../main/services/media/media.service";
 import * as fs from "fs-extra";
 import * as path from "path";
 import List from "@material-ui/core/List";
@@ -10,7 +10,7 @@ import Process from "./process/Process";
 import "./Encoder.scss";
 import {Register} from "../../../../decorators/Module";
 import {SelectFolder} from "../../../common/os";
-import {Services} from "../../../../../main/services";
+
 import {Alert} from "@material-ui/lab";
 import AlertTitle from "@material-ui/lab/AlertTitle";
 import Link from "@material-ui/core/Link";
@@ -24,6 +24,10 @@ import {encoders} from "../../../../../config/media/encoder";
 import {getAppParams} from "../../../../../main/util/args";
 import {Logger} from "../../../../../main/util/logger";
 import {setCurrentProcess, setFormat, setMedias, setProcesses, setProgress, stopCurrentProcess} from "../../../../store/module/media/media.action";
+import {inject} from "inversify";
+import {FilesService} from "../../../../../main/services/files/files.service";
+import {DependencyInjectionKeys} from "../../../../../main/services/dependency-injection/dependency-injection.keys";
+import {resolve} from "inversify-react";
 
 
 const mapStateToProps = (state: StoreState) => ({
@@ -68,14 +72,21 @@ const menu = withContext({
 export class Encoder extends React.Component<Props> {
 
 
+	@resolve(DependencyInjectionKeys.files)
+	filesService!: FilesService
+
+
+	@resolve(DependencyInjectionKeys.media.convert)
+	mediaService!: MediaService
+
 	private logger = Logger(Encoder)
 
 	override async componentDidMount() {
-		await Services.media.convert.checkIfFFmpegInstalled();
+		await this.mediaService.checkIfFFmpegInstalled();
 
 		const appParams = getAppParams();
 		if (appParams.folder) {
-			await this.onFileSelect(await Services.files.list(appParams.folder));
+			await this.onFileSelect(await this.filesService.list(appParams.folder));
 		}
 	}
 
@@ -126,26 +137,26 @@ export class Encoder extends React.Component<Props> {
 			<div className={"Encoder"}>
 
 				{softInstalled === true && <>
-					<SelectFolder onChange={this.onFileSelect} mode={"file"} showSelected/>
+                    <SelectFolder onChange={this.onFileSelect} mode={"file"} showSelected/>
 					{optionsUi}
 					{processUi}
 					{actionsUi}
-				</>}
+                </>}
 
 
 				{softInstalled === false && <>
-					<Alert severity="error">
-						<AlertTitle>This module requires FFmpeg</AlertTitle>
-						It can be downloaded <Link href="https://ffmpeg.org/download.html">here</Link>
-					</Alert>
-				</>}
+                    <Alert severity="error">
+                        <AlertTitle>This module requires FFmpeg</AlertTitle>
+                        It can be downloaded <Link href="https://ffmpeg.org/download.html">here</Link>
+                    </Alert>
+                </>}
 
 				{softInstalled === undefined && <>
-					<Alert severity="info">
-						<AlertTitle>Please wait</AlertTitle>
-						Checking if FFmpeg is installed
-					</Alert>
-				</>}
+                    <Alert severity="info">
+                        <AlertTitle>Please wait</AlertTitle>
+                        Checking if FFmpeg is installed
+                    </Alert>
+                </>}
 
 			</div>
 		);

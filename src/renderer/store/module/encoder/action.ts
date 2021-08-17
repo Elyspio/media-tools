@@ -1,6 +1,8 @@
 import {createAction as _createAction} from "@reduxjs/toolkit";
 import {EncoderState} from "./reducer";
-import {Services} from "../../../../main/services";
+import {DialogService} from "../../../../main/services/electron/dialog.service";
+import {DependencyInjectionKeys} from "../../../../main/services/dependency-injection/dependency-injection.keys";
+import {container} from "../../../../main/services/dependency-injection/dependency-injection.container";
 
 
 const createAction = <T>(type: string) => _createAction<T>(`encoder/${type}`);
@@ -10,12 +12,14 @@ export const setProcessStatus = createAction<EncoderState["processes"]>("setProc
 export const updateProcessPercentage = createAction<number>("updateProcessPercentage");
 
 
+const electronService = container.get<DialogService>(DependencyInjectionKeys.electron.dialog);
+
 export async function runOnFinishAction() {
 
 	const notification = new Notification("Affiche un nouvel écran", {});
 
 	notification.onclick = () => {
-		Services.electron.dialog.createWindow("/encoder/recap", {
+		electronService.createWindow("/encoder/recap", {
 				title: "Encoder action summary",
 				top: true,
 				modal: true

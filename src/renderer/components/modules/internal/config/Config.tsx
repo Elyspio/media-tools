@@ -8,8 +8,12 @@ import {Add, Adjust, Remove} from "@material-ui/icons";
 import {Divider} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import "./Config.scss";
-import {Services} from "../../../../../main/services";
+
 import {StoreState} from "../../../../store";
+import {ConfigurationService} from "../../../../../main/services/configuration/configuration.service";
+import {inject} from "inversify";
+import {DependencyInjectionKeys} from "../../../../../main/services/dependency-injection/dependency-injection.keys";
+import {resolve} from "inversify-react";
 
 const mapStateToProps = (state: StoreState) => ({config: state.config.current});
 
@@ -30,6 +34,10 @@ export class Config extends Component<ReduxTypes> {
 
 	node = 0;
 
+
+	@resolve(DependencyInjectionKeys.configuration)
+	configurationService!: ConfigurationService
+
 	override render() {
 		const {config} = this.props;
 		this.node = 0;
@@ -45,7 +53,7 @@ export class Config extends Component<ReduxTypes> {
 				</TreeView>
 
 				<Divider className={"divider"}/>
-				<Button color={"primary"} onClick={() => Services.configuration.regenerate()}>Regenerate config</Button>
+				<Button color={"primary"} onClick={() => this.configurationService.regenerate()}>Regenerate config</Button>
 			</Container>
 		);
 	}

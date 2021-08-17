@@ -1,5 +1,7 @@
 import {networkInterfaces} from "systeminformation";
+import {injectable} from "inversify";
 
+@injectable()
 export abstract class VpnService {
 
 	abstract isConnected(interfaceName: string): Promise<boolean>;

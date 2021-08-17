@@ -3,8 +3,11 @@ import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Sl
 import {TransitionProps} from "@material-ui/core/transitions";
 import {Button} from "../../../common/Button";
 import {useModal} from "../../../../hooks/useModal";
-import {remote} from "electron"
-import {Services} from "../../../../../main/services";
+import {remote} from "electron";
+import {useInjection} from "inversify-react";
+import {TorrentService} from "../../../../../main/services/media/torrent.service";
+import {DependencyInjectionKeys} from "../../../../../main/services/dependency-injection/dependency-injection.keys";
+
 
 const {Notification} = remote.require('electron')
 
@@ -19,13 +22,16 @@ const Transition = React.forwardRef(function Transition(
 
 function AddNewTorrent(props: { name: string, clear: () => void }) {
 
-	const {open, setClose, setOpen} = useModal(true)
+	const {open, setClose} = useModal(true)
 
+	const services = {
+		torrent: useInjection<TorrentService>(DependencyInjectionKeys.media.torrent)
+	}
 
 	const launchApp = async (add: boolean) => {
 		setClose()
 		if (add) {
-			await Services.media.torrent.add(props.name)
+			await services.torrent.add(props.name)
 			new Notification({
 				title: `Starting to download ${props.name}`,
 			}).show()

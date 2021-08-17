@@ -1,6 +1,6 @@
 {
     "name": "elytools",
-    "version": "0.81.0",
+    "version": "0.82.0",
     "description": "template for Electron with ReactJs rendering in TypeScript",
     "main": "./dist/main.js",
     "scripts": {
@@ -95,6 +95,9 @@
         "@reduxjs/toolkit": "^1.6.0",
         "axios": "^0.21.1",
         "dayjs": "^1.10.5",
+        "inversify": "^5.1.1",
+        "inversify-react": "^1.0.0",
+        "reflect-metadata": "^0.1.13",
         "docker-hub-api": "^0.8.0",
         "fs-extra": "^10.0.0",
         "notistack": "^1.0.9",

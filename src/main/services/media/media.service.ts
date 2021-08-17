@@ -4,12 +4,15 @@ import {File, Media, MediaData, Stream} from "../../../renderer/components/modul
 import {EventEmitter} from "events";
 import * as path from "path";
 import {isInstalled} from "../../util";
-import {store} from "../../../renderer/store";
 import {setFFmpegInstalled, setProgress} from "../../../renderer/store/module/media/media.action";
+import {injectable} from "inversify";
 
 
+@injectable()
 export class MediaService {
-	public async getInfo(file: File) : Promise<MediaData> {
+
+
+	public async getInfo(file: File): Promise<MediaData> {
 		try {
 			const {stdout} = await exec(`ffprobe.exe  -v quiet -print_format json -show_format -show_streams "${file.path}"`);
 			return JSON.parse(stdout);
@@ -21,11 +24,15 @@ export class MediaService {
 
 	public async checkIfFFmpegInstalled() {
 		const bool = await isInstalled("ffmpeg");
+		const {store} = await import("../../../renderer/store")
 		store.dispatch(setFFmpegInstalled(bool));
 		return bool;
 	}
 
 	public async convert(input: Media, format: string, options?: { outputPath: string }): Promise<[EventEmitter, ReturnType<typeof spawn>]> {
+
+		const {store} = await import("../../../renderer/store")
+
 		try {
 			const outputPath = options?.outputPath ?? path.join(__dirname, "output.mkv");
 			const process = spawn("ffmpeg.exe", ["-y", "-i", input.file.path, "-map", "0", "-c:v", format, "-progress", "-", "-nostats", outputPath], {stdio: "pipe"});

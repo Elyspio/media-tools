@@ -4,8 +4,10 @@ import {WatchListener} from "fs-extra";
 import * as path from "path";
 import {Readable} from "stream";
 import {Extract} from "unzipper";
+import {injectable} from "inversify";
 
 
+@injectable()
 export class FilesService {
 
 	public async delete(folder: string, match: RegExp, progress?: (number: number) => void) {

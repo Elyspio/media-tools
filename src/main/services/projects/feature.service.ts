@@ -1,5 +1,4 @@
 import {Feature, FeatureOptions} from "./types";
-import {Services} from "../index";
 import {featureMap} from "../../../config/projects/projects";
 import {github} from "../../../config/projects/projects.private";
 import * as fs from "fs-extra";
@@ -7,11 +6,23 @@ import {ensureDir, writeFile} from "fs-extra";
 import {promises as ofs} from "fs";
 import * as  path from "path";
 import * as os from "os";
+import {inject, injectable} from "inversify";
+import {GithubService} from "./github.service";
+import {FilesService} from "../files/files.service";
+import {DependencyInjectionKeys} from "../dependency-injection/dependency-injection.keys";
 
 
+@injectable()
 export class FeatureService {
+
+	@inject(DependencyInjectionKeys.projects.github)
+	private githubService!: GithubService
+
+	@inject(DependencyInjectionKeys.files)
+	private filesService!: FilesService
+
 	public async getAvailableFeature(): Promise<Feature[]> {
-		const templates = await Services.projects.github.getTemplates();
+		const templates = await this.githubService.getTemplates();
 		console.log("templates", templates);
 		const features = new Set<Feature>();
 		for (const t of templates) {
@@ -23,20 +34,20 @@ export class FeatureService {
 	}
 
 	public async get(feature: Feature, dist: string) {
-		const templates = await Services.projects.github.getTemplates();
+		const templates = await this.githubService.getTemplates();
 		const featured = Object.entries(featureMap).find(([id, f]) => f.some(ff => ff === feature));
 
 		if (featured) {
 			const template = templates.find(t => t.id.toString() === featured[0]);
 			if (template) {
-				await Services.projects.github.clone({repo: template.name, owner: github.user, output: dist});
+				await this.githubService.clone({repo: template.name, owner: github.user, output: dist});
 			}
 		}
 
 		if (feature.use.length > 0) {
 			const files = await fs.readdir(dist);
 			const willBeRemoved = files.filter(f => !feature.use.includes(f));
-			await Services.files.deleteNodes(willBeRemoved.map(f => ({path: path.resolve(dist, f)})));
+			await this.filesService.deleteNodes(willBeRemoved.map(f => ({path: path.resolve(dist, f)})));
 		}
 
 		if (feature.options?.includes(FeatureOptions.wrap)) {

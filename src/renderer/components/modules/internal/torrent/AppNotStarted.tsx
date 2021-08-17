@@ -2,10 +2,13 @@ import React from 'react';
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide} from "@material-ui/core";
 import {TransitionProps} from "@material-ui/core/transitions";
 import {Button} from "../../../common/Button";
-import {Services} from '../../../../../main/services';
+
 import {useModal} from "../../../../hooks/useModal";
-import {remote} from "electron"
+import {remote} from "electron";
 import {spawnAsync} from "../../../../../main/util";
+import {useInjection} from "inversify-react";
+import {SystemService} from "../../../../../main/services/system/system.service";
+import {DependencyInjectionKeys} from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 
 const {Notification} = remote.require('electron')
 
@@ -21,10 +24,13 @@ const Transition = React.forwardRef(function Transition(
 function AppNotStarted() {
 
 	const {open, setClose, setOpen} = useModal(false)
+	const services = {
+		system: useInjection<SystemService>(DependencyInjectionKeys.system)
+	}
 
 
 	React.useEffect(() => {
-		Services.system.isAppStarted("qbittorrent").then(launched => {
+		services.system.isAppStarted("qbittorrent").then(launched => {
 			if (!launched) {
 				setOpen()
 			}

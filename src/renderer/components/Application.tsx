@@ -2,55 +2,45 @@ import React from "react";
 import Frame from "./frame/Frame";
 import Router from "./router/Router";
 import {checkUpdate} from "../../main/util/updater";
-import {Services} from "../../main/services";
-import {Configuration} from "../../main/services/configuration/configurationService";
-import {connect, ConnectedProps} from "react-redux";
-import {Dispatch} from "redux";
-import {StoreState} from "../store";
-
-class Application extends React.Component<ReduxTypes> {
+import {Configuration, ConfigurationService} from "../../main/services/configuration/configuration.service";
+import {useAppSelector} from "../store";
+import {useInjection} from "inversify-react"
+import {WindowService} from "../../main/services/electron/window.service";
+import {DependencyInjectionKeys} from "../../main/services/dependency-injection/dependency-injection.keys";
 
 
-	checkHeight = async () => {
+export function Application() {
 
-		if (this.props.current.autoResize.width || this.props.current.autoResize.height) {
-			const config = await Services.configuration.get();
+	const services = {
+		configuration: useInjection<ConfigurationService>(DependencyInjectionKeys.configuration),
+		window: useInjection<WindowService>(DependencyInjectionKeys.electron.window),
+	}
+
+	const current = useAppSelector(state => state.routing.routes[state.routing.path]);
+
+	const checkHeight = React.useCallback(async () => {
+		if (current?.autoResize.width || current?.autoResize.height) {
+			const config = await services.configuration.get();
 			// @ts-ignore
 			const dim: (keyof Configuration["frame"]["resize"])[] = [...Object.keys(config.frame.resize)].filter(k => config.frame.resize[k] && this.props.current.autoResize[k] === true);
-			const delta = await Services.electron.window.isUnderSized(dim);
+			const delta = await services.window.isUnderSized(dim);
 			if (dim.map(d => delta[d]).some(v => v > 0)) {
-				await Services.electron.window.resize(delta);
+				await services.window.resize(delta);
 			}
 		}
+	}, [current])
 
 
-	};
-
-	override async componentDidMount() {
+	React.useEffect(() => {
 		setTimeout(checkUpdate, 1000);
-		setInterval(this.checkHeight, 250);
-	}
+		setInterval(checkHeight, 250);
+	}, [])
 
-	override render() {
-
-		return (
-			<Frame>
-				<Router/>
-			</Frame>
-		);
-	}
+	return (
+		<Frame>
+			<Router/>
+		</Frame>
+	);
 }
 
-
-const mapStateToProps = (state: StoreState) => ({
-	current: state.routing.routes[state.routing.path]
-});
-
-
-const mapDispatchToProps = (dispatch: Dispatch) => ({});
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-type ReduxTypes = ConnectedProps<typeof connector>;
-
-
-export default connector(Application);
+export default Application;

@@ -1,7 +1,7 @@
 import {Button as MuiButton, ButtonProps} from "@material-ui/core";
 import {ThemeProvider} from "@material-ui/core/styles";
 import React from "react";
-import {theme} from "../../app";
+import {theme} from "../../../config/theme";
 
 type NewColors = "error" | "warning";
 

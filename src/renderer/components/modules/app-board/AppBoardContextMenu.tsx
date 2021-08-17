@@ -6,7 +6,7 @@ import FormControl from "@material-ui/core/FormControl";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import {setConfig} from "../../../store/module/configuration/action";
-import {BaseConfig, Configuration} from "../../../../main/services/configuration/configurationService";
+import {BaseConfig, Configuration} from "../../../../main/services/configuration/configuration.service";
 import {StoreState} from "../../../store";
 
 const mapStateToProps = (state: StoreState) => ({

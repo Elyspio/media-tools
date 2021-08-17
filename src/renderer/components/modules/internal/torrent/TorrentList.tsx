@@ -2,11 +2,15 @@ import React, {useMemo} from 'react';
 import {Box, Menu, MenuItem, Typography} from "@material-ui/core";
 import {DataGrid, GridCellParams, GridColumns} from "@material-ui/data-grid";
 import {useAsyncState} from "../../../../hooks/useAsyncState";
-import {Services} from "../../../../../main/services";
+
 import {Torrent, TorrentState} from "@ctrl/qbittorrent/dist/types";
 import {useAppDimension} from "../../../../../main/util/hooks";
 import * as dayjs from "dayjs";
 import "dayjs/plugin/duration";
+import {useInjection} from "inversify-react";
+import {FilesService} from "../../../../../main/services/files/files.service";
+import {TorrentService} from "../../../../../main/services/media/torrent.service";
+import {DependencyInjectionKeys} from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 
 const duration = require('dayjs/plugin/duration')
 const relativeTime = require('dayjs/plugin/relativeTime')
@@ -144,9 +148,14 @@ const initialPopoverPosition: PopoverInfo = {}
 
 const TorrentList = () => {
 
+	const services = {
+		torrent: useInjection<TorrentService>(DependencyInjectionKeys.media.torrent),
+		files: useInjection<FilesService>(DependencyInjectionKeys.files),
+	}
+
 	const [popoverPosition, setPopoverPosition] = React.useState(initialPopoverPosition);
 
-	const {data, reload} = useAsyncState(Services.media.torrent.list, [], 1000);
+	const {data, reload} = useAsyncState(services.torrent.list, [], 1000);
 
 	const {width} = useAppDimension();
 
@@ -175,9 +184,9 @@ const TorrentList = () => {
 	const handleClose = React.useCallback(async (item?: "resume" | "pause" | "delete") => {
 		setPopoverPosition(initialPopoverPosition);
 		const func = {
-			resume: Services.media.torrent.resume,
-			pause: Services.media.torrent.pause,
-			delete: Services.media.torrent.delete,
+			resume: services.torrent.resume,
+			pause: services.torrent.pause,
+			delete: services.torrent.delete,
 		}
 
 		if (item) {
@@ -199,18 +208,18 @@ const TorrentList = () => {
 			/>
 
 			{popoverPosition.mouseY && popoverPosition.mouseX && <Menu
-				keepMounted
-				open={true}
-				onClose={() => handleClose()}
-				anchorReference="anchorPosition"
-				anchorPosition={
+                keepMounted
+                open={true}
+                onClose={() => handleClose()}
+                anchorReference="anchorPosition"
+                anchorPosition={
 					{top: popoverPosition.mouseY, left: popoverPosition.mouseX}
 				}
-			>
-				<MenuItem onClick={() => handleClose("resume")}>Resume</MenuItem>
-				<MenuItem onClick={() => handleClose("pause")}>Pause</MenuItem>
-				<MenuItem onClick={() => handleClose("delete")}>Delete</MenuItem>
-			</Menu>}
+            >
+                <MenuItem onClick={() => handleClose("resume")}>Resume</MenuItem>
+                <MenuItem onClick={() => handleClose("pause")}>Pause</MenuItem>
+                <MenuItem onClick={() => handleClose("delete")}>Delete</MenuItem>
+            </Menu>}
 
 
 		</Box>

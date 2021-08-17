@@ -4,7 +4,7 @@ import {Dialog, DialogContent, DialogTitle, List, ListItem, ListItemText, ListSu
 import React from "react";
 import "./Settings.scss";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import {Configuration} from "../../../../main/services/configuration/configurationService";
+import {Configuration} from "../../../../main/services/configuration/configuration.service";
 import {setConfig} from "../../../store/module/configuration/action";
 import {StoreState} from "../../../store";
 
