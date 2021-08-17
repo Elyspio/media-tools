@@ -1,7 +1,9 @@
 import {createReducer} from "@reduxjs/toolkit";
 import {store} from "../..";
 import {setOnFinishAction, setProcessStatus, updateProcessPercentage} from "./action";
-import {Services} from "../../../../main/services";
+import {SystemService} from "../../../../main/services/system/system.service";
+import {DependencyInjectionKeys} from "../../../../main/services/dependency-injection/dependency-injection.keys";
+import {container} from "../../../../main/services/dependency-injection/dependency-injection.container";
 
 
 export const onFinishActionList = <const>["Sleep", "Shutdown", "Hibernate", "Lock", "None"];
@@ -24,13 +26,16 @@ const defaultState: EncoderState = {
 };
 
 
+const systemService = container.get<SystemService>(DependencyInjectionKeys.electron.dialog);
+
+
 export const getOnFinishAction = () => {
 
 	const actions: { [key in typeof onFinishActionList[number]]: () => any } = {
-		Hibernate: Services.system.hibernate,
-		Lock: Services.system.lock,
-		Shutdown: Services.system.shutdown,
-		Sleep: Services.system.sleep,
+		Hibernate: systemService.hibernate,
+		Lock: systemService.lock,
+		Shutdown: systemService.shutdown,
+		Sleep: systemService.sleep,
 		None: () => {
 		}
 	};

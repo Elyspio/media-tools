@@ -3,16 +3,18 @@ import "./Vpn.scss";
 import {Container, Divider, MenuItem, Typography} from "@material-ui/core";
 import {Register} from "../../../../decorators/Module";
 import {Button} from "../../../common/Button";
-import {Services} from "../../../../../main/services";
+
 import {connect, ConnectedProps} from "react-redux";
 import {Dispatch} from "redux";
 import {StoreState} from "../../../../store";
 import {ProviderContext, withSnackbar} from "notistack";
 import Box from "@material-ui/core/Box";
-import {countries, Country} from "../../../../../main/services/network/nordvpnService";
+import {countries, Country, NordvpnService} from "../../../../../main/services/network/nordvpn.service";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import {Logger} from "../../../../../main/util/logger";
+import {resolve} from "inversify-react";
+import {DependencyInjectionKeys} from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 
 
 const mapStateToProps = (state: StoreState) => ({
@@ -40,6 +42,10 @@ type State = {
 }, connector, withSnackbar)
 export class Vpn extends Component<ReduxTypes & ProviderContext, State> {
 
+
+	@resolve(DependencyInjectionKeys.networks.nordvpn)
+	nordvpnService!: NordvpnService
+
 	override state: State = {
 		config: {
 			nordvpn: {
@@ -62,13 +68,13 @@ export class Vpn extends Component<ReduxTypes & ProviderContext, State> {
 	};
 	private nordvpn = {
 		connect: () => {
-			Services.networks.nordvpn.connect(this.state.config.nordvpn.country).catch((e: Error) => {
+			this.nordvpnService.connect(this.state.config.nordvpn.country).catch((e: Error) => {
 				this.logger.error("nordvpn.connect error", e);
 				this.props.enqueueSnackbar(e.message, {variant: "error", anchorOrigin: {horizontal: "right", vertical: "bottom"}});
 			})
 		},
 		disconnect: () => {
-			Services.networks.nordvpn.disconnect().catch((e: Error) => {
+			this.nordvpnService.disconnect().catch((e: Error) => {
 				this.logger.error("nordvpn.disconnect error", e);
 				this.props.enqueueSnackbar(e.message, {variant: "error", anchorOrigin: {horizontal: "right", vertical: "bottom"}});
 			});

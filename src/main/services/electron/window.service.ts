@@ -1,8 +1,10 @@
-import {Configuration} from "../configuration/configurationService";
+import {Configuration} from "../configuration/configuration.service";
+import {injectable} from "inversify";
 
 const {BrowserWindow} = require("electron").remote;
 type Dimensions = (keyof Configuration["frame"]["resize"])[];
 
+@injectable()
 export class WindowService {
 
 	public async isUnderSized(dimensions: Dimensions): Promise<{ height: number, width: number }> {

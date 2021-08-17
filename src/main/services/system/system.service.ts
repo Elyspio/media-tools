@@ -4,9 +4,11 @@ import {promisify} from "util";
 import {xml2js} from "xml-js";
 import {NvidiaSmi} from "./types/nvidia";
 import * as os from "os";
+import {injectable} from "inversify";
 
 const exec = promisify(_exec);
 
+@injectable()
 export class SystemService {
 
 	private static _instance: SystemService = new SystemService();

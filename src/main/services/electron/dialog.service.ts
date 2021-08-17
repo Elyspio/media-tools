@@ -1,16 +1,16 @@
 import {BrowserWindowConstructorOptions} from "electron";
 import * as fs from "fs-extra";
 import path, {join} from "path";
-import url from "url";
+import * as url from "url";
 import {windowOption} from "../../../config/electron";
-import {store} from "../../../renderer/store";
+import {injectable} from "inversify";
 
 const {dialog, BrowserWindow} = require("electron").remote;
 
+@injectable()
 export class DialogService {
 
 	/**
-	 *
 	 * @param returnFiles flag to make the function return files in the folder
 	 */
 	public async selectFolder(returnFiles?: boolean) {
@@ -37,6 +37,8 @@ export class DialogService {
 		});
 
 
+		const {store} = await import("../../../renderer/store" )
+
 		const search = `route=${target}&options=${JSON.stringify(frame)}&store=${JSON.stringify(store.getState())}`;
 		const param = "data=" + btoa(search);
 		if (process.env.NODE_ENV !== "production") {
@@ -55,7 +57,6 @@ export class DialogService {
 	}
 
 	private escape = (path: string) => path.replace(/\\/g, "\\\\");
-
 
 }
 

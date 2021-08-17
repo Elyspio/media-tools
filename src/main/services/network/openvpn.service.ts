@@ -2,11 +2,13 @@ import {isInstalled} from "../../util";
 import {vpnConfig} from "../../../config/networks/vpn";
 import {spawn} from "child_process";
 import {EventManager} from "../../util/events";
+import {injectable} from "inversify";
 
 type StatusListener = "connected" | "disconnected"
 type StdioListener = string
 
-export class OpenVpnService extends EventManager<["data", "status"], [StdioListener, StatusListener]> {
+@injectable()
+export class OpenvpnService extends EventManager<["data", "status"], [StdioListener, StatusListener]> {
 
 	public static errors = {
 		vpnCLientNotInstalled: new Error("Vpn client could not be found in PATH"),
@@ -26,27 +28,27 @@ export class OpenVpnService extends EventManager<["data", "status"], [StdioListe
 
 	public connect() {
 
-		if (!OpenVpnService.isClientInstalled()) {
-			throw OpenVpnService.errors.vpnCLientNotInstalled;
+		if (!OpenvpnService.isClientInstalled()) {
+			throw OpenvpnService.errors.vpnCLientNotInstalled;
 		}
 
-		if (!OpenVpnService.spawned) {
-			OpenVpnService.spawned = spawn("openvpn --config " + vpnConfig.configFile, {stdio: "pipe"});
-			OpenVpnService.spawned.stdout?.on("data", args => {
+		if (!OpenvpnService.spawned) {
+			OpenvpnService.spawned = spawn("openvpn --config " + vpnConfig.configFile, {stdio: "pipe"});
+			OpenvpnService.spawned.stdout?.on("data", args => {
 				this.stdout.push(args.toString());
 				this.emit("data", this.stdout.join());
 				this.emit("status", "disconnected");
 			});
 		} else {
-			throw OpenVpnService.errors.alreadyConnected;
+			throw OpenvpnService.errors.alreadyConnected;
 		}
 	}
 
 	public disconnect() {
-		if (!OpenVpnService.spawned) {
-			throw OpenVpnService.errors.notConnected;
+		if (!OpenvpnService.spawned) {
+			throw OpenvpnService.errors.notConnected;
 		}
-		OpenVpnService.spawned.kill("SIGTERM");
+		OpenvpnService.spawned.kill("SIGTERM");
 		this.emit("status", "disconnected");
 	}
 

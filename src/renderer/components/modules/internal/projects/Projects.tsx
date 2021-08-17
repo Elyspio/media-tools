@@ -9,10 +9,12 @@ import Select from "@material-ui/core/Select";
 import Box from "@material-ui/core/Box";
 import Checkbox from "@material-ui/core/Checkbox";
 import {Register} from "../../../../decorators/Module";
-import {Services} from "../../../../../main/services";
+import {resolve} from "inversify-react";
 import {Feature} from "../../../../../main/services/projects/types";
 import {ProjectBuilder} from "../../../../../main/services/projects/projectBuilder";
 import {Logger} from "../../../../../main/util/logger";
+import {FeatureService} from "../../../../../main/services/projects/feature.service";
+import {DependencyInjectionKeys} from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 
 interface State {
 	folder?: string
@@ -36,6 +38,10 @@ interface State {
 })
 export class Vpn extends Component<{}, State> {
 
+
+	@resolve(DependencyInjectionKeys.projects.feature)
+	featureService!: FeatureService
+
 	override state: State = {
 		use: [],
 		features: [],
@@ -51,7 +57,7 @@ export class Vpn extends Component<{}, State> {
 
 	override async componentDidMount() {
 		this.setState({
-			features: await Services.projects.feature.getAvailableFeature(),
+			features: await this.featureService.getAvailableFeature(),
 			loading: false
 		});
 	}
@@ -66,128 +72,128 @@ export class Vpn extends Component<{}, State> {
 
 				{!loading && <>
 
-					<Box className={"row"}>
-						<TextField
-							label={"Folder name"}
-							error={name.length === 0}
-							style={{width: "30%"}} value={name}
-							onChange={e => this.handleChange("name", e.target.value)}
-						/>
+                    <Box className={"row"}>
+                        <TextField
+                            label={"Folder name"}
+                            error={name.length === 0}
+                            style={{width: "30%"}} value={name}
+                            onChange={e => this.handleChange("name", e.target.value)}
+                        />
 
-						<TextField
-							label={"Description"}
-							value={description}
-							id={"description"}
-							style={{width: "70%"}}
-							onChange={e => this.handleChange("description", e.target.value)}
-						/>
-					</Box>
+                        <TextField
+                            label={"Description"}
+                            value={description}
+                            id={"description"}
+                            style={{width: "70%"}}
+                            onChange={e => this.handleChange("description", e.target.value)}
+                        />
+                    </Box>
 
 
-					<Box className={"row"}>
-						<InputLabel id="ignoreContentLabel">Use features</InputLabel>
-						<Select
-							labelId="ignoreContentLabel"
-							id="ignoreContentSelect"
-							multiple
-							MenuProps={{variant: "menu"}}
-							value={use}
-							renderValue={(selected: any) => selected.join(" ")}
-							input={<Input/>}
-							onChange={e => this.handleChange("use", e.target.value)}
-						>
+                    <Box className={"row"}>
+                        <InputLabel id="ignoreContentLabel">Use features</InputLabel>
+                        <Select
+                            labelId="ignoreContentLabel"
+                            id="ignoreContentSelect"
+                            multiple
+                            MenuProps={{variant: "menu"}}
+                            value={use}
+                            renderValue={(selected: any) => selected.join(" ")}
+                            input={<Input/>}
+                            onChange={e => this.handleChange("use", e.target.value)}
+                        >
 							{features.map(({name}) => (
 								<MenuItem key={name} value={name} className={"exclude"}>
 									<Checkbox checked={use.some(i => i === name)} color={"secondary"}/>
 									<Typography className={"item"}>{name}</Typography>
 								</MenuItem>
 							))}
-						</Select>
-					</Box>
+                        </Select>
+                    </Box>
 
-					<Box className="options row">
-						<Typography color={"primary"}>Options</Typography>
-						<div className="simple-options">
-							<div className={"option"}>
-								<FormControlLabel
-									control={<Checkbox checked={readme} color={"default"} onChange={(e) => this.handleChange("readme", e.target.checked)} name="readme"/>}
-									labelPlacement={"start"}
-									label="Readme"
-									className={"switch"}
-								/>
-							</div>
+                    <Box className="options row">
+                        <Typography color={"primary"}>Options</Typography>
+                        <div className="simple-options">
+                            <div className={"option"}>
+                                <FormControlLabel
+                                    control={<Checkbox checked={readme} color={"default"} onChange={(e) => this.handleChange("readme", e.target.checked)} name="readme"/>}
+                                    labelPlacement={"start"}
+                                    label="Readme"
+                                    className={"switch"}
+                                />
+                            </div>
 
 
-						</div>
+                        </div>
 
-						<div className={"option"}>
-							<FormControlLabel
-								control={<Checkbox checked={!!docker} color={"default"} onChange={(e) => this.handleChange("docker", e.target.checked)} name="docker"/>}
-								labelPlacement={"start"}
-								label="Docker"
-								className={"switch"}
-							/>
+                        <div className={"option"}>
+                            <FormControlLabel
+                                control={<Checkbox checked={!!docker} color={"default"} onChange={(e) => this.handleChange("docker", e.target.checked)} name="docker"/>}
+                                labelPlacement={"start"}
+                                label="Docker"
+                                className={"switch"}
+                            />
 
 							{docker && <TextField
-								label={"Docker name"}
-								error={typeof docker === "string" && docker.length === 0}
-								defaultValue={name}
-								style={{width: "50%"}}
-								onChange={e => this.handleChange("docker", e.target.value)}
-							/>}
-						</div>
+                                label={"Docker name"}
+                                error={typeof docker === "string" && docker.length === 0}
+                                defaultValue={name}
+                                style={{width: "50%"}}
+                                onChange={e => this.handleChange("docker", e.target.value)}
+                            />}
+                        </div>
 
-						<div className={"option"}>
-							<FormControlLabel
-								control={<Checkbox checked={!!github} color={"default"} onChange={(e) => this.handleChange("github", e.target.checked)} name="github"/>}
-								labelPlacement={"start"}
-								label="Github"
-								className={"switch"}
-							/>
+                        <div className={"option"}>
+                            <FormControlLabel
+                                control={<Checkbox checked={!!github} color={"default"} onChange={(e) => this.handleChange("github", e.target.checked)} name="github"/>}
+                                labelPlacement={"start"}
+                                label="Github"
+                                className={"switch"}
+                            />
 
 							{github && <TextField
-								label={"Github name"}
-								error={typeof github === "string" && github.length === 0}
-								defaultValue={name}
-								style={{width: "50%"}}
-								onChange={e => this.handleChange("github", e.target.value)}
-							/>}
+                                label={"Github name"}
+                                error={typeof github === "string" && github.length === 0}
+                                defaultValue={name}
+                                style={{width: "50%"}}
+                                onChange={e => this.handleChange("github", e.target.value)}
+                            />}
 
 							{github && <FormControlLabel
-								control={<Checkbox
+                                control={<Checkbox
 									checked={template}
 									color={"default"}
 									onChange={(e) => this.handleChange("template", e.target.checked)}
 									name="Template"/>
 								}
-								labelPlacement={"start"}
-								label="Template"
-								className={"switch"}
-							/>}
+                                labelPlacement={"start"}
+                                label="Template"
+                                className={"switch"}
+                            />}
 
-						</div>
+                        </div>
 
-					</Box>
+                    </Box>
 
-					<div className="bottom">
-						<SelectFolder
-							onChange={(val) => this.handleChange("folder", val)}
-							mode={"folder"}
-							showSelected
-							variant={"outlined"}
-							color={"default"}
+                    <div className="bottom">
+                        <SelectFolder
+                            onChange={(val) => this.handleChange("folder", val)}
+                            mode={"folder"}
+                            showSelected
+                            variant={"outlined"}
+                            color={"default"}
 
-						/>
+                        />
 
-						<Button
-							color={"primary"}
-							className={"RemoveBtn"}
-							variant={"outlined"}
-							onClick={this.create}>
-							Create repository
-						</Button>
-					</div>
-				</>}
+                        <Button
+                            color={"primary"}
+                            className={"RemoveBtn"}
+                            variant={"outlined"}
+                            onClick={this.create}>
+                            Create repository
+                        </Button>
+                    </div>
+                </>}
 			</Container>
 		);
 	}

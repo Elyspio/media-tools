@@ -1,9 +1,12 @@
 import React, {HTMLAttributes} from "react";
 import Button, {ButtonProps} from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import {Services} from "../../../main/services";
+
 import "./os.scss";
 import {useLogger} from "../../hooks/useLogger";
+import {DialogService} from "../../../main/services/electron/dialog.service";
+import {useInjection} from "inversify-react";
+import {DependencyInjectionKeys} from "../../../main/services/dependency-injection/dependency-injection.keys";
 
 type Props = Omit<HTMLAttributes<any>, "onChange"> & {
 	showSelected?: boolean,
@@ -24,6 +27,9 @@ type SelectFolder = {
 
 export function SelectFolder(props: Props) {
 
+	const services = {
+		dialog: useInjection<DialogService>(DependencyInjectionKeys.electron.dialog),
+	}
 
 	const [files, setFiles] = React.useState<string>("");
 
@@ -33,7 +39,7 @@ export function SelectFolder(props: Props) {
 
 	async function openDialog(e: React.MouseEvent) {
 		if (props.mode === "folder") {
-			let choice = await Services.electron.dialog.selectFolder(false);
+			let choice = await services.dialog.selectFolder(false);
 			logger.info("files", files);
 
 			if (choice !== null) {

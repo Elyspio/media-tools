@@ -1,5 +1,6 @@
 import {createReducer} from "@reduxjs/toolkit";
 import {addRoute, setPath} from "./action";
+import {FilesService} from "../../../../main/services/files/files.service";
 
 const requires = [
 	"external/lights/Light",
@@ -16,9 +17,10 @@ const requires = [
 	"app-board/AppBoard"
 ];
 
-for (const c of requires) {
+requires.forEach(async (c) => {
 	import(`../../../components/modules/${c}.tsx`);
-}
+})
+
 
 type ReactComponent = any;
 

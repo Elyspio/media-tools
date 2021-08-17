@@ -1,10 +1,25 @@
 import {Feature} from "./types";
-import {Services} from "../index";
+
 import * as path from "path";
 import * as fs from "fs-extra";
 import {EOL} from "os";
+import {FeatureService} from "./feature.service";
+import {inject} from "inversify";
+import {GithubService} from "./github.service";
+import {DockerService} from "./docker.service";
+import {DependencyInjectionKeys} from "../dependency-injection/dependency-injection.keys";
+
 
 export class ProjectBuilder {
+
+	@inject(DependencyInjectionKeys.projects.feature)
+	private featureService!: FeatureService
+
+	@inject(DependencyInjectionKeys.projects.docker)
+	private dockerService!: DockerService
+
+	@inject(DependencyInjectionKeys.projects.github)
+	private githubService!: GithubService
 
 	private config: {
 		name: string,
@@ -48,11 +63,11 @@ export class ProjectBuilder {
 		if (!output) throw new Error("No output provided");
 
 		// features
-		const getFeatures = this.config.features.map(f => Services.projects.feature.get(f, path.join(output, f.name)));
+		const getFeatures = this.config.features.map(f => this.featureService.get(f, path.join(output, f.name)));
 		const paths = this.config.features.map(f => path.join(output, f.name));
 		await Promise.all(getFeatures);
 		const projectPath = path.join(output, this.config.name);
-		await Services.projects.feature.merge(paths, projectPath);
+		await this.featureService.merge(paths, projectPath);
 
 		// readme
 		if (this.config.readme) {
@@ -73,12 +88,12 @@ export class ProjectBuilder {
 
 		// github
 		if (this.config.github) {
-			await Services.projects.github.init(projectPath, this.config.github, this.config.description, this.config.template);
+			await this.githubService.init(projectPath, this.config.github, this.config.description, this.config.template);
 		}
 
 		// docker
 		if (this.config.docker) {
-			await Services.projects.docker.addDockerSupport(this.config.docker, this.config.description ?? "", this.config.features, projectPath);
+			await this.dockerService.addDockerSupport(this.config.docker, this.config.description ?? "", this.config.features, projectPath);
 		}
 
 

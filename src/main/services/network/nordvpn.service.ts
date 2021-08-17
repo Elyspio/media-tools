@@ -1,13 +1,14 @@
 import {isInstalled} from "../../util";
 import {spawn} from "child_process";
-import {VpnService} from "./vpnService";
-import {store} from "../../../renderer/store";
+import {VpnService} from "./vpn.service";
+import {injectable} from "inversify";
 
 
 export const countries = ["Switzerland", "France", "Germany"] as const
 export type Country = typeof countries[number]
 
-export class NordVpnService extends VpnService {
+@injectable()
+export class NordvpnService extends VpnService {
 
 	public static errors = {
 		vpnCLientNotInstalled: new Error("Nordvpn client could not be found in PATH")
@@ -19,20 +20,21 @@ export class NordVpnService extends VpnService {
 	}
 
 	public async connect(region?: Country) {
-		if (!await this.isClientInstalled()) throw NordVpnService.errors.vpnCLientNotInstalled;
+		if (!await this.isClientInstalled()) throw NordvpnService.errors.vpnCLientNotInstalled;
 		const bonus = []
 		if (region) bonus.push("-g", region);
 		await this.runIgnoringError("nordvpn", "-c", ...bonus)
 	}
 
 	public async disconnect() {
-		if (!await this.isClientInstalled()) throw NordVpnService.errors.vpnCLientNotInstalled;
+		if (!await this.isClientInstalled()) throw NordvpnService.errors.vpnCLientNotInstalled;
 		await this.runIgnoringError("nordvpn", "-d")
 
 	}
 
 
-	public waitForConnect(region?: Country) {
+	public async waitForConnect(region?: Country) {
+		const {store} = await import("../../../renderer/store")
 		return new Promise<void>(async resolve => {
 			await this.connect(region);
 			const timer = setInterval(() => {

@@ -1,6 +1,7 @@
 import {qbittorent} from "../../../config/media/torents.private";
 import {QBittorrent as IQBittorrent} from "@ctrl/qbittorrent";
 import {readFile} from "fs/promises";
+import {injectable} from "inversify";
 
 const {remote} = require("electron")
 const {QBittorrent} = remote.require('@ctrl/qbittorrent');
@@ -11,6 +12,7 @@ const client: IQBittorrent = new QBittorrent({
 	username: qbittorent.login
 });
 
+@injectable()
 export class TorrentService {
 
 	async add(torrent: string) {

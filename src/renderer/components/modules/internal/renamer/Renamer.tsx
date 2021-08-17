@@ -7,8 +7,10 @@ import {SelectFolder} from "../../../common/os";
 import {Register} from "../../../../decorators/Module";
 import "./Renamer.scss";
 import {getAppParams} from "../../../../../main/util/args";
-import {Services} from "../../../../../main/services";
 import {Logger} from "../../../../../main/util/logger";
+import {resolve} from "inversify-react";
+import {FilesService} from "../../../../../main/services/files/files.service";
+import {DependencyInjectionKeys} from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 
 
 interface State {
@@ -31,6 +33,10 @@ interface Episode {
 @Register({name: "Renamer", path: "/renamer"})
 export class Renamer extends React.Component<{}, State> {
 
+
+	@resolve(DependencyInjectionKeys.files)
+	filesService!: FilesService
+
 	override state: State = {
 		episodes: [],
 		replaceOptions: {},
@@ -42,7 +48,7 @@ export class Renamer extends React.Component<{}, State> {
 		const appParams = getAppParams();
 		this.logger.info("params", appParams);
 		if (appParams.folder) {
-			const files = await Services.files.list(appParams.folder);
+			const files = await this.filesService.list(appParams.folder);
 			await this.onFileSelect(files);
 		}
 	}

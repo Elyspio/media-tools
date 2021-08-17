@@ -4,8 +4,10 @@ import {docker} from "../../../config/projects/projects.private";
 import {Feature} from "./types";
 import * as fs from "fs-extra";
 import * as path from "path";
+import {injectable} from "inversify";
 
 
+@injectable()
 export class DockerService {
 	public addDockerSupport = async (dockerName: string, description: string, features: Feature[], projectRoot: string) => {
 		const dockerFolder = path.join(projectRoot, "docker");

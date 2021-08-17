@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import "./Purge.scss";
 import {SelectFolder} from "../../../common/os";
-import {Services} from "../../../../../main/services";
+
 import TextField from "@material-ui/core/TextField";
 import {Button, Container, Input, MenuItem, Typography} from "@material-ui/core";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -12,6 +12,9 @@ import Checkbox from "@material-ui/core/Checkbox";
 import {Alert, Color} from "@material-ui/lab";
 import {Register} from "../../../../decorators/Module";
 import {Logger} from "../../../../../main/util/logger";
+import {resolve} from "inversify-react";
+import {FilesService} from "../../../../../main/services/files/files.service";
+import {DependencyInjectionKeys} from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 
 interface State {
 	match: string,
@@ -35,6 +38,9 @@ let exclusions = ["node_modules", ".git", ".expo", ".bit"];
 
 @Register({name: "Purge", description: "Removes files that match a pattern ", path: "/purge"})
 export class Purge extends Component<{}, State> {
+
+	@resolve(DependencyInjectionKeys.files)
+	filesService!: FilesService
 
 
 	override state: State = {
@@ -65,48 +71,48 @@ export class Purge extends Component<{}, State> {
 
 				{!loading && folder && <>
 
-					<Box className="filter">
-						<TextField label={"Match"} onChange={this.onMatchChange}/>
+                    <Box className="filter">
+                        <TextField label={"Match"} onChange={this.onMatchChange}/>
 
-						<Box className={"exclusion"}>
-							<InputLabel id="ignoreContentLabel">Ignore content from</InputLabel>
-							<Select
-								labelId="ignoreContentLabel"
-								id="ignoreContentSelect"
-								multiple
-								MenuProps={{variant: "menu"}}
-								value={preview.exclude}
-								renderValue={(selected: any) => selected.join(", ")}
-								input={<Input/>}
-								onChange={this.changePreviewExclusion}
-							>
+                        <Box className={"exclusion"}>
+                            <InputLabel id="ignoreContentLabel">Ignore content from</InputLabel>
+                            <Select
+                                labelId="ignoreContentLabel"
+                                id="ignoreContentSelect"
+                                multiple
+                                MenuProps={{variant: "menu"}}
+                                value={preview.exclude}
+                                renderValue={(selected: any) => selected.join(", ")}
+                                input={<Input/>}
+                                onChange={this.changePreviewExclusion}
+                            >
 								{exclusions.map((name) => (
 									<MenuItem key={name} value={name} className={"exclude"}>
 										<Checkbox checked={preview.exclude.includes(name)} color={"secondary"}/>
 										<Typography className={"item"}>{name}</Typography>
 									</MenuItem>
 								))}
-							</Select>
-						</Box>
-					</Box>
+                            </Select>
+                        </Box>
+                    </Box>
 
 
-					<Typography className={"preview-title"} variant={"h6"}>Preview <span className={"itemCount"}>( {preview.filtered.length} / {preview.raw.length} )</span>
-					</Typography>
-					<Container>
-						<div onScroll={this.onPreviewScroll} className={"preview-items"} ref={r => this.items = r}>
+                    <Typography className={"preview-title"} variant={"h6"}>Preview <span className={"itemCount"}>( {preview.filtered.length} / {preview.raw.length} )</span>
+                    </Typography>
+                    <Container>
+                        <div onScroll={this.onPreviewScroll} className={"preview-items"} ref={r => this.items = r}>
 							{preview.filtered.slice(0, preview.amount).map(f => <Typography noWrap key={f}><span title={f}>{f}</span></Typography>)}
-						</div>
-					</Container>
+                        </div>
+                    </Container>
 					{match && <div className={"actions"}>
-						<Button color={"secondary"} className={"RemoveBtn"} variant={"outlined"} onClick={this.remove}>Remove</Button>
+                        <Button color={"secondary"} className={"RemoveBtn"} variant={"outlined"} onClick={this.remove}>Remove</Button>
 
 						{alert && <div>
 							{<Alert severity={alert.severity}>{alert.message}</Alert>}
-						</div>}
+                        </div>}
 
-					</div>}
-				</>}
+                    </div>}
+                </>}
 
 
 			</Container>
@@ -148,7 +154,7 @@ export class Purge extends Component<{}, State> {
 			loading: true
 		});
 
-		const folders = await Services.files.list(folder, ["node_modules", ".git", ".expo", ".bit"]);
+		const folders = await this.filesService.list(folder, ["node_modules", ".git", ".expo", ".bit"]);
 
 		this.setState(prev => ({
 			...prev,
@@ -171,7 +177,7 @@ export class Purge extends Component<{}, State> {
 
 			const nbNodesToDelete = this.state.preview.filtered.length;
 
-			await Services.files.deleteNodes(this.state.preview.filtered.map(c => ({type: "folder", path: c})));
+			await this.filesService.deleteNodes(this.state.preview.filtered.map(c => ({type: "folder", path: c})));
 			await this.onFolderSelect(this.state.folder as string);
 			this.setState(prev => ({
 				...prev,

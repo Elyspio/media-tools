@@ -1,10 +1,12 @@
 import {Octokit} from "@octokit/rest";
 import {Repository, Template} from "./types";
-import {Services} from "../index";
 import * as path from "path";
 import * as fs from "fs-extra";
 import {github as githubConf} from "../../../config/projects/projects.private";
 import {spawnBinary} from "../../util";
+import {inject, injectable} from "inversify";
+import {FilesService} from "../files/files.service";
+import {DependencyInjectionKeys} from "../dependency-injection/dependency-injection.keys";
 
 
 const github = new Octokit({
@@ -20,10 +22,12 @@ const github = new Octokit({
 });
 
 
+@injectable()
 export class GithubService {
 
-	constructor(private log?: boolean) {
-	}
+	@inject(DependencyInjectionKeys.files)
+	filesService!: FilesService
+
 
 	public async getTemplates(username?: string): Promise<Template[]> {
 		const func = username ? () => github.repos.listForUser({username: username, per_page: 1000}) : () => github.repos.listForAuthenticatedUser({per_page: 1000});
@@ -35,9 +39,9 @@ export class GithubService {
 	public async clone(options: { owner: string, repo: string, output: string }) {
 		// @ts-ignore
 		const {data}: { data: ArrayBuffer } = await github.repos.downloadZipballArchive({ref: "master", repo: options.repo, owner: options.owner, archive_format: "zipball"});
-		await Services.files.unzip(data, path.resolve(__dirname, options.output));
+		await this.filesService.unzip(data, path.resolve(__dirname, options.output));
 		const innerDir = await fs.readdir(options.output);
-		await Services.files.moveContent(path.join(options.output, innerDir[0]), options.output);
+		await this.filesService.moveContent(path.join(options.output, innerDir[0]), options.output);
 	}
 
 	/**
