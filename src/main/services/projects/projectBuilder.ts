@@ -8,6 +8,7 @@ import {inject} from "inversify";
 import {GithubService} from "./github.service";
 import {DockerService} from "./docker.service";
 import {DependencyInjectionKeys} from "../dependency-injection/dependency-injection.keys";
+import {FilesService} from "../files/files.service";
 
 
 export class ProjectBuilder {
@@ -20,6 +21,10 @@ export class ProjectBuilder {
 
 	@inject(DependencyInjectionKeys.projects.github)
 	private githubService!: GithubService
+
+
+	@inject(DependencyInjectionKeys.files)
+	private filesService!: FilesService
 
 	private config: {
 		name: string,
@@ -74,7 +79,7 @@ export class ProjectBuilder {
 			const content = [
 				"# " + this.config.github,
 				"",
-				"Bootstrapped with [media-tools](https://github.com/Elyspio/media-tools) project",
+				"Bootstrapped with [Elytools](https://github.com/Elyspio/media-tools) project",
 				"",
 				...(this.config.features.length ? [
 					"Features included: ",
@@ -96,12 +101,18 @@ export class ProjectBuilder {
 			await this.dockerService.addDockerSupport(this.config.docker, this.config.description ?? "", this.config.features, projectPath);
 		}
 
-
+		await this.updateTemplate(projectPath);
 	}
-
 
 	isTemplate() {
 		this.config.template = true;
+	}
+
+	private async updateTemplate(folder: string) {
+		const files = await this.filesService.list(folder);
+		await Promise.all(
+			files.map(async file => await this.filesService.replaceInFile(file, "express-react-ts-template", this.config.name))
+		)
 	}
 }
 

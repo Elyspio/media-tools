@@ -13,7 +13,7 @@ import {MuiThemeProvider} from "@material-ui/core/styles";
 import "./App.scss";
 import {SnackbarProvider} from "notistack";
 import {Logger} from "../main/util/logger";
-import {Provider as DiProvider} from"inversify-react"
+import {Provider as DiProvider} from "inversify-react"
 import {theme} from "../config/theme";
 
 
@@ -26,7 +26,6 @@ const logger = Logger("App")
 const mainElement = document.createElement("div");
 mainElement.classList.add("root");
 document.body.appendChild(mainElement);
-
 
 
 ReactDOM.render(

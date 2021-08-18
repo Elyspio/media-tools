@@ -25,7 +25,6 @@ export class FilesService {
 		return Promise.all(promises);
 	}
 
-
 	public async deleteNodes(nodes: { type?: "folder" | "file", path: string }[]) {
 		const promises = nodes.map(async ({path, type}) => {
 			switch (type) {
@@ -41,7 +40,6 @@ export class FilesService {
 		await Promise.all(promises);
 
 	}
-
 
 	public async find(folder: string, match?: RegExp): Promise<string[]> {
 		const files: string[] = [];
@@ -64,7 +62,6 @@ export class FilesService {
 
 		return files;
 	}
-
 
 	public async list(folder: string, ignore?: string[]) {
 		const files: string[] = [];
@@ -133,6 +130,19 @@ export class FilesService {
 			console.debug("Unwatch folder", folder);
 			fsWatcher.close();
 		}
+	}
+
+	/**
+	 * Replace all occurences of a string by another one in a file
+	 * @param filepath path to the file
+	 * @param search value to be replaced
+	 * @param value value with which you replace
+	 */
+	public async replaceInFile(filepath: string, search: string | RegExp, value: string) {
+		const file = (await fse.readFile(filepath));
+		let fileContent = file.toString("utf8");
+		fileContent = fileContent.replaceAll(search, value);
+		await fse.writeFile(filepath, fileContent, {encoding: "utf8"});
 	}
 
 	private isDir = async (path: string) => (await fs.lstat(path)).isDirectory();

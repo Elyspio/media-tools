@@ -6,7 +6,7 @@ import {theme} from "../../../config/theme";
 type NewColors = "error" | "warning";
 
 interface Props extends Omit<ButtonProps, "color"> {
-	color: ButtonProps["color"] | NewColors;
+	color?: ButtonProps["color"] | NewColors;
 }
 
 export function Button(props: Props) {

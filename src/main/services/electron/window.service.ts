@@ -1,5 +1,6 @@
 import {Configuration} from "../configuration/configuration.service";
 import {injectable} from "inversify";
+import {windowOption} from "../../../config/electron";
 
 const {BrowserWindow} = require("electron").remote;
 type Dimensions = (keyof Configuration["frame"]["resize"])[];
@@ -33,7 +34,7 @@ export class WindowService {
 		});
 	}
 
-	public async resize(delta: { width: number, height: number }) {
+	public resize(delta: { width: number, height: number }) {
 		const window = BrowserWindow.getFocusedWindow();
 
 		if (window) {
@@ -49,8 +50,11 @@ export class WindowService {
 				}
 			}
 		}
+	}
 
-
+	public resetDimensions() {
+		const window = BrowserWindow.getFocusedWindow();
+		window?.setSize(windowOption.width!, windowOption.height!)
 	}
 
 
