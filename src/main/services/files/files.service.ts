@@ -11,7 +11,7 @@ import {injectable} from "inversify";
 export class FilesService {
 
 	public async delete(folder: string, match: RegExp, progress?: (number: number) => void) {
-		const folders = await this.find(folder, match);
+		const folders = await this.find(folder, {match});
 		let completed = 0;
 
 		const promises = folders.map(async f => {
@@ -24,7 +24,6 @@ export class FilesService {
 
 		return Promise.all(promises);
 	}
-
 
 	public async deleteNodes(nodes: { type?: "folder" | "file", path: string }[]) {
 		const promises = nodes.map(async ({path, type}) => {
@@ -42,20 +41,22 @@ export class FilesService {
 
 	}
 
-
-	public async find(folder: string, match?: RegExp): Promise<string[]> {
+	public async find(folder: string, filter?: { match: RegExp, inverse?: boolean }): Promise<string[]> {
 		const files: string[] = [];
 
 		const _files = (await fs.readdir(folder)).map(f => this.escapePath(path.join(folder, f)));
 
 		for (const node of _files) {
 			try {
-				if (await this.isDir(node)) {
-					if (match === undefined || node.match(match)) {
+				if (!await this.isDir(node)) {
+					if (filter === undefined) {
 						files.push(node);
 					} else {
-						files.push(...await this.find(node, match));
+						const match = Boolean(node.match(filter.match)?.length);
+						if (match && !filter.inverse || !match && filter.inverse) files.push(node)
 					}
+				} else {
+					files.push(...await this.find(node, filter));
 				}
 			} catch (e) {
 			}
@@ -64,7 +65,6 @@ export class FilesService {
 
 		return files;
 	}
-
 
 	public async list(folder: string, ignore?: string[]) {
 		const files: string[] = [];
@@ -133,6 +133,19 @@ export class FilesService {
 			console.debug("Unwatch folder", folder);
 			fsWatcher.close();
 		}
+	}
+
+	/**
+	 * Replace all occurences of a string by another one in a file
+	 * @param filepath path to the file
+	 * @param search value to be replaced
+	 * @param value value with which you replace
+	 */
+	public async replaceInFile(filepath: string, search: string | RegExp, value: string) {
+		const file = (await fse.readFile(filepath));
+		let fileContent = file.toString("utf8");
+		fileContent = fileContent.replaceAll(search, value);
+		await fse.writeFile(filepath, fileContent, {encoding: "utf8"});
 	}
 
 	private isDir = async (path: string) => (await fs.lstat(path)).isDirectory();

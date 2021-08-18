@@ -11,7 +11,6 @@ import "./Config.scss";
 
 import {StoreState} from "../../../../store";
 import {ConfigurationService} from "../../../../../main/services/configuration/configuration.service";
-import {inject} from "inversify";
 import {DependencyInjectionKeys} from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 import {resolve} from "inversify-react";
 

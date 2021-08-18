@@ -9,7 +9,6 @@ import {reducer as configurationRouter} from "./module/configuration/reducer";
 import {mediaSlice} from "./module/media/media.reducer";
 import {TypedUseSelectorHook, useSelector} from "react-redux";
 
-
 export const store = configureStore({
 	reducer: {
 		updater: updaterReducer,
@@ -19,7 +18,7 @@ export const store = configureStore({
 		vpn: vpnReducer,
 		media: mediaSlice.reducer
 	},
-	devTools: process.env.NODE_ENV === "development",
+	devTools: true,
 	middleware: [
 		...getDefaultMiddleware({
 			serializableCheck: {

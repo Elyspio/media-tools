@@ -1,8 +1,8 @@
-import React, {Component} from "react";
+import React, {Component, ReactNode} from "react";
 import "./Projects.scss";
 import {SelectFolder} from "../../../common/os";
 import TextField from "@material-ui/core/TextField";
-import {Button, Container, FormControlLabel, Input, MenuItem, Typography} from "@material-ui/core";
+import {Button, Container, FormControlLabel, Grid, Input, MenuItem, Typography} from "@material-ui/core";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
@@ -18,7 +18,7 @@ import {DependencyInjectionKeys} from "../../../../../main/services/dependency-i
 
 interface State {
 	folder?: string
-	use: string[],
+	useFeatures: string[],
 	features: Feature[]
 	name: string,
 	readme: boolean,
@@ -36,14 +36,14 @@ interface State {
 	path: "/projects",
 	autoResize: {height: true, width: false}
 })
-export class Vpn extends Component<{}, State> {
+export class Projects extends Component<{}, State> {
 
 
 	@resolve(DependencyInjectionKeys.projects.feature)
 	featureService!: FeatureService
 
 	override state: State = {
-		use: [],
+		useFeatures: [],
 		features: [],
 		docker: false,
 		loading: true,
@@ -53,7 +53,7 @@ export class Vpn extends Component<{}, State> {
 		name: "",
 		template: false
 	};
-	private logger = Logger(Vpn)
+	private logger = Logger(Projects)
 
 	override async componentDidMount() {
 		this.setState({
@@ -64,11 +64,14 @@ export class Vpn extends Component<{}, State> {
 
 	override render() {
 
-		const {use, features, loading, docker, name, readme, description, template, github} = this.state;
-		this.logger.info("dirname", __dirname);
+		const {useFeatures, features, loading, docker, name, readme, description, template, github} = this.state;
 		return (
 			<Container className="Projects">
-				{loading && <CircularProgress color={"secondary"} size={"2rem"}/>}
+				{loading && <Grid container justifyContent={"center"} alignItems={"center"} className={"fullSize"}>
+                    <Grid item>
+                        <CircularProgress color={"primary"} size={"2rem"}/>
+                    </Grid>
+                </Grid>}
 
 				{!loading && <>
 
@@ -97,14 +100,14 @@ export class Vpn extends Component<{}, State> {
                             id="ignoreContentSelect"
                             multiple
                             MenuProps={{variant: "menu"}}
-                            value={use}
-                            renderValue={(selected: any) => selected.join(" ")}
+                            value={useFeatures}
+                            renderValue={(selected: any) => joinComponents(selected.map((x: string) => <Typography variant={"overline"}>{x}</Typography>))}
                             input={<Input/>}
-                            onChange={e => this.handleChange("use", e.target.value)}
+                            onChange={e => this.handleChange("useFeatures", e.target.value)}
                         >
 							{features.map(({name}) => (
 								<MenuItem key={name} value={name} className={"exclude"}>
-									<Checkbox checked={use.some(i => i === name)} color={"secondary"}/>
+									<Checkbox checked={useFeatures.some(i => i === name)} color={"secondary"}/>
 									<Typography className={"item"}>{name}</Typography>
 								</MenuItem>
 							))}
@@ -175,24 +178,43 @@ export class Vpn extends Component<{}, State> {
 
                     </Box>
 
-                    <div className="bottom">
-                        <SelectFolder
-                            onChange={(val) => this.handleChange("folder", val)}
-                            mode={"folder"}
-                            showSelected
-                            variant={"outlined"}
-                            color={"default"}
 
-                        />
+                    <Grid container direction={"column"} spacing={1}>
 
-                        <Button
-                            color={"primary"}
-                            className={"RemoveBtn"}
-                            variant={"outlined"}
-                            onClick={this.create}>
-                            Create repository
-                        </Button>
-                    </div>
+                        <Grid item container alignItems={"center"}>
+                            <Grid item xs={4}>
+                                <SelectFolder
+                                    onChange={(val) => this.handleChange("folder", val)}
+                                    mode={"folder"}
+                                    label={"Select parent folder"}
+                                    variant={"outlined"}
+                                    color={"default"}
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={8}>
+                                <Box pl={2}>
+                                    <Typography variant={"subtitle2"}>{this.state.folder}</Typography>
+                                </Box>
+                            </Grid>
+                        </Grid>
+
+                        <Grid item container>
+                            <Grid item xs={4}>
+                                <Button
+                                    fullWidth
+                                    color={"primary"}
+                                    className={"RemoveBtn"}
+                                    variant={"outlined"}
+                                    disabled={!this.state.name || this.state.useFeatures.length === 0 || !(this.state.folder && this.state.folder.length > 0)}
+                                    onClick={this.create}>
+                                    Create repository
+                                </Button>
+                            </Grid>
+
+                        </Grid>
+
+                    </Grid>
                 </>}
 			</Container>
 		);
@@ -200,12 +222,12 @@ export class Vpn extends Component<{}, State> {
 
 
 	create = () => {
-		const {description, docker, github, name, readme, use, folder, features, template} = this.state;
+		const {description, docker, github, name, readme, useFeatures, folder, features, template} = this.state;
 		const builder = new ProjectBuilder();
 
 		builder.name = name;
 		builder.description = description ?? undefined;
-		use.forEach(f => builder.use(features.find(ff => f === ff.name) as Feature));
+		useFeatures.forEach(f => builder.use(features.find(ff => f === ff.name) as Feature));
 
 		if (docker) builder.docker = typeof docker === "string" ? docker : name;
 		if (github) builder.github = typeof github === "string" ? github : name;
@@ -225,5 +247,17 @@ export class Vpn extends Component<{}, State> {
 }
 
 
+function joinComponents(components: ReactNode[]) {
+	const ret = Array<ReactNode>();
+
+	components.forEach((component, index) => {
+		ret.push(component);
+		if (index < components.length - 1) ret.push(<Box display={"inline"} px={2}>|</Box>)
+	})
+
+	return ret;
+
+
+}
 
 

@@ -16,6 +16,11 @@ body {
 	overflow: hidden;
 }
 
+.fullSize {
+	height: 100%;
+	width: 100%;
+}
+
 :export {
 	background: $backgroundColor;
 	primary: $primary;

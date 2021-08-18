@@ -2,7 +2,6 @@
 import dockerHubAPI from "docker-hub-api";
 import {docker} from "../../../config/projects/projects.private";
 import {Feature} from "./types";
-import * as fs from "fs-extra";
 import * as path from "path";
 import {injectable} from "inversify";
 
@@ -44,8 +43,8 @@ export class DockerService {
 
 		let p = path.resolve(__dirname, "..", "files", "projects", "dockerfiles", file);
 		console.log("trying to read " + p);
-		const content = await fs.readFile(p);
-
-		await fs.writeFile(output, content);
+		// const content = await fs.readFile(p);
+		//
+		// await fs.writeFile(output, content);
 	};
 }

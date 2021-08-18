@@ -1,12 +1,11 @@
 import {createReducer} from "@reduxjs/toolkit";
 import {addRoute, setPath} from "./action";
-import {FilesService} from "../../../../main/services/files/files.service";
 
 const requires = [
 	"external/lights/Light",
 	"external/home-assistant/HomeAssistant",
 	"internal/encoder/Encoder",
-	"internal/encoder/Recap",
+	"internal/encoder/recap/Recap",
 	"internal/purge/Purge",
 	"internal/projects/Projects",
 	"internal/vpn/Vpn",
@@ -17,9 +16,9 @@ const requires = [
 	"app-board/AppBoard"
 ];
 
-requires.forEach(async (c) => {
+for (const c of requires) {
 	import(`../../../components/modules/${c}.tsx`);
-})
+}
 
 
 type ReactComponent = any;

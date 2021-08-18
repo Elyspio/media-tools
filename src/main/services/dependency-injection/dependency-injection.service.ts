@@ -14,17 +14,17 @@ import {TorrentService} from "../media/torrent.service";
 import {DependencyInjectionKeys} from "./dependency-injection.keys";
 import {container} from "./dependency-injection.container";
 
-container.bind<DialogService>(DependencyInjectionKeys.electron.dialog).toConstantValue(new DialogService());
-container.bind<WindowService>(DependencyInjectionKeys.electron.window).toConstantValue(new WindowService());
-container.bind<MediaService>(DependencyInjectionKeys.media.convert).toConstantValue(new MediaService());
-container.bind<TorrentService>(DependencyInjectionKeys.media.torrent).toConstantValue(new TorrentService());
-container.bind<SystemService>(DependencyInjectionKeys.system).toConstantValue(new SystemService());
-container.bind<FilesService>(DependencyInjectionKeys.files).toConstantValue(new FilesService());
-container.bind<ConfigurationService>(DependencyInjectionKeys.configuration).toConstantValue(new ConfigurationService());
+container.bind<DialogService>(DependencyInjectionKeys.electron.dialog).to(DialogService);
+container.bind<WindowService>(DependencyInjectionKeys.electron.window).to(WindowService);
+container.bind<MediaService>(DependencyInjectionKeys.media.convert).to(MediaService);
+container.bind<TorrentService>(DependencyInjectionKeys.media.torrent).to(TorrentService);
+container.bind<SystemService>(DependencyInjectionKeys.system).to(SystemService);
+container.bind<FilesService>(DependencyInjectionKeys.files).to(FilesService);
+container.bind<ConfigurationService>(DependencyInjectionKeys.configuration).to(ConfigurationService);
 container.bind<GithubService>(DependencyInjectionKeys.projects.github).to(GithubService)
 container.bind<FeatureService>(DependencyInjectionKeys.projects.feature).to(FeatureService)
 container.bind<DockerService>(DependencyInjectionKeys.projects.docker).to(DockerService);
-container.bind<OpenvpnService>(DependencyInjectionKeys.networks.openvpn).toConstantValue(new OpenvpnService());
-container.bind<NordvpnService>(DependencyInjectionKeys.networks.nordvpn).toConstantValue(new NordvpnService());
+container.bind<OpenvpnService>(DependencyInjectionKeys.networks.openvpn).to(OpenvpnService);
+container.bind<NordvpnService>(DependencyInjectionKeys.networks.nordvpn).to(NordvpnService);
 
 console.info("Dependency injection loaded")

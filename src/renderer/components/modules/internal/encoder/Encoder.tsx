@@ -24,7 +24,6 @@ import {encoders} from "../../../../../config/media/encoder";
 import {getAppParams} from "../../../../../main/util/args";
 import {Logger} from "../../../../../main/util/logger";
 import {setCurrentProcess, setFormat, setMedias, setProcesses, setProgress, stopCurrentProcess} from "../../../../store/module/media/media.action";
-import {inject} from "inversify";
 import {FilesService} from "../../../../../main/services/files/files.service";
 import {DependencyInjectionKeys} from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 import {resolve} from "inversify-react";
