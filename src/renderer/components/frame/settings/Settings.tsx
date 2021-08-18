@@ -1,12 +1,16 @@
 import {connect, ConnectedProps} from "react-redux";
 import {Dispatch} from "redux";
-import {Dialog, DialogContent, DialogTitle, List, ListItem, ListItemText, ListSubheader, Switch} from "@material-ui/core";
+import {Dialog, DialogContent, DialogTitle, Grid, List, ListItem, ListItemText, ListSubheader, Switch, Typography} from "@material-ui/core";
 import React from "react";
 import "./Settings.scss";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import {Configuration} from "../../../../main/services/configuration/configuration.service";
 import {setConfig} from "../../../store/module/configuration/action";
 import {StoreState} from "../../../store";
+import {Button} from "../../common/Button";
+import {resolve} from "inversify-react";
+import {WindowService} from "../../../../main/services/electron/window.service";
+import {DependencyInjectionKeys} from "../../../../main/services/dependency-injection/dependency-injection.keys";
 
 type OwnProps = ReduxTypes & {
 	isOpen: boolean,
@@ -16,7 +20,12 @@ type OwnProps = ReduxTypes & {
 class Settings extends React.Component<OwnProps> {
 
 
-	toggleResources = (newState: boolean) => {
+	@resolve(DependencyInjectionKeys.electron.window)
+	private windowService!: WindowService
+
+
+
+	private toggleResources = (newState: boolean) => {
 		this.props.setConfig({
 			...this.props.config,
 			frame: {
@@ -30,7 +39,7 @@ class Settings extends React.Component<OwnProps> {
 	};
 
 
-	toggleResize = (dimension: keyof Configuration["frame"]["resize"], state: boolean) => {
+	private toggleResize = (dimension: keyof Configuration["frame"]["resize"], state: boolean) => {
 		this.props.setConfig({
 			...this.props.config,
 			frame: {
@@ -53,34 +62,60 @@ class Settings extends React.Component<OwnProps> {
 		>
 			<DialogTitle id="alert-dialog-title">Settings</DialogTitle>
 			<DialogContent className={"Settings"}>
-				<List subheader={<ListSubheader color={"primary"}>Frame</ListSubheader>}>
-					<ListItem>
-						<ListItemText primary="Show resource utilization"/>
-						<ListItemSecondaryAction>
-							<Switch
-								edge="end"
-								checked={config.frame.show.resourceUtilization}
-								onChange={e => this.toggleResources(e.target.checked)}
-							/>
-						</ListItemSecondaryAction>
-					</ListItem>
-				</List>
+				<Grid container direction={"column"} spacing={2}>
+					<Grid item>
+						<List subheader={<ListSubheader color={"primary"}>Frame</ListSubheader>}>
+							<ListItem>
+								<ListItemText primary="Show resource utilization"/>
+								<ListItemSecondaryAction>
+									<Switch
+										edge="end"
+										checked={config.frame.show.resourceUtilization}
+										onChange={e => this.toggleResources(e.target.checked)}
+									/>
+								</ListItemSecondaryAction>
+							</ListItem>
+						</List>
+					</Grid>
 
-				<List subheader={<ListSubheader color={"primary"}>Resize</ListSubheader>}>
+					<Grid item>
+						<List subheader={<ListSubheader color={"primary"}>
+							<Grid container alignItems={"center"} justifyContent={"space-between"}>
+								<Grid item>
+									Resize
+								</Grid>
+								<Grid item>
+									<Button
+										style={{marginRight: -16}}
+										variant={"outlined"}
+										onClick={this.windowService.resetDimensions}
+									>
+										<Typography variant={"overline"}>Auto</Typography>
+									</Button>
+								</Grid>
+							</Grid>
 
-					{Object.keys(config.frame.resize).map((key) => (
-						<ListItem key={key}>
-							<ListItemText primary={key[0].toUpperCase() + key.slice(1)}/>
-							<ListItemSecondaryAction>
-								<Switch
-									edge="end"
-									checked={config.frame.resize[key as keyof Configuration["frame"]["resize"]]}
-									onChange={e => this.toggleResize(key as keyof Configuration["frame"]["resize"], e.target.checked)}
-								/>
-							</ListItemSecondaryAction>
-						</ListItem>
-					))}
-				</List>
+						</ListSubheader>}>
+
+							{Object.keys(config.frame.resize).map((key) => (
+								<ListItem key={key}>
+									<ListItemText primary={key[0].toUpperCase() + key.slice(1)}/>
+									<ListItemSecondaryAction>
+										<Switch
+											edge="end"
+											checked={config.frame.resize[key as keyof Configuration["frame"]["resize"]]}
+											onChange={e => this.toggleResize(key as keyof Configuration["frame"]["resize"], e.target.checked)}
+										/>
+									</ListItemSecondaryAction>
+								</ListItem>
+							))}
+						</List>
+					</Grid>
+
+				</Grid>
+
+
+
 
 			</DialogContent>
 		</Dialog>;

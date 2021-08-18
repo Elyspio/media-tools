@@ -1,28 +1,14 @@
-import {BrowserWindow, remote, app} from "electron"
+import {app, BrowserWindow} from "electron"
 import * as path from "path";
 import * as url from "url";
 import {windowOption} from "../config/electron";
-
 
 app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
 app.commandLine.appendSwitch("disable-site-isolation-trials");
 
 let win: BrowserWindow | null;
 
-
-
-app.whenReady().then(() => {
-
-	if (process.env.NODE_ENV !== "production") {
-		// installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS])
-		// 	.then((name) => console.log(`Added Extension:  ${name}`))
-		// 	.catch((err) => console.log('An error occurred: ', err));
-	}
-
-});
-
 const createWindow = async () => {
-
 
 	win = new BrowserWindow({
 		...windowOption
@@ -84,3 +70,4 @@ if (!gotTheLock) {
 	// Create myWindow, load the rest of the app, etc...
 	app.on("ready", createWindow);
 }
+

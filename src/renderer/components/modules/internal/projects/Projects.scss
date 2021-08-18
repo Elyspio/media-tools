@@ -2,6 +2,7 @@
 	height: 100%;
 	width: 100%;
 	position: relative;
+	margin-bottom: 2rem;
 
 	.options {
 		max-height: 30vh;
@@ -45,8 +46,8 @@
 	}
 
 	.bottom {
-		position: fixed;
-		bottom: 2rem;
+		//position: fixed;
+		//bottom: 2rem;
 	}
 
 }

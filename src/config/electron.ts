@@ -14,4 +14,3 @@ export const windowOption: BrowserWindowConstructorOptions = {
 	resizable: true
 };
 
-export const appName = "media-tools";

@@ -1,4 +1,4 @@
-import {configureStore, getDefaultMiddleware} from "@reduxjs/toolkit";
+import {compose, configureStore, getDefaultMiddleware} from "@reduxjs/toolkit";
 import {logger} from "redux-logger";
 import {getUriParam} from "../util/url";
 import {reducer as updaterReducer} from "./module/updater/reducer";
@@ -9,7 +9,6 @@ import {reducer as configurationRouter} from "./module/configuration/reducer";
 import {mediaSlice} from "./module/media/media.reducer";
 import {TypedUseSelectorHook, useSelector} from "react-redux";
 
-
 export const store = configureStore({
 	reducer: {
 		updater: updaterReducer,
@@ -19,7 +18,7 @@ export const store = configureStore({
 		vpn: vpnReducer,
 		media: mediaSlice.reducer
 	},
-	devTools: process.env.NODE_ENV === "development",
+	devTools: true,
 	middleware: [
 		...getDefaultMiddleware({
 			serializableCheck: {
