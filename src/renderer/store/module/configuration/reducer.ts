@@ -7,7 +7,7 @@ import {container} from "../../../../main/services/dependency-injection/dependen
 
 
 export interface ConfigurationRouter {
-	current: Configuration
+	current: Configuration;
 }
 
 

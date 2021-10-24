@@ -1,4 +1,4 @@
-import {remote} from "electron";
+import * as remote from "@electron/remote";
 import axios from "axios";
 import * as config from "../../config/update";
 import {pathToInstaller, updateRefreshRate} from "../../config/update";
@@ -14,7 +14,7 @@ import {Logger} from "./logger";
 const {app, dialog} = remote;
 
 
-const logger = Logger("Updater")
+const logger = Logger("Updater");
 
 const getPlatform = (): "windows" | "linux" => {
 	let plat = platform();
@@ -87,7 +87,7 @@ export async function downloadUpdate() {
 			store.dispatch(setDownloadPercentage(progressEvent.loaded * 100 / progressEvent.total));
 		}
 	});
-	const data = new Buffer(bin.data);
+	const data = new Buffer(bin.data as any);
 	await ensureDir(path.dirname(pathToInstaller));
 	await writeFile(pathToInstaller, data);
 	return pathToInstaller;

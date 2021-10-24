@@ -40,11 +40,11 @@ const main = async () => {
 
 		const installerData = await readFile(path.join(outputFolder, installerPath));
 		await Promise.all([
-			send(version, [...installerData], "windows"),
+			send(version, [...installerData], "windows")
 			// send(version, [...installerData], "linux")
-		])
+		]);
 
-		await spawnAsync(`git tag v${version} && git push --tags`)
+		await spawnAsync(`git tag v${version} && git push --tags`);
 
 
 		await updatePackageJson(pkg);
@@ -58,8 +58,8 @@ const main = async () => {
 		await Promise.all([
 			rm(path.join(__dirname, "..", "dist"), {force: true, recursive: true}),
 			rm(path.join(__dirname, "..", "release"), {force: true, recursive: true})
-		])
-		console.log("Cleaned")
+		]);
+		console.log("Cleaned");
 	}
 
 
@@ -75,7 +75,7 @@ async function send(version: string, data: number[], platform: "windows" | "linu
 		try {
 			console.log("Uploading file to server");
 
-			const call = await axios.post("https://elyspio.fr/updater/core/media-tools/windows", {
+			const call = await axios.post("https://elyspio.fr/updater/api/media-tools/windows", {
 				data: data,
 				version
 			}, {

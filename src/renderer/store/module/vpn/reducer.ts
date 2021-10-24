@@ -37,7 +37,7 @@ const slice = createSlice({
 			state.connected[payload.type] = payload.state;
 		});
 	}
-})
+});
 
 
 // setInterval(() => {

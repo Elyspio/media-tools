@@ -8,30 +8,30 @@ export function useAsyncState<T>(func: UseAsyncStateParams<T>, defaultValue: T, 
 	const [data, setData] = useState<T>();
 
 	const handle = async (func: UseAsyncStateParams<T>) => {
-		const out = await func()
+		const out = await func();
 		setData(out);
-	}
+	};
 
 	useEffect(() => {
 		handle(func);
 		let timer: NodeJS.Timer | undefined;
 		if (replay) {
 			timer = setInterval(() => {
-				handle(func)
-			}, replay)
+				handle(func);
+			}, replay);
 		}
 
 		return () => {
 			timer && clearInterval(timer);
-		}
+		};
 
-	}, [func])
+	}, [func]);
 
 
 	return {
 		data: data ?? defaultValue,
-		reload: () => handle(func),
-	}
+		reload: () => handle(func)
+	};
 
 
 }

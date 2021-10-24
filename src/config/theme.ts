@@ -3,7 +3,7 @@ import {createMuiTheme} from "@material-ui/core/styles";
 import * as style from "../renderer/App.scss";
 import {Logger} from "../main/util/logger";
 
-const logger = Logger("Theme")
+const logger = Logger("Theme");
 
 logger.info("style", style);
 

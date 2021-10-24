@@ -1,7 +1,7 @@
 import {exec as _exec, spawn, SpawnOptions} from "child_process";
 import {platform} from "os";
 import * as process from "process";
-import {promisify} from "util"
+import {promisify} from "util";
 
 export const spawnBinary = async (binary: string, param: string[], folder: string, log?: boolean) => {
 	const child = spawn(binary, param, {cwd: folder});
@@ -32,19 +32,19 @@ export const spawnAsync = async (command: string, options?: Partial<SpawnOptions
 
 	if (child.stdout)
 		child.stdout.on("data", (data) => {
-			console.log("spawnAsync", data.toString())
+			console.log("spawnAsync", data.toString());
 			stdout += data.toString();
 		});
 
 	if (child.stderr)
 		child.stderr.on("data", (data) => {
-			console.error("spawnAsync", data.toString())
+			console.error("spawnAsync", data.toString());
 			stderr += data.toString();
 		});
 
 	const exitCode: number | null = await new Promise((resolve) => {
 		child.on("close", (code) => {
-			console.error("spawnAsync close", code)
+			console.error("spawnAsync close", code);
 			resolve(code);
 		});
 	});
@@ -56,7 +56,7 @@ export const spawnAsync = async (command: string, options?: Partial<SpawnOptions
 };
 
 
-export const exec = promisify(_exec)
+export const exec = promisify(_exec);
 
 
 export async function isInstalled(app: string) {

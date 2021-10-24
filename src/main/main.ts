@@ -1,7 +1,11 @@
-import {app, BrowserWindow} from "electron"
+import {app, BrowserWindow} from "electron";
 import * as path from "path";
 import * as url from "url";
 import {windowOption} from "../config/electron";
+import * as remoteMain from "@electron/remote/main";
+
+remoteMain.initialize();
+
 
 app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
 app.commandLine.appendSwitch("disable-site-isolation-trials");
@@ -13,13 +17,14 @@ const createWindow = async () => {
 	win = new BrowserWindow({
 		...windowOption
 	});
+	remoteMain.enable(win.webContents);
 
 	if (process.env.NODE_ENV !== "production") {
 		process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "1"; // eslint-disable-line require-atomic-updates
-		win.loadURL(`http://localhost:2003`);
+		await win.loadURL(`http://localhost:2003`);
 	} else {
 
-		win.loadURL(
+		await win.loadURL(
 			url.format({
 				pathname: path.join(__dirname, "index.html"),
 				protocol: "file:",

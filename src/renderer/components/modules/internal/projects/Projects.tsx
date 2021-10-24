@@ -40,7 +40,7 @@ export class Projects extends Component<{}, State> {
 
 
 	@resolve(DependencyInjectionKeys.projects.feature)
-	featureService!: FeatureService
+	featureService!: FeatureService;
 
 	override state: State = {
 		useFeatures: [],
@@ -53,7 +53,7 @@ export class Projects extends Component<{}, State> {
 		name: "",
 		template: false
 	};
-	private logger = Logger(Projects)
+	private logger = Logger(Projects);
 
 	override async componentDidMount() {
 		this.setState({
@@ -68,154 +68,154 @@ export class Projects extends Component<{}, State> {
 		return (
 			<Container className="Projects">
 				{loading && <Grid container justifyContent={"center"} alignItems={"center"} className={"fullSize"}>
-                    <Grid item>
-                        <CircularProgress color={"primary"} size={"2rem"}/>
-                    </Grid>
-                </Grid>}
+					<Grid item>
+						<CircularProgress color={"primary"} size={"2rem"}/>
+					</Grid>
+				</Grid>}
 
 				{!loading && <>
 
-                    <Box className={"row"}>
-                        <TextField
-                            label={"Folder name"}
-                            error={name.length === 0}
-                            style={{width: "30%"}} value={name}
-                            onChange={e => this.handleChange("name", e.target.value)}
-                        />
+					<Box className={"row"}>
+						<TextField
+							label={"Folder name"}
+							error={name.length === 0}
+							style={{width: "30%"}} value={name}
+							onChange={e => this.handleChange("name", e.target.value)}
+						/>
 
-                        <TextField
-                            label={"Description"}
-                            value={description}
-                            id={"description"}
-                            style={{width: "70%"}}
-                            onChange={e => this.handleChange("description", e.target.value)}
-                        />
-                    </Box>
+						<TextField
+							label={"Description"}
+							value={description}
+							id={"description"}
+							style={{width: "70%"}}
+							onChange={e => this.handleChange("description", e.target.value)}
+						/>
+					</Box>
 
 
-                    <Box className={"row"}>
-                        <InputLabel id="ignoreContentLabel">Use features</InputLabel>
-                        <Select
-                            labelId="ignoreContentLabel"
-                            id="ignoreContentSelect"
-                            multiple
-                            MenuProps={{variant: "menu"}}
-                            value={useFeatures}
-                            renderValue={(selected: any) => joinComponents(selected.map((x: string) => <Typography variant={"overline"}>{x}</Typography>))}
-                            input={<Input/>}
-                            onChange={e => this.handleChange("useFeatures", e.target.value)}
-                        >
+					<Box className={"row"}>
+						<InputLabel id="ignoreContentLabel">Use features</InputLabel>
+						<Select
+							labelId="ignoreContentLabel"
+							id="ignoreContentSelect"
+							multiple
+							MenuProps={{variant: "menu"}}
+							value={useFeatures}
+							renderValue={(selected: any) => joinComponents(selected.map((x: string) => <Typography variant={"overline"}>{x}</Typography>))}
+							input={<Input/>}
+							onChange={e => this.handleChange("useFeatures", e.target.value)}
+						>
 							{features.map(({name}) => (
 								<MenuItem key={name} value={name} className={"exclude"}>
 									<Checkbox checked={useFeatures.some(i => i === name)} color={"secondary"}/>
 									<Typography className={"item"}>{name}</Typography>
 								</MenuItem>
 							))}
-                        </Select>
-                    </Box>
+						</Select>
+					</Box>
 
-                    <Box className="options row">
-                        <Typography color={"primary"}>Options</Typography>
-                        <div className="simple-options">
-                            <div className={"option"}>
-                                <FormControlLabel
-                                    control={<Checkbox checked={readme} color={"default"} onChange={(e) => this.handleChange("readme", e.target.checked)} name="readme"/>}
-                                    labelPlacement={"start"}
-                                    label="Readme"
-                                    className={"switch"}
-                                />
-                            </div>
+					<Box className="options row">
+						<Typography color={"primary"}>Options</Typography>
+						<div className="simple-options">
+							<div className={"option"}>
+								<FormControlLabel
+									control={<Checkbox checked={readme} color={"default"} onChange={(e) => this.handleChange("readme", e.target.checked)} name="readme"/>}
+									labelPlacement={"start"}
+									label="Readme"
+									className={"switch"}
+								/>
+							</div>
 
 
-                        </div>
+						</div>
 
-                        <div className={"option"}>
-                            <FormControlLabel
-                                control={<Checkbox checked={!!docker} color={"default"} onChange={(e) => this.handleChange("docker", e.target.checked)} name="docker"/>}
-                                labelPlacement={"start"}
-                                label="Docker"
-                                className={"switch"}
-                            />
+						<div className={"option"}>
+							<FormControlLabel
+								control={<Checkbox checked={!!docker} color={"default"} onChange={(e) => this.handleChange("docker", e.target.checked)} name="docker"/>}
+								labelPlacement={"start"}
+								label="Docker"
+								className={"switch"}
+							/>
 
 							{docker && <TextField
-                                label={"Docker name"}
-                                error={typeof docker === "string" && docker.length === 0}
-                                defaultValue={name}
-                                style={{width: "50%"}}
-                                onChange={e => this.handleChange("docker", e.target.value)}
-                            />}
-                        </div>
+								label={"Docker name"}
+								error={typeof docker === "string" && docker.length === 0}
+								defaultValue={name}
+								style={{width: "50%"}}
+								onChange={e => this.handleChange("docker", e.target.value)}
+							/>}
+						</div>
 
-                        <div className={"option"}>
-                            <FormControlLabel
-                                control={<Checkbox checked={!!github} color={"default"} onChange={(e) => this.handleChange("github", e.target.checked)} name="github"/>}
-                                labelPlacement={"start"}
-                                label="Github"
-                                className={"switch"}
-                            />
+						<div className={"option"}>
+							<FormControlLabel
+								control={<Checkbox checked={!!github} color={"default"} onChange={(e) => this.handleChange("github", e.target.checked)} name="github"/>}
+								labelPlacement={"start"}
+								label="Github"
+								className={"switch"}
+							/>
 
 							{github && <TextField
-                                label={"Github name"}
-                                error={typeof github === "string" && github.length === 0}
-                                defaultValue={name}
-                                style={{width: "50%"}}
-                                onChange={e => this.handleChange("github", e.target.value)}
-                            />}
+								label={"Github name"}
+								error={typeof github === "string" && github.length === 0}
+								defaultValue={name}
+								style={{width: "50%"}}
+								onChange={e => this.handleChange("github", e.target.value)}
+							/>}
 
 							{github && <FormControlLabel
-                                control={<Checkbox
+								control={<Checkbox
 									checked={template}
 									color={"default"}
 									onChange={(e) => this.handleChange("template", e.target.checked)}
 									name="Template"/>
 								}
-                                labelPlacement={"start"}
-                                label="Template"
-                                className={"switch"}
-                            />}
+								labelPlacement={"start"}
+								label="Template"
+								className={"switch"}
+							/>}
 
-                        </div>
+						</div>
 
-                    </Box>
+					</Box>
 
 
-                    <Grid container direction={"column"} spacing={1}>
+					<Grid container direction={"column"} spacing={1}>
 
-                        <Grid item container alignItems={"center"}>
-                            <Grid item xs={4}>
-                                <SelectFolder
-                                    onChange={(val) => this.handleChange("folder", val)}
-                                    mode={"folder"}
-                                    label={"Select parent folder"}
-                                    variant={"outlined"}
-                                    color={"default"}
-                                    fullWidth
-                                />
-                            </Grid>
-                            <Grid item xs={8}>
-                                <Box pl={2}>
-                                    <Typography variant={"subtitle2"}>{this.state.folder}</Typography>
-                                </Box>
-                            </Grid>
-                        </Grid>
+						<Grid item container alignItems={"center"}>
+							<Grid item xs={4}>
+								<SelectFolder
+									onChange={(val) => this.handleChange("folder", val)}
+									mode={"folder"}
+									label={"Select parent folder"}
+									variant={"outlined"}
+									color={"default"}
+									fullWidth
+								/>
+							</Grid>
+							<Grid item xs={8}>
+								<Box pl={2}>
+									<Typography variant={"subtitle2"}>{this.state.folder}</Typography>
+								</Box>
+							</Grid>
+						</Grid>
 
-                        <Grid item container>
-                            <Grid item xs={4}>
-                                <Button
-                                    fullWidth
-                                    color={"primary"}
-                                    className={"RemoveBtn"}
-                                    variant={"outlined"}
-                                    disabled={!this.state.name || this.state.useFeatures.length === 0 || !(this.state.folder && this.state.folder.length > 0)}
-                                    onClick={this.create}>
-                                    Create repository
-                                </Button>
-                            </Grid>
+						<Grid item container>
+							<Grid item xs={4}>
+								<Button
+									fullWidth
+									color={"primary"}
+									className={"RemoveBtn"}
+									variant={"outlined"}
+									disabled={!this.state.name || this.state.useFeatures.length === 0 || !(this.state.folder && this.state.folder.length > 0)}
+									onClick={this.create}>
+									Create repository
+								</Button>
+							</Grid>
 
-                        </Grid>
+						</Grid>
 
-                    </Grid>
-                </>}
+					</Grid>
+				</>}
 			</Container>
 		);
 	}
@@ -252,8 +252,8 @@ function joinComponents(components: ReactNode[]) {
 
 	components.forEach((component, index) => {
 		ret.push(component);
-		if (index < components.length - 1) ret.push(<Box display={"inline"} px={2}>|</Box>)
-	})
+		if (index < components.length - 1) ret.push(<Box display={"inline"} px={2}>|</Box>);
+	});
 
 	return ret;
 

@@ -1,20 +1,20 @@
-import React from 'react';
+import React from "react";
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide} from "@material-ui/core";
 import {TransitionProps} from "@material-ui/core/transitions";
 import {Button} from "../../../common/Button";
 import {useModal} from "../../../../hooks/useModal";
-import {remote} from "electron";
+import * as remote from "@electron/remote";
 import {useInjection} from "inversify-react";
 import {TorrentService} from "../../../../../main/services/media/torrent.service";
 import {DependencyInjectionKeys} from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 
 
-const {Notification} = remote.require('electron')
+const {Notification} = remote.require("electron");
 
 
 const Transition = React.forwardRef(function Transition(
 	props: TransitionProps & { children?: React.ReactElement<any, any> },
-	ref: React.Ref<unknown>,
+	ref: React.Ref<unknown>
 ) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -22,19 +22,19 @@ const Transition = React.forwardRef(function Transition(
 
 function AddNewTorrent(props: { name: string, clear: () => void }) {
 
-	const {open, setClose} = useModal(true)
+	const {open, setClose} = useModal(true);
 
 	const services = {
 		torrent: useInjection<TorrentService>(DependencyInjectionKeys.media.torrent)
-	}
+	};
 
 	const launchApp = async (add: boolean) => {
-		setClose()
+		setClose();
 		if (add) {
-			await services.torrent.add(props.name)
+			await services.torrent.add(props.name);
 			new Notification({
-				title: `Starting to download ${props.name}`,
-			}).show()
+				title: `Starting to download ${props.name}`
+			}).show();
 			props.clear();
 		}
 

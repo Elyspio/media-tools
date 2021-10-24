@@ -50,10 +50,10 @@ function OnFinishAction(props: { close: () => void } & ReduxTypes) {
 		<DialogActions>
 
 			{process.env.NODE_ENV !== "production" && current !== "None" && <Button
-                variant={"outlined"}
-                onClick={runOnFinishAction}>
-                Force action
-            </Button>}
+				variant={"outlined"}
+				onClick={runOnFinishAction}>
+				Force action
+			</Button>}
 
 			<Button autoFocus onClick={close} color="secondary">
 				Cancel

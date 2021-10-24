@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useMemo} from "react";
 import {Box, Menu, MenuItem, Typography} from "@material-ui/core";
 import {DataGrid, GridCellParams, GridColumns} from "@material-ui/data-grid";
 import {useAsyncState} from "../../../../hooks/useAsyncState";
@@ -12,27 +12,27 @@ import {FilesService} from "../../../../../main/services/files/files.service";
 import {TorrentService} from "../../../../../main/services/media/torrent.service";
 import {DependencyInjectionKeys} from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 
-const duration = require('dayjs/plugin/duration')
-const relativeTime = require('dayjs/plugin/relativeTime')
+const duration = require("dayjs/plugin/duration");
+const relativeTime = require("dayjs/plugin/relativeTime");
 
-dayjs.extend(duration)
-dayjs.extend(relativeTime)
+dayjs.extend(duration);
+dayjs.extend(relativeTime);
 
-const keys = ["id", "name", "dlspeed", "progress", "eta", "size", "state", "priority"] as const
+const keys = ["id", "name", "dlspeed", "progress", "eta", "size", "state", "priority"] as const;
 type Keys = typeof keys[number];
 
 function getTorrentStateStr(state: TorrentState) {
 	switch (state) {
 		case TorrentState.Error:
-			return ["Error"]
+			return ["Error"];
 
 		case TorrentState.PausedUP:
 		case TorrentState.PausedDL:
-			return ["Paused", "#09a0b4"]
+			return ["Paused", "#09a0b4"];
 
 		case TorrentState.QueuedUP:
 		case TorrentState.QueuedDL:
-			return ["Queued", "#09b49a"]
+			return ["Queued", "#09b49a"];
 
 		case TorrentState.Uploading:
 			return ["Uploading", "#b40978"];
@@ -54,70 +54,70 @@ function getTorrentStateStr(state: TorrentState) {
 			return ["Forced", ""];
 
 		case TorrentState.MissingFiles:
-			return ["Missing files", "#b40909"]
+			return ["Missing files", "#b40909"];
 	}
 
-	return ["", undefined]
+	return ["", undefined];
 }
 
 const columns: Record<Keys, GridColumns[number] & { field: Keys }> = {
-	id: {field: 'id', headerName: 'id', width: 0, hide: true,},
+	id: {field: "id", headerName: "id", width: 0, hide: true},
 	priority: {
-		field: 'priority', headerName: '#', width: 90, type: "number", renderCell: ({value}) => {
-			return value === 0 ? "*" : value
+		field: "priority", headerName: "#", width: 90, type: "number", renderCell: ({value}) => {
+			return value === 0 ? "*" : value;
 		}
 	},
 	name: {
-		field: 'name', headerName: 'Name', flex: 1, renderCell: params => {
+		field: "name", headerName: "Name", flex: 1, renderCell: params => {
 			const val = params.value as string;
-			return <Typography title={val}>{val}</Typography>
+			return <Typography title={val}>{val}</Typography>;
 		}
 	},
 	progress: {
-		field: 'progress', headerName: 'Done', width: 130, type: "string", renderCell: params => {
+		field: "progress", headerName: "Done", width: 130, type: "string", renderCell: params => {
 			const val = Number(params.value) * 100;
-			return `${val.toFixed(2)}%`
+			return `${val.toFixed(2)}%`;
 		}
 	},
 	state: {
-		field: 'state', headerName: 'State', width: 130, renderCell: params => {
+		field: "state", headerName: "State", width: 130, renderCell: params => {
 			const val = params.value as TorrentState;
 			let [str, color] = getTorrentStateStr(val);
-			return <Typography style={{color}}>{str}</Typography>
+			return <Typography style={{color}}>{str}</Typography>;
 		}
 	},
 	dlspeed: {
-		field: 'dlspeed', headerName: 'Download speed', width: 185, type: "string", renderCell: params => {
-			const row = params.row as Torrent
+		field: "dlspeed", headerName: "Download speed", width: 185, type: "string", renderCell: params => {
+			const row = params.row as Torrent;
 			let val = Number(params.value) / (1024 ** 2);
 			return row.state === TorrentState.Downloading ? `${val.toFixed(2)} Mo/s` : "N/A";
 		}
 	},
 	eta: {
-		field: 'eta', headerName: 'ETA', width: 120, renderCell: params => {
+		field: "eta", headerName: "ETA", width: 120, renderCell: params => {
 			let value = params.value === 8640000 ? "N/A"
 				: dayjs.duration(params.value as number, "seconds").humanize();
 
 			console.log(value);
 
-			return value
+			return value;
 		}
 	},
 	size: {
-		field: 'size', headerName: 'Size', width: 150, type: "number", renderCell: params => {
+		field: "size", headerName: "Size", width: 150, type: "number", renderCell: params => {
 			let val = Number(params.value) / (1024 ** 3);
-			return `${val.toFixed(2)} GB`
+			return `${val.toFixed(2)} GB`;
 		}
-	},
-}
+	}
+};
 
 Object.values(columns).forEach(col => {
 	col["align"] ??= "right";
 	col["headerAlign"] ??= "right";
 	col["sortable"] = false;
-})
+});
 
-columns.name.headerAlign = columns.name.align = "left"
+columns.name.headerAlign = columns.name.align = "left";
 
 const allColumns = [
 	columns.id,
@@ -127,8 +127,8 @@ const allColumns = [
 	columns.state,
 	columns.dlspeed,
 	columns.eta,
-	columns.size,
-]
+	columns.size
+];
 
 const smallColumns = [
 	columns.id,
@@ -136,7 +136,7 @@ const smallColumns = [
 	columns.name,
 	columns.state,
 	columns.progress
-]
+];
 
 type  PopoverInfo = {
 	mouseX?: number,
@@ -144,14 +144,14 @@ type  PopoverInfo = {
 	torrent?: Record<Keys, any>
 };
 
-const initialPopoverPosition: PopoverInfo = {}
+const initialPopoverPosition: PopoverInfo = {};
 
 const TorrentList = () => {
 
 	const services = {
 		torrent: useInjection<TorrentService>(DependencyInjectionKeys.media.torrent),
-		files: useInjection<FilesService>(DependencyInjectionKeys.files),
-	}
+		files: useInjection<FilesService>(DependencyInjectionKeys.files)
+	};
 
 	const [popoverPosition, setPopoverPosition] = React.useState(initialPopoverPosition);
 
@@ -169,7 +169,7 @@ const TorrentList = () => {
 			id: torrent.hash,
 			state: torrent.state,
 			priority: torrent.priority
-		}))
+		}));
 	}, [data]);
 
 	const onCellClick = React.useCallback((torrent: GridCellParams, event: React.MouseEvent) => {
@@ -179,18 +179,18 @@ const TorrentList = () => {
 			mouseY: event.clientY - 4,
 			torrent: torrent.row as any
 		});
-	}, [])
+	}, []);
 
 	const handleClose = React.useCallback(async (item?: "resume" | "pause" | "delete") => {
 		setPopoverPosition(initialPopoverPosition);
 		const func = {
 			resume: services.torrent.resume,
 			pause: services.torrent.pause,
-			delete: services.torrent.delete,
-		}
+			delete: services.torrent.delete
+		};
 
 		if (item) {
-			await func[item](popoverPosition.torrent!!.id)
+			await func[item](popoverPosition.torrent!!.id);
 			await reload();
 		}
 
@@ -208,18 +208,18 @@ const TorrentList = () => {
 			/>
 
 			{popoverPosition.mouseY && popoverPosition.mouseX && <Menu
-                keepMounted
-                open={true}
-                onClose={() => handleClose()}
-                anchorReference="anchorPosition"
-                anchorPosition={
+				keepMounted
+				open={true}
+				onClose={() => handleClose()}
+				anchorReference="anchorPosition"
+				anchorPosition={
 					{top: popoverPosition.mouseY, left: popoverPosition.mouseX}
 				}
-            >
-                <MenuItem onClick={() => handleClose("resume")}>Resume</MenuItem>
-                <MenuItem onClick={() => handleClose("pause")}>Pause</MenuItem>
-                <MenuItem onClick={() => handleClose("delete")}>Delete</MenuItem>
-            </Menu>}
+			>
+				<MenuItem onClick={() => handleClose("resume")}>Resume</MenuItem>
+				<MenuItem onClick={() => handleClose("pause")}>Pause</MenuItem>
+				<MenuItem onClick={() => handleClose("delete")}>Delete</MenuItem>
+			</Menu>}
 
 
 		</Box>

@@ -5,7 +5,7 @@ import FullscreenExitIcon from "@material-ui/icons/FullscreenExit";
 import FullscreenIcon from "@material-ui/icons/Fullscreen";
 import RemoveIcon from "@material-ui/icons/Remove";
 import SettingsIcon from "@material-ui/icons/Settings";
-import {remote} from "electron";
+import * as remote from "@electron/remote";
 import Settings from "../settings/Settings";
 
 interface State {
@@ -15,7 +15,7 @@ interface State {
 }
 
 interface Props {
-	title?: string
+	title?: string;
 }
 
 

@@ -35,7 +35,7 @@ export class Config extends Component<ReduxTypes> {
 
 
 	@resolve(DependencyInjectionKeys.configuration)
-	configurationService!: ConfigurationService
+	configurationService!: ConfigurationService;
 
 	override render() {
 		const {config} = this.props;

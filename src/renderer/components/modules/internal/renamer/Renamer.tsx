@@ -35,13 +35,13 @@ export class Renamer extends React.Component<{}, State> {
 
 
 	@resolve(DependencyInjectionKeys.files)
-	filesService!: FilesService
+	filesService!: FilesService;
 
 	override state: State = {
 		episodes: [],
 		replaceOptions: {},
-		name: "",
-	}
+		name: ""
+	};
 	private logger = Logger(Renamer);
 
 	override async componentDidMount() {
@@ -161,7 +161,7 @@ export class Renamer extends React.Component<{}, State> {
 			this.setState({
 				episodes: episodes,
 				min,
-				max,
+				max
 			});
 		}
 
@@ -211,8 +211,8 @@ export class Renamer extends React.Component<{}, State> {
 
 	private getNewEpisodeName = (episode: State["episodes"][number], num: string) => {
 		const name = this.state.name.trim();
-		return `${path.dirname(episode.file)}${path.sep}${name} ${num}.${episode.extension}`
-	}
+		return `${path.dirname(episode.file)}${path.sep}${name} ${num}.${episode.extension}`;
+	};
 
 	private rename = async (): Promise<any> => {
 
@@ -269,7 +269,7 @@ export class Renamer extends React.Component<{}, State> {
 				this.logger.info(JSON.parse(JSON.stringify(this.state)));
 				await fs.rename(episode.file, path.join(path.dirname(episode.file), newFileName));
 			}
-		}))
+		}));
 
 	};
 

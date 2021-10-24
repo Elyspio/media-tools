@@ -40,7 +40,7 @@ let exclusions = ["node_modules", ".git", ".expo", ".bit"];
 export class Purge extends Component<{}, State> {
 
 	@resolve(DependencyInjectionKeys.files)
-	filesService!: FilesService
+	filesService!: FilesService;
 
 
 	override state: State = {
@@ -71,48 +71,48 @@ export class Purge extends Component<{}, State> {
 
 				{!loading && folder && <>
 
-                    <Box className="filter">
-                        <TextField label={"Match"} onChange={this.onMatchChange}/>
+					<Box className="filter">
+						<TextField label={"Match"} onChange={this.onMatchChange}/>
 
-                        <Box className={"exclusion"}>
-                            <InputLabel id="ignoreContentLabel">Ignore content from</InputLabel>
-                            <Select
-                                labelId="ignoreContentLabel"
-                                id="ignoreContentSelect"
-                                multiple
-                                MenuProps={{variant: "menu"}}
-                                value={preview.exclude}
-                                renderValue={(selected: any) => selected.join(", ")}
-                                input={<Input/>}
-                                onChange={this.changePreviewExclusion}
-                            >
+						<Box className={"exclusion"}>
+							<InputLabel id="ignoreContentLabel">Ignore content from</InputLabel>
+							<Select
+								labelId="ignoreContentLabel"
+								id="ignoreContentSelect"
+								multiple
+								MenuProps={{variant: "menu"}}
+								value={preview.exclude}
+								renderValue={(selected: any) => selected.join(", ")}
+								input={<Input/>}
+								onChange={this.changePreviewExclusion}
+							>
 								{exclusions.map((name) => (
 									<MenuItem key={name} value={name} className={"exclude"}>
 										<Checkbox checked={preview.exclude.includes(name)} color={"secondary"}/>
 										<Typography className={"item"}>{name}</Typography>
 									</MenuItem>
 								))}
-                            </Select>
-                        </Box>
-                    </Box>
+							</Select>
+						</Box>
+					</Box>
 
 
-                    <Typography className={"preview-title"} variant={"h6"}>Preview <span className={"itemCount"}>( {preview.filtered.length} / {preview.raw.length} )</span>
-                    </Typography>
-                    <Container>
-                        <div onScroll={this.onPreviewScroll} className={"preview-items"} ref={r => this.items = r}>
+					<Typography className={"preview-title"} variant={"h6"}>Preview <span className={"itemCount"}>( {preview.filtered.length} / {preview.raw.length} )</span>
+					</Typography>
+					<Container>
+						<div onScroll={this.onPreviewScroll} className={"preview-items"} ref={r => this.items = r}>
 							{preview.filtered.slice(0, preview.amount).map(f => <Typography noWrap key={f}><span title={f}>{f}</span></Typography>)}
-                        </div>
-                    </Container>
+						</div>
+					</Container>
 					{match && <div className={"actions"}>
-                        <Button color={"secondary"} className={"RemoveBtn"} variant={"outlined"} onClick={this.remove}>Remove</Button>
+						<Button color={"secondary"} className={"RemoveBtn"} variant={"outlined"} onClick={this.remove}>Remove</Button>
 
 						{alert && <div>
 							{<Alert severity={alert.severity}>{alert.message}</Alert>}
-                        </div>}
+						</div>}
 
-                    </div>}
-                </>}
+					</div>}
+				</>}
 
 
 			</Container>

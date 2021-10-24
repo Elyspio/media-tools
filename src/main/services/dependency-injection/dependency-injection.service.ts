@@ -1,4 +1,4 @@
-console.info("Dependency injection started")
+console.info("Dependency injection started");
 import {DialogService} from "../electron/dialog.service";
 import {MediaService} from "../media/media.service";
 import {SystemService} from "../system/system.service";
@@ -21,10 +21,10 @@ container.bind<TorrentService>(DependencyInjectionKeys.media.torrent).to(Torrent
 container.bind<SystemService>(DependencyInjectionKeys.system).to(SystemService);
 container.bind<FilesService>(DependencyInjectionKeys.files).to(FilesService);
 container.bind<ConfigurationService>(DependencyInjectionKeys.configuration).to(ConfigurationService);
-container.bind<GithubService>(DependencyInjectionKeys.projects.github).to(GithubService)
-container.bind<FeatureService>(DependencyInjectionKeys.projects.feature).to(FeatureService)
+container.bind<GithubService>(DependencyInjectionKeys.projects.github).to(GithubService);
+container.bind<FeatureService>(DependencyInjectionKeys.projects.feature).to(FeatureService);
 container.bind<DockerService>(DependencyInjectionKeys.projects.docker).to(DockerService);
 container.bind<OpenvpnService>(DependencyInjectionKeys.networks.openvpn).to(OpenvpnService);
 container.bind<NordvpnService>(DependencyInjectionKeys.networks.nordvpn).to(NordvpnService);
 
-console.info("Dependency injection loaded")
+console.info("Dependency injection loaded");

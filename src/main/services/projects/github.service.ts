@@ -31,7 +31,7 @@ export class GithubService {
 	constructor() {
 		this.services = {
 			files: container.get<FilesService>(DependencyInjectionKeys.files)
-		}
+		};
 	}
 
 	public async getTemplates(username?: string): Promise<Template[]> {
@@ -67,7 +67,7 @@ export class GithubService {
 	}
 
 	public async exist(name: string) {
-		const {data} = await github.repos.listForAuthenticatedUser()
+		const {data} = await github.repos.listForAuthenticatedUser();
 		return data.some(d => d.name === name);
 	}
 

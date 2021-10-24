@@ -1,21 +1,21 @@
-import React from 'react';
+import React from "react";
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide} from "@material-ui/core";
 import {TransitionProps} from "@material-ui/core/transitions";
 import {Button} from "../../../common/Button";
 
 import {useModal} from "../../../../hooks/useModal";
-import {remote} from "electron";
+import * as remote from "@electron/remote";
 import {spawnAsync} from "../../../../../main/util";
 import {useInjection} from "inversify-react";
 import {SystemService} from "../../../../../main/services/system/system.service";
 import {DependencyInjectionKeys} from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 
-const {Notification} = remote.require('electron')
+const {Notification} = remote.require("electron");
 
 
 const Transition = React.forwardRef(function Transition(
 	props: TransitionProps & { children?: React.ReactElement<any, any> },
-	ref: React.Ref<unknown>,
+	ref: React.Ref<unknown>
 ) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -23,27 +23,27 @@ const Transition = React.forwardRef(function Transition(
 
 function AppNotStarted() {
 
-	const {open, setClose, setOpen} = useModal(false)
+	const {open, setClose, setOpen} = useModal(false);
 	const services = {
 		system: useInjection<SystemService>(DependencyInjectionKeys.system)
-	}
+	};
 
 
 	React.useEffect(() => {
 		services.system.isAppStarted("qbittorrent").then(launched => {
 			if (!launched) {
-				setOpen()
+				setOpen();
 			}
-		})
-	}, [])
+		});
+	}, []);
 
 
 	const launchApp = () => {
-		setClose()
+		setClose();
 		new Notification({
-			title: "Launching qBittorent",
-		}).show()
-		return spawnAsync("qbittorrent")
+			title: "Launching qBittorent"
+		}).show();
+		return spawnAsync("qbittorrent");
 	};
 
 	return (

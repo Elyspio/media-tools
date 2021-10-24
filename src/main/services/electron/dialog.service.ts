@@ -1,11 +1,11 @@
 import {BrowserWindowConstructorOptions} from "electron";
 import * as fs from "fs-extra";
-import path, {join} from "path";
+import * as path from "path";
 import * as url from "url";
 import {windowOption} from "../../../config/electron";
 import {injectable} from "inversify";
 
-const {dialog, BrowserWindow} = require("electron").remote;
+const {dialog, BrowserWindow} = require("@electron/remote");
 
 @injectable()
 export class DialogService {
@@ -25,7 +25,7 @@ export class DialogService {
 
 		return {
 			folder: folder,
-			files: returnFiles ? (await fs.readdir(folder)).map(file => this.escape(join(folder, file))) : undefined
+			files: returnFiles ? (await fs.readdir(folder)).map(file => this.escape(path.join(folder, file))) : undefined
 		};
 
 	}
@@ -37,7 +37,7 @@ export class DialogService {
 		});
 
 
-		const {store} = await import("../../../renderer/store" )
+		const {store} = await import("../../../renderer/store" );
 
 		const search = `route=${target}&options=${JSON.stringify(frame)}&store=${JSON.stringify(store.getState())}`;
 		const param = "data=" + btoa(search);

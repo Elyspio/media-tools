@@ -32,4 +32,4 @@ export const store = configureStore({
 
 export type StoreState = ReturnType<typeof store.getState>
 
-export const useAppSelector: TypedUseSelectorHook<StoreState> = useSelector
+export const useAppSelector: TypedUseSelectorHook<StoreState> = useSelector;

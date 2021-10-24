@@ -8,7 +8,7 @@ export abstract class VpnService {
 
 	protected async isInterfaceConnected(name: string) {
 		const interfaces = await networkInterfaces();
-		return interfaces.some(inter => inter.ifaceName.toLocaleLowerCase().includes(name.toLocaleLowerCase()) && inter.operstate === "up")
+		return interfaces.some(inter => inter.ifaceName.toLocaleLowerCase().includes(name.toLocaleLowerCase()) && inter.operstate === "up");
 	}
 
 

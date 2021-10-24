@@ -1,25 +1,25 @@
-import {remote} from "electron";
+import * as remote from "@electron/remote";
 import * as React from "react";
 
 
 export function useAppDimension() {
 
-	const [width, setWidth] = React.useState(() => remote.getCurrentWindow().getSize()[0])
-	const [height, setHeight] = React.useState(() => remote.getCurrentWindow().getSize()[1])
+	const [width, setWidth] = React.useState(() => remote.getCurrentWindow().getSize()[0]);
+	const [height, setHeight] = React.useState(() => remote.getCurrentWindow().getSize()[1]);
 
 	const win = React.useMemo(() => {
 		let currentWindow = remote.getCurrentWindow();
 		currentWindow.on("resize", () => {
 			const sizes = win.getSize();
-			setWidth(sizes[0])
-			setHeight(sizes[1])
-		})
+			setWidth(sizes[0]);
+			setHeight(sizes[1]);
+		});
 		return currentWindow;
-	}, [])
+	}, []);
 
 
 	return {
 		width,
 		height
-	}
+	};
 }

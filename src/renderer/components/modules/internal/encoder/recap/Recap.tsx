@@ -21,7 +21,7 @@ export interface Props {
 
 
 export interface State {
-	timeleft: number
+	timeleft: number;
 }
 
 @Register({name: "Encoder Recap", path: "/encoder/recap", show: {appboard: false, name: true}}, connector)

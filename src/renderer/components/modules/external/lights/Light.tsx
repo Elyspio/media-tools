@@ -6,7 +6,7 @@ import {Dispatch} from "redux";
 import {StoreState} from "../../../../store";
 
 interface State {
-	url?: string
+	url?: string;
 }
 
 

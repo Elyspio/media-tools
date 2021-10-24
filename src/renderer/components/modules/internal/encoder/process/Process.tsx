@@ -9,17 +9,17 @@ import {formatDuration} from "../../../../../util/date";
 
 const dayjs = require("dayjs");
 
-const duration = require('dayjs/plugin/duration')
-const relativeTime = require('dayjs/plugin/relativeTime')
-const updateLocal = require('dayjs/plugin/updateLocale')
+const duration = require("dayjs/plugin/duration");
+const relativeTime = require("dayjs/plugin/relativeTime");
+const updateLocal = require("dayjs/plugin/updateLocale");
 
-dayjs.extend(duration)
-dayjs.extend(relativeTime)
+dayjs.extend(duration);
+dayjs.extend(relativeTime);
 dayjs.extend(updateLocal);
 
 
 interface Props {
-	data: ProcessData
+	data: ProcessData;
 }
 
 
@@ -28,22 +28,22 @@ function Process({data}: Props) {
 	const ref = useRef<Dayjs | null>(null);
 
 	const eta = React.useMemo(() => {
-		if (data.percentage === 0) return "Queued"
+		if (data.percentage === 0) return "Queued";
 		if (data.percentage > 0 && ref.current === null) {
 			ref.current = dayjs();
 
 		}
 		if (data.percentage === 100) {
 			ref.current = null;
-			return "Done"
+			return "Done";
 		}
 
 		const nbSeconds = dayjs().diff(ref.current, "seconds");
 
-		const timeToWait = ((100 - data.percentage) * nbSeconds) / data.percentage
+		const timeToWait = ((100 - data.percentage) * nbSeconds) / data.percentage;
 		return formatDuration(dayjs.duration(timeToWait, "seconds"));
 
-	}, [data.percentage, data.media.file.path])
+	}, [data.percentage, data.media.file.path]);
 
 	return <ListItem className={"Process"}>
 		<Grid container direction={"row"} spacing={2}>

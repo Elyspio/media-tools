@@ -60,7 +60,7 @@ export const mediaSlice = createSlice({
 			} else {
 				encodingProcess.current = undefined;
 			}
-		})
+		});
 
 	}
 });

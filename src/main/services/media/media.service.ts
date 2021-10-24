@@ -24,14 +24,14 @@ export class MediaService {
 
 	public async checkIfFFmpegInstalled() {
 		const bool = await isInstalled("ffmpeg");
-		const {store} = await import("../../../renderer/store")
+		const {store} = await import("../../../renderer/store");
 		store.dispatch(setFFmpegInstalled(bool));
 		return bool;
 	}
 
 	public async convert(input: Media, format: string, options?: { outputPath: string }): Promise<[EventEmitter, ReturnType<typeof spawn>]> {
 
-		const {store} = await import("../../../renderer/store")
+		const {store} = await import("../../../renderer/store");
 
 		try {
 			const outputPath = options?.outputPath ?? path.join(__dirname, "output.mkv");

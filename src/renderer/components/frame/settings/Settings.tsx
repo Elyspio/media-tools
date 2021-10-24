@@ -21,7 +21,7 @@ class Settings extends React.Component<OwnProps> {
 
 
 	@resolve(DependencyInjectionKeys.electron.window)
-	private windowService!: WindowService
+	private windowService!: WindowService;
 
 	override render() {
 		let {close, isOpen, config} = this.props;

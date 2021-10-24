@@ -17,6 +17,6 @@ export const DependencyInjectionKeys = {
 	},
 	networks: {
 		openvpn: Symbol.for("OpenvpnService"),
-		nordvpn: Symbol.for("NordvpnService"),
+		nordvpn: Symbol.for("NordvpnService")
 	}
-}
+};

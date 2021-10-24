@@ -116,7 +116,7 @@ export interface Permissions {
 }
 
 export interface Template extends Repository {
-	is_template: true
+	is_template: true;
 }
 
 export enum FeatureOptions {

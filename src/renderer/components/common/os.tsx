@@ -29,8 +29,8 @@ type SelectFolder = {
 export function SelectFolder(props: Props) {
 
 	const services = {
-		dialog: useInjection<DialogService>(DependencyInjectionKeys.electron.dialog),
-	}
+		dialog: useInjection<DialogService>(DependencyInjectionKeys.electron.dialog)
+	};
 
 	const [files, setFiles] = React.useState<string>("");
 

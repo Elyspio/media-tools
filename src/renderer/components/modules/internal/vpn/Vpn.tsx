@@ -3,11 +3,9 @@ import "./Vpn.scss";
 import {Container, Divider, MenuItem, Typography} from "@material-ui/core";
 import {Register} from "../../../../decorators/Module";
 import {Button} from "../../../common/Button";
-
 import {connect, ConnectedProps} from "react-redux";
 import {Dispatch} from "redux";
 import {StoreState} from "../../../../store";
-import {ProviderContext, withSnackbar} from "notistack";
 import Box from "@material-ui/core/Box";
 import {countries, Country, NordvpnService} from "../../../../../main/services/network/nordvpn.service";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -15,6 +13,7 @@ import Select from "@material-ui/core/Select";
 import {Logger} from "../../../../../main/util/logger";
 import {resolve} from "inversify-react";
 import {DependencyInjectionKeys} from "../../../../../main/services/dependency-injection/dependency-injection.keys";
+import {toast} from "react-toastify";
 
 
 const mapStateToProps = (state: StoreState) => ({
@@ -39,12 +38,12 @@ type State = {
 	name: "Vpn",
 	description: "Start or stop VPN",
 	path: "/vpn"
-}, connector, withSnackbar)
-export class Vpn extends Component<ReduxTypes & ProviderContext, State> {
+}, connector)
+export class Vpn extends Component<ReduxTypes, State> {
 
 
 	@resolve(DependencyInjectionKeys.networks.nordvpn)
-	nordvpnService!: NordvpnService
+	nordvpnService!: NordvpnService;
 
 	override state: State = {
 		config: {
@@ -53,7 +52,7 @@ export class Vpn extends Component<ReduxTypes & ProviderContext, State> {
 			}
 		}
 	};
-	private logger = Logger(Vpn)
+	private logger = Logger(Vpn);
 	private openvpn = {
 		connect: () => {
 			// 	Services.vpn.openvpn.connect().catch((e: Error) => {
@@ -70,13 +69,13 @@ export class Vpn extends Component<ReduxTypes & ProviderContext, State> {
 		connect: () => {
 			this.nordvpnService.connect(this.state.config.nordvpn.country).catch((e: Error) => {
 				this.logger.error("nordvpn.connect error", e);
-				this.props.enqueueSnackbar(e.message, {variant: "error", anchorOrigin: {horizontal: "right", vertical: "bottom"}});
-			})
+				toast.error(e.message, {position: "bottom-right"});
+			});
 		},
 		disconnect: () => {
 			this.nordvpnService.disconnect().catch((e: Error) => {
 				this.logger.error("nordvpn.disconnect error", e);
-				this.props.enqueueSnackbar(e.message, {variant: "error", anchorOrigin: {horizontal: "right", vertical: "bottom"}});
+				toast.error(e.message, {position: "bottom-right"});
 			});
 		}
 	};
@@ -140,7 +139,7 @@ export class Vpn extends Component<ReduxTypes & ProviderContext, State> {
 					country: e.target.value
 				}
 			}
-		}))
+		}));
 	};
 
 

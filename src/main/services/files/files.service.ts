@@ -53,7 +53,7 @@ export class FilesService {
 						files.push(node);
 					} else {
 						const match = Boolean(node.match(filter.match)?.length);
-						if (match && !filter.inverse || !match && filter.inverse) files.push(node)
+						if (match && !filter.inverse || !match && filter.inverse) files.push(node);
 					}
 				} else {
 					files.push(...await this.find(node, filter));
@@ -126,13 +126,13 @@ export class FilesService {
 
 		let fsWatcher = fse.watch(folder, {recursive: true, encoding: "utf8"}, (event, filename) => {
 			filename = path.join(folder, filename);
-			console.debug("new action", {event, filename})
-			action(event, filename)
+			console.debug("new action", {event, filename});
+			action(event, filename);
 		});
 		return () => {
 			console.debug("Unwatch folder", folder);
 			fsWatcher.close();
-		}
+		};
 	}
 
 	/**

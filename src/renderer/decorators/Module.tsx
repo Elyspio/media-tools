@@ -22,7 +22,7 @@ export const defaultModuleDescription = {
 type Must = Omit<Info, keyof typeof defaultModuleDescription> & Partial<typeof defaultModuleDescription>
 
 
-const logger = Logger("Module")
+const logger = Logger("Module");
 
 export function Register(info: Must, ...connector: Function[]) {
 	store.dispatch(addRoute({...defaultModuleDescription, ...info, component: info.name}));
@@ -32,14 +32,14 @@ export function Register(info: Must, ...connector: Function[]) {
 		let ret = target;
 		connector.reverse().forEach(f => {
 			ret = f(ret);
-		})
+		});
 
 		addComponent(info.path, ret);
 		return target;
 	};
 }
 
-export function register(WrappedComponent: React.ComponentType, info: Must) {
+export function register(WrappedComponent: React.ComponentType, info: Must, ...connector: Function[]) {
 	store.dispatch(addRoute({...defaultModuleDescription, ...info, component: info.name}));
 	logger.info("Registering component", {name: info.name, component: WrappedComponent.name});
 
@@ -50,10 +50,13 @@ export function register(WrappedComponent: React.ComponentType, info: Must) {
 		}
 	};
 
+	connector.reverse().forEach(f => {
+		comp = f(comp);
+	});
+
 	addComponent(info.path, comp);
 
-
-	return comp
+	return comp;
 }
 
 

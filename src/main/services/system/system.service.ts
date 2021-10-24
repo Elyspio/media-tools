@@ -56,28 +56,28 @@ export class SystemService {
 		let platform = os.platform();
 
 		if (platform === "win32") {
-			const {stdout} = await exec('REG QUERY \"HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders\"')
+			const {stdout} = await exec("REG QUERY \"HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders\"");
 			const nodes = stdout
 				.split("\r\n")
 				.map(x => x.trim()
-					.split(" ")
-					.filter(line => line.length)
-				).filter(line => line.length)
+				           .split(" ")
+				           .filter(line => line.length)
+				).filter(line => line.length);
 
 			const folder_array = nodes.find(n => n[0] === "{7D83EE9B-2244-4E70-B1F5-5393042AF1E4}");
 			if (folder_array) {
-				folder = folder_array[2]
+				folder = folder_array[2];
 			}
 		} else if (platform === "linux") {
-			const {stdout} = await exec('xdg-user-dir DOWNLOAD')
+			const {stdout} = await exec("xdg-user-dir DOWNLOAD");
 			folder = stdout;
 		}
 
 		if (folder === undefined) {
-			throw new Error("Could not find user's download folder")
+			throw new Error("Could not find user's download folder");
 		}
 
-		return folder
+		return folder;
 	}
 
 	public async open(thing: string) {
@@ -85,12 +85,12 @@ export class SystemService {
 		try {
 			switch (platform) {
 				case "linux":
-					await exec("xdg-open " + thing)
-					break
+					await exec("xdg-open " + thing);
+					break;
 
 				case "win32":
-					await exec("explorer.exe " + thing)
-					break
+					await exec("explorer.exe " + thing);
+					break;
 			}
 		} catch (e) {
 
@@ -100,8 +100,8 @@ export class SystemService {
 	}
 
 	public async isAppStarted(name: string) {
-		const apps = await processes()
-		return apps.list.some(app => app.name.includes(name))
+		const apps = await processes();
+		return apps.list.some(app => app.name.includes(name));
 	}
 
 

@@ -1,11 +1,10 @@
-import {BrowserWindowConstructorOptions} from "electron";
+import {BrowserWindowConstructorOptions} from "electron/main";
 
 export const windowOption: BrowserWindowConstructorOptions = {
 	width: 800,
 	height: 600,
 	webPreferences: {
 		nodeIntegration: true,
-		enableRemoteModule: true,
 		webSecurity: false,
 		contextIsolation: false
 	},

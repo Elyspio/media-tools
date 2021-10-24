@@ -33,7 +33,7 @@ export class ProjectBuilder {
 			docker: container.get<DockerService>(DependencyInjectionKeys.projects.docker),
 			github: container.get<GithubService>(DependencyInjectionKeys.projects.github),
 			feature: container.get<FeatureService>(DependencyInjectionKeys.projects.feature)
-		}
+		};
 	}
 
 	public set description(des: string) {
@@ -110,7 +110,7 @@ export class ProjectBuilder {
 		let name = typeof this.config.docker === "string" ? this.config.docker : this.config.name;
 		await Promise.all(
 			files.map(async file => await this.services.files.replaceInFile(file, "express-react-ts-template", name))
-		)
+		);
 	}
 }
 

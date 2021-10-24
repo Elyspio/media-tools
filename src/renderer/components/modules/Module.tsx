@@ -20,12 +20,12 @@ function Module(props: ConnectedProps<typeof connector> & { children?: any }) {
 
 	return <div className={"Module"}>
 		{!options.modal && props.info.show.name && <div className="bar">
-            <IconButton className={"backBtn"}
-                        onClick={() => props.backHistory()}>
-                <ArrowBackIcon/>
-            </IconButton>
+			<IconButton className={"backBtn"}
+						onClick={() => props.backHistory()}>
+				<ArrowBackIcon/>
+			</IconButton>
 			{props.info.show.name && <Typography variant={"h5"} className="title">{props.info.name}</Typography>}
-        </div>}
+		</div>}
 
 		{props.children}
 
