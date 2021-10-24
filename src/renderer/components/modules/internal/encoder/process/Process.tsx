@@ -17,21 +17,17 @@ dayjs.extend(duration);
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocal);
 
-
 interface Props {
 	data: ProcessData;
 }
 
-
 function Process({ data }: Props) {
-
 	const ref = useRef<Dayjs | null>(null);
 
 	const eta = React.useMemo(() => {
 		if (data.percentage === 0) return "Queued";
 		if (data.percentage > 0 && ref.current === null) {
 			ref.current = dayjs();
-
 		}
 		if (data.percentage === 100) {
 			ref.current = null;
@@ -42,34 +38,32 @@ function Process({ data }: Props) {
 
 		const timeToWait = ((100 - data.percentage) * nbSeconds) / data.percentage;
 		return formatDuration(dayjs.duration(timeToWait, "seconds"));
-
 	}, [data.percentage, data.media.file.path]);
 
-	return <ListItem className={"Process"}>
-		<Grid container direction={"row"} spacing={2}>
-			<Grid item xs={4}>
-				<Typography
-					className={"name"}
-					title={data.media.file.name}>{data.media.file.name}
-				</Typography>
-			</Grid>
+	return (
+		<ListItem className={"Process"}>
+			<Grid container direction={"row"} spacing={2}>
+				<Grid item xs={4}>
+					<Typography className={"name"} title={data.media.file.name}>
+						{data.media.file.name}
+					</Typography>
+				</Grid>
 
-			<Grid item xs>
-				<LinearProgress
-					className={"bar"}
-					variant="determinate"
-					title={data.percentage.toString()}
-					value={data.percentage} />
-			</Grid>
+				<Grid item xs>
+					<LinearProgress className={"bar"} variant="determinate" title={data.percentage.toString()} value={data.percentage} />
+				</Grid>
 
-			<Grid item xs={2}>
-				<Typography color={"textPrimary"}>{data.percentage.toFixed(2)}%</Typography>
+				<Grid item xs={2}>
+					<Typography color={"textPrimary"}>{data.percentage.toFixed(2)}%</Typography>
+				</Grid>
+				<Grid item xs={4}>
+					<Typography color={"textPrimary"} noWrap>
+						{eta}
+					</Typography>
+				</Grid>
 			</Grid>
-			<Grid item xs={4}>
-				<Typography color={"textPrimary"} noWrap>{eta}</Typography>
-			</Grid>
-		</Grid>
-	</ListItem>;
+		</ListItem>
+	);
 }
 
 export default Process;

@@ -13,16 +13,13 @@
 			grid-template-columns: repeat(6, 1fr);
 			grid-template-rows: auto;
 		}
-
 	}
-
 
 	.option {
 		display: flex;
 	}
 
 	.row {
-
 		margin: 2.5rem 0;
 
 		.MuiInputBase-formControl {
@@ -40,8 +37,5 @@
 				width: 4rem;
 			}
 		}
-
 	}
-
 }
-

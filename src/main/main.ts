@@ -9,16 +9,14 @@ import * as remoteMain from "@electron/remote/main";
 
 remoteMain.initialize();
 
-
 app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
 app.commandLine.appendSwitch("disable-site-isolation-trials");
 
 let win: BrowserWindow | null;
 
 const createWindow = async () => {
-
 	win = new BrowserWindow({
-		...windowOption
+		...windowOption,
 	});
 	remoteMain.enable(win.webContents);
 
@@ -26,12 +24,11 @@ const createWindow = async () => {
 		process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "1"; // eslint-disable-line require-atomic-updates
 		await win.loadURL(`http://localhost:2003`);
 	} else {
-
 		await win.loadURL(
 			url.format({
 				pathname: path.join(__dirname, "index.html"),
 				protocol: "file:",
-				slashes: true
+				slashes: true,
 			})
 		);
 	}
@@ -47,7 +44,6 @@ const createWindow = async () => {
 		win = null;
 	});
 };
-
 
 app.on("window-all-closed", () => {
 	if (process.platform !== "darwin") {
@@ -78,4 +74,3 @@ if (!gotTheLock) {
 	// Create myWindow, load the rest of the app, etc...
 	app.on("ready", createWindow);
 }
-

@@ -5,14 +5,13 @@ import { Feature } from "./types";
 import * as path from "path";
 import { injectable } from "inversify";
 
-
 @injectable()
 export class DockerService {
 	public addDockerSupport = async (dockerName: string, description: string, features: Feature[], projectRoot: string) => {
 		const dockerFolder = path.join(projectRoot, "docker");
 		await Promise.all([
 			// this.createRepository(dockerName, description, description),
-			this.addDockerfile(features, path.join(dockerFolder, "DockerFile"))
+			this.addDockerfile(features, path.join(dockerFolder, "DockerFile")),
 		]);
 	};
 
@@ -21,12 +20,11 @@ export class DockerService {
 		await dockerHubAPI.createRepository(docker.username, name, {
 			description,
 			full_description: fullDescription,
-			is_private: visibility === "private"
+			is_private: visibility === "private",
 		});
 	};
 
 	private addDockerfile = async (features: Feature[], output: string) => {
-
 		let file = "";
 
 		if (features.find(f => f.name === "web-back") && features.find(f => f.name === "web-front")) {

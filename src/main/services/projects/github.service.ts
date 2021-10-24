@@ -9,41 +9,49 @@ import { FilesService } from "../files/files.service";
 import { DependencyInjectionKeys } from "../dependency-injection/dependency-injection.keys";
 import { container } from "../dependency-injection/dependency-injection.container";
 
-
 const github = new Octokit({
 	log: {
 		debug: console.debug,
 		error: console.error,
 		info: console.info,
-		warn: console.warn
+		warn: console.warn,
 	},
 	auth: githubConf.token,
 	userAgent: "appName",
-	previews: ["baptiste-preview"]
+	previews: ["baptiste-preview"],
 });
-
 
 @injectable()
 export class GithubService {
 	private services: { files: FilesService };
 
-
 	constructor() {
 		this.services = {
-			files: container.get<FilesService>(DependencyInjectionKeys.files)
+			files: container.get<FilesService>(DependencyInjectionKeys.files),
 		};
 	}
 
 	public async getTemplates(username?: string): Promise<Template[]> {
-		const func = username ? () => github.repos.listForUser({ username: username, per_page: 1000 }) : () => github.repos.listForAuthenticatedUser({ per_page: 1000 });
+		const func = username
+			? () =>
+					github.repos.listForUser({
+						username: username,
+						per_page: 1000,
+					})
+			: () => github.repos.listForAuthenticatedUser({ per_page: 1000 });
 		// @ts-ignore
 		const { data }: { data: Repository[] } = await func();
 		return data.filter(x => x.is_template).sort((x, y) => x.full_name.localeCompare(y.full_name)) as Template[];
 	}
 
-	public async clone(options: { owner: string, repo: string, output: string }) {
+	public async clone(options: { owner: string; repo: string; output: string }) {
 		// @ts-ignore
-		const { data }: { data: ArrayBuffer } = await github.repos.downloadZipballArchive({ ref: "master", repo: options.repo, owner: options.owner, archive_format: "zipball" });
+		const { data }: { data: ArrayBuffer } = await github.repos.downloadZipballArchive({
+			ref: "master",
+			repo: options.repo,
+			owner: options.owner,
+			archive_format: "zipball",
+		});
 		await this.services.files.unzip(data, path.resolve(__dirname, options.output));
 		const innerDir = await fs.readdir(options.output);
 		await this.services.files.moveContent(path.join(options.output, innerDir[0]), options.output);
@@ -70,5 +78,4 @@ export class GithubService {
 		const { data } = await github.repos.listForAuthenticatedUser();
 		return data.some(d => d.name === name);
 	}
-
 }

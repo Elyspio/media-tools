@@ -1,4 +1,4 @@
-@use 'sass:math';
+@use "sass:math";
 
 @import "src/renderer/variables";
 
@@ -15,7 +15,6 @@
 	border-radius: 0 !important;
 	height: math.div($titlebarHeight, 1.5);
 
-
 	.item {
 		display: flex;
 		justify-content: center;
@@ -30,5 +29,4 @@
 			display: block;
 		}
 	}
-
 }

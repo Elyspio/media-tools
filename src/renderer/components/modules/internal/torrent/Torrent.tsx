@@ -12,23 +12,19 @@ import { SystemService } from "../../../../../main/services/system/system.servic
 import { FilesService } from "../../../../../main/services/files/files.service";
 import { DependencyInjectionKeys } from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 
-
 let stopWatchingFolder: Function;
 
 const Torrent = () => {
-
 	const services = {
 		system: useInjection<SystemService>(DependencyInjectionKeys.system),
-		files: useInjection<FilesService>(DependencyInjectionKeys.files)
+		files: useInjection<FilesService>(DependencyInjectionKeys.files),
 	};
-
 
 	const [addingTorrent, setAddingTorrent] = useState<string>();
 
 	const onTorrentAdded = React.useCallback((filename: string) => {
 		setAddingTorrent(filename);
 	}, []);
-
 
 	// region didMount
 
@@ -45,21 +41,22 @@ const Torrent = () => {
 
 	// endregion didMount
 
-
 	const gotoYggTorrent = useCallback(() => {
 		services.system.open("https://yggtorrent.li/");
 	}, []);
 
-	return <Grid className={"Torrent"}>
-		<AppNotStarted />
-		{addingTorrent && <AddNewTorrent name={addingTorrent} clear={() => setAddingTorrent(undefined)} />}
+	return (
+		<Grid className={"Torrent"}>
+			<AppNotStarted />
+			{addingTorrent && <AddNewTorrent name={addingTorrent} clear={() => setAddingTorrent(undefined)} />}
 
-		<Button color={"primary"} onClick={gotoYggTorrent}>Search torrent</Button>
-		<div style={{ margin: "1rem" }} />
-		<TorrentList />
-	</Grid>;
+			<Button color={"primary"} onClick={gotoYggTorrent}>
+				Search torrent
+			</Button>
+			<div style={{ margin: "1rem" }} />
+			<TorrentList />
+		</Grid>
+	);
 };
 
 register(Torrent, { name: "Torrent", path: "/torrent" });
-
-

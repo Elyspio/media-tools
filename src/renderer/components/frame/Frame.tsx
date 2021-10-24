@@ -9,19 +9,16 @@ import { Dispatch } from "redux";
 import { StoreState } from "../../store";
 
 type Props = ReduxTypes & {
-	children: ReactNode
-}
+	children: ReactNode;
+};
 
 function Frame(props: Props) {
-
 	const options = getUriParam("options", { json: true }) ?? {
 		bottom: props.config.current.frame.show.resourceUtilization,
-		top: true
+		top: true,
 	};
 
-	const main = <div className="main">
-		{props.children}
-	</div>;
+	const main = <div className="main">{props.children}</div>;
 	return (
 		<Paper square className={"Frame"}>
 			{options.top && <Titlebar title={options.title} />}
@@ -31,15 +28,13 @@ function Frame(props: Props) {
 	);
 }
 
-
 const mapStateToProps = (state: StoreState) => ({
-	config: state.config
+	config: state.config,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({});
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 type ReduxTypes = ConnectedProps<typeof connector>;
-
 
 export default connector(Frame);

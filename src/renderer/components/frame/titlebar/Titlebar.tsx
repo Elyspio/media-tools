@@ -9,21 +9,18 @@ import * as remote from "@electron/remote";
 import Settings from "../settings/Settings";
 
 interface State {
-	fullscreen: boolean,
-	settingModalOpened: boolean
-
+	fullscreen: boolean;
+	settingModalOpened: boolean;
 }
 
 interface Props {
 	title?: string;
 }
 
-
 class Titlebar extends Component<Props, State> {
-
 	override state: State = {
 		fullscreen: remote.getCurrentWindow().isFullScreen(),
-		settingModalOpened: false
+		settingModalOpened: false,
 	};
 
 	override render() {
@@ -32,13 +29,16 @@ class Titlebar extends Component<Props, State> {
 			<div className={"Titlebar"}>
 				<span className={"title"}>{this.props.title || remote.getCurrentWindow().title}</span>
 				<div>
-					<Button onClick={this.toggleModal}><SettingsIcon htmlColor={"#555555"} fontSize={"small"} /></Button>
-					<Button onClick={this.minimize}><RemoveIcon /></Button>
-					<Button
-						onClick={() => this.goFullscreen(!this.state.fullscreen)}>
-						{this.state.fullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+					<Button onClick={this.toggleModal}>
+						<SettingsIcon htmlColor={"#555555"} fontSize={"small"} />
 					</Button>
-					<Button className={"close"} onClick={this.close}>X</Button>
+					<Button onClick={this.minimize}>
+						<RemoveIcon />
+					</Button>
+					<Button onClick={() => this.goFullscreen(!this.state.fullscreen)}>{this.state.fullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}</Button>
+					<Button className={"close"} onClick={this.close}>
+						X
+					</Button>
 				</div>
 				<Settings close={this.toggleModal} isOpen={settingModalOpened} />
 			</div>
@@ -65,7 +65,7 @@ class Titlebar extends Component<Props, State> {
 	private goFullscreen(state: boolean): void {
 		remote.getCurrentWindow().setFullScreen(state);
 		this.setState({
-			fullscreen: state
+			fullscreen: state,
 		});
 	}
 }

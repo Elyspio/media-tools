@@ -7,12 +7,8 @@ type Dimensions = (keyof Configuration["frame"]["resize"])[];
 
 @injectable()
 export class WindowService {
-
-	public async isUnderSized(dimensions: Dimensions): Promise<{ height: number, width: number }> {
-
-
+	public async isUnderSized(dimensions: Dimensions): Promise<{ height: number; width: number }> {
 		return new Promise(resolve => {
-
 			let incrementWidth = 0;
 			let incrementHeight = 0;
 
@@ -28,13 +24,12 @@ export class WindowService {
 
 			resolve({
 				height: incrementHeight,
-				width: incrementWidth
+				width: incrementWidth,
 			});
-
 		});
 	}
 
-	public resize(delta: { width: number, height: number }) {
+	public resize(delta: { width: number; height: number }) {
 		const window = BrowserWindow.getFocusedWindow();
 
 		if (window) {
@@ -42,11 +37,11 @@ export class WindowService {
 
 			for (let i = 0; i < 20; i++) {
 				if (delta.width > 0) {
-					window.setSize(Math.ceil(width + i * delta.width / 20) + 5, height, true);
+					window.setSize(Math.ceil(width + (i * delta.width) / 20) + 5, height, true);
 				}
 
 				if (delta.height > 0) {
-					window.setSize(width, Math.ceil(height + i * delta.height / 20) + 5, true);
+					window.setSize(width, Math.ceil(height + (i * delta.height) / 20) + 5, true);
 				}
 			}
 		}
@@ -56,7 +51,4 @@ export class WindowService {
 		const window = BrowserWindow.getFocusedWindow();
 		window?.setSize(windowOption.width!, windowOption.height!);
 	}
-
-
 }
-

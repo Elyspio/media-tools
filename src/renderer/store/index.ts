@@ -16,20 +16,20 @@ export const store = configureStore({
 		routing: routerReducer,
 		config: configurationRouter,
 		vpn: vpnReducer,
-		media: mediaSlice.reducer
+		media: mediaSlice.reducer,
 	},
 	devTools: true,
 	middleware: [
 		...getDefaultMiddleware({
 			serializableCheck: {
-				ignoredActions: ["media/setCurrentProcess"]
-			}
+				ignoredActions: ["media/setCurrentProcess"],
+			},
 		}),
-		logger
+		logger,
 	],
-	preloadedState: getUriParam("store", { json: true, remove: true }) ?? undefined
+	preloadedState: getUriParam("store", { json: true, remove: true }) ?? undefined,
 });
 
-export type StoreState = ReturnType<typeof store.getState>
+export type StoreState = ReturnType<typeof store.getState>;
 
 export const useAppSelector: TypedUseSelectorHook<StoreState> = useSelector;

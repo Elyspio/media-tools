@@ -3,9 +3,7 @@ import { Encoder, Media, ProcessData } from "../../../components/modules/interna
 import { ChildProcess } from "child_process";
 import { StoreState } from "../../index";
 
-
 const createAction = <T>(name: string) => _createAction<T>(`media/${name}`);
-
 
 export const setMedias = createAction<Media[]>("setMedia");
 export const setFormat = createAction<Encoder["value"]["ffmpeg"]>("setFormat");
@@ -17,7 +15,9 @@ export const setCurrentProcess = createAction<ChildProcess | undefined>("setCurr
 export let encodingProcess: { current?: ChildProcess } = {};
 
 export const stopCurrentProcess = createAsyncThunk("media/stopCurrentProcess", (arg, thunkAPI) => {
-	const { media: { encoder } } = thunkAPI.getState() as StoreState;
+	const {
+		media: { encoder },
+	} = thunkAPI.getState() as StoreState;
 	if (encoder.currentProcessPid && encodingProcess.current) {
 		encodingProcess.current.kill("SIGKILL");
 		thunkAPI.dispatch(setCurrentProcess(undefined));

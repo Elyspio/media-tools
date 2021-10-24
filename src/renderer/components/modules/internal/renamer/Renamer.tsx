@@ -12,35 +12,32 @@ import { resolve } from "inversify-react";
 import { FilesService } from "../../../../../main/services/files/files.service";
 import { DependencyInjectionKeys } from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 
-
 interface State {
-	episodes: Episode[]
-	name: string,
-	min?: number,
-	max?: number,
+	episodes: Episode[];
+	name: string;
+	min?: number;
+	max?: number;
 	replaceOptions: {
-		search?: string,
-		replaceWith?: string
-	}
+		search?: string;
+		replaceWith?: string;
+	};
 }
 
 interface Episode {
-	file: string,
-	num: number,
-	extension: string
+	file: string;
+	num: number;
+	extension: string;
 }
 
 @Register({ name: "Renamer", path: "/renamer" })
 export class Renamer extends React.Component<{}, State> {
-
-
 	@resolve(DependencyInjectionKeys.files)
 	filesService!: FilesService;
 
 	override state: State = {
 		episodes: [],
 		replaceOptions: {},
-		name: ""
+		name: "",
 	};
 	private logger = Logger(Renamer);
 
@@ -54,69 +51,46 @@ export class Renamer extends React.Component<{}, State> {
 	}
 
 	override render() {
-
 		const { name, episodes, min, max, replaceOptions } = this.state;
 
 		let options: JSX.Element | null = null;
 		if (episodes.length > 0) {
-			options = <div className="options">
+			options = (
+				<div className="options">
+					<div className="classic">
+						<TextField id={"renamer-new-name-input"} label={"Futur nom"} onChange={this.onNameChange} fullWidth error={!(name !== undefined && name.length > 0)} />
 
-				<div className="classic">
-					<TextField
-						id={"renamer-new-name-input"}
-						label={"Futur nom"}
-						onChange={this.onNameChange}
-						fullWidth
-						error={!(name !== undefined && name.length > 0)}
-					/>
-
-					<div className="nums">
-						<Typography className={"line"} variant={"overline"}>Début: {min}</Typography>
-						<Typography className={"line"} variant={"overline"}>Fin: {max}</Typography>
+						<div className="nums">
+							<Typography className={"line"} variant={"overline"}>
+								Début: {min}
+							</Typography>
+							<Typography className={"line"} variant={"overline"}>
+								Fin: {max}
+							</Typography>
+						</div>
 					</div>
 
-				</div>
+					<div className="example">
+						<TextField className={"line"} disabled label={"Origin"} value={episodes[0].file} />
 
-				<div className="example">
-					<TextField
-						className={"line"}
-						disabled
-						label={"Origin"}
-						value={episodes[0].file} />
-
-					<TextField
-						className={"line"}
-						disabled
-						label={"Renamed"}
-						value={this.getNewEpisodeName(episodes[0], "1")} />
-				</div>
-
-				<Button
-					color={"secondary"}
-					onClick={() => this.rename()}
-					disabled={name.length === 0}
-				>
-					Rename files
-				</Button>
-
-				<div className="replace-char">
-
-					<div className={"actions"}>
-						<TextField onChange={this.setSearchChar} label={"Search"} />
-						<TextField onChange={this.setReplaceChar} label={"Replace with"} />
-						<Button
-							variant={"outlined"}
-							color={"secondary"}
-							onClick={this.replaceChar}
-							disabled={(replaceOptions.search?.length ?? 0) === 0}
-						>
-							Replace char
-						</Button>
+						<TextField className={"line"} disabled label={"Renamed"} value={this.getNewEpisodeName(episodes[0], "1")} />
 					</div>
 
-				</div>
+					<Button color={"secondary"} onClick={() => this.rename()} disabled={name.length === 0}>
+						Rename files
+					</Button>
 
-			</div>;
+					<div className="replace-char">
+						<div className={"actions"}>
+							<TextField onChange={this.setSearchChar} label={"Search"} />
+							<TextField onChange={this.setReplaceChar} label={"Replace with"} />
+							<Button variant={"outlined"} color={"secondary"} onClick={this.replaceChar} disabled={(replaceOptions.search?.length ?? 0) === 0}>
+								Replace char
+							</Button>
+						</div>
+					</div>
+				</div>
+			);
 		}
 
 		return (
@@ -129,17 +103,17 @@ export class Renamer extends React.Component<{}, State> {
 
 	private onNameChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
 		this.setState({
-			name: e.target.value
+			name: e.target.value,
 		});
 	};
 	private onFileSelect = (files: string[]) => {
 		this.logger.info("files", files);
 		if (files.length) {
-
-			const trim = (str: string) => str
-				.replace(/-_/g, " ")
-				.replace(/\./g, " . ")
-				.replace(/([0-9]*)E([0-9]+)/g, "$1 E $2");
+			const trim = (str: string) =>
+				str
+					.replace(/-_/g, " ")
+					.replace(/\./g, " . ")
+					.replace(/([0-9]*)E([0-9]+)/g, "$1 E $2");
 
 			let fileNames = files.map(trim);
 
@@ -151,20 +125,19 @@ export class Renamer extends React.Component<{}, State> {
 			const episodes: Episode[] = fileNames.map((name, index) => ({
 				file: files.find(file => trim(file) === name) as string,
 				num: Number.parseInt(spited[index][numberIndex]),
-				extension: this.findExtension(name) as string
+				extension: this.findExtension(name) as string,
 			}));
 			this.logger.info("episodes", episodes);
 
-			const min = episodes.reduce((ep1, ep2) => ep1.num < ep2.num ? ep1 : ep2).num;
-			const max = episodes.reduce((ep1, ep2) => ep1.num > ep2.num ? ep1 : ep2).num;
+			const min = episodes.reduce((ep1, ep2) => (ep1.num < ep2.num ? ep1 : ep2)).num;
+			const max = episodes.reduce((ep1, ep2) => (ep1.num > ep2.num ? ep1 : ep2)).num;
 
 			this.setState({
 				episodes: episodes,
 				min,
-				max
+				max,
 			});
 		}
-
 	};
 
 	// region rename
@@ -182,7 +155,7 @@ export class Renamer extends React.Component<{}, State> {
 		}
 		if (filenames.length > 1) {
 			const splited = filenames.map(file => file.split(" "));
-			const littleOne = splited.reduce((a, b) => a.length < b.length ? a : b);
+			const littleOne = splited.reduce((a, b) => (a.length < b.length ? a : b));
 			for (let index = 0; index < littleOne.length; index++) {
 				if (Number.isNaN(Number(splited[0][index]))) continue;
 				const possibleNum = Number.parseInt(splited[0][index]);
@@ -206,7 +179,6 @@ export class Renamer extends React.Component<{}, State> {
 			return last.slice(index + 1);
 		}
 		return undefined;
-
 	};
 
 	private getNewEpisodeName = (episode: State["episodes"][number], num: string) => {
@@ -215,27 +187,27 @@ export class Renamer extends React.Component<{}, State> {
 	};
 
 	private rename = async (): Promise<any> => {
-
 		if (this.state.min === undefined || this.state.max === undefined) return Promise.reject();
 
 		let name = this.state.name?.trim();
 		if (!(name !== undefined && name?.length > 0)) return Promise.reject();
 		this.setState({
-			episodes: []
+			episodes: [],
 		});
-		return Promise.all(this.state.episodes.map((episode: Episode) => {
-			return new Promise<void>(async resolve => {
-				const num = this.padWithZeros(episode.num, this.state.max!!.toString().length);
-				await fs.rename(episode.file, this.getNewEpisodeName(episode, num));
-				resolve();
-			});
-		}));
+		return Promise.all(
+			this.state.episodes.map((episode: Episode) => {
+				return new Promise<void>(async resolve => {
+					const num = this.padWithZeros(episode.num, this.state.max!!.toString().length);
+					await fs.rename(episode.file, this.getNewEpisodeName(episode, num));
+					resolve();
+				});
+			})
+		);
 	};
 
 	// endregion rename
 
 	// region replace char
-
 
 	private setReplaceChar = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
 		e.persist();
@@ -243,8 +215,8 @@ export class Renamer extends React.Component<{}, State> {
 			...prev,
 			replaceOptions: {
 				...prev.replaceOptions,
-				replaceWith: e.target.value
-			}
+				replaceWith: e.target.value,
+			},
 		}));
 	};
 
@@ -254,23 +226,23 @@ export class Renamer extends React.Component<{}, State> {
 			...prev,
 			replaceOptions: {
 				...prev.replaceOptions,
-				search: e.target.value
-			}
+				search: e.target.value,
+			},
 		}));
 	};
 
 	private replaceChar = async () => {
-
 		let { replaceWith, search } = this.state.replaceOptions;
 
-		await Promise.all(this.state.episodes.map(async episode => {
-			if (replaceWith && search) {
-				const newFileName = path.basename(episode.file).replace(new RegExp(this.escapeRegex(search), "g"), replaceWith);
-				this.logger.info(JSON.parse(JSON.stringify(this.state)));
-				await fs.rename(episode.file, path.join(path.dirname(episode.file), newFileName));
-			}
-		}));
-
+		await Promise.all(
+			this.state.episodes.map(async episode => {
+				if (replaceWith && search) {
+					const newFileName = path.basename(episode.file).replace(new RegExp(this.escapeRegex(search), "g"), replaceWith);
+					this.logger.info(JSON.parse(JSON.stringify(this.state)));
+					await fs.rename(episode.file, path.join(path.dirname(episode.file), newFileName));
+				}
+			})
+		);
 	};
 
 	// endregion replace char
@@ -280,7 +252,6 @@ export class Renamer extends React.Component<{}, State> {
 	private escapeRegex = (str: string) => {
 		return str.replace(/[\-\[\]\/{}()*+?.\\^$|]/g, "\\$&");
 	};
-
 
 	private padWithZeros(number: number, length: number) {
 		let n: string = "" + number;
@@ -292,4 +263,3 @@ export class Renamer extends React.Component<{}, State> {
 
 	// endregion utils
 }
-

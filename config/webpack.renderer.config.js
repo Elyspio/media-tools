@@ -4,13 +4,12 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const path = require("path");
 
-
 const baseConfig = require("./webpack.base.config");
 
 module.exports = merge(baseConfig, {
 	target: "electron-renderer",
 	entry: {
-		app: ["@babel/polyfill", "../src/renderer/app.tsx"]
+		app: ["@babel/polyfill", "../src/renderer/app.tsx"],
 	},
 	module: {
 		rules: [
@@ -21,16 +20,16 @@ module.exports = merge(baseConfig, {
 				options: {
 					cacheDirectory: true,
 					babelrc: true,
-					configFile: path.resolve(__dirname, "./.babelrc.js")
-				}
+					configFile: path.resolve(__dirname, "./.babelrc.js"),
+				},
 			},
 			{
 				test: /\.scss$/,
-				loaders: ["style-loader", "css-loader", "sass-loader"]
+				loaders: ["style-loader", "css-loader", "sass-loader"],
 			},
 			{
 				test: /\.css$/,
-				loaders: ["style-loader", "css-loader"]
+				loaders: ["style-loader", "css-loader"],
 			},
 			{
 				test: /\.(gif|png|jpe?g|svg)$/,
@@ -39,33 +38,32 @@ module.exports = merge(baseConfig, {
 					{
 						loader: "image-webpack-loader",
 						options: {
-							disable: true
-						}
-					}
-				]
+							disable: true,
+						},
+					},
+				],
 			},
 			// All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
 			{
 				enforce: "pre",
 				test: /\.js$/,
 				loader: "source-map-loader",
-				exclude: /node_modules/
-			}
-
-		]
+				exclude: /node_modules/,
+			},
+		],
 	},
 
 	plugins: [
 		new ForkTsCheckerWebpackPlugin({
 			reportFiles: ["../src/renderer/**/*"],
-			tsconfig: "../tsconfig.json"
+			tsconfig: "../tsconfig.json",
 		}),
 		new webpack.NamedModulesPlugin(),
 		new HtmlWebpackPlugin({
-			title: "Elytools"
+			title: "Elytools",
 		}),
 		new webpack.DefinePlugin({
-			"process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV || "development")
-		})
-	]
+			"process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV || "development"),
+		}),
+	],
 });

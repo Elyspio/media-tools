@@ -10,12 +10,11 @@ const { QBittorrent } = remote.require("@ctrl/qbittorrent");
 const client: IQBittorrent = new QBittorrent({
 	baseUrl: qbittorent.uri,
 	password: qbittorent.password,
-	username: qbittorent.login
+	username: qbittorent.login,
 });
 
 @injectable()
 export class TorrentService {
-
 	async add(torrent: string) {
 		const read = await readFile(torrent);
 		await client.addTorrent(read, { firstLastPiecePrio: "true" });

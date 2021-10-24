@@ -8,28 +8,26 @@ import { useInjection } from "inversify-react";
 import { DependencyInjectionKeys } from "../../../main/services/dependency-injection/dependency-injection.keys";
 
 type Props = Omit<HTMLAttributes<any>, "onChange"> & {
-	label?: string
-	showSelected?: boolean,
-	color?: ButtonProps["color"],
-	variant?: ButtonProps["variant"],
-	fullWidth?: boolean
-} & (SelectFile | SelectFolder)
+	label?: string;
+	showSelected?: boolean;
+	color?: ButtonProps["color"];
+	variant?: ButtonProps["variant"];
+	fullWidth?: boolean;
+} & (SelectFile | SelectFolder);
 
 type SelectFile = {
 	mode: "file";
-	onChange: (item: string[]) => void
-}
+	onChange: (item: string[]) => void;
+};
 
 type SelectFolder = {
 	mode: "folder";
-	onChange: (item: string) => void
-}
-
+	onChange: (item: string) => void;
+};
 
 export function SelectFolder(props: Props) {
-
 	const services = {
-		dialog: useInjection<DialogService>(DependencyInjectionKeys.electron.dialog)
+		dialog: useInjection<DialogService>(DependencyInjectionKeys.electron.dialog),
 	};
 
 	const [files, setFiles] = React.useState<string>("");
@@ -70,17 +68,16 @@ export function SelectFolder(props: Props) {
 	return (
 		<div className={"SelectFolder"} style={{ margin: "1rem 0", width: "100%" }}>
 			<Button className={"header"} color={props.color ?? "primary"} fullWidth={props.fullWidth} onClick={openDialog} variant={props.variant ?? "outlined"}>
-				{
-					props.mode === "folder"
-						? <> {props.label ?? "Select folder"}</>
-						: <label htmlFor={"select-file-id"}>Select files</label>
-				}
+				{props.mode === "folder" ? <> {props.label ?? "Select folder"}</> : <label htmlFor={"select-file-id"}>Select files</label>}
 			</Button>
 
 			<input type="file" multiple id={"select-file-id"} ref={inputRef} hidden={true} onChange={onFileChange} />
 
-			{props.showSelected && <Typography variant={"caption"} className={"files"} noWrap>{files}</Typography>}
-
+			{props.showSelected && (
+				<Typography variant={"caption"} className={"files"} noWrap>
+					{files}
+				</Typography>
+			)}
 		</div>
 	);
 }

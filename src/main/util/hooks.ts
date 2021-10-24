@@ -1,9 +1,7 @@
 import * as remote from "@electron/remote";
 import * as React from "react";
 
-
 export function useAppDimension() {
-
 	const [width, setWidth] = React.useState(() => remote.getCurrentWindow().getSize()[0]);
 	const [height, setHeight] = React.useState(() => remote.getCurrentWindow().getSize()[1]);
 
@@ -17,9 +15,8 @@ export function useAppDimension() {
 		return currentWindow;
 	}, []);
 
-
 	return {
 		width,
-		height
+		height,
 	};
 }

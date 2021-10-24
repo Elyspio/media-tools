@@ -2,14 +2,13 @@ import { createSlice } from "@reduxjs/toolkit";
 import { setConfigurationFile, setStdioOutput, setVpnConnected } from "./action";
 import { vpnConfig } from "../../../../config/networks/vpn";
 
-
 export interface VpnState {
-	configFile: string
-	stdio: string
+	configFile: string;
+	stdio: string;
 	connected: {
-		openvpn: boolean,
-		nordvpn: boolean
-	},
+		openvpn: boolean;
+		nordvpn: boolean;
+	};
 }
 
 const defaultState: VpnState = {
@@ -17,10 +16,9 @@ const defaultState: VpnState = {
 	stdio: "",
 	connected: {
 		openvpn: false,
-		nordvpn: false
-	}
+		nordvpn: false,
+	},
 };
-
 
 const slice = createSlice({
 	initialState: defaultState,
@@ -36,9 +34,8 @@ const slice = createSlice({
 		addCase(setVpnConnected, (state, { payload }) => {
 			state.connected[payload.type] = payload.state;
 		});
-	}
+	},
 });
-
 
 // setInterval(() => {
 // 	Services.networks.nordvpn.isConnected().then(x => store.dispatch(setVpnConnected({state: x, type: "nordvpn"})))

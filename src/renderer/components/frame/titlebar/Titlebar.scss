@@ -1,6 +1,5 @@
 @import "src/renderer/variables";
 
-
 .Titlebar {
 	display: flex;
 	justify-content: space-between;
@@ -35,13 +34,9 @@
 		&.close:hover {
 			background-color: #b70101;
 		}
-
-
 	}
 
 	&:last-child {
 		margin-right: 2rem;
 	}
-
-
 }

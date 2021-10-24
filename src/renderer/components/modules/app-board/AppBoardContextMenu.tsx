@@ -10,16 +10,20 @@ import { BaseConfig, Configuration } from "../../../../main/services/configurati
 import { StoreState } from "../../../store";
 
 const mapStateToProps = (state: StoreState) => ({
-	config: state.config.current
+	config: state.config.current,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-	setShowed: (elem: Configuration["appboard"]["show"], config: Configuration) => dispatch(setConfig({
-		...config, appboard: {
-			...config.appboard,
-			show: elem
-		}
-	}))
+	setShowed: (elem: Configuration["appboard"]["show"], config: Configuration) =>
+		dispatch(
+			setConfig({
+				...config,
+				appboard: {
+					...config.appboard,
+					show: elem,
+				},
+			})
+		),
 });
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
@@ -28,8 +32,6 @@ type ReduxTypes = ConnectedProps<typeof connector>;
 type Props = ReduxTypes & { close: () => void };
 
 function AppBoardContextMenu({ config, setShowed, close }: Props) {
-
-
 	return (
 		<div>
 			<DialogTitle id="responsive-dialog-title">Filter applications</DialogTitle>
@@ -44,7 +46,11 @@ function AppBoardContextMenu({ config, setShowed, close }: Props) {
 						label="Show"
 						multiple={true}
 					>
-						{BaseConfig.appboard.show.map(l => <MenuItem value={l} key={l}>{l}</MenuItem>)}
+						{BaseConfig.appboard.show.map(l => (
+							<MenuItem value={l} key={l}>
+								{l}
+							</MenuItem>
+						))}
 					</Select>
 				</FormControl>
 			</DialogContent>

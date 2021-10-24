@@ -1,5 +1,4 @@
 export function log(target: any, key: string, descriptor: PropertyDescriptor) {
-
 	// save a reference to the original method this way we keep the values currently in the
 	// descriptor and don't overwrite what another decorator might have done to the descriptor.
 	if (descriptor === undefined) {
@@ -8,7 +7,7 @@ export function log(target: any, key: string, descriptor: PropertyDescriptor) {
 	const originalMethod = descriptor.value;
 
 	//editing the descriptor/value parameter
-	descriptor.value = function() {
+	descriptor.value = function () {
 		const args = [];
 		for (let _i = 0; _i < arguments.length; _i++) {
 			args[_i] = arguments[_i];

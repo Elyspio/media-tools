@@ -3,27 +3,25 @@ import { setDownloadPercentage, setServerLatestVersion, setServerUrl } from "./a
 import { updateServer } from "../../../../config/update";
 
 export interface UpdateState {
-	download?: number,
-	serverVersion?: string,
-	serverUrl: string
+	download?: number;
+	serverVersion?: string;
+	serverUrl: string;
 }
 
 const defaultState: UpdateState = {
-	serverUrl: updateServer
+	serverUrl: updateServer,
 };
 
 export const reducer = createReducer<UpdateState>(defaultState, builder => {
-
-	builder.addCase(setDownloadPercentage, ((state, action) => {
+	builder.addCase(setDownloadPercentage, (state, action) => {
 		state.download = action.payload;
-	}));
+	});
 
-	builder.addCase(setServerLatestVersion, ((state, action) => {
+	builder.addCase(setServerLatestVersion, (state, action) => {
 		state.serverVersion = action.payload;
-	}));
+	});
 
-	builder.addCase(setServerUrl, ((state, action) => {
+	builder.addCase(setServerUrl, (state, action) => {
 		state.serverUrl = action.payload;
-
-	}));
+	});
 });
