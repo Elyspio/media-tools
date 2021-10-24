@@ -1,8 +1,8 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import "./ResourceUtilization.scss";
-import {SystemService} from "../../../../main/services/system/system.service";
-import {Box} from "@material-ui/core";
-import Paper from "@material-ui/core/Paper";
+import { SystemService } from "../../../../main/services/system/system.service";
+import { Box } from "@mui/material";
+import Paper from "@mui/material/Paper";
 
 
 interface State {

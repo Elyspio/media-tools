@@ -1,7 +1,7 @@
-import {isInstalled} from "../../util";
-import {spawn} from "child_process";
-import {VpnService} from "./vpn.service";
-import {injectable} from "inversify";
+import { isInstalled } from "../../util";
+import { spawn } from "child_process";
+import { VpnService } from "./vpn.service";
+import { injectable } from "inversify";
 
 
 export const countries = ["Switzerland", "France", "Germany"] as const;
@@ -34,11 +34,11 @@ export class NordvpnService extends VpnService {
 
 
 	public async waitForConnect(region?: Country) {
-		const {store} = await import("../../../renderer/store");
+		const { store } = await import("../../../renderer/store");
 		return new Promise<void>(async resolve => {
 			await this.connect(region);
 			const timer = setInterval(() => {
-				const {nordvpn} = store.getState().vpn.connected;
+				const { nordvpn } = store.getState().vpn.connected;
 				if (nordvpn) {
 					clearInterval(timer);
 					resolve();
@@ -54,7 +54,7 @@ export class NordvpnService extends VpnService {
 
 	private async runIgnoringError(command: string, ...params: string[]) {
 		try {
-			spawn(command, params, {detached: true, stdio: "ignore"});
+			spawn(command, params, { detached: true, stdio: "ignore" });
 		} catch (e) {
 
 		}

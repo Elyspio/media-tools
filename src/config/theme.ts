@@ -1,7 +1,7 @@
-import {createMuiTheme} from "@material-ui/core/styles";
+import { adaptV4Theme, createTheme as createMuiTheme } from "@mui/material/styles";
 // @ts-ignore
 import * as style from "../renderer/App.scss";
-import {Logger} from "../main/util/logger";
+import { Logger } from "../main/util/logger";
 
 const logger = Logger("Theme");
 
@@ -9,7 +9,7 @@ logger.info("style", style);
 
 
 function createTheme() {
-	return createMuiTheme({
+	return createMuiTheme(adaptV4Theme({
 		overrides: {
 			MuiTooltip: {
 				tooltip: {
@@ -18,7 +18,7 @@ function createTheme() {
 			}
 		},
 		palette: {
-			type: "dark",
+			mode: "dark",
 			primary: {
 				main: style.primary
 			},
@@ -30,7 +30,7 @@ function createTheme() {
 				paper: style.background
 			}
 		}
-	});
+	}));
 }
 
 

@@ -1,12 +1,12 @@
 import React from "react";
 import Frame from "./frame/Frame";
 import Router from "./router/Router";
-import {checkUpdate} from "../../main/util/updater";
-import {Configuration, ConfigurationService} from "../../main/services/configuration/configuration.service";
-import {store} from "../store";
-import {useInjection} from "inversify-react";
-import {WindowService} from "../../main/services/electron/window.service";
-import {DependencyInjectionKeys} from "../../main/services/dependency-injection/dependency-injection.keys";
+import { checkUpdate } from "../../main/util/updater";
+import { Configuration, ConfigurationService } from "../../main/services/configuration/configuration.service";
+import { store } from "../store";
+import { useInjection } from "inversify-react";
+import { WindowService } from "../../main/services/electron/window.service";
+import { DependencyInjectionKeys } from "../../main/services/dependency-injection/dependency-injection.keys";
 
 
 export function Application() {
@@ -16,7 +16,7 @@ export function Application() {
 		window: useInjection<WindowService>(DependencyInjectionKeys.electron.window)
 	};
 	const checkHeight = async () => {
-		const {routing: {routes, path}} = store.getState();
+		const { routing: { routes, path } } = store.getState();
 		const current = routes[path];
 		if (current?.autoResize.width || current?.autoResize.height) {
 			const config = await services.configuration.get();
@@ -37,7 +37,7 @@ export function Application() {
 
 	return (
 		<Frame>
-			<Router/>
+			<Router />
 		</Frame>
 	);
 }

@@ -1,10 +1,10 @@
-import {currentLoad, mem, processes} from "systeminformation";
-import {exec as _exec} from "child_process";
-import {promisify} from "util";
-import {xml2js} from "xml-js";
-import {NvidiaSmi} from "./types/nvidia";
+import { currentLoad, mem, processes } from "systeminformation";
+import { exec as _exec } from "child_process";
+import { promisify } from "util";
+import { xml2js } from "xml-js";
+import { NvidiaSmi } from "./types/nvidia";
 import * as os from "os";
-import {injectable} from "inversify";
+import { injectable } from "inversify";
 
 const exec = promisify(_exec);
 
@@ -31,7 +31,7 @@ export class SystemService {
 
 	public async gpuLoad(): Promise<{ encode: number, decode: number, overall: number, memory: number }> {
 		let xml = (await exec("nvidia-smi -x -q")).stdout;
-		const data: NvidiaSmi = xml2js(xml, {compact: true}) as any;
+		const data: NvidiaSmi = xml2js(xml, { compact: true }) as any;
 		const use = data.nvidia_smi_log.gpu.utilization;
 		const parse = (number: string) => Number.parseFloat(number.slice(0, -1));
 		return {
@@ -56,7 +56,7 @@ export class SystemService {
 		let platform = os.platform();
 
 		if (platform === "win32") {
-			const {stdout} = await exec("REG QUERY \"HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders\"");
+			const { stdout } = await exec("REG QUERY \"HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders\"");
 			const nodes = stdout
 				.split("\r\n")
 				.map(x => x.trim()
@@ -69,7 +69,7 @@ export class SystemService {
 				folder = folder_array[2];
 			}
 		} else if (platform === "linux") {
-			const {stdout} = await exec("xdg-user-dir DOWNLOAD");
+			const { stdout } = await exec("xdg-user-dir DOWNLOAD");
 			folder = stdout;
 		}
 

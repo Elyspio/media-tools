@@ -1,13 +1,13 @@
-import {store, StoreState} from "../../../../store";
-import {DialogContent, DialogTitle, InputLabel, MenuItem, Select} from "@material-ui/core";
-import FormControl from "@material-ui/core/FormControl";
-import {runOnFinishAction, setOnFinishAction} from "../../../../store/module/encoder/action";
-import {onFinishActionList} from "../../../../store/module/encoder/reducer";
-import DialogActions from "@material-ui/core/DialogActions";
-import Button from "@material-ui/core/Button";
+import { store, StoreState } from "../../../../store";
+import { DialogContent, DialogTitle, InputLabel, MenuItem, Select } from "@mui/material";
+import FormControl from "@mui/material/FormControl";
+import { runOnFinishAction, setOnFinishAction } from "../../../../store/module/encoder/action";
+import { onFinishActionList } from "../../../../store/module/encoder/reducer";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
 import React from "react";
-import {Dispatch} from "redux";
-import {connect, ConnectedProps} from "react-redux";
+import { Dispatch } from "redux";
+import { connect, ConnectedProps } from "react-redux";
 
 const mapStateToProps = (state: StoreState) => ({
 	action: state.encoder.onFinishAction
@@ -21,7 +21,7 @@ type ReduxTypes = ConnectedProps<typeof connector>;
 
 function OnFinishAction(props: { close: () => void } & ReduxTypes) {
 
-	const {close, action} = props;
+	const { close, action } = props;
 
 	const [current, setCurrent] = React.useState<StoreState["encoder"]["onFinishAction"]>(action);
 

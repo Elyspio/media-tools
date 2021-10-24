@@ -1,20 +1,19 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import "./Purge.scss";
-import {SelectFolder} from "../../../common/os";
+import { SelectFolder } from "../../../common/os";
 
-import TextField from "@material-ui/core/TextField";
-import {Button, Container, Input, MenuItem, Typography} from "@material-ui/core";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import InputLabel from "@material-ui/core/InputLabel";
-import Select from "@material-ui/core/Select";
-import Box from "@material-ui/core/Box";
-import Checkbox from "@material-ui/core/Checkbox";
-import {Alert, Color} from "@material-ui/lab";
-import {Register} from "../../../../decorators/Module";
-import {Logger} from "../../../../../main/util/logger";
-import {resolve} from "inversify-react";
-import {FilesService} from "../../../../../main/services/files/files.service";
-import {DependencyInjectionKeys} from "../../../../../main/services/dependency-injection/dependency-injection.keys";
+import TextField from "@mui/material/TextField";
+import { Alert, AlertColor, Button, Container, Input, MenuItem, Typography } from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import Box from "@mui/material/Box";
+import Checkbox from "@mui/material/Checkbox";
+import { Register } from "../../../../decorators/Module";
+import { Logger } from "../../../../../main/util/logger";
+import { resolve } from "inversify-react";
+import { FilesService } from "../../../../../main/services/files/files.service";
+import { DependencyInjectionKeys } from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 
 interface State {
 	match: string,
@@ -27,7 +26,7 @@ interface State {
 	}
 	loading?: boolean,
 	alert?: {
-		severity: Color,
+		severity: AlertColor,
 		message: string
 	}
 }
@@ -36,7 +35,7 @@ interface State {
 const defaultAmount = 30;
 let exclusions = ["node_modules", ".git", ".expo", ".bit"];
 
-@Register({name: "Purge", description: "Removes files that match a pattern ", path: "/purge"})
+@Register({ name: "Purge", description: "Removes files that match a pattern ", path: "/purge" })
 export class Purge extends Component<{}, State> {
 
 	@resolve(DependencyInjectionKeys.files)
@@ -62,17 +61,17 @@ export class Purge extends Component<{}, State> {
 
 	override render() {
 
-		let {folder, match, preview, loading, alert} = this.state;
+		let { folder, match, preview, loading, alert } = this.state;
 
 		return (
 			<Container className="Purge">
-				<SelectFolder onChange={this.onFolderSelect} mode={"folder"} showSelected/>
-				{loading && <CircularProgress color={"secondary"} size={"2rem"}/>}
+				<SelectFolder onChange={this.onFolderSelect} mode={"folder"} showSelected />
+				{loading && <CircularProgress color={"secondary"} size={"2rem"} />}
 
 				{!loading && folder && <>
 
 					<Box className="filter">
-						<TextField label={"Match"} onChange={this.onMatchChange}/>
+						<TextField label={"Match"} onChange={this.onMatchChange} />
 
 						<Box className={"exclusion"}>
 							<InputLabel id="ignoreContentLabel">Ignore content from</InputLabel>
@@ -80,15 +79,15 @@ export class Purge extends Component<{}, State> {
 								labelId="ignoreContentLabel"
 								id="ignoreContentSelect"
 								multiple
-								MenuProps={{variant: "menu"}}
+								MenuProps={{ variant: "menu" }}
 								value={preview.exclude}
 								renderValue={(selected: any) => selected.join(", ")}
-								input={<Input/>}
+								input={<Input />}
 								onChange={this.changePreviewExclusion}
 							>
 								{exclusions.map((name) => (
 									<MenuItem key={name} value={name} className={"exclude"}>
-										<Checkbox checked={preview.exclude.includes(name)} color={"secondary"}/>
+										<Checkbox checked={preview.exclude.includes(name)} color={"secondary"} />
 										<Typography className={"item"}>{name}</Typography>
 									</MenuItem>
 								))}
@@ -177,7 +176,7 @@ export class Purge extends Component<{}, State> {
 
 			const nbNodesToDelete = this.state.preview.filtered.length;
 
-			await this.filesService.deleteNodes(this.state.preview.filtered.map(c => ({type: "folder", path: c})));
+			await this.filesService.deleteNodes(this.state.preview.filtered.map(c => ({ type: "folder", path: c })));
 			await this.onFolderSelect(this.state.folder as string);
 			this.setState(prev => ({
 				...prev,
@@ -186,7 +185,7 @@ export class Purge extends Component<{}, State> {
 					severity: "success"
 				}
 			}));
-		} catch (e) {
+		} catch (e: any) {
 			this.setState(prev => ({
 				...prev,
 				alert: {
@@ -198,7 +197,7 @@ export class Purge extends Component<{}, State> {
 
 
 		setTimeout(() => {
-			this.setState(prev => ({...prev, alert: undefined}));
+			this.setState(prev => ({ ...prev, alert: undefined }));
 		}, 50000);
 
 

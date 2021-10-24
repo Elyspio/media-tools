@@ -1,8 +1,8 @@
-import {Configuration} from "../configuration/configuration.service";
-import {injectable} from "inversify";
-import {windowOption} from "../../../config/electron";
+import { Configuration } from "../configuration/configuration.service";
+import { injectable } from "inversify";
+import { windowOption } from "../../../config/electron";
 
-const {BrowserWindow} = require("@electron/remote");
+const { BrowserWindow } = require("@electron/remote");
 type Dimensions = (keyof Configuration["frame"]["resize"])[];
 
 @injectable()

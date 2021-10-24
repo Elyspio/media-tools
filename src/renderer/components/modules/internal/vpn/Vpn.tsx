@@ -1,19 +1,18 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import "./Vpn.scss";
-import {Container, Divider, MenuItem, Typography} from "@material-ui/core";
-import {Register} from "../../../../decorators/Module";
-import {Button} from "../../../common/Button";
-import {connect, ConnectedProps} from "react-redux";
-import {Dispatch} from "redux";
-import {StoreState} from "../../../../store";
-import Box from "@material-ui/core/Box";
-import {countries, Country, NordvpnService} from "../../../../../main/services/network/nordvpn.service";
-import InputLabel from "@material-ui/core/InputLabel";
-import Select from "@material-ui/core/Select";
-import {Logger} from "../../../../../main/util/logger";
-import {resolve} from "inversify-react";
-import {DependencyInjectionKeys} from "../../../../../main/services/dependency-injection/dependency-injection.keys";
-import {toast} from "react-toastify";
+import { Button, Container, Divider, MenuItem, Typography } from "@mui/material";
+import { Register } from "../../../../decorators/Module";
+import { connect, ConnectedProps } from "react-redux";
+import { Dispatch } from "redux";
+import { StoreState } from "../../../../store";
+import Box from "@mui/material/Box";
+import { countries, Country, NordvpnService } from "../../../../../main/services/network/nordvpn.service";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import { Logger } from "../../../../../main/util/logger";
+import { resolve } from "inversify-react";
+import { DependencyInjectionKeys } from "../../../../../main/services/dependency-injection/dependency-injection.keys";
+import { toast } from "react-toastify";
 
 
 const mapStateToProps = (state: StoreState) => ({
@@ -69,13 +68,13 @@ export class Vpn extends Component<ReduxTypes, State> {
 		connect: () => {
 			this.nordvpnService.connect(this.state.config.nordvpn.country).catch((e: Error) => {
 				this.logger.error("nordvpn.connect error", e);
-				toast.error(e.message, {position: "bottom-right"});
+				toast.error(e.message, { position: "bottom-right" });
 			});
 		},
 		disconnect: () => {
 			this.nordvpnService.disconnect().catch((e: Error) => {
 				this.logger.error("nordvpn.disconnect error", e);
-				toast.error(e.message, {position: "bottom-right"});
+				toast.error(e.message, { position: "bottom-right" });
 			});
 		}
 	};
@@ -87,29 +86,29 @@ export class Vpn extends Component<ReduxTypes, State> {
 			<Container className="Vpn">
 				<Box className={"item"}>
 					<Typography align={"center"}>OpenVpn</Typography>
-					<Divider className={"divider"}/>
+					<Divider className={"divider"} />
 					<div className="btns">
 						<Button disabled={this.props.connected.openvpn} color={"primary"} onClick={() => this.openvpn.connect()}>Connect</Button>
 						<Button disabled={!this.props.connected.openvpn} color={"error"} onClick={() => this.openvpn.disconnect()}>Disconnect</Button>
 					</div>
-					<Divider className={"divider"}/>
+					<Divider className={"divider"} />
 					<Typography>{this.props.content}</Typography>
 				</Box>
 
 				<Box className={"item"}>
 					<Typography align={"center"}>NordVpn</Typography>
-					<Divider className={"divider"}/>
+					<Divider className={"divider"} />
 					<div className="btns">
 						<Button disabled={this.props.connected.nordvpn} color={"primary"} onClick={() => this.nordvpn.connect()}>Connect</Button>
 						<Button disabled={!this.props.connected.nordvpn} color={"error"} onClick={() => this.nordvpn.disconnect()}>Disconnect</Button>
 					</div>
-					<Divider className={"divider"}/>
+					<Divider className={"divider"} />
 					<Container>
 						<InputLabel id="nordVpnCountryLabel">Country</InputLabel>
 						<Select
 							labelId="nordVpnCountryLabel"
 							id="nordVpnCountryValue"
-							MenuProps={{variant: "selectedMenu"}}
+							MenuProps={{ variant: "selectedMenu" }}
 							value={this.state.config.nordvpn.country}
 							onChange={this.onChange}
 						>
@@ -120,7 +119,7 @@ export class Vpn extends Component<ReduxTypes, State> {
 							))}
 						</Select>
 					</Container>
-					<Divider className={"divider"}/>
+					<Divider className={"divider"} />
 					<Typography>{this.props.content}</Typography>
 				</Box>
 

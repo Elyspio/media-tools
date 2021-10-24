@@ -1,11 +1,11 @@
-import {BrowserWindowConstructorOptions} from "electron";
+import { BrowserWindowConstructorOptions } from "electron";
 import * as fs from "fs-extra";
 import * as path from "path";
 import * as url from "url";
-import {windowOption} from "../../../config/electron";
-import {injectable} from "inversify";
+import { windowOption } from "../../../config/electron";
+import { injectable } from "inversify";
 
-const {dialog, BrowserWindow} = require("@electron/remote");
+const { dialog, BrowserWindow } = require("@electron/remote");
 
 @injectable()
 export class DialogService {
@@ -37,7 +37,7 @@ export class DialogService {
 		});
 
 
-		const {store} = await import("../../../renderer/store" );
+		const { store } = await import("../../../renderer/store" );
 
 		const search = `route=${target}&options=${JSON.stringify(frame)}&store=${JSON.stringify(store.getState())}`;
 		const param = "data=" + btoa(search);

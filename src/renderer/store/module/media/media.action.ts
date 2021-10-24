@@ -1,7 +1,7 @@
-import {createAction as _createAction, createAsyncThunk} from "@reduxjs/toolkit";
-import {Encoder, Media, ProcessData} from "../../../components/modules/internal/encoder/type";
-import {ChildProcess} from "child_process";
-import {StoreState} from "../../index";
+import { createAction as _createAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { Encoder, Media, ProcessData } from "../../../components/modules/internal/encoder/type";
+import { ChildProcess } from "child_process";
+import { StoreState } from "../../index";
 
 
 const createAction = <T>(name: string) => _createAction<T>(`media/${name}`);
@@ -17,7 +17,7 @@ export const setCurrentProcess = createAction<ChildProcess | undefined>("setCurr
 export let encodingProcess: { current?: ChildProcess } = {};
 
 export const stopCurrentProcess = createAsyncThunk("media/stopCurrentProcess", (arg, thunkAPI) => {
-	const {media: {encoder}} = thunkAPI.getState() as StoreState;
+	const { media: { encoder } } = thunkAPI.getState() as StoreState;
 	if (encoder.currentProcessPid && encodingProcess.current) {
 		encodingProcess.current.kill("SIGKILL");
 		thunkAPI.dispatch(setCurrentProcess(undefined));

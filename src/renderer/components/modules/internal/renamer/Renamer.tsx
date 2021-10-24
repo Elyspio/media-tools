@@ -1,16 +1,16 @@
 import React from "react";
-import Button from "@material-ui/core/Button";
-import {TextField, Typography} from "@material-ui/core";
-import {promises as fs} from "fs";
+import Button from "@mui/material/Button";
+import { TextField, Typography } from "@mui/material";
+import { promises as fs } from "fs";
 import * as path from "path";
-import {SelectFolder} from "../../../common/os";
-import {Register} from "../../../../decorators/Module";
+import { SelectFolder } from "../../../common/os";
+import { Register } from "../../../../decorators/Module";
 import "./Renamer.scss";
-import {getAppParams} from "../../../../../main/util/args";
-import {Logger} from "../../../../../main/util/logger";
-import {resolve} from "inversify-react";
-import {FilesService} from "../../../../../main/services/files/files.service";
-import {DependencyInjectionKeys} from "../../../../../main/services/dependency-injection/dependency-injection.keys";
+import { getAppParams } from "../../../../../main/util/args";
+import { Logger } from "../../../../../main/util/logger";
+import { resolve } from "inversify-react";
+import { FilesService } from "../../../../../main/services/files/files.service";
+import { DependencyInjectionKeys } from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 
 
 interface State {
@@ -30,7 +30,7 @@ interface Episode {
 	extension: string
 }
 
-@Register({name: "Renamer", path: "/renamer"})
+@Register({ name: "Renamer", path: "/renamer" })
 export class Renamer extends React.Component<{}, State> {
 
 
@@ -55,7 +55,7 @@ export class Renamer extends React.Component<{}, State> {
 
 	override render() {
 
-		const {name, episodes, min, max, replaceOptions} = this.state;
+		const { name, episodes, min, max, replaceOptions } = this.state;
 
 		let options: JSX.Element | null = null;
 		if (episodes.length > 0) {
@@ -82,13 +82,13 @@ export class Renamer extends React.Component<{}, State> {
 						className={"line"}
 						disabled
 						label={"Origin"}
-						value={episodes[0].file}/>
+						value={episodes[0].file} />
 
 					<TextField
 						className={"line"}
 						disabled
 						label={"Renamed"}
-						value={this.getNewEpisodeName(episodes[0], "1")}/>
+						value={this.getNewEpisodeName(episodes[0], "1")} />
 				</div>
 
 				<Button
@@ -102,8 +102,8 @@ export class Renamer extends React.Component<{}, State> {
 				<div className="replace-char">
 
 					<div className={"actions"}>
-						<TextField onChange={this.setSearchChar} label={"Search"}/>
-						<TextField onChange={this.setReplaceChar} label={"Replace with"}/>
+						<TextField onChange={this.setSearchChar} label={"Search"} />
+						<TextField onChange={this.setReplaceChar} label={"Replace with"} />
 						<Button
 							variant={"outlined"}
 							color={"secondary"}
@@ -121,7 +121,7 @@ export class Renamer extends React.Component<{}, State> {
 
 		return (
 			<div className={"Renamer"}>
-				<SelectFolder onChange={this.onFileSelect} mode={"file"}/>
+				<SelectFolder onChange={this.onFileSelect} mode={"file"} />
 				{options}
 			</div>
 		);
@@ -261,7 +261,7 @@ export class Renamer extends React.Component<{}, State> {
 
 	private replaceChar = async () => {
 
-		let {replaceWith, search} = this.state.replaceOptions;
+		let { replaceWith, search } = this.state.replaceOptions;
 
 		await Promise.all(this.state.episodes.map(async episode => {
 			if (replaceWith && search) {

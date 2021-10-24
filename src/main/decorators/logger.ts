@@ -8,7 +8,7 @@ export function log(target: any, key: string, descriptor: PropertyDescriptor) {
 	const originalMethod = descriptor.value;
 
 	//editing the descriptor/value parameter
-	descriptor.value = function () {
+	descriptor.value = function() {
 		const args = [];
 		for (let _i = 0; _i < arguments.length; _i++) {
 			args[_i] = arguments[_i];

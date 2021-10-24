@@ -1,8 +1,8 @@
-import React, {ReactNode} from "react";
-import {Menu} from "@material-ui/core";
-import MenuItem from "@material-ui/core/MenuItem";
-import Dialog from "@material-ui/core/Dialog";
-import {InferableComponentEnhancerWithProps} from "react-redux";
+import React, { ReactNode } from "react";
+import { Menu } from "@mui/material";
+import MenuItem from "@mui/material/MenuItem";
+import Dialog from "@mui/material/Dialog";
+import { InferableComponentEnhancerWithProps } from "react-redux";
 
 
 type ContextProps = {
@@ -25,9 +25,9 @@ function extract<T = any>(init?: T) {
 
 export function withContext(config: ContextProps) {
 
-	return function (WrappedComponent: any) {
+	return function(WrappedComponent: any) {
 
-		return function (props: any) {
+		return function(props: any) {
 			const [pos, setPos] = React.useState<{ top: number, left: number } | undefined>(undefined);
 			const modal = {
 				open: extract<boolean>(false),
@@ -70,7 +70,7 @@ export function withContext(config: ContextProps) {
 			}, []);
 
 
-			return <div onContextMenu={onContextMenu} style={{height: "100%"}}>
+			return <div onContextMenu={onContextMenu} style={{ height: "100%" }}>
 				{memo}
 				<Menu
 					anchorReference="anchorPosition"
@@ -84,7 +84,7 @@ export function withContext(config: ContextProps) {
 				<Dialog open={modal.open.get}>
 					{
 						// @ts-ignore
-						modal.component.get && modal.component.get({close: handleClose})
+						modal.component.get && modal.component.get({ close: handleClose })
 					}
 				</Dialog>
 			</div>;

@@ -1,14 +1,14 @@
-import {Feature} from "./types";
+import { Feature } from "./types";
 import * as path from "path";
 import * as fs from "fs-extra";
-import {EOL} from "os";
-import {FeatureService} from "./feature.service";
-import {injectable} from "inversify";
-import {GithubService} from "./github.service";
-import {DockerService} from "./docker.service";
-import {FilesService} from "../files/files.service";
-import {DependencyInjectionKeys} from "../dependency-injection/dependency-injection.keys";
-import {container} from "../dependency-injection/dependency-injection.container";
+import { EOL } from "os";
+import { FeatureService } from "./feature.service";
+import { injectable } from "inversify";
+import { GithubService } from "./github.service";
+import { DockerService } from "./docker.service";
+import { FilesService } from "../files/files.service";
+import { DependencyInjectionKeys } from "../dependency-injection/dependency-injection.keys";
+import { container } from "../dependency-injection/dependency-injection.container";
 
 
 @injectable()
@@ -106,7 +106,7 @@ export class ProjectBuilder {
 	}
 
 	private async updateTemplate(folder: string) {
-		const files = await this.services.files.find(folder, {match: /.git/g, inverse: true});
+		const files = await this.services.files.find(folder, { match: /.git/g, inverse: true });
 		let name = typeof this.config.docker === "string" ? this.config.docker : this.config.name;
 		await Promise.all(
 			files.map(async file => await this.services.files.replaceInFile(file, "express-react-ts-template", name))

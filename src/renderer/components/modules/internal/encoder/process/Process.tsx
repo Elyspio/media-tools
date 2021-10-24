@@ -1,11 +1,11 @@
-import React, {useRef} from "react";
-import {Grid, ListItem} from "@material-ui/core";
+import React, { useRef } from "react";
+import { Grid, ListItem } from "@mui/material";
 import "./Process.scss";
-import Typography from "@material-ui/core/Typography";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import {ProcessData} from "../type";
-import {Dayjs} from "dayjs";
-import {formatDuration} from "../../../../../util/date";
+import Typography from "@mui/material/Typography";
+import LinearProgress from "@mui/material/LinearProgress";
+import { ProcessData } from "../type";
+import { Dayjs } from "dayjs";
+import { formatDuration } from "../../../../../util/date";
 
 const dayjs = require("dayjs");
 
@@ -23,7 +23,7 @@ interface Props {
 }
 
 
-function Process({data}: Props) {
+function Process({ data }: Props) {
 
 	const ref = useRef<Dayjs | null>(null);
 
@@ -59,7 +59,7 @@ function Process({data}: Props) {
 					className={"bar"}
 					variant="determinate"
 					title={data.percentage.toString()}
-					value={data.percentage}/>
+					value={data.percentage} />
 			</Grid>
 
 			<Grid item xs={2}>

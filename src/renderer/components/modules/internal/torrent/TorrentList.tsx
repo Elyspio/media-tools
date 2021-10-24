@@ -1,16 +1,16 @@
-import React, {useMemo} from "react";
-import {Box, Menu, MenuItem, Typography} from "@material-ui/core";
-import {DataGrid, GridCellParams, GridColumns} from "@material-ui/data-grid";
-import {useAsyncState} from "../../../../hooks/useAsyncState";
+import React, { useMemo } from "react";
+import { Box, Menu, MenuItem, Typography } from "@mui/material";
+import { DataGrid, GridCellParams, GridColumns } from "@mui/x-data-grid";
+import { useAsyncState } from "../../../../hooks/useAsyncState";
 
-import {Torrent, TorrentState} from "@ctrl/qbittorrent/dist/types";
-import {useAppDimension} from "../../../../../main/util/hooks";
+import { Torrent, TorrentState } from "@ctrl/qbittorrent/dist/types";
+import { useAppDimension } from "../../../../../main/util/hooks";
 import * as dayjs from "dayjs";
 import "dayjs/plugin/duration";
-import {useInjection} from "inversify-react";
-import {FilesService} from "../../../../../main/services/files/files.service";
-import {TorrentService} from "../../../../../main/services/media/torrent.service";
-import {DependencyInjectionKeys} from "../../../../../main/services/dependency-injection/dependency-injection.keys";
+import { useInjection } from "inversify-react";
+import { FilesService } from "../../../../../main/services/files/files.service";
+import { TorrentService } from "../../../../../main/services/media/torrent.service";
+import { DependencyInjectionKeys } from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 
 const duration = require("dayjs/plugin/duration");
 const relativeTime = require("dayjs/plugin/relativeTime");
@@ -61,9 +61,9 @@ function getTorrentStateStr(state: TorrentState) {
 }
 
 const columns: Record<Keys, GridColumns[number] & { field: Keys }> = {
-	id: {field: "id", headerName: "id", width: 0, hide: true},
+	id: { field: "id", headerName: "id", width: 0, hide: true },
 	priority: {
-		field: "priority", headerName: "#", width: 90, type: "number", renderCell: ({value}) => {
+		field: "priority", headerName: "#", width: 90, type: "number", renderCell: ({ value }) => {
 			return value === 0 ? "*" : value;
 		}
 	},
@@ -83,7 +83,7 @@ const columns: Record<Keys, GridColumns[number] & { field: Keys }> = {
 		field: "state", headerName: "State", width: 130, renderCell: params => {
 			const val = params.value as TorrentState;
 			let [str, color] = getTorrentStateStr(val);
-			return <Typography style={{color}}>{str}</Typography>;
+			return <Typography style={{ color }}>{str}</Typography>;
 		}
 	},
 	dlspeed: {
@@ -155,9 +155,9 @@ const TorrentList = () => {
 
 	const [popoverPosition, setPopoverPosition] = React.useState(initialPopoverPosition);
 
-	const {data, reload} = useAsyncState(services.torrent.list, [], 1000);
+	const { data, reload } = useAsyncState(services.torrent.list, [], 1000);
 
-	const {width} = useAppDimension();
+	const { width } = useAppDimension();
 
 	const rows = useMemo<{ [key in Keys]: any }[]>(() => {
 		return data.map((torrent: Torrent) => ({
@@ -199,7 +199,7 @@ const TorrentList = () => {
 	return (
 		<Box className={"TorrentList"}>
 			<DataGrid
-				sortModel={[{sort: "asc", field: "priority"}]}
+				sortModel={[{ sort: "asc", field: "priority" }]}
 				isRowSelectable={() => false}
 				sortingMode={"client"}
 				onCellClick={onCellClick}
@@ -213,7 +213,7 @@ const TorrentList = () => {
 				onClose={() => handleClose()}
 				anchorReference="anchorPosition"
 				anchorPosition={
-					{top: popoverPosition.mouseY, left: popoverPosition.mouseX}
+					{ top: popoverPosition.mouseY, left: popoverPosition.mouseX }
 				}
 			>
 				<MenuItem onClick={() => handleClose("resume")}>Resume</MenuItem>

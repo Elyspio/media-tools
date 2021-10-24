@@ -1,31 +1,30 @@
-import React, {useMemo} from "react";
-import Button from "@material-ui/core/Button";
-import {Grid, InputLabel, MenuItem, Select} from "@material-ui/core";
-import {File, Media, ProcessData} from "./type";
-import {MediaService} from "../../../../../main/services/media/media.service";
+import React, { useMemo } from "react";
+import Button from "@mui/material/Button";
+import { Alert, Grid, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import { File, Media, ProcessData } from "./type";
+import { MediaService } from "../../../../../main/services/media/media.service";
 import * as fs from "fs-extra";
 import * as path from "path";
-import List from "@material-ui/core/List";
+import List from "@mui/material/List";
 import Process from "./process/Process";
 import "./Encoder.scss";
-import {register} from "../../../../decorators/Module";
-import {SelectFolder} from "../../../common/os";
-import {Alert} from "@material-ui/lab";
-import AlertTitle from "@material-ui/lab/AlertTitle";
-import Link from "@material-ui/core/Link";
-import {withContext} from "../../../common/hoc/withContext";
-import {useDispatch} from "react-redux";
-import {bindActionCreators} from "redux";
+import { register } from "../../../../decorators/Module";
+import { SelectFolder } from "../../../common/os";
+import AlertTitle from "@mui/material/AlertTitle";
+import Link from "@mui/material/Link";
+import { withContext } from "../../../common/hoc/withContext";
+import { useDispatch } from "react-redux";
+import { bindActionCreators } from "redux";
 import OnFinishAction from "./OnFinishAction";
-import {runOnFinishAction} from "../../../../store/module/encoder/action";
-import {useAppSelector} from "../../../../store";
-import {encoders} from "../../../../../config/media/encoder";
-import {getAppParams} from "../../../../../main/util/args";
-import {Logger} from "../../../../../main/util/logger";
-import {setCurrentProcess, setFFmpegInstalled, setFormat, setMedias, setProcesses as setProcessStore, setProgress, stopCurrentProcess} from "../../../../store/module/media/media.action";
-import {FilesService} from "../../../../../main/services/files/files.service";
-import {DependencyInjectionKeys} from "../../../../../main/services/dependency-injection/dependency-injection.keys";
-import {useInjection} from "inversify-react";
+import { runOnFinishAction } from "../../../../store/module/encoder/action";
+import { useAppSelector } from "../../../../store";
+import { encoders } from "../../../../../config/media/encoder";
+import { getAppParams } from "../../../../../main/util/args";
+import { Logger } from "../../../../../main/util/logger";
+import { setCurrentProcess, setFFmpegInstalled, setFormat, setMedias, setProcesses as setProcessStore, setProgress, stopCurrentProcess } from "../../../../store/module/media/media.action";
+import { FilesService } from "../../../../../main/services/files/files.service";
+import { DependencyInjectionKeys } from "../../../../../main/services/dependency-injection/dependency-injection.keys";
+import { useInjection } from "inversify-react";
 
 
 function Encoder() {
@@ -42,9 +41,9 @@ function Encoder() {
 
 	const dispatch = useDispatch();
 
-	const actions = useMemo(() => bindActionCreators({setProcessStore, setFormat, setCurrentProcess, setFFmpegInstalled, setMedias, setProgress, stopCurrentProcess}, dispatch), [dispatch]);
+	const actions = useMemo(() => bindActionCreators({ setProcessStore, setFormat, setCurrentProcess, setFFmpegInstalled, setMedias, setProgress, stopCurrentProcess }, dispatch), [dispatch]);
 
-	const {action, media: {medias, encoder, process: processes}} = useAppSelector((state => ({
+	const { action, media: { medias, encoder, process: processes } } = useAppSelector((state => ({
 		action: state.encoder.onFinishAction, media: state.media
 	})));
 
@@ -64,13 +63,13 @@ function Encoder() {
 
 	// region onSelection
 
-	const onFormatChange = React.useCallback(async (e: React.ChangeEvent<{ name?: string; value: any }>) => {
+	const onFormatChange = React.useCallback(async (e: SelectChangeEvent<any>) => {
 		dispatch(setFormat(e.target.value));
 		setProcesses();
 	}, [dispatch]);
 
 	const onFileSelect = React.useCallback(async (result: string[]) => {
-		const files: File[] = result.map(f => ({name: f.slice(f.lastIndexOf(path.sep)), path: f}));
+		const files: File[] = result.map(f => ({ name: f.slice(f.lastIndexOf(path.sep)), path: f }));
 
 		const media: Media[] = await Promise.all(files.map(async (file) => ({
 			file: file, property: await new MediaService().getInfo(file)
@@ -95,10 +94,10 @@ function Encoder() {
 
 			if (!process) throw `Invalid State, could not found in store a media with type="${media.file.path}"`;
 
-			actions.setProgress({...process, percentage: 0});
+			actions.setProgress({ ...process, percentage: 0 });
 
 			const outputPath = path.join(path.dirname(media.file.path), "current.mkv");
-			const [s, createdProcess] = await new MediaService().convert(media, encoder.format, {outputPath: outputPath});
+			const [s, createdProcess] = await new MediaService().convert(media, encoder.format, { outputPath: outputPath });
 
 			actions.setCurrentProcess(createdProcess);
 
@@ -108,7 +107,7 @@ function Encoder() {
 			});
 
 			s.on("finished", async () => {
-				actions.setProgress({...process, percentage: 100});
+				actions.setProgress({ ...process, percentage: 100 });
 				resolve(outputPath);
 			});
 
@@ -123,7 +122,7 @@ function Encoder() {
 		if (encoder.currentProcessPid) {
 			stopEncoding();
 		} else {
-			for (const {media} of processes) {
+			for (const { media } of processes) {
 				const output = await encodeFile(media);
 				const old = path.join(path.dirname(media.file.path), "old");
 				await fs.ensureDir(old);
@@ -150,7 +149,7 @@ function Encoder() {
 
 	let softInstalled = encoder.isSoftInstalled;
 
-	const {optionsUi, actionsUi} = React.useMemo(() => {
+	const { optionsUi, actionsUi } = React.useMemo(() => {
 
 		const optionsUi = <div className={"options"}>
 			<InputLabel
@@ -189,7 +188,7 @@ function Encoder() {
 		if (processes) {
 			return <div className={"processes"}>
 				<List className={"content"}>
-					{processes.map(p => <Process key={p.media.file.name} data={p}/>)}
+					{processes.map(p => <Process key={p.media.file.name} data={p} />)}
 				</List>
 			</div>;
 		}
@@ -201,7 +200,7 @@ function Encoder() {
 
 		{softInstalled === true && <>
 			<div className={"header"}>
-				<SelectFolder onChange={onFileSelect} mode={"file"} showSelected/>
+				<SelectFolder onChange={onFileSelect} mode={"file"} showSelected />
 				{optionsUi}
 			</div>
 			{processUi}
@@ -233,7 +232,7 @@ register(Encoder, {
 	name: "Encoder", description: "Encode video in different formats", path: "/encoder"
 }, withContext({
 	items: [{
-		label: "Action", show: () => ({close}) => <OnFinishAction close={close}/>
+		label: "Action", show: () => ({ close }) => <OnFinishAction close={close} />
 	}]
 }));
 

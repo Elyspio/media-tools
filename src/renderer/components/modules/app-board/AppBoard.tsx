@@ -1,13 +1,13 @@
 import React from "react";
 import "./AppBoard.scss";
-import {connect, ConnectedProps} from "react-redux";
-import {Button} from "@material-ui/core";
-import Tooltip from "@material-ui/core/Tooltip";
-import {Register} from "../../../decorators/Module";
-import {setPath} from "../../../store/module/router/action";
-import {withContext} from "../../common/hoc/withContext";
+import { connect, ConnectedProps } from "react-redux";
+import { Button } from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
+import { Register } from "../../../decorators/Module";
+import { setPath } from "../../../store/module/router/action";
+import { withContext } from "../../common/hoc/withContext";
 import AppBoardContextMenu from "./AppBoardContextMenu";
-import {StoreState} from "../../../store";
+import { StoreState } from "../../../store";
 
 
 const mapStateToProps = (state: StoreState) => {
@@ -38,13 +38,13 @@ const menu = withContext({
 	items: [
 		{
 			label: "Filter",
-			show: () => ({close}) => <AppBoardContextMenu close={close}/>
+			show: () => ({ close }) => <AppBoardContextMenu close={close} />
 		}
 	],
 	redux: connector
 });
 
-@Register({name: "AppBoard", path: "/", show: {appboard: false, name: false}}, menu)
+@Register({ name: "AppBoard", path: "/", show: { appboard: false, name: false } }, menu)
 class AppBoard extends React.Component<ConnectedProps<typeof connector>> {
 	override render() {
 		return (

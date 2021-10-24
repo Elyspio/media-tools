@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 
 type Callback<T> = (x?: any) => T;
 
@@ -12,5 +12,5 @@ export function useWatcherEffect<E = any, T = any>(obj: (event: E, callback: any
 		});
 	}, [event, watcher]);
 
-	return {data: data ?? defaultValue};
+	return { data: data ?? defaultValue };
 }

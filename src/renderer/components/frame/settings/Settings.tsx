@@ -1,16 +1,15 @@
-import {connect, ConnectedProps} from "react-redux";
-import {Dispatch} from "redux";
-import {Dialog, DialogContent, DialogTitle, Grid, List, ListItem, ListItemText, ListSubheader, Switch, Typography} from "@material-ui/core";
+import { connect, ConnectedProps } from "react-redux";
+import { Dispatch } from "redux";
+import { Button, Dialog, DialogContent, DialogTitle, Grid, List, ListItem, ListItemText, ListSubheader, Switch, Typography } from "@mui/material";
 import React from "react";
 import "./Settings.scss";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import {Configuration} from "../../../../main/services/configuration/configuration.service";
-import {setConfig} from "../../../store/module/configuration/action";
-import {StoreState} from "../../../store";
-import {Button} from "../../common/Button";
-import {resolve} from "inversify-react";
-import {WindowService} from "../../../../main/services/electron/window.service";
-import {DependencyInjectionKeys} from "../../../../main/services/dependency-injection/dependency-injection.keys";
+import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
+import { Configuration } from "../../../../main/services/configuration/configuration.service";
+import { setConfig } from "../../../store/module/configuration/action";
+import { StoreState } from "../../../store";
+import { resolve } from "inversify-react";
+import { WindowService } from "../../../../main/services/electron/window.service";
+import { DependencyInjectionKeys } from "../../../../main/services/dependency-injection/dependency-injection.keys";
 
 type OwnProps = ReduxTypes & {
 	isOpen: boolean,
@@ -24,7 +23,7 @@ class Settings extends React.Component<OwnProps> {
 	private windowService!: WindowService;
 
 	override render() {
-		let {close, isOpen, config} = this.props;
+		let { close, isOpen, config } = this.props;
 		return <Dialog
 			open={isOpen}
 			onClose={close}
@@ -37,7 +36,7 @@ class Settings extends React.Component<OwnProps> {
 					<Grid item>
 						<List subheader={<ListSubheader color={"primary"}>Frame</ListSubheader>}>
 							<ListItem>
-								<ListItemText primary="Show resource utilization"/>
+								<ListItemText primary="Show resource utilization" />
 								<ListItemSecondaryAction>
 									<Switch
 										edge="end"
@@ -57,7 +56,7 @@ class Settings extends React.Component<OwnProps> {
 								</Grid>
 								<Grid item>
 									<Button
-										style={{marginRight: -16}}
+										style={{ marginRight: -16 }}
 										variant={"outlined"}
 										onClick={this.windowService.resetDimensions}
 									>
@@ -70,7 +69,7 @@ class Settings extends React.Component<OwnProps> {
 
 							{Object.keys(config.frame.resize).map((key) => (
 								<ListItem key={key}>
-									<ListItemText primary={key[0].toUpperCase() + key.slice(1)}/>
+									<ListItemText primary={key[0].toUpperCase() + key.slice(1)} />
 									<ListItemSecondaryAction>
 										<Switch
 											edge="end"

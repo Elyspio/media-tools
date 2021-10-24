@@ -1,28 +1,27 @@
 import React from "react";
-import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide} from "@material-ui/core";
-import {TransitionProps} from "@material-ui/core/transitions";
-import {Button} from "../../../common/Button";
-import {useModal} from "../../../../hooks/useModal";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide } from "@mui/material";
+import { TransitionProps } from "@mui/material/transitions";
+import { useModal } from "../../../../hooks/useModal";
 import * as remote from "@electron/remote";
-import {useInjection} from "inversify-react";
-import {TorrentService} from "../../../../../main/services/media/torrent.service";
-import {DependencyInjectionKeys} from "../../../../../main/services/dependency-injection/dependency-injection.keys";
+import { useInjection } from "inversify-react";
+import { TorrentService } from "../../../../../main/services/media/torrent.service";
+import { DependencyInjectionKeys } from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 
 
-const {Notification} = remote.require("electron");
+const { Notification } = remote.require("electron");
 
 
 const Transition = React.forwardRef(function Transition(
 	props: TransitionProps & { children?: React.ReactElement<any, any> },
 	ref: React.Ref<unknown>
 ) {
-	return <Slide direction="up" ref={ref} {...props} />;
+	return <Slide direction="up" ref={ref} {...props} children={props.children!} />;
 });
 
 
 function AddNewTorrent(props: { name: string, clear: () => void }) {
 
-	const {open, setClose} = useModal(true);
+	const { open, setClose } = useModal(true);
 
 	const services = {
 		torrent: useInjection<TorrentService>(DependencyInjectionKeys.media.torrent)

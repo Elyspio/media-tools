@@ -1,4 +1,4 @@
-import {BrowserWindowConstructorOptions} from "electron/main";
+import { BrowserWindowConstructorOptions } from "electron/main";
 
 export const windowOption: BrowserWindowConstructorOptions = {
 	width: 800,

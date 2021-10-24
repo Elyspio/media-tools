@@ -1,7 +1,7 @@
 import React from "react";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
+import CircularProgress from "@mui/material/CircularProgress";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
 type Props = {
 	value: number,
@@ -15,12 +15,12 @@ type Props = {
 
 export function CircularProgressWithLabel(props: Props) {
 
-	const {circle, title, percentage} = props.size;
+	const { circle, title, percentage } = props.size;
 
 
 	return (
 		<Box position="relative" display="inline-flex">
-			<CircularProgress variant="determinate" {...props} size={circle}/>
+			<CircularProgress variant="determinate" {...props} size={circle} />
 			<Box
 				top={0}
 				left={0}
@@ -33,8 +33,8 @@ export function CircularProgressWithLabel(props: Props) {
 				justifyContent="center"
 			>
 
-				<Typography variant="caption" style={{fontSize: title}} component="div" color="textSecondary">{`${props.label}`}</Typography>
-				<Typography variant="caption" style={{fontSize: percentage}} component="div" color="textSecondary">{`${Math.round(props.value)}%`}</Typography>
+				<Typography variant="caption" style={{ fontSize: title }} component="div" color="textSecondary">{`${props.label}`}</Typography>
+				<Typography variant="caption" style={{ fontSize: percentage }} component="div" color="textSecondary">{`${Math.round(props.value)}%`}</Typography>
 			</Box>
 		</Box>
 	);

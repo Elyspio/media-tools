@@ -1,6 +1,6 @@
-import {createSlice} from "@reduxjs/toolkit";
-import {setConfigurationFile, setStdioOutput, setVpnConnected} from "./action";
-import {vpnConfig} from "../../../../config/networks/vpn";
+import { createSlice } from "@reduxjs/toolkit";
+import { setConfigurationFile, setStdioOutput, setVpnConnected } from "./action";
+import { vpnConfig } from "../../../../config/networks/vpn";
 
 
 export interface VpnState {
@@ -26,14 +26,14 @@ const slice = createSlice({
 	initialState: defaultState,
 	name: "Vpn",
 	reducers: {},
-	extraReducers: ({addCase}) => {
+	extraReducers: ({ addCase }) => {
 		addCase(setConfigurationFile, (state, action) => {
 			state.configFile = action.payload;
 		});
 		addCase(setStdioOutput, (state, action) => {
 			state.stdio = action.payload;
 		});
-		addCase(setVpnConnected, (state, {payload}) => {
+		addCase(setVpnConnected, (state, { payload }) => {
 			state.connected[payload.type] = payload.state;
 		});
 	}
@@ -45,4 +45,4 @@ const slice = createSlice({
 // 	Services.networks.openvpn.isConnected().then(x => store.dispatch(setVpnConnected({state: x, type: "openvpn"})))
 // }, 500)
 
-export const {reducer} = slice;
+export const { reducer } = slice;

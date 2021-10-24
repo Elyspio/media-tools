@@ -1,4 +1,4 @@
-import {CreateDurationType} from "dayjs/plugin/duration";
+import { CreateDurationType } from "dayjs/plugin/duration";
 
 export function formatDuration(duration: ReturnType<CreateDurationType>, prefix = false) {
 	let parts = [];

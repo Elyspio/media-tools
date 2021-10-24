@@ -1,7 +1,10 @@
-import {app, BrowserWindow} from "electron";
+import "core-js/stable";
+import "regenerator-runtime/runtime";
+
+import { app, BrowserWindow } from "electron";
 import * as path from "path";
 import * as url from "url";
-import {windowOption} from "../config/electron";
+import { windowOption } from "../config/electron";
 import * as remoteMain from "@electron/remote/main";
 
 remoteMain.initialize();

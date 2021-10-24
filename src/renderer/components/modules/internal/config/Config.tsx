@@ -1,20 +1,20 @@
-import React, {Component} from "react";
-import {connect, ConnectedProps} from "react-redux";
-import {Dispatch} from "redux";
-import {Register} from "../../../../decorators/Module";
-import Container from "@material-ui/core/Container";
-import {TreeItem, TreeView} from "@material-ui/lab";
-import {Add, Adjust, Remove} from "@material-ui/icons";
-import {Divider} from "@material-ui/core";
-import Button from "@material-ui/core/Button";
+import React, { Component } from "react";
+import { connect, ConnectedProps } from "react-redux";
+import { Dispatch } from "redux";
+import { Register } from "../../../../decorators/Module";
+import Container from "@mui/material/Container";
+import { TreeItem, TreeView } from "@mui/lab";
+import { Add, Adjust, Remove } from "@mui/icons-material";
+import { Divider } from "@mui/material";
+import Button from "@mui/material/Button";
 import "./Config.scss";
 
-import {StoreState} from "../../../../store";
-import {ConfigurationService} from "../../../../../main/services/configuration/configuration.service";
-import {DependencyInjectionKeys} from "../../../../../main/services/dependency-injection/dependency-injection.keys";
-import {resolve} from "inversify-react";
+import { StoreState } from "../../../../store";
+import { ConfigurationService } from "../../../../../main/services/configuration/configuration.service";
+import { DependencyInjectionKeys } from "../../../../../main/services/dependency-injection/dependency-injection.keys";
+import { resolve } from "inversify-react";
 
-const mapStateToProps = (state: StoreState) => ({config: state.config.current});
+const mapStateToProps = (state: StoreState) => ({ config: state.config.current });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({});
 
@@ -38,20 +38,20 @@ export class Config extends Component<ReduxTypes> {
 	configurationService!: ConfigurationService;
 
 	override render() {
-		const {config} = this.props;
+		const { config } = this.props;
 		this.node = 0;
 		return (
 			<Container className={"Config"}>
 				<TreeView
 					defaultExpanded={["current"]}
-					defaultCollapseIcon={<Remove style={{color: "red"}}/>}
-					defaultExpandIcon={<Add style={{color: "blue"}}/>}
-					defaultEndIcon={<Adjust/>}
+					defaultCollapseIcon={<Remove style={{ color: "red" }} />}
+					defaultExpandIcon={<Add style={{ color: "blue" }} />}
+					defaultEndIcon={<Adjust />}
 				>
 					{this.generateTree(config)}
 				</TreeView>
 
-				<Divider className={"divider"}/>
+				<Divider className={"divider"} />
 				<Button color={"primary"} onClick={() => this.configurationService.regenerate()}>Regenerate config</Button>
 			</Container>
 		);
@@ -67,7 +67,7 @@ export class Config extends Component<ReduxTypes> {
 			}
 
 			let id = (this.node++).toString();
-			return <TreeItem key={k + id} nodeId={id} label={`${k} -> ${val}`}/>;
+			return <TreeItem key={k + id} nodeId={id} label={`${k} -> ${val}`} />;
 		});
 
 		let id = (this.node++).toString();

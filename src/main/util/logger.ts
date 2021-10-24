@@ -1,4 +1,4 @@
-import {Logger as ILogger} from "@tsed/logger";
+import { Logger as ILogger } from "@tsed/logger";
 
 export const Logger = (name: string | Function) => {
 
@@ -6,9 +6,9 @@ export const Logger = (name: string | Function) => {
 	const logger = new ILogger(current);
 
 	logger.appenders
-	      .set("stdout", {type: "stdout", levels: ["debug", "info", "trace", "warn"]})
-	      .set("stderr", {type: "stderr", levels: ["fatal", "error", "warn"]})
-	      .set("console", {type: "console"});
+	      .set("stdout", { type: "stdout", levels: ["debug", "info", "trace", "warn"] })
+	      .set("stderr", { type: "stderr", levels: ["fatal", "error", "warn"] })
+	      .set("console", { type: "console" });
 
 	return logger;
 };

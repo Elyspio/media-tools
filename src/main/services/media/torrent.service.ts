@@ -1,11 +1,11 @@
-import {qbittorent} from "../../../config/media/torents.private";
-import {QBittorrent as IQBittorrent} from "@ctrl/qbittorrent";
-import {readFile} from "fs/promises";
-import {injectable} from "inversify";
+import { qbittorent } from "../../../config/media/torents.private";
+import { QBittorrent as IQBittorrent } from "@ctrl/qbittorrent";
+import { readFile } from "fs/promises";
+import { injectable } from "inversify";
 
 import * as remote from "@electron/remote";
 
-const {QBittorrent} = remote.require("@ctrl/qbittorrent");
+const { QBittorrent } = remote.require("@ctrl/qbittorrent");
 
 const client: IQBittorrent = new QBittorrent({
 	baseUrl: qbittorent.uri,
@@ -18,7 +18,7 @@ export class TorrentService {
 
 	async add(torrent: string) {
 		const read = await readFile(torrent);
-		await client.addTorrent(read, {firstLastPiecePrio: "true"});
+		await client.addTorrent(read, { firstLastPiecePrio: "true" });
 	}
 
 	async list() {

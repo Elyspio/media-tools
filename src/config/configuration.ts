@@ -1,7 +1,7 @@
 import * as electron from "electron";
 import * as path from "path";
 import * as remote from "@electron/remote";
-import {Configuration} from "../main/services/configuration/configuration.service";
+import { Configuration } from "../main/services/configuration/configuration.service";
 
 export const configFolder = (electron.app || remote.app).getPath("userData");
 export const configMainFile = path.join(configFolder, "settings.json");

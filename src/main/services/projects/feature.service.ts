@@ -1,16 +1,16 @@
-import {Feature, FeatureOptions} from "./types";
-import {featureMap} from "../../../config/projects/projects";
-import {github} from "../../../config/projects/projects.private";
+import { Feature, FeatureOptions } from "./types";
+import { featureMap } from "../../../config/projects/projects";
+import { github } from "../../../config/projects/projects.private";
 import * as fs from "fs-extra";
-import {ensureDir, writeFile} from "fs-extra";
-import {promises as ofs} from "fs";
+import { ensureDir, writeFile } from "fs-extra";
+import { promises as ofs } from "fs";
 import * as  path from "path";
 import * as os from "os";
-import {injectable} from "inversify";
-import {GithubService} from "./github.service";
-import {FilesService} from "../files/files.service";
-import {DependencyInjectionKeys} from "../dependency-injection/dependency-injection.keys";
-import {container} from "../dependency-injection/dependency-injection.container";
+import { injectable } from "inversify";
+import { GithubService } from "./github.service";
+import { FilesService } from "../files/files.service";
+import { DependencyInjectionKeys } from "../dependency-injection/dependency-injection.keys";
+import { container } from "../dependency-injection/dependency-injection.container";
 
 
 @injectable()
@@ -43,14 +43,14 @@ export class FeatureService {
 		if (featured) {
 			const template = templates.find(t => t.id.toString() === featured[0]);
 			if (template) {
-				await this.services.github.clone({repo: template.name, owner: github.user, output: dist});
+				await this.services.github.clone({ repo: template.name, owner: github.user, output: dist });
 			}
 		}
 
 		if (feature.use.length > 0) {
 			const files = await fs.readdir(dist);
 			const willBeRemoved = files.filter(f => !feature.use.includes(f));
-			await this.services.files.deleteNodes(willBeRemoved.map(f => ({path: path.resolve(dist, f)})));
+			await this.services.files.deleteNodes(willBeRemoved.map(f => ({ path: path.resolve(dist, f) })));
 		}
 
 		if (feature.options?.includes(FeatureOptions.wrap)) {
@@ -78,7 +78,7 @@ export class FeatureService {
 			}
 
 		}
-		await Promise.all(src.map(f => ofs.rmdir(f, {recursive: true})));
+		await Promise.all(src.map(f => ofs.rmdir(f, { recursive: true })));
 	}
 
 	/**

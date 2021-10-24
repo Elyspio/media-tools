@@ -1,20 +1,20 @@
-import React, {Component, ReactNode} from "react";
+import React, { Component, ReactNode } from "react";
 import "./Projects.scss";
-import {SelectFolder} from "../../../common/os";
-import TextField from "@material-ui/core/TextField";
-import {Button, Container, FormControlLabel, Grid, Input, MenuItem, Typography} from "@material-ui/core";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import InputLabel from "@material-ui/core/InputLabel";
-import Select from "@material-ui/core/Select";
-import Box from "@material-ui/core/Box";
-import Checkbox from "@material-ui/core/Checkbox";
-import {Register} from "../../../../decorators/Module";
-import {resolve} from "inversify-react";
-import {Feature} from "../../../../../main/services/projects/types";
-import {ProjectBuilder} from "../../../../../main/services/projects/projectBuilder";
-import {Logger} from "../../../../../main/util/logger";
-import {FeatureService} from "../../../../../main/services/projects/feature.service";
-import {DependencyInjectionKeys} from "../../../../../main/services/dependency-injection/dependency-injection.keys";
+import { SelectFolder } from "../../../common/os";
+import TextField from "@mui/material/TextField";
+import { Button, Container, FormControlLabel, Grid, Input, MenuItem, Typography } from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import Box from "@mui/material/Box";
+import Checkbox from "@mui/material/Checkbox";
+import { Register } from "../../../../decorators/Module";
+import { resolve } from "inversify-react";
+import { Feature } from "../../../../../main/services/projects/types";
+import { ProjectBuilder } from "../../../../../main/services/projects/projectBuilder";
+import { Logger } from "../../../../../main/util/logger";
+import { FeatureService } from "../../../../../main/services/projects/feature.service";
+import { DependencyInjectionKeys } from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 
 interface State {
 	folder?: string
@@ -34,7 +34,7 @@ interface State {
 	name: "Projects",
 	description: "Create projects from projects repositories",
 	path: "/projects",
-	autoResize: {height: true, width: false}
+	autoResize: { height: true, width: false }
 })
 export class Projects extends Component<{}, State> {
 
@@ -64,12 +64,12 @@ export class Projects extends Component<{}, State> {
 
 	override render() {
 
-		const {useFeatures, features, loading, docker, name, readme, description, template, github} = this.state;
+		const { useFeatures, features, loading, docker, name, readme, description, template, github } = this.state;
 		return (
 			<Container className="Projects">
 				{loading && <Grid container justifyContent={"center"} alignItems={"center"} className={"fullSize"}>
 					<Grid item>
-						<CircularProgress color={"primary"} size={"2rem"}/>
+						<CircularProgress color={"primary"} size={"2rem"} />
 					</Grid>
 				</Grid>}
 
@@ -79,7 +79,7 @@ export class Projects extends Component<{}, State> {
 						<TextField
 							label={"Folder name"}
 							error={name.length === 0}
-							style={{width: "30%"}} value={name}
+							style={{ width: "30%" }} value={name}
 							onChange={e => this.handleChange("name", e.target.value)}
 						/>
 
@@ -87,7 +87,7 @@ export class Projects extends Component<{}, State> {
 							label={"Description"}
 							value={description}
 							id={"description"}
-							style={{width: "70%"}}
+							style={{ width: "70%" }}
 							onChange={e => this.handleChange("description", e.target.value)}
 						/>
 					</Box>
@@ -99,15 +99,15 @@ export class Projects extends Component<{}, State> {
 							labelId="ignoreContentLabel"
 							id="ignoreContentSelect"
 							multiple
-							MenuProps={{variant: "menu"}}
+							MenuProps={{ variant: "menu" }}
 							value={useFeatures}
 							renderValue={(selected: any) => joinComponents(selected.map((x: string) => <Typography variant={"overline"}>{x}</Typography>))}
-							input={<Input/>}
+							input={<Input />}
 							onChange={e => this.handleChange("useFeatures", e.target.value)}
 						>
-							{features.map(({name}) => (
+							{features.map(({ name }) => (
 								<MenuItem key={name} value={name} className={"exclude"}>
-									<Checkbox checked={useFeatures.some(i => i === name)} color={"secondary"}/>
+									<Checkbox checked={useFeatures.some(i => i === name)} color={"secondary"} />
 									<Typography className={"item"}>{name}</Typography>
 								</MenuItem>
 							))}
@@ -119,7 +119,7 @@ export class Projects extends Component<{}, State> {
 						<div className="simple-options">
 							<div className={"option"}>
 								<FormControlLabel
-									control={<Checkbox checked={readme} color={"default"} onChange={(e) => this.handleChange("readme", e.target.checked)} name="readme"/>}
+									control={<Checkbox checked={readme} color={"default"} onChange={(e) => this.handleChange("readme", e.target.checked)} name="readme" />}
 									labelPlacement={"start"}
 									label="Readme"
 									className={"switch"}
@@ -131,7 +131,7 @@ export class Projects extends Component<{}, State> {
 
 						<div className={"option"}>
 							<FormControlLabel
-								control={<Checkbox checked={!!docker} color={"default"} onChange={(e) => this.handleChange("docker", e.target.checked)} name="docker"/>}
+								control={<Checkbox checked={!!docker} color={"default"} onChange={(e) => this.handleChange("docker", e.target.checked)} name="docker" />}
 								labelPlacement={"start"}
 								label="Docker"
 								className={"switch"}
@@ -141,14 +141,14 @@ export class Projects extends Component<{}, State> {
 								label={"Docker name"}
 								error={typeof docker === "string" && docker.length === 0}
 								defaultValue={name}
-								style={{width: "50%"}}
+								style={{ width: "50%" }}
 								onChange={e => this.handleChange("docker", e.target.value)}
 							/>}
 						</div>
 
 						<div className={"option"}>
 							<FormControlLabel
-								control={<Checkbox checked={!!github} color={"default"} onChange={(e) => this.handleChange("github", e.target.checked)} name="github"/>}
+								control={<Checkbox checked={!!github} color={"default"} onChange={(e) => this.handleChange("github", e.target.checked)} name="github" />}
 								labelPlacement={"start"}
 								label="Github"
 								className={"switch"}
@@ -158,7 +158,7 @@ export class Projects extends Component<{}, State> {
 								label={"Github name"}
 								error={typeof github === "string" && github.length === 0}
 								defaultValue={name}
-								style={{width: "50%"}}
+								style={{ width: "50%" }}
 								onChange={e => this.handleChange("github", e.target.value)}
 							/>}
 
@@ -167,7 +167,7 @@ export class Projects extends Component<{}, State> {
 									checked={template}
 									color={"default"}
 									onChange={(e) => this.handleChange("template", e.target.checked)}
-									name="Template"/>
+									name="Template" />
 								}
 								labelPlacement={"start"}
 								label="Template"
@@ -188,7 +188,7 @@ export class Projects extends Component<{}, State> {
 									mode={"folder"}
 									label={"Select parent folder"}
 									variant={"outlined"}
-									color={"default"}
+									color={"inherit"}
 									fullWidth
 								/>
 							</Grid>
@@ -222,7 +222,7 @@ export class Projects extends Component<{}, State> {
 
 
 	create = () => {
-		const {description, docker, github, name, readme, useFeatures, folder, features, template} = this.state;
+		const { description, docker, github, name, readme, useFeatures, folder, features, template } = this.state;
 		const builder = new ProjectBuilder();
 
 		builder.name = name;

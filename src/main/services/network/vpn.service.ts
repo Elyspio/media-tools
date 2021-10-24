@@ -1,5 +1,5 @@
-import {networkInterfaces} from "systeminformation";
-import {injectable} from "inversify";
+import { networkInterfaces } from "systeminformation";
+import { injectable } from "inversify";
 
 @injectable()
 export abstract class VpnService {

@@ -1,8 +1,8 @@
-import {createAction as _createAction} from "@reduxjs/toolkit";
-import {EncoderState} from "./reducer";
-import {DialogService} from "../../../../main/services/electron/dialog.service";
-import {DependencyInjectionKeys} from "../../../../main/services/dependency-injection/dependency-injection.keys";
-import {container} from "../../../../main/services/dependency-injection/dependency-injection.container";
+import { createAction as _createAction } from "@reduxjs/toolkit";
+import { EncoderState } from "./reducer";
+import { DialogService } from "../../../../main/services/electron/dialog.service";
+import { DependencyInjectionKeys } from "../../../../main/services/dependency-injection/dependency-injection.keys";
+import { container } from "../../../../main/services/dependency-injection/dependency-injection.container";
 
 
 const createAction = <T>(type: string) => _createAction<T>(`encoder/${type}`);

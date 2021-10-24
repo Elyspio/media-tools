@@ -1,6 +1,6 @@
-import {createSlice} from "@reduxjs/toolkit";
-import {Encoder, Media, ProcessData} from "../../../components/modules/internal/encoder/type";
-import {encodingProcess, setCurrentProcess, setFFmpegInstalled, setFormat, setMedias, setProcesses, setProgress} from "./media.action";
+import { createSlice } from "@reduxjs/toolkit";
+import { Encoder, Media, ProcessData } from "../../../components/modules/internal/encoder/type";
+import { encodingProcess, setCurrentProcess, setFFmpegInstalled, setFormat, setMedias, setProcesses, setProgress } from "./media.action";
 
 
 export type MediaState = {
@@ -28,7 +28,7 @@ export const mediaSlice = createSlice({
 	name: "media",
 	initialState,
 	reducers: {},
-	extraReducers: ({addCase}) => {
+	extraReducers: ({ addCase }) => {
 		addCase(setMedias, (state, action) => {
 			state.medias = action.payload;
 		});

@@ -1,17 +1,17 @@
 import * as remote from "@electron/remote";
 import axios from "axios";
 import * as config from "../../config/update";
-import {pathToInstaller, updateRefreshRate} from "../../config/update";
-import {platform} from "os";
-import {ensureDir, writeFile} from "fs-extra";
+import { pathToInstaller, updateRefreshRate } from "../../config/update";
+import { platform } from "os";
+import { ensureDir, writeFile } from "fs-extra";
 import * as path from "path";
-import {store} from "../../renderer/store";
-import {setDownloadPercentage, setServerLatestVersion} from "../../renderer/store/module/updater/action";
-import {spawn} from "child_process";
-import {setPath} from "../../renderer/store/module/router/action";
-import {Logger} from "./logger";
+import { store } from "../../renderer/store";
+import { setDownloadPercentage, setServerLatestVersion } from "../../renderer/store/module/updater/action";
+import { spawn } from "child_process";
+import { setPath } from "../../renderer/store/module/router/action";
+import { Logger } from "./logger";
 
-const {app, dialog} = remote;
+const { app, dialog } = remote;
 
 
 const logger = Logger("Updater");
@@ -52,13 +52,13 @@ export async function checkUpdate() {
 
 			store.dispatch(setServerLatestVersion(call.data.val));
 
-			const response = await dialog.showMessageBox({title: "Update", message: "A new version is available", buttons: ["Download", "Cancel"]});
+			const response = await dialog.showMessageBox({ title: "Update", message: "A new version is available", buttons: ["Download", "Cancel"] });
 
 			if (response.response === 0) {
 				store.dispatch(setPath("/updater"));
 				await downloadUpdate();
 
-				const response = await dialog.showMessageBox({title: "Update", message: "Application is ready to update", buttons: ["Install", "Cancel"]});
+				const response = await dialog.showMessageBox({ title: "Update", message: "Application is ready to update", buttons: ["Install", "Cancel"] });
 				if (response.response === 0) {
 					await installUpdate();
 				}
@@ -97,7 +97,7 @@ export async function downloadUpdate() {
 export async function installUpdate() {
 	const filename = path.basename(pathToInstaller);
 	const dir = path.dirname(pathToInstaller);
-	const p = spawn(filename, {detached: true, stdio: "ignore", cwd: dir});
+	const p = spawn(filename, { detached: true, stdio: "ignore", cwd: dir });
 	p.unref();
 	app.quit();
 }

@@ -1,10 +1,10 @@
-import {exec as _exec, spawn, SpawnOptions} from "child_process";
-import {platform} from "os";
+import { exec as _exec, spawn, SpawnOptions } from "child_process";
+import { platform } from "os";
 import * as process from "process";
-import {promisify} from "util";
+import { promisify } from "util";
 
 export const spawnBinary = async (binary: string, param: string[], folder: string, log?: boolean) => {
-	const child = spawn(binary, param, {cwd: folder});
+	const child = spawn(binary, param, { cwd: folder });
 	let stdout = "", stderr = "";
 
 	if (child.stdout)
@@ -19,14 +19,14 @@ export const spawnBinary = async (binary: string, param: string[], folder: strin
 
 	return new Promise<{ code: number | null, stdout: string, stderr: string }>((resolve) => {
 		child.on("close", (code) => {
-			console.log(`child process exited with code ${code}`, {binary, param, folder, stdout, stderr, code});
-			resolve({code, stdout, stderr});
+			console.log(`child process exited with code ${code}`, { binary, param, folder, stdout, stderr, code });
+			resolve({ code, stdout, stderr });
 		});
 	});
 };
 
 export const spawnAsync = async (command: string, options?: Partial<SpawnOptions> & { ignoreErrors?: boolean, color?: boolean }) => {
-	const child = spawn(`cmd.exe`, ["/c", ...command.split(" ")], {stdio: "inherit", ...options});
+	const child = spawn(`cmd.exe`, ["/c", ...command.split(" ")], { stdio: "inherit", ...options });
 
 	let stdout = "", stderr = "";
 

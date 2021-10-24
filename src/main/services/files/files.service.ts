@@ -1,21 +1,21 @@
-import {promises as fs} from "fs";
+import { promises as fs } from "fs";
 import * as fse from "fs-extra";
-import {WatchListener} from "fs-extra";
+import { WatchListener } from "fs-extra";
 import * as path from "path";
-import {Readable} from "stream";
-import {Extract} from "unzipper";
-import {injectable} from "inversify";
+import { Readable } from "stream";
+import { Extract } from "unzipper";
+import { injectable } from "inversify";
 
 
 @injectable()
 export class FilesService {
 
 	public async delete(folder: string, match: RegExp, progress?: (number: number) => void) {
-		const folders = await this.find(folder, {match});
+		const folders = await this.find(folder, { match });
 		let completed = 0;
 
 		const promises = folders.map(async f => {
-			await fs.rmdir(f, {recursive: true});
+			await fs.rmdir(f, { recursive: true });
 			if (progress) {
 				progress(++completed);
 			}
@@ -26,14 +26,14 @@ export class FilesService {
 	}
 
 	public async deleteNodes(nodes: { type?: "folder" | "file", path: string }[]) {
-		const promises = nodes.map(async ({path, type}) => {
+		const promises = nodes.map(async ({ path, type }) => {
 			switch (type) {
 				case "folder":
-					return fs.rmdir(path, {recursive: true});
+					return fs.rmdir(path, { recursive: true });
 				case "file":
 					return fs.unlink(path);
 				default:
-					return await this.isDir(path) ? fs.rmdir(path, {recursive: true}) : fs.unlink(path);
+					return await this.isDir(path) ? fs.rmdir(path, { recursive: true }) : fs.unlink(path);
 			}
 		});
 
@@ -108,7 +108,7 @@ export class FilesService {
 		readable.push(null);
 
 		return readable
-			.pipe(Extract({path: output}))
+			.pipe(Extract({ path: output }))
 			.promise();
 
 	}
@@ -118,15 +118,15 @@ export class FilesService {
 		await Promise.all(
 			files.map(f => fse.move(path.join(src, f), path.join(dest, f)))
 		);
-		await fs.rmdir(src, {recursive: true});
+		await fs.rmdir(src, { recursive: true });
 	}
 
 	public watch(folder: string, action: WatchListener<string>) {
 		console.debug("Watch folder", folder);
 
-		let fsWatcher = fse.watch(folder, {recursive: true, encoding: "utf8"}, (event, filename) => {
+		let fsWatcher = fse.watch(folder, { recursive: true, encoding: "utf8" }, (event, filename) => {
 			filename = path.join(folder, filename);
-			console.debug("new action", {event, filename});
+			console.debug("new action", { event, filename });
 			action(event, filename);
 		});
 		return () => {
@@ -145,7 +145,7 @@ export class FilesService {
 		const file = (await fse.readFile(filepath));
 		let fileContent = file.toString("utf8");
 		fileContent = fileContent.replaceAll(search, value);
-		await fse.writeFile(filepath, fileContent, {encoding: "utf8"});
+		await fse.writeFile(filepath, fileContent, { encoding: "utf8" });
 	}
 
 	private isDir = async (path: string) => (await fs.lstat(path)).isDirectory();

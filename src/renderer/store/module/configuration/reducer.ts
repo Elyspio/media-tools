@@ -1,9 +1,9 @@
-import {createReducer} from "@reduxjs/toolkit";
-import {setConfig} from "./action";
+import { createReducer } from "@reduxjs/toolkit";
+import { setConfig } from "./action";
 
-import {Configuration, ConfigurationService} from "../../../../main/services/configuration/configuration.service";
-import {DependencyInjectionKeys} from "../../../../main/services/dependency-injection/dependency-injection.keys";
-import {container} from "../../../../main/services/dependency-injection/dependency-injection.container";
+import { Configuration, ConfigurationService } from "../../../../main/services/configuration/configuration.service";
+import { DependencyInjectionKeys } from "../../../../main/services/dependency-injection/dependency-injection.keys";
+import { container } from "../../../../main/services/dependency-injection/dependency-injection.container";
 
 
 export interface ConfigurationRouter {

@@ -1,8 +1,8 @@
 import * as fs from "fs-extra";
-import {configMainFile, defaultConfiguration} from "../../../config/configuration";
+import { configMainFile, defaultConfiguration } from "../../../config/configuration";
 import * as remote from "@electron/remote";
-import {setConfig} from "../../../renderer/store/module/configuration/action";
-import {injectable} from "inversify";
+import { setConfig } from "../../../renderer/store/module/configuration/action";
+import { injectable } from "inversify";
 
 
 export const BaseConfig = {
@@ -82,7 +82,7 @@ export class ConfigurationService {
 	}
 
 	public async regenerate() {
-		const {store} = await import("../../../renderer/store");
+		const { store } = await import("../../../renderer/store");
 		await fs.writeFile(configMainFile, JSON.stringify(defaultConfiguration));
 		store.dispatch(setConfig(defaultConfiguration));
 	}
