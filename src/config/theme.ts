@@ -1,19 +1,30 @@
-import { adaptV4Theme, createTheme as createMuiTheme } from "@mui/material/styles";
+import { createTheme as createMuiTheme } from "@mui/material/styles";
+import { Logger } from "../main/util/logger";
 // @ts-ignore
 import * as style from "../renderer/App.scss";
-import { Logger } from "../main/util/logger";
 
 const logger = Logger("Theme");
 
 logger.info("style", style);
 
-
-function createTheme() {
-	return createMuiTheme(adaptV4Theme({
-		overrides: {
+export const theme = createMuiTheme({
+		components: {
+			MuiPaper: {
+				styleOverrides: {
+					root: {
+						"&.MuiPaper-root": {
+							backgroundImage: "unset !important"
+						}
+					}
+				}
+			},
 			MuiTooltip: {
-				tooltip: {
-					fontSize: "0.75em"
+				styleOverrides: {
+					tooltip: {
+						"&.MuiTooltip-root": {
+							fontSize: "0.75em"
+						}
+					}
 				}
 			}
 		},
@@ -30,8 +41,5 @@ function createTheme() {
 				paper: style.background
 			}
 		}
-	}));
-}
-
-
-export const theme = createTheme();
+	}
+);

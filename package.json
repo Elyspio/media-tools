@@ -13,7 +13,7 @@
 		"prestart": "npm run build",
 		"start": "electron .",
 		"postinstall": "electron-builder install-app-deps",
-		"release": "ts-node --project config/tsconfig.json config/release.ts"
+		"release": "ts-node config/release.ts"
 	},
 	"build": {
 		"productName": "Elytools",

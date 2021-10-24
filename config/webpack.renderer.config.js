@@ -2,6 +2,8 @@ const webpack = require("webpack");
 const merge = require("webpack-merge").merge;
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
+const path = require("path");
+
 
 const baseConfig = require("./webpack.base.config");
 
@@ -18,21 +20,8 @@ module.exports = merge(baseConfig, {
 				loader: "babel-loader",
 				options: {
 					cacheDirectory: true,
-					babelrc: false,
-					presets: [
-						[
-							"@babel/preset-env",
-							{targets: {browsers: "last 2 versions "}}
-						],
-						"@babel/preset-typescript",
-						"@babel/preset-react"
-					],
-					plugins: [
-						["@babel/plugin-proposal-decorators", {legacy: true, loose: true}],
-						["@babel/plugin-proposal-class-properties", {loose: true}],
-						["@babel/plugin-transform-typescript", {allowNamespaces: true, loose: true}],
-						["@babel/plugin-proposal-private-methods", {loose: true}]
-					]
+					babelrc: true,
+					configFile: path.resolve(__dirname, "./.babelrc.js")
 				}
 			},
 			{
@@ -60,7 +49,7 @@ module.exports = merge(baseConfig, {
 				enforce: "pre",
 				test: /\.js$/,
 				loader: "source-map-loader",
-				exclude: /node_modules/,
+				exclude: /node_modules/
 			}
 
 		]
@@ -69,7 +58,7 @@ module.exports = merge(baseConfig, {
 	plugins: [
 		new ForkTsCheckerWebpackPlugin({
 			reportFiles: ["../src/renderer/**/*"],
-			tsconfig: "./tsconfig.json"
+			tsconfig: "../tsconfig.json"
 		}),
 		new webpack.NamedModulesPlugin(),
 		new HtmlWebpackPlugin({
