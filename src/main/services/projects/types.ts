@@ -124,7 +124,7 @@ export enum FeatureOptions {
 }
 
 export type Feature = {
-	name: "web-front" | "web-back" | "mobile" | "watch" | "desktop",
-	use: string[],
-	options?: FeatureOptions[]
-}
+	name: "web-front" | "web-back" | "mobile" | "watch" | "desktop";
+	use: string[];
+	options?: FeatureOptions[];
+};

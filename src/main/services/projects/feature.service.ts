@@ -4,14 +4,13 @@ import { github } from "../../../config/projects/projects.private";
 import * as fs from "fs-extra";
 import { ensureDir, writeFile } from "fs-extra";
 import { promises as ofs } from "fs";
-import * as  path from "path";
+import * as path from "path";
 import * as os from "os";
 import { injectable } from "inversify";
 import { GithubService } from "./github.service";
 import { FilesService } from "../files/files.service";
 import { DependencyInjectionKeys } from "../dependency-injection/dependency-injection.keys";
 import { container } from "../dependency-injection/dependency-injection.container";
-
 
 @injectable()
 export class FeatureService {
@@ -20,7 +19,7 @@ export class FeatureService {
 	constructor() {
 		this.services = {
 			files: container.get<FilesService>(DependencyInjectionKeys.files),
-			github: container.get<GithubService>(DependencyInjectionKeys.projects.github)
+			github: container.get<GithubService>(DependencyInjectionKeys.projects.github),
 		};
 	}
 
@@ -29,7 +28,7 @@ export class FeatureService {
 		console.log("templates", templates);
 		const features = new Set<Feature>();
 		for (const t of templates) {
-			for (const f of (featureMap[t.id.toString()] ?? [])) {
+			for (const f of featureMap[t.id.toString()] ?? []) {
 				features.add(f);
 			}
 		}
@@ -76,7 +75,6 @@ export class FeatureService {
 					await fs.move(file, path.resolve(dist, fileBasename));
 				}
 			}
-
 		}
 		await Promise.all(src.map(f => ofs.rmdir(f, { recursive: true })));
 	}
@@ -88,8 +86,7 @@ export class FeatureService {
 	 * @private
 	 */
 	private async mergeFile(f1: string, f2: string) {
-		let content = await fs.readFile(f1) + os.EOL + await fs.readFile(f2);
+		let content = (await fs.readFile(f1)) + os.EOL + (await fs.readFile(f2));
 		return writeFile(f1, content);
 	}
-
 }

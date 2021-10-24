@@ -6,12 +6,9 @@ import { getComponent } from "../../store/module/router/reducer";
 import { getUriParam } from "../../util/url";
 import { StoreState } from "../../store";
 
-
-interface Props extends ConnectedProps<typeof connector> {
-}
+interface Props extends ConnectedProps<typeof connector> {}
 
 function Router(props: Props) {
-
 	const route = getUriParam("route", {});
 
 	if (route) {
@@ -20,21 +17,22 @@ function Router(props: Props) {
 
 	if (!props.current) return null;
 
-	return <Module>
-		<props.current />
-	</Module>;
+	return (
+		<Module>
+			<props.current />
+		</Module>
+	);
 }
 
 const mapStateToProps = (state: StoreState) => ({
 	current: getComponent(state.routing.path),
-	path: state.routing.path
+	path: state.routing.path,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-	setPath: (path: string) => dispatch(setPath(path))
+	setPath: (path: string) => dispatch(setPath(path)),
 });
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
-
 
 export default connector(Router);

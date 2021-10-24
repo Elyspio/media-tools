@@ -5,24 +5,19 @@ import { Configuration, ConfigurationService } from "../../../../main/services/c
 import { DependencyInjectionKeys } from "../../../../main/services/dependency-injection/dependency-injection.keys";
 import { container } from "../../../../main/services/dependency-injection/dependency-injection.container";
 
-
 export interface ConfigurationRouter {
 	current: Configuration;
 }
 
-
 const configurationService = container.get<ConfigurationService>(DependencyInjectionKeys.configuration);
 
-
 const defaultState: ConfigurationRouter = {
-	current: configurationService.get(false) as Configuration
+	current: configurationService.get(false) as Configuration,
 };
 
 export const reducer = createReducer<ConfigurationRouter>(defaultState, builder => {
-
-	builder.addCase(setConfig, ((state, action) => {
+	builder.addCase(setConfig, (state, action) => {
 		state.current = action.payload;
 		configurationService.set(action.payload);
-	}));
-
+	});
 });

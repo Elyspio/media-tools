@@ -8,38 +8,33 @@ const logger = Logger("Theme");
 logger.info("style", style);
 
 export const theme = createMuiTheme({
-		components: {
-			MuiPaper: {
-				styleOverrides: {
-					root: {
-						"&.MuiPaper-root": {
-							backgroundImage: "unset !important"
-						}
-					}
-				}
+	components: {
+		MuiPaper: {
+			styleOverrides: {
+				root: {
+					"&.MuiPaper-root": {
+						backgroundImage: "unset !important",
+					},
+				},
 			},
-			MuiTooltip: {
-				styleOverrides: {
-					tooltip: {
-						"&.MuiTooltip-root": {
-							fontSize: "0.75em"
-						}
-					}
-				}
-			}
 		},
-		palette: {
-			mode: "dark",
-			primary: {
-				main: style.primary
+		MuiTooltip: {
+			styleOverrides: {
+				tooltip: {},
 			},
-			secondary: {
-				main: style.secondary
-			},
-			background: {
-				default: style.background,
-				paper: style.background
-			}
-		}
-	}
-);
+		},
+	},
+	palette: {
+		mode: "dark",
+		primary: {
+			main: style.primary,
+		},
+		secondary: {
+			main: style.secondary,
+		},
+		background: {
+			default: style.background,
+			paper: style.background,
+		},
+	},
+});

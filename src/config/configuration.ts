@@ -11,19 +11,19 @@ console.log("Setings will be stored in file " + configMainFile);
 export const defaultConfiguration: Configuration = {
 	version: "",
 	appboard: {
-		show: ["internal", "external"]
+		show: ["internal", "external"],
 	},
 	frame: {
 		show: {
-			resourceUtilization: false
+			resourceUtilization: false,
 		},
 		resize: {
 			height: false,
-			width: false
-		}
+			width: false,
+		},
 	},
 	endpoints: {
 		lightManager: "https://elyspio.fr/light-manager/",
-		homeAssistant: "https://ha.elyspio.fr"
-	}
+		homeAssistant: "https://ha.elyspio.fr",
+	},
 };

@@ -6,8 +6,8 @@ const baseConfig = require("./webpack.renderer.config");
 module.exports = merge(baseConfig, {
 	resolve: {
 		alias: {
-			"react-dom": "@hot-loader/react-dom"
-		}
+			"react-dom": "@hot-loader/react-dom",
+		},
 	},
 	devServer: {
 		port: 2003,
@@ -19,7 +19,7 @@ module.exports = merge(baseConfig, {
 		headers: { "Access-Control-Allow-Origin": "*" },
 		historyApiFallback: {
 			verbose: true,
-			disableDotRule: false
+			disableDotRule: false,
 		},
 		before() {
 			if (process.env.START_HOT) {
@@ -27,9 +27,11 @@ module.exports = merge(baseConfig, {
 				spawn("npm", ["run", "start-main-dev"], {
 					shell: true,
 					env: process.env,
-					stdio: "inherit"
-				}).on("close", code => process.exit(code)).on("error", spawnError => console.error(spawnError));
+					stdio: "inherit",
+				})
+					.on("close", code => process.exit(code))
+					.on("error", spawnError => console.error(spawnError));
 			}
-		}
-	}
+		},
+	},
 });

@@ -16,31 +16,28 @@ import { FilesService } from "../../../../../main/services/files/files.service";
 import { DependencyInjectionKeys } from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 
 interface State {
-	match: string,
-	folder?: string
+	match: string;
+	folder?: string;
 	preview: {
-		raw: string[],
-		filtered: string[],
-		exclude: string[],
-		amount: number
-	}
-	loading?: boolean,
+		raw: string[];
+		filtered: string[];
+		exclude: string[];
+		amount: number;
+	};
+	loading?: boolean;
 	alert?: {
-		severity: AlertColor,
-		message: string
-	}
+		severity: AlertColor;
+		message: string;
+	};
 }
-
 
 const defaultAmount = 30;
 let exclusions = ["node_modules", ".git", ".expo", ".bit"];
 
 @Register({ name: "Purge", description: "Removes files that match a pattern ", path: "/purge" })
 export class Purge extends Component<{}, State> {
-
 	@resolve(DependencyInjectionKeys.files)
 	filesService!: FilesService;
-
 
 	override state: State = {
 		match: "",
@@ -49,10 +46,10 @@ export class Purge extends Component<{}, State> {
 			raw: [],
 			filtered: [],
 			exclude: exclusions,
-			amount: defaultAmount
+			amount: defaultAmount,
 		},
 
-		loading: false
+		loading: false,
 	};
 	private logger = Logger(Purge);
 	private onMatchTimeout?: NodeJS.Timeout;
@@ -60,7 +57,6 @@ export class Purge extends Component<{}, State> {
 	private items: HTMLDivElement | null = null;
 
 	override render() {
-
 		let { folder, match, preview, loading, alert } = this.state;
 
 		return (
@@ -68,60 +64,66 @@ export class Purge extends Component<{}, State> {
 				<SelectFolder onChange={this.onFolderSelect} mode={"folder"} showSelected />
 				{loading && <CircularProgress color={"secondary"} size={"2rem"} />}
 
-				{!loading && folder && <>
+				{!loading && folder && (
+					<>
+						<Box className="filter">
+							<TextField label={"Match"} onChange={this.onMatchChange} />
 
-					<Box className="filter">
-						<TextField label={"Match"} onChange={this.onMatchChange} />
-
-						<Box className={"exclusion"}>
-							<InputLabel id="ignoreContentLabel">Ignore content from</InputLabel>
-							<Select
-								labelId="ignoreContentLabel"
-								id="ignoreContentSelect"
-								multiple
-								MenuProps={{ variant: "menu" }}
-								value={preview.exclude}
-								renderValue={(selected: any) => selected.join(", ")}
-								input={<Input />}
-								onChange={this.changePreviewExclusion}
-							>
-								{exclusions.map((name) => (
-									<MenuItem key={name} value={name} className={"exclude"}>
-										<Checkbox checked={preview.exclude.includes(name)} color={"secondary"} />
-										<Typography className={"item"}>{name}</Typography>
-									</MenuItem>
-								))}
-							</Select>
+							<Box className={"exclusion"}>
+								<InputLabel id="ignoreContentLabel">Ignore content from</InputLabel>
+								<Select
+									labelId="ignoreContentLabel"
+									id="ignoreContentSelect"
+									multiple
+									MenuProps={{ variant: "menu" }}
+									value={preview.exclude}
+									renderValue={(selected: any) => selected.join(", ")}
+									input={<Input />}
+									onChange={this.changePreviewExclusion}
+								>
+									{exclusions.map(name => (
+										<MenuItem key={name} value={name} className={"exclude"}>
+											<Checkbox checked={preview.exclude.includes(name)} color={"secondary"} />
+											<Typography className={"item"}>{name}</Typography>
+										</MenuItem>
+									))}
+								</Select>
+							</Box>
 						</Box>
-					</Box>
 
+						<Typography className={"preview-title"} variant={"h6"}>
+							Preview{" "}
+							<span className={"itemCount"}>
+								( {preview.filtered.length} / {preview.raw.length} )
+							</span>
+						</Typography>
+						<Container>
+							<div onScroll={this.onPreviewScroll} className={"preview-items"} ref={r => (this.items = r)}>
+								{preview.filtered.slice(0, preview.amount).map(f => (
+									<Typography noWrap key={f}>
+										<span title={f}>{f}</span>
+									</Typography>
+								))}
+							</div>
+						</Container>
+						{match && (
+							<div className={"actions"}>
+								<Button color={"secondary"} className={"RemoveBtn"} variant={"outlined"} onClick={this.remove}>
+									Remove
+								</Button>
 
-					<Typography className={"preview-title"} variant={"h6"}>Preview <span className={"itemCount"}>( {preview.filtered.length} / {preview.raw.length} )</span>
-					</Typography>
-					<Container>
-						<div onScroll={this.onPreviewScroll} className={"preview-items"} ref={r => this.items = r}>
-							{preview.filtered.slice(0, preview.amount).map(f => <Typography noWrap key={f}><span title={f}>{f}</span></Typography>)}
-						</div>
-					</Container>
-					{match && <div className={"actions"}>
-						<Button color={"secondary"} className={"RemoveBtn"} variant={"outlined"} onClick={this.remove}>Remove</Button>
-
-						{alert && <div>
-							{<Alert severity={alert.severity}>{alert.message}</Alert>}
-						</div>}
-
-					</div>}
-				</>}
-
-
+								{alert && <div>{<Alert severity={alert.severity}>{alert.message}</Alert>}</div>}
+							</div>
+						)}
+					</>
+				)}
 			</Container>
 		);
 	}
 
 	private filter = (folders: string[], match: string) => {
-
 		let regExp = new RegExp(match);
-		let filtered = folders.filter((f) => f.match(regExp));
+		let filtered = folders.filter(f => f.match(regExp));
 		return filtered;
 	};
 
@@ -131,9 +133,8 @@ export class Purge extends Component<{}, State> {
 
 		this.setState(prev => ({
 			...prev,
-			match
+			match,
 		}));
-
 
 		if (this.onMatchTimeout) clearTimeout(this.onMatchTimeout);
 
@@ -142,15 +143,15 @@ export class Purge extends Component<{}, State> {
 				...prev,
 				preview: {
 					...prev.preview,
-					filtered: this.filter(prev.preview.raw, match)
-				}
+					filtered: this.filter(prev.preview.raw, match),
+				},
 			}));
 		}, 50);
 	};
 
 	private onFolderSelect = async (folder: string) => {
 		this.setState({
-			loading: true
+			loading: true,
 		});
 
 		const folders = await this.filesService.list(folder, ["node_modules", ".git", ".expo", ".bit"]);
@@ -162,9 +163,9 @@ export class Purge extends Component<{}, State> {
 				...prev.preview,
 				raw: folders,
 				filtered: folders,
-				amount: defaultAmount
+				amount: defaultAmount,
 			},
-			loading: false
+			loading: false,
 		}));
 	};
 
@@ -173,7 +174,6 @@ export class Purge extends Component<{}, State> {
 	 */
 	private remove = async () => {
 		try {
-
 			const nbNodesToDelete = this.state.preview.filtered.length;
 
 			await this.filesService.deleteNodes(this.state.preview.filtered.map(c => ({ type: "folder", path: c })));
@@ -182,25 +182,22 @@ export class Purge extends Component<{}, State> {
 				...prev,
 				alert: {
 					message: `${nbNodesToDelete} node has been deleted`,
-					severity: "success"
-				}
+					severity: "success",
+				},
 			}));
 		} catch (e: any) {
 			this.setState(prev => ({
 				...prev,
 				alert: {
 					message: e.message,
-					severity: "error"
-				}
+					severity: "error",
+				},
 			}));
 		}
-
 
 		setTimeout(() => {
 			this.setState(prev => ({ ...prev, alert: undefined }));
 		}, 50000);
-
-
 	};
 	/**
 	 * Handle
@@ -213,8 +210,8 @@ export class Purge extends Component<{}, State> {
 				...prev,
 				preview: {
 					...prev.preview,
-					amount: prev.preview.amount * 2
-				}
+					amount: prev.preview.amount * 2,
+				},
 			}));
 		}
 	};
@@ -224,9 +221,8 @@ export class Purge extends Component<{}, State> {
 			...prev,
 			preview: {
 				...prev.preview,
-				exclude: e.target.value
-			}
+				exclude: e.target.value,
+			},
 		}));
 	};
 }
-

@@ -10,7 +10,7 @@ import { Dispatch } from "redux";
 import { connect, ConnectedProps } from "react-redux";
 
 const mapStateToProps = (state: StoreState) => ({
-	action: state.encoder.onFinishAction
+	action: state.encoder.onFinishAction,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({});
@@ -18,9 +18,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({});
 const connector = connect(mapStateToProps, mapDispatchToProps);
 type ReduxTypes = ConnectedProps<typeof connector>;
 
-
 function OnFinishAction(props: { close: () => void } & ReduxTypes) {
-
 	const { close, action } = props;
 
 	const [current, setCurrent] = React.useState<StoreState["encoder"]["onFinishAction"]>(action);
@@ -30,39 +28,44 @@ function OnFinishAction(props: { close: () => void } & ReduxTypes) {
 		close();
 	};
 
-	const values = [...onFinishActionList].sort(s => s === "None" ? -1 : 1);
-	return <div>
-		<DialogTitle id="responsive-dialog-title">{"Action when processes are finished"}</DialogTitle>
-		<DialogContent>
-			<FormControl variant="outlined" fullWidth>
-				<InputLabel id="demo-simple-select-outlined-label">Action</InputLabel>
-				<Select
-					labelId="demo-simple-select-outlined-label"
-					id="demo-simple-select-outlined"
-					value={current}
-					onChange={e => setCurrent(e.target.value as any)}
-					label="Action"
-				>
-					{values.map(l => <MenuItem value={l} key={l}>{l}</MenuItem>)}
-				</Select>
-			</FormControl>
-		</DialogContent>
-		<DialogActions>
+	const values = [...onFinishActionList].sort(s => (s === "None" ? -1 : 1));
+	return (
+		<div>
+			<DialogTitle id="responsive-dialog-title">{"Action when processes are finished"}</DialogTitle>
+			<DialogContent>
+				<FormControl variant="outlined" fullWidth>
+					<InputLabel id="demo-simple-select-outlined-label">Action</InputLabel>
+					<Select
+						labelId="demo-simple-select-outlined-label"
+						id="demo-simple-select-outlined"
+						value={current}
+						onChange={e => setCurrent(e.target.value as any)}
+						label="Action"
+					>
+						{values.map(l => (
+							<MenuItem value={l} key={l}>
+								{l}
+							</MenuItem>
+						))}
+					</Select>
+				</FormControl>
+			</DialogContent>
+			<DialogActions>
+				{process.env.NODE_ENV !== "production" && current !== "None" && (
+					<Button variant={"outlined"} onClick={runOnFinishAction}>
+						Force action
+					</Button>
+				)}
 
-			{process.env.NODE_ENV !== "production" && current !== "None" && <Button
-				variant={"outlined"}
-				onClick={runOnFinishAction}>
-				Force action
-			</Button>}
-
-			<Button autoFocus onClick={close} color="secondary">
-				Cancel
-			</Button>
-			<Button onClick={validate} color="primary" autoFocus>
-				Ok
-			</Button>
-		</DialogActions>
-	</div>;
+				<Button autoFocus onClick={close} color="secondary">
+					Cancel
+				</Button>
+				<Button onClick={validate} color="primary" autoFocus>
+					Ok
+				</Button>
+			</DialogActions>
+		</div>
+	);
 }
 
 export default connector(OnFinishAction);

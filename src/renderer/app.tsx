@@ -14,16 +14,12 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.scss";
 
-
 declare module "@mui/material/styles" {
 	// eslint-disable-next-line @typescript-eslint/no-empty-interface
-	interface DefaultTheme extends Theme {
-	}
+	interface DefaultTheme extends Theme {}
 }
 
-
 downloadFont("https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap");
-
 
 const logger = Logger("App");
 
@@ -31,7 +27,6 @@ const logger = Logger("App");
 const mainElement = document.createElement("div");
 mainElement.classList.add("root");
 document.body.appendChild(mainElement);
-
 
 ReactDOM.render(
 	<DiProvider container={container}>
@@ -47,13 +42,10 @@ ReactDOM.render(
 	mainElement
 );
 
-
 function downloadFont(url: string) {
 	const css = document.createElement("link");
 	css.rel = "stylesheet";
 	css.href = url;
 
-
 	document.head.appendChild(css);
 }
-

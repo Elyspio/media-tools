@@ -3,35 +3,30 @@ import { spawn } from "child_process";
 import { VpnService } from "./vpn.service";
 import { injectable } from "inversify";
 
-
 export const countries = ["Switzerland", "France", "Germany"] as const;
-export type Country = typeof countries[number]
+export type Country = typeof countries[number];
 
 @injectable()
 export class NordvpnService extends VpnService {
-
 	public static errors = {
-		vpnCLientNotInstalled: new Error("Nordvpn client could not be found in PATH")
+		vpnCLientNotInstalled: new Error("Nordvpn client could not be found in PATH"),
 	};
-
 
 	public async isClientInstalled() {
 		return isInstalled("nordvpn");
 	}
 
 	public async connect(region?: Country) {
-		if (!await this.isClientInstalled()) throw NordvpnService.errors.vpnCLientNotInstalled;
+		if (!(await this.isClientInstalled())) throw NordvpnService.errors.vpnCLientNotInstalled;
 		const bonus = [];
 		if (region) bonus.push("-g", region);
 		await this.runIgnoringError("nordvpn", "-c", ...bonus);
 	}
 
 	public async disconnect() {
-		if (!await this.isClientInstalled()) throw NordvpnService.errors.vpnCLientNotInstalled;
+		if (!(await this.isClientInstalled())) throw NordvpnService.errors.vpnCLientNotInstalled;
 		await this.runIgnoringError("nordvpn", "-d");
-
 	}
-
 
 	public async waitForConnect(region?: Country) {
 		const { store } = await import("../../../renderer/store");
@@ -47,7 +42,6 @@ export class NordvpnService extends VpnService {
 		});
 	}
 
-
 	public override isConnected() {
 		return super.isInterfaceConnected("nordvpn");
 	}
@@ -55,8 +49,6 @@ export class NordvpnService extends VpnService {
 	private async runIgnoringError(command: string, ...params: string[]) {
 		try {
 			spawn(command, params, { detached: true, stdio: "ignore" });
-		} catch (e) {
-
-		}
+		} catch (e) {}
 	}
 }

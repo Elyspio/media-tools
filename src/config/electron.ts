@@ -6,10 +6,9 @@ export const windowOption: BrowserWindowConstructorOptions = {
 	webPreferences: {
 		nodeIntegration: true,
 		webSecurity: false,
-		contextIsolation: false
+		contextIsolation: false,
 	},
 	hasShadow: true,
 	frame: false,
-	resizable: true
+	resizable: true,
 };
-

@@ -76,28 +76,27 @@ export interface StreamTags {
 }
 
 export type Encoder = {
-	format: "x265" | "x264",
-	type: "CPU" | "GPU",
+	format: "x265" | "x264";
+	type: "CPU" | "GPU";
 	value: {
-		ffmpeg: "libx265" | "hevc_nvenc",
-		ffprobe: FFProbeFileFormat
-	}
-}
+		ffmpeg: "libx265" | "hevc_nvenc";
+		ffprobe: FFProbeFileFormat;
+	};
+};
 
 export type FFProbeFileFormat = "hevc" | "h264";
 
-
 export type File = {
-	path: string,
-	name: string
+	path: string;
+	name: string;
 };
 
 export interface Media {
-	file: File,
-	property: MediaData,
+	file: File;
+	property: MediaData;
 }
 
 export type ProcessData = {
-	media: Media,
-	percentage: number
+	media: Media;
+	percentage: number;
 };

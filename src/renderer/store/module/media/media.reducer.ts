@@ -2,27 +2,24 @@ import { createSlice } from "@reduxjs/toolkit";
 import { Encoder, Media, ProcessData } from "../../../components/modules/internal/encoder/type";
 import { encodingProcess, setCurrentProcess, setFFmpegInstalled, setFormat, setMedias, setProcesses, setProgress } from "./media.action";
 
-
 export type MediaState = {
-	medias: Media[]
-	process: ProcessData[],
+	medias: Media[];
+	process: ProcessData[];
 	encoder: {
-		format: Encoder["value"]["ffmpeg"]
-		isSoftInstalled?: boolean,
-		currentProcessPid?: number
-	}
-}
+		format: Encoder["value"]["ffmpeg"];
+		isSoftInstalled?: boolean;
+		currentProcessPid?: number;
+	};
+};
 
 const initialState: MediaState = {
 	medias: [],
 	process: [],
 	encoder: {
 		isSoftInstalled: undefined,
-		format: "hevc_nvenc"
-	}
-
+		format: "hevc_nvenc",
+	},
 };
-
 
 export const mediaSlice = createSlice({
 	name: "media",
@@ -52,7 +49,6 @@ export const mediaSlice = createSlice({
 			}
 		});
 
-
 		addCase(setCurrentProcess, (state, action) => {
 			state.encoder.currentProcessPid = action.payload?.pid;
 			if (action.payload) {
@@ -61,8 +57,5 @@ export const mediaSlice = createSlice({
 				encodingProcess.current = undefined;
 			}
 		});
-
-	}
+	},
 });
-
-

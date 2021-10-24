@@ -1,8 +1,7 @@
 type getUriParamOptions = {
-	remove?: boolean,
-	json?: boolean
-}
-
+	remove?: boolean;
+	json?: boolean;
+};
 
 export function injectParams() {
 	const base64 = getUriParam("data");
@@ -14,9 +13,8 @@ export function injectParams() {
 }
 
 export function getUriParam<T = any>(param: string, { json }: getUriParamOptions = {}) {
-	let search = (new URL(document.location.href)).searchParams;
+	let search = new URL(document.location.href).searchParams;
 	let elem = search.get(param);
-	let value: T = (elem && json) ? JSON.parse(elem) : elem;
+	let value: T = elem && json ? JSON.parse(elem) : elem;
 	return value;
-
 }

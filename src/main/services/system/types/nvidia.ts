@@ -81,8 +81,7 @@ export interface GPUAttributes {
 	id: string;
 }
 
-export interface AccountedProcesses {
-}
+export interface AccountedProcesses {}
 
 export interface ApplicationsClocks {
 	graphics_clock: Text;

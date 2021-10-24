@@ -7,11 +7,8 @@ import { isInstalled } from "../../util";
 import { setFFmpegInstalled, setProgress } from "../../../renderer/store/module/media/media.action";
 import { injectable } from "inversify";
 
-
 @injectable()
 export class MediaService {
-
-
 	public async getInfo(file: File): Promise<MediaData> {
 		try {
 			const { stdout } = await exec(`ffprobe.exe  -v quiet -print_format json -show_format -show_streams "${file.path}"`);
@@ -30,7 +27,6 @@ export class MediaService {
 	}
 
 	public async convert(input: Media, format: string, options?: { outputPath: string }): Promise<[EventEmitter, ReturnType<typeof spawn>]> {
-
 		const { store } = await import("../../../renderer/store");
 
 		try {
@@ -45,33 +41,32 @@ export class MediaService {
 			let parts = stream.avg_frame_rate.split("/");
 			const framerate = Number.parseFloat(parts[0]) / Number.parseFloat(parts[1]);
 
-
 			const nbFrames = framerate * Number.parseFloat(input.property.format.duration);
 
 			process.on("error", console.error);
-			process.stderr.on("data", (e) => console.error("process.data", e.toString()));
-			process.stderr.on("error", (e) => console.error("process.stdeer", e.toString()));
-			process.stdout.on("error", (e) => console.error("process.stdout", e.toString()));
+			process.stderr.on("data", e => console.error("process.data", e.toString()));
+			process.stderr.on("error", e => console.error("process.stdeer", e.toString()));
+			process.stdout.on("error", e => console.error("process.stdout", e.toString()));
 			process.stdout.on("data", (chunk: string) => {
 				const obj = this.getFFMpegProgress(chunk);
-				let percentage = obj.frame / nbFrames * 100;
+				let percentage = (obj.frame / nbFrames) * 100;
 				s.emit("progress", percentage);
 				store.dispatch(setProgress({ media: input, percentage }));
 			});
 
-
 			process.on("close", () => s.emit("finished", outputPath));
 			return [s, process];
-
 		} catch (e) {
 			console.error(e);
 			throw e;
 		}
-
 	}
 
 	private getFFMpegProgress(chunk: string): FFMPpegProgress {
-		const data = chunk.toString().split("\n").map(line => line.split("="));
+		const data = chunk
+			.toString()
+			.split("\n")
+			.map(line => line.split("="));
 		return {
 			frame: Number.parseInt(data[0][1]),
 			fps: Number.parseInt(data[1][1]),
@@ -84,26 +79,24 @@ export class MediaService {
 			dupFrame: Number.parseInt(data[8][1]),
 			dropFrame: Number.parseInt(data[9][1]),
 			speed: Number.parseInt(data[10][1].slice(0, data[9][1].length - 1)),
-			progress: data[11][1] as any
+			progress: data[11][1] as any,
 		};
 	}
-
 }
 
 const exec = promisify(_exec);
 
-
 interface FFMPpegProgress {
-	frame: number,
-	fps: number,
-	stream: string,
-	bitrate: number
-	totalSize: number,
-	outTimeUs: number,
-	outTimeMs: number,
-	outTime: string,
-	dupFrame: number,
-	dropFrame: number,
-	speed: number,
-	progress: "continue" | "end"
+	frame: number;
+	fps: number;
+	stream: string;
+	bitrate: number;
+	totalSize: number;
+	outTimeUs: number;
+	outTimeMs: number;
+	outTime: string;
+	dupFrame: number;
+	dropFrame: number;
+	speed: number;
+	progress: "continue" | "end";
 }

@@ -13,44 +13,42 @@ const requires = [
 	"internal/updater/Updater",
 	"internal/torrent/Torrent",
 	"internal/config/Config",
-	"app-board/AppBoard"
+	"app-board/AppBoard",
 ];
 
 for (const c of requires) {
 	import(`../../../components/modules/${c}.tsx`);
 }
 
-
 type ReactComponent = any;
 
 export type ModuleDescription = {
-	name: string,
-	description?: string,
-	icon?: string,
-	external?: boolean
-	component: ReactComponent,
-	path: string,
+	name: string;
+	description?: string;
+	icon?: string;
+	external?: boolean;
+	component: ReactComponent;
+	path: string;
 	show: {
 		// if this module will be shown in AppBoard
-		appboard: boolean,
+		appboard: boolean;
 		// if it will be showed at top of the page
-		name: boolean
-	},
+		name: boolean;
+	};
 	autoResize: {
-		width: boolean,
-		height: boolean
-	}
-}
-
+		width: boolean;
+		height: boolean;
+	};
+};
 
 export interface RouterState {
-	path: string,
-	routes: { [key: string]: Omit<ModuleDescription, "component"> & { component: string } }
+	path: string;
+	routes: { [key: string]: Omit<ModuleDescription, "component"> & { component: string } };
 }
 
 const defaultState: RouterState = {
 	path: "/",
-	routes: {}
+	routes: {},
 };
 
 const components: { [key: string]: ReactComponent } = {};
@@ -63,16 +61,12 @@ export function getComponent(route: string) {
 	return components[route];
 }
 
-
 export const reducer = createReducer<RouterState>(defaultState, builder => {
-
-	builder.addCase(setPath, ((state, action) => {
+	builder.addCase(setPath, (state, action) => {
 		state.path = action.payload;
-	}));
+	});
 
-	builder.addCase(addRoute, ((state, action) => {
+	builder.addCase(addRoute, (state, action) => {
 		state.routes[action.payload.path] = action.payload;
-	}));
-
-
+	});
 });

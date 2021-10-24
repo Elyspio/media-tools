@@ -13,7 +13,6 @@ import { Logger } from "./logger";
 
 const { app, dialog } = remote;
 
-
 const logger = Logger("Updater");
 
 const getPlatform = (): "windows" | "linux" => {
@@ -24,46 +23,45 @@ const getPlatform = (): "windows" | "linux" => {
 };
 
 export function getVersion() {
-	return process.env.NODE_ENV === "production"
-		? app.getVersion()
-		: process.env.npm_package_version as string;
+	return process.env.NODE_ENV === "production" ? app.getVersion() : (process.env.npm_package_version as string);
 }
-
 
 const getServerUrl = () => {
 	return store.getState().updater.serverUrl;
 };
 
-
 export async function checkUpdate() {
-
 	const version = getVersion();
 
 	const plat = getPlatform();
 
 	try {
-
-		const call: { data: { date: string, val: string } } = await axios.get(`${getServerUrl()}${config.app_name}/${plat}/version/`);
+		const call: { data: { date: string; val: string } } = await axios.get(`${getServerUrl()}${config.app_name}/${plat}/version/`);
 
 		const current = version.split(".").map(x => parseInt(x));
 		const server = call.data.val.split(".").map((x: string) => parseInt(x));
 
+		store.dispatch(setServerLatestVersion(call.data.val));
+
 		if (server[0] > current[0] || server[1] > current[1] || server[2] > current[2]) {
-
-			store.dispatch(setServerLatestVersion(call.data.val));
-
-			const response = await dialog.showMessageBox({ title: "Update", message: "A new version is available", buttons: ["Download", "Cancel"] });
+			const response = await dialog.showMessageBox({
+				title: "Update",
+				message: "A new version is available",
+				buttons: ["Download", "Cancel"],
+			});
 
 			if (response.response === 0) {
 				store.dispatch(setPath("/updater"));
 				await downloadUpdate();
 
-				const response = await dialog.showMessageBox({ title: "Update", message: "Application is ready to update", buttons: ["Install", "Cancel"] });
+				const response = await dialog.showMessageBox({
+					title: "Update",
+					message: "Application is ready to update",
+					buttons: ["Install", "Cancel"],
+				});
 				if (response.response === 0) {
 					await installUpdate();
 				}
-
-
 			} else {
 				logger.debug("User does not want to update");
 			}
@@ -74,25 +72,22 @@ export async function checkUpdate() {
 		logger.error("checkUpdate", e);
 	}
 
-
 	setTimeout(checkUpdate, updateRefreshRate);
 }
-
 
 export async function downloadUpdate() {
 	const plat = getPlatform();
 	const bin = await axios.get(`${getServerUrl()}${config.app_name}/${plat}`, {
 		responseType: "arraybuffer",
 		onDownloadProgress: progressEvent => {
-			store.dispatch(setDownloadPercentage(progressEvent.loaded * 100 / progressEvent.total));
-		}
+			store.dispatch(setDownloadPercentage((progressEvent.loaded * 100) / progressEvent.total));
+		},
 	});
 	const data = new Buffer(bin.data as any);
 	await ensureDir(path.dirname(pathToInstaller));
 	await writeFile(pathToInstaller, data);
 	return pathToInstaller;
 }
-
 
 export async function installUpdate() {
 	const filename = path.basename(pathToInstaller);

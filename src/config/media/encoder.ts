@@ -7,15 +7,15 @@ export const encoders: Encoder[] = [
 		type: "CPU",
 		value: {
 			ffmpeg: "libx265",
-			ffprobe: "hevc"
-		}
+			ffprobe: "hevc",
+		},
 	},
 	{
 		format: "x265",
 		type: "GPU",
 		value: {
 			ffmpeg: "hevc_nvenc",
-			ffprobe: "hevc"
-		}
-	}
+			ffprobe: "hevc",
+		},
+	},
 ];

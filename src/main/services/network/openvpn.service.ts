@@ -4,16 +4,15 @@ import { spawn } from "child_process";
 import { EventManager } from "../../util/events";
 import { injectable } from "inversify";
 
-type StatusListener = "connected" | "disconnected"
-type StdioListener = string
+type StatusListener = "connected" | "disconnected";
+type StdioListener = string;
 
 @injectable()
 export class OpenvpnService extends EventManager<["data", "status"], [StdioListener, StatusListener]> {
-
 	public static errors = {
 		vpnCLientNotInstalled: new Error("Vpn client could not be found in PATH"),
 		alreadyConnected: new Error("Vpn is already connected"),
-		notConnected: new Error("Vpn is not connected")
+		notConnected: new Error("Vpn is not connected"),
 	};
 	private static spawned: ReturnType<typeof spawn>;
 	public stdout: string[] = [];
@@ -27,7 +26,6 @@ export class OpenvpnService extends EventManager<["data", "status"], [StdioListe
 	}
 
 	public connect() {
-
 		if (!OpenvpnService.isClientInstalled()) {
 			throw OpenvpnService.errors.vpnCLientNotInstalled;
 		}
@@ -51,5 +49,4 @@ export class OpenvpnService extends EventManager<["data", "status"], [StdioListe
 		OpenvpnService.spawned.kill("SIGTERM");
 		this.emit("status", "disconnected");
 	}
-
 }

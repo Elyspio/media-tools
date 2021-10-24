@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 
-
 type UseAsyncStateParams<T> = () => Promise<T>;
 
 export function useAsyncState<T>(func: UseAsyncStateParams<T>, defaultValue: T, replay?: number) {
-
 	const [data, setData] = useState<T>();
 
 	const handle = async (func: UseAsyncStateParams<T>) => {
@@ -24,14 +22,10 @@ export function useAsyncState<T>(func: UseAsyncStateParams<T>, defaultValue: T, 
 		return () => {
 			timer && clearInterval(timer);
 		};
-
 	}, [func]);
-
 
 	return {
 		data: data ?? defaultValue,
-		reload: () => handle(func)
+		reload: () => handle(func),
 	};
-
-
 }

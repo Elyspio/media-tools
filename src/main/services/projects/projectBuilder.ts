@@ -10,21 +10,20 @@ import { FilesService } from "../files/files.service";
 import { DependencyInjectionKeys } from "../dependency-injection/dependency-injection.keys";
 import { container } from "../dependency-injection/dependency-injection.container";
 
-
 @injectable()
 export class ProjectBuilder {
 	private services: { github: GithubService; feature: FeatureService; files: FilesService; docker: DockerService };
 	private config: {
-		name: string,
-		github?: string,
-		description?: string,
-		readme?: boolean,
-		features: Feature[],
+		name: string;
+		github?: string;
+		description?: string;
+		readme?: boolean;
+		features: Feature[];
 		docker?: string;
-		template?: boolean,
+		template?: boolean;
 	} = {
 		name: "",
-		features: []
+		features: [],
 	};
 
 	public constructor() {
@@ -32,7 +31,7 @@ export class ProjectBuilder {
 			files: container.get<FilesService>(DependencyInjectionKeys.files),
 			docker: container.get<DockerService>(DependencyInjectionKeys.projects.docker),
 			github: container.get<GithubService>(DependencyInjectionKeys.projects.github),
-			feature: container.get<FeatureService>(DependencyInjectionKeys.projects.feature)
+			feature: container.get<FeatureService>(DependencyInjectionKeys.projects.feature),
 		};
 	}
 
@@ -78,18 +77,15 @@ export class ProjectBuilder {
 				"",
 				"Bootstrapped with [Elytools](https://github.com/Elyspio/media-tools) project",
 				"",
-				...(this.config.features.length ? [
-					"Features included: ",
-					...this.config.features.map(f => `- ${f.name}`),
-					""] : []),
+				...(this.config.features.length ? ["Features included: ", ...this.config.features.map(f => `- ${f.name}`), ""] : []),
 				"",
-				this.config.description
+				this.config.description,
 			];
 			await fs.writeFile(path.join(projectPath, "readme.md"), content.join(EOL));
 		}
 
 		// github
-		if (this.config.github && !await this.services.github.exist(this.config.github)) {
+		if (this.config.github && !(await this.services.github.exist(this.config.github))) {
 			await this.services.github.init(projectPath, this.config.github, this.config.description, this.config.template);
 		}
 
@@ -108,9 +104,6 @@ export class ProjectBuilder {
 	private async updateTemplate(folder: string) {
 		const files = await this.services.files.find(folder, { match: /.git/g, inverse: true });
 		let name = typeof this.config.docker === "string" ? this.config.docker : this.config.name;
-		await Promise.all(
-			files.map(async file => await this.services.files.replaceInFile(file, "express-react-ts-template", name))
-		);
+		await Promise.all(files.map(async file => await this.services.files.replaceInFile(file, "express-react-ts-template", name)));
 	}
 }
-

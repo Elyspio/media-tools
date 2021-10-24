@@ -48,7 +48,6 @@ function getTorrentStateStr(state: TorrentState) {
 		case TorrentState.Downloading:
 			return ["Downloading", "#ff8200"];
 
-
 		case TorrentState.ForcedDL:
 		case TorrentState.ForcedUP:
 			return ["Forced", ""];
@@ -63,52 +62,76 @@ function getTorrentStateStr(state: TorrentState) {
 const columns: Record<Keys, GridColumns[number] & { field: Keys }> = {
 	id: { field: "id", headerName: "id", width: 0, hide: true },
 	priority: {
-		field: "priority", headerName: "#", width: 90, type: "number", renderCell: ({ value }) => {
+		field: "priority",
+		headerName: "#",
+		width: 90,
+		type: "number",
+		renderCell: ({ value }) => {
 			return value === 0 ? "*" : value;
-		}
+		},
 	},
 	name: {
-		field: "name", headerName: "Name", flex: 1, renderCell: params => {
+		field: "name",
+		headerName: "Name",
+		flex: 1,
+		renderCell: params => {
 			const val = params.value as string;
 			return <Typography title={val}>{val}</Typography>;
-		}
+		},
 	},
 	progress: {
-		field: "progress", headerName: "Done", width: 130, type: "string", renderCell: params => {
+		field: "progress",
+		headerName: "Done",
+		width: 130,
+		type: "string",
+		renderCell: params => {
 			const val = Number(params.value) * 100;
 			return `${val.toFixed(2)}%`;
-		}
+		},
 	},
 	state: {
-		field: "state", headerName: "State", width: 130, renderCell: params => {
+		field: "state",
+		headerName: "State",
+		width: 130,
+		renderCell: params => {
 			const val = params.value as TorrentState;
 			let [str, color] = getTorrentStateStr(val);
 			return <Typography style={{ color }}>{str}</Typography>;
-		}
+		},
 	},
 	dlspeed: {
-		field: "dlspeed", headerName: "Download speed", width: 185, type: "string", renderCell: params => {
+		field: "dlspeed",
+		headerName: "Download speed",
+		width: 185,
+		type: "string",
+		renderCell: params => {
 			const row = params.row as Torrent;
-			let val = Number(params.value) / (1024 ** 2);
+			let val = Number(params.value) / 1024 ** 2;
 			return row.state === TorrentState.Downloading ? `${val.toFixed(2)} Mo/s` : "N/A";
-		}
+		},
 	},
 	eta: {
-		field: "eta", headerName: "ETA", width: 120, renderCell: params => {
-			let value = params.value === 8640000 ? "N/A"
-				: dayjs.duration(params.value as number, "seconds").humanize();
+		field: "eta",
+		headerName: "ETA",
+		width: 120,
+		renderCell: params => {
+			let value = params.value === 8640000 ? "N/A" : dayjs.duration(params.value as number, "seconds").humanize();
 
 			console.log(value);
 
 			return value;
-		}
+		},
 	},
 	size: {
-		field: "size", headerName: "Size", width: 150, type: "number", renderCell: params => {
-			let val = Number(params.value) / (1024 ** 3);
+		field: "size",
+		headerName: "Size",
+		width: 150,
+		type: "number",
+		renderCell: params => {
+			let val = Number(params.value) / 1024 ** 3;
 			return `${val.toFixed(2)} GB`;
-		}
-	}
+		},
+	},
 };
 
 Object.values(columns).forEach(col => {
@@ -119,38 +142,22 @@ Object.values(columns).forEach(col => {
 
 columns.name.headerAlign = columns.name.align = "left";
 
-const allColumns = [
-	columns.id,
-	columns.priority,
-	columns.name,
-	columns.progress,
-	columns.state,
-	columns.dlspeed,
-	columns.eta,
-	columns.size
-];
+const allColumns = [columns.id, columns.priority, columns.name, columns.progress, columns.state, columns.dlspeed, columns.eta, columns.size];
 
-const smallColumns = [
-	columns.id,
-	columns.priority,
-	columns.name,
-	columns.state,
-	columns.progress
-];
+const smallColumns = [columns.id, columns.priority, columns.name, columns.state, columns.progress];
 
-type  PopoverInfo = {
-	mouseX?: number,
-	mouseY?: number,
-	torrent?: Record<Keys, any>
+type PopoverInfo = {
+	mouseX?: number;
+	mouseY?: number;
+	torrent?: Record<Keys, any>;
 };
 
 const initialPopoverPosition: PopoverInfo = {};
 
 const TorrentList = () => {
-
 	const services = {
 		torrent: useInjection<TorrentService>(DependencyInjectionKeys.media.torrent),
-		files: useInjection<FilesService>(DependencyInjectionKeys.files)
+		files: useInjection<FilesService>(DependencyInjectionKeys.files),
 	};
 
 	const [popoverPosition, setPopoverPosition] = React.useState(initialPopoverPosition);
@@ -168,7 +175,7 @@ const TorrentList = () => {
 			size: torrent.size,
 			id: torrent.hash,
 			state: torrent.state,
-			priority: torrent.priority
+			priority: torrent.priority,
 		}));
 	}, [data]);
 
@@ -177,24 +184,26 @@ const TorrentList = () => {
 		setPopoverPosition({
 			mouseX: event.clientX - 2,
 			mouseY: event.clientY - 4,
-			torrent: torrent.row as any
+			torrent: torrent.row as any,
 		});
 	}, []);
 
-	const handleClose = React.useCallback(async (item?: "resume" | "pause" | "delete") => {
-		setPopoverPosition(initialPopoverPosition);
-		const func = {
-			resume: services.torrent.resume,
-			pause: services.torrent.pause,
-			delete: services.torrent.delete
-		};
+	const handleClose = React.useCallback(
+		async (item?: "resume" | "pause" | "delete") => {
+			setPopoverPosition(initialPopoverPosition);
+			const func = {
+				resume: services.torrent.resume,
+				pause: services.torrent.pause,
+				delete: services.torrent.delete,
+			};
 
-		if (item) {
-			await func[item](popoverPosition.torrent!!.id);
-			await reload();
-		}
-
-	}, [popoverPosition]);
+			if (item) {
+				await func[item](popoverPosition.torrent!!.id);
+				await reload();
+			}
+		},
+		[popoverPosition]
+	);
 
 	return (
 		<Box className={"TorrentList"}>
@@ -207,21 +216,19 @@ const TorrentList = () => {
 				columns={width > 1000 ? allColumns : smallColumns}
 			/>
 
-			{popoverPosition.mouseY && popoverPosition.mouseX && <Menu
-				keepMounted
-				open={true}
-				onClose={() => handleClose()}
-				anchorReference="anchorPosition"
-				anchorPosition={
-					{ top: popoverPosition.mouseY, left: popoverPosition.mouseX }
-				}
-			>
-				<MenuItem onClick={() => handleClose("resume")}>Resume</MenuItem>
-				<MenuItem onClick={() => handleClose("pause")}>Pause</MenuItem>
-				<MenuItem onClick={() => handleClose("delete")}>Delete</MenuItem>
-			</Menu>}
-
-
+			{popoverPosition.mouseY && popoverPosition.mouseX && (
+				<Menu
+					keepMounted
+					open={true}
+					onClose={() => handleClose()}
+					anchorReference="anchorPosition"
+					anchorPosition={{ top: popoverPosition.mouseY, left: popoverPosition.mouseX }}
+				>
+					<MenuItem onClick={() => handleClose("resume")}>Resume</MenuItem>
+					<MenuItem onClick={() => handleClose("pause")}>Pause</MenuItem>
+					<MenuItem onClick={() => handleClose("delete")}>Delete</MenuItem>
+				</Menu>
+			)}
 		</Box>
 	);
 };

@@ -12,81 +12,65 @@ import { WindowService } from "../../../../main/services/electron/window.service
 import { DependencyInjectionKeys } from "../../../../main/services/dependency-injection/dependency-injection.keys";
 
 type OwnProps = ReduxTypes & {
-	isOpen: boolean,
-	close: () => void
-}
+	isOpen: boolean;
+	close: () => void;
+};
 
 class Settings extends React.Component<OwnProps> {
-
-
 	@resolve(DependencyInjectionKeys.electron.window)
 	private windowService!: WindowService;
 
 	override render() {
 		let { close, isOpen, config } = this.props;
-		return <Dialog
-			open={isOpen}
-			onClose={close}
-			aria-labelledby="alert-dialog-title"
-			aria-describedby="alert-dialog-description"
-		>
-			<DialogTitle id="alert-dialog-title">Settings</DialogTitle>
-			<DialogContent className={"Settings"}>
-				<Grid container direction={"column"} spacing={2}>
-					<Grid item>
-						<List subheader={<ListSubheader color={"primary"}>Frame</ListSubheader>}>
-							<ListItem>
-								<ListItemText primary="Show resource utilization" />
-								<ListItemSecondaryAction>
-									<Switch
-										edge="end"
-										checked={config.frame.show.resourceUtilization}
-										onChange={e => this.toggleResources(e.target.checked)}
-									/>
-								</ListItemSecondaryAction>
-							</ListItem>
-						</List>
-					</Grid>
-
-					<Grid item>
-						<List subheader={<ListSubheader color={"primary"}>
-							<Grid container alignItems={"center"} justifyContent={"space-between"}>
-								<Grid item>
-									Resize
-								</Grid>
-								<Grid item>
-									<Button
-										style={{ marginRight: -16 }}
-										variant={"outlined"}
-										onClick={this.windowService.resetDimensions}
-									>
-										<Typography variant={"overline"}>Auto</Typography>
-									</Button>
-								</Grid>
-							</Grid>
-
-						</ListSubheader>}>
-
-							{Object.keys(config.frame.resize).map((key) => (
-								<ListItem key={key}>
-									<ListItemText primary={key[0].toUpperCase() + key.slice(1)} />
+		return (
+			<Dialog open={isOpen} onClose={close} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+				<DialogTitle id="alert-dialog-title">Settings</DialogTitle>
+				<DialogContent className={"Settings"}>
+					<Grid container direction={"column"} spacing={2}>
+						<Grid item>
+							<List subheader={<ListSubheader color={"primary"}>Frame</ListSubheader>}>
+								<ListItem>
+									<ListItemText primary="Show resource utilization" />
 									<ListItemSecondaryAction>
-										<Switch
-											edge="end"
-											checked={config.frame.resize[key as keyof Configuration["frame"]["resize"]]}
-											onChange={e => this.toggleResize(key as keyof Configuration["frame"]["resize"], e.target.checked)}
-										/>
+										<Switch edge="end" checked={config.frame.show.resourceUtilization} onChange={e => this.toggleResources(e.target.checked)} />
 									</ListItemSecondaryAction>
 								</ListItem>
-							))}
-						</List>
+							</List>
+						</Grid>
+
+						<Grid item>
+							<List
+								subheader={
+									<ListSubheader color={"primary"}>
+										<Grid container alignItems={"center"} justifyContent={"space-between"}>
+											<Grid item>Resize</Grid>
+											<Grid item>
+												<Button style={{ marginRight: -16 }} variant={"outlined"} onClick={this.windowService.resetDimensions}>
+													<Typography variant={"overline"}>Auto</Typography>
+												</Button>
+											</Grid>
+										</Grid>
+									</ListSubheader>
+								}
+							>
+								{Object.keys(config.frame.resize).map(key => (
+									<ListItem key={key}>
+										<ListItemText primary={key[0].toUpperCase() + key.slice(1)} />
+										<ListItemSecondaryAction>
+											<Switch
+												edge="end"
+												checked={config.frame.resize[key as keyof Configuration["frame"]["resize"]]}
+												onChange={e => this.toggleResize(key as keyof Configuration["frame"]["resize"], e.target.checked)}
+											/>
+										</ListItemSecondaryAction>
+									</ListItem>
+								))}
+							</List>
+						</Grid>
 					</Grid>
-
-				</Grid>
-
-
-			</DialogContent>
-		</Dialog>;
+				</DialogContent>
+			</Dialog>
+		);
 	}
 
 	private toggleResources = (newState: boolean) => {
@@ -96,9 +80,9 @@ class Settings extends React.Component<OwnProps> {
 				...this.props.config.frame,
 				show: {
 					...this.props.config.frame.show,
-					resourceUtilization: newState
-				}
-			}
+					resourceUtilization: newState,
+				},
+			},
 		});
 	};
 
@@ -109,20 +93,19 @@ class Settings extends React.Component<OwnProps> {
 				...this.props.config.frame,
 				resize: {
 					...this.props.config.frame.resize,
-					[dimension]: state
-				}
-			}
+					[dimension]: state,
+				},
+			},
 		});
 	};
 }
 
-
 const mapStateToProps = (state: StoreState) => ({
-	config: state.config.current
+	config: state.config.current,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-	setConfig: (config: Configuration) => dispatch(setConfig(config))
+	setConfig: (config: Configuration) => dispatch(setConfig(config)),
 });
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

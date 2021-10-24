@@ -7,24 +7,17 @@ import { useInjection } from "inversify-react";
 import { TorrentService } from "../../../../../main/services/media/torrent.service";
 import { DependencyInjectionKeys } from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 
-
 const { Notification } = remote.require("electron");
 
-
-const Transition = React.forwardRef(function Transition(
-	props: TransitionProps & { children?: React.ReactElement<any, any> },
-	ref: React.Ref<unknown>
-) {
+const Transition = React.forwardRef(function Transition(props: TransitionProps & { children?: React.ReactElement<any, any> }, ref: React.Ref<unknown>) {
 	return <Slide direction="up" ref={ref} {...props} children={props.children!} />;
 });
 
-
-function AddNewTorrent(props: { name: string, clear: () => void }) {
-
+function AddNewTorrent(props: { name: string; clear: () => void }) {
 	const { open, setClose } = useModal(true);
 
 	const services = {
-		torrent: useInjection<TorrentService>(DependencyInjectionKeys.media.torrent)
+		torrent: useInjection<TorrentService>(DependencyInjectionKeys.media.torrent),
 	};
 
 	const launchApp = async (add: boolean) => {
@@ -32,11 +25,10 @@ function AddNewTorrent(props: { name: string, clear: () => void }) {
 		if (add) {
 			await services.torrent.add(props.name);
 			new Notification({
-				title: `Starting to download ${props.name}`
+				title: `Starting to download ${props.name}`,
 			}).show();
 			props.clear();
 		}
-
 	};
 
 	return (
@@ -50,12 +42,9 @@ function AddNewTorrent(props: { name: string, clear: () => void }) {
 		>
 			<DialogTitle id="alert-dialog-slide-title">{"Add a new torrent"}</DialogTitle>
 			<DialogContent>
-				<DialogContentText id="alert-dialog-slide-description">
-					{props.name}
-				</DialogContentText>
+				<DialogContentText id="alert-dialog-slide-description">{props.name}</DialogContentText>
 			</DialogContent>
 			<DialogActions>
-
 				<Button onClick={() => launchApp(false)} color="primary">
 					Do nothing
 				</Button>

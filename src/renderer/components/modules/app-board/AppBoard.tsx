@@ -9,7 +9,6 @@ import { withContext } from "../../common/hoc/withContext";
 import AppBoardContextMenu from "./AppBoardContextMenu";
 import { StoreState } from "../../../store";
 
-
 const mapStateToProps = (state: StoreState) => {
 	const config = state.config.current;
 
@@ -20,15 +19,15 @@ const mapStateToProps = (state: StoreState) => {
 
 	apps.sort((a1, a2) => a1.name.localeCompare(a2.name));
 
-	return ({
-		apps: apps
-	});
+	return {
+		apps: apps,
+	};
 };
 const mapDispatchToProps = (dispatch: Function) => {
 	return {
 		setCurrent: (path: string) => {
 			dispatch(setPath(path));
-		}
+		},
 	};
 };
 
@@ -38,10 +37,13 @@ const menu = withContext({
 	items: [
 		{
 			label: "Filter",
-			show: () => ({ close }) => <AppBoardContextMenu close={close} />
-		}
+			show:
+				() =>
+				({ close }) =>
+					<AppBoardContextMenu close={close} />,
+		},
 	],
-	redux: connector
+	redux: connector,
 });
 
 @Register({ name: "AppBoard", path: "/", show: { appboard: false, name: false } }, menu)
@@ -49,18 +51,20 @@ class AppBoard extends React.Component<ConnectedProps<typeof connector>> {
 	override render() {
 		return (
 			<div className={"AppBoard"}>
-				{this.props.apps.map(app =>
+				{this.props.apps.map(app => (
 					<Tooltip title={app.description ?? ""} key={app.name}>
-						<Button color={app.external ? "secondary" : "primary"} size={"large"}
-						        className={"app"}
-						        variant={"outlined"}
-						        onClick={() => this.props.setCurrent(app.path)}>
+						<Button
+							color={app.external ? "secondary" : "primary"}
+							size={"large"}
+							className={"app"}
+							variant={"outlined"}
+							onClick={() => this.props.setCurrent(app.path)}
+						>
 							{app.name}
 						</Button>
 					</Tooltip>
-				)}
+				))}
 			</div>
 		);
 	}
 }
-

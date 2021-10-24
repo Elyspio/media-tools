@@ -10,22 +10,15 @@ import { DependencyInjectionKeys } from "../../../../../main/services/dependency
 
 const { Notification } = remote.require("electron");
 
-
-const Transition = React.forwardRef(function Transition(
-	props: TransitionProps & { children?: React.ReactElement<any, any> },
-	ref: React.Ref<unknown>
-) {
+const Transition = React.forwardRef(function Transition(props: TransitionProps & { children?: React.ReactElement<any, any> }, ref: React.Ref<unknown>) {
 	return <Slide direction="up" ref={ref} {...props} children={props.children ?? <></>} />;
 });
 
-
 function AppNotStarted() {
-
 	const { open, setClose, setOpen } = useModal(false);
 	const services = {
-		system: useInjection<SystemService>(DependencyInjectionKeys.system)
+		system: useInjection<SystemService>(DependencyInjectionKeys.system),
 	};
-
 
 	React.useEffect(() => {
 		services.system.isAppStarted("qbittorrent").then(launched => {
@@ -35,11 +28,10 @@ function AppNotStarted() {
 		});
 	}, []);
 
-
 	const launchApp = () => {
 		setClose();
 		new Notification({
-			title: "Launching qBittorent"
+			title: "Launching qBittorent",
 		}).show();
 		return spawnAsync("qbittorrent");
 	};
@@ -56,8 +48,7 @@ function AppNotStarted() {
 			<DialogTitle id="alert-dialog-slide-title">{"Use Google's location service?"}</DialogTitle>
 			<DialogContent>
 				<DialogContentText id="alert-dialog-slide-description">
-					Let Google help apps determine location. This means sending anonymous location data to
-					Google, even when no apps are running.
+					Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.
 				</DialogContentText>
 			</DialogContent>
 			<DialogActions>

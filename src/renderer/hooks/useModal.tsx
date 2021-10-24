@@ -23,7 +23,6 @@ export function useModal(defaultState: boolean) {
 	return {
 		open: state,
 		setOpen: open,
-		setClose: close
+		setClose: close,
 	};
 }
-

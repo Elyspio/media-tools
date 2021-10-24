@@ -9,14 +9,12 @@ const { dialog, BrowserWindow } = require("@electron/remote");
 
 @injectable()
 export class DialogService {
-
 	/**
 	 * @param returnFiles flag to make the function return files in the folder
 	 */
 	public async selectFolder(returnFiles?: boolean) {
-
 		const path = await dialog.showOpenDialog({
-			properties: ["openDirectory"]
+			properties: ["openDirectory"],
 		});
 
 		if (path.canceled) return null;
@@ -25,19 +23,17 @@ export class DialogService {
 
 		return {
 			folder: folder,
-			files: returnFiles ? (await fs.readdir(folder)).map(file => this.escape(path.join(folder, file))) : undefined
+			files: returnFiles ? (await fs.readdir(folder)).map(file => this.escape(path.join(folder, file))) : undefined,
 		};
-
 	}
 
 	public async createWindow(target: string, frame: createWindowCustomOption, option?: Partial<BrowserWindowConstructorOptions>) {
 		const win = new BrowserWindow({
 			...windowOption,
-			...option
+			...option,
 		});
 
-
-		const { store } = await import("../../../renderer/store" );
+		const { store } = await import("../../../renderer/store");
 
 		const search = `route=${target}&options=${JSON.stringify(frame)}&store=${JSON.stringify(store.getState())}`;
 		const param = "data=" + btoa(search);
@@ -49,24 +45,21 @@ export class DialogService {
 					pathname: path.join(__dirname, "index.html"),
 					protocol: "file:",
 					query: search,
-					slashes: true
+					slashes: true,
 				})
 			);
 		}
-
 	}
 
 	private escape = (path: string) => path.replace(/\\/g, "\\\\");
-
 }
 
-
 export type createWindowCustomOption = {
-	title?: string,
-	top?: boolean,
-	bottom?: boolean,
+	title?: string;
+	top?: boolean;
+	bottom?: boolean;
 	/**
 	 * overrides top and bottom options
 	 */
-	modal?: boolean
-}
+	modal?: boolean;
+};

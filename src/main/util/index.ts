@@ -5,62 +5,60 @@ import { promisify } from "util";
 
 export const spawnBinary = async (binary: string, param: string[], folder: string, log?: boolean) => {
 	const child = spawn(binary, param, { cwd: folder });
-	let stdout = "", stderr = "";
+	let stdout = "",
+		stderr = "";
 
 	if (child.stdout)
-		child.stdout.on("data", (data) => {
+		child.stdout.on("data", data => {
 			stdout += data.toString();
 		});
 
 	if (child.stderr)
-		child.stderr.on("data", (data) => {
+		child.stderr.on("data", data => {
 			stderr += data.toString();
 		});
 
-	return new Promise<{ code: number | null, stdout: string, stderr: string }>((resolve) => {
-		child.on("close", (code) => {
+	return new Promise<{ code: number | null; stdout: string; stderr: string }>(resolve => {
+		child.on("close", code => {
 			console.log(`child process exited with code ${code}`, { binary, param, folder, stdout, stderr, code });
 			resolve({ code, stdout, stderr });
 		});
 	});
 };
 
-export const spawnAsync = async (command: string, options?: Partial<SpawnOptions> & { ignoreErrors?: boolean, color?: boolean }) => {
+export const spawnAsync = async (command: string, options?: Partial<SpawnOptions> & { ignoreErrors?: boolean; color?: boolean }) => {
 	const child = spawn(`cmd.exe`, ["/c", ...command.split(" ")], { stdio: "inherit", ...options });
 
-	let stdout = "", stderr = "";
+	let stdout = "",
+		stderr = "";
 
 	if (child.stdout)
-		child.stdout.on("data", (data) => {
+		child.stdout.on("data", data => {
 			console.log("spawnAsync", data.toString());
 			stdout += data.toString();
 		});
 
 	if (child.stderr)
-		child.stderr.on("data", (data) => {
+		child.stderr.on("data", data => {
 			console.error("spawnAsync", data.toString());
 			stderr += data.toString();
 		});
 
-	const exitCode: number | null = await new Promise((resolve) => {
-		child.on("close", (code) => {
+	const exitCode: number | null = await new Promise(resolve => {
+		child.on("close", code => {
 			console.error("spawnAsync close", code);
 			resolve(code);
 		});
 	});
 
-	if (exitCode !== 0 && (!options?.ignoreErrors)) {
+	if (exitCode !== 0 && !options?.ignoreErrors) {
 		throw new Error(`subprocess error exit ${exitCode} for command ${command}`);
 	}
-
 };
-
 
 export const exec = promisify(_exec);
 
-
 export async function isInstalled(app: string) {
-
 	let command = "";
 	switch (platform()) {
 		case "win32":
@@ -71,13 +69,9 @@ export async function isInstalled(app: string) {
 			break;
 	}
 
-
 	try {
 		return (await spawnBinary(command, [app], process.cwd())).stderr.length === 0;
 	} catch (e) {
 		return false;
 	}
-
 }
-
-
