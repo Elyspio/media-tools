@@ -58,7 +58,7 @@ const main = async () => {
 				force: true,
 				recursive: true,
 			}),
-			rm(path.join(__dirname, "..", "release"), { force: true, recursive: true }),
+			//rm(path.join(__dirname, "..", "release"), { force: true, recursive: true }),
 		]);
 		console.log("Cleaned");
 	}

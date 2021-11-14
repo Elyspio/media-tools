@@ -15,6 +15,7 @@ import { ProjectBuilder } from "../../../../../main/services/projects/projectBui
 import { Logger } from "../../../../../main/util/logger";
 import { FeatureService } from "../../../../../main/services/projects/feature.service";
 import { DependencyInjectionKeys } from "../../../../../main/services/dependency-injection/dependency-injection.keys";
+import { toast } from "react-toastify";
 
 interface State {
 	folder?: string;
@@ -213,7 +214,7 @@ export class Projects extends Component<{}, State> {
 		);
 	}
 
-	create = () => {
+	create = async () => {
 		const { description, docker, github, name, readme, useFeatures, folder, features, template } = this.state;
 		const builder = new ProjectBuilder();
 
@@ -226,7 +227,11 @@ export class Projects extends Component<{}, State> {
 		if (readme) builder.addReadme();
 		if (template) builder.isTemplate();
 
-		return builder.build(folder as string);
+		await toast.promise(builder.build(folder as string), {
+			error: "Could not create project",
+			pending: "Creating project",
+			success: "Project created",
+		});
 	};
 
 	private handleChange(field: keyof State, val: any) {

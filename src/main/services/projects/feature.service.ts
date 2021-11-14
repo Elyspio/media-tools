@@ -46,9 +46,9 @@ export class FeatureService {
 			}
 		}
 
-		if (feature.use.length > 0) {
+		if (feature.take.length > 0) {
 			const files = await fs.readdir(dist);
-			const willBeRemoved = files.filter(f => !feature.use.includes(f));
+			const willBeRemoved = files.filter(f => !feature.take.includes(f));
 			await this.services.files.deleteNodes(willBeRemoved.map(f => ({ path: path.resolve(dist, f) })));
 		}
 
@@ -87,6 +87,7 @@ export class FeatureService {
 	 */
 	private async mergeFile(f1: string, f2: string) {
 		let content = (await fs.readFile(f1)) + os.EOL + (await fs.readFile(f2));
-		return writeFile(f1, content);
+		let uniq = [...new Set(content.split(os.EOL))];
+		return writeFile(f1, uniq.join(os.EOL));
 	}
 }

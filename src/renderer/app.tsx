@@ -34,7 +34,7 @@ ReactDOM.render(
 			<ThemeProvider theme={theme}>
 				<Provider store={store}>
 					<Application />
-					<ToastContainer />
+					<ToastContainer theme={"dark"} position={"top-right"} className={"no-autoresize"} />
 				</Provider>
 			</ThemeProvider>
 		</StyledEngineProvider>

@@ -21,7 +21,7 @@ export function Application() {
 		if (current?.autoResize.width || current?.autoResize.height) {
 			const config = await services.configuration.get();
 			const keys = Object.keys(config.frame.resize) as Array<keyof Configuration["frame"]["resize"]>;
-			const dim = keys.filter(k => config.frame.resize[k] && current.autoResize[k] === true);
+			const dim = keys.filter(k => config.frame.resize[k] && current.autoResize[k]);
 			const delta = await services.window.isUnderSized(dim);
 			if (dim.map(d => delta[d]).some(v => v > 0)) {
 				await services.window.resize(delta);
