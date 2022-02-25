@@ -8,7 +8,7 @@ const baseConfig = require("./webpack.base.config");
 module.exports = merge(baseConfig, {
 	target: "electron-main",
 	entry: {
-		main: "../src/main/main.ts",
+		main: "../app/src/main/main.ts",
 	},
 	module: {
 		rules: [
@@ -26,7 +26,7 @@ module.exports = merge(baseConfig, {
 	},
 	plugins: [
 		new ForkTsCheckerWebpackPlugin({
-			reportFiles: ["../src/main/**/*"],
+			reportFiles: ["../app/src/main/**/*"],
 			tsconfig: path.resolve(__dirname, "..", "tsconfig.json"),
 		}),
 		new webpack.DefinePlugin({

@@ -1,6 +1,6 @@
 # Elytools
 
-An app to automatize actions that I was doing too often
+An app to automatize actions what I was doing too often
 
 ## Modules avalaibles
 

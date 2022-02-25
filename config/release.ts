@@ -1,18 +1,23 @@
 import { readdir, readFile, remove, rm, writeFile } from "fs-extra";
 import axios from "axios";
 import * as path from "path";
-import { spawnAsync } from "../src/main/util";
+import { spawnAsync } from "../app/src/main/util";
 
 const packageJson = path.join(__dirname, "..", "package.json");
+const appPackageJson = path.join(__dirname, "..", "app", "package.json");
 
 const main = async () => {
 	let pkg = JSON.parse((await readFile(packageJson)).toString());
+	let pkgApp = JSON.parse((await readFile(appPackageJson)).toString());
 	const originalPkg = { ...pkg };
 	let [major, minor, build] = pkg.version.split(".").map((str: string) => Number.parseInt(str));
 	minor += 1;
 	let version = [major, minor, build].join(".");
 	pkg = { ...pkg, version };
-	const updatePackageJson = (pkg: any) => writeFile(packageJson, JSON.stringify({ ...pkg }, undefined, 4));
+	const updatePackageJson = (pkg: any) => {
+		writeFile(appPackageJson, JSON.stringify({ ...pkg }, undefined, 4));
+		writeFile(packageJson, JSON.stringify({ ...pkg }, undefined, 4));
+	};
 
 	const nodeBinaries = path.resolve(path.dirname(packageJson), "node_modules", ".bin");
 
@@ -33,7 +38,7 @@ const main = async () => {
 
 		const outputFolder = path.resolve(path.dirname(packageJson), pkg.build.directories.output);
 		const files = await readdir(outputFolder);
-		const installerPath = files.find(f => f.slice(f.length - 4) === ".exe" && f.includes(version)) as string;
+		const installerPath = files.find(f => f.endsWith(".exe") && f.includes(version)) as string;
 
 		if (!installerPath) {
 			throw new Error(`Could not find installer: ` + JSON.stringify({ version, files }));
