@@ -38,7 +38,7 @@
 		/* Transpile each file as a separate module (similar to 'ts.transpileModule'). */
 		"resolveJsonModule": true,
 		"esModuleInterop": true,
-		"noImplicitOverride": true,
+		"noImplicitOverride": false,
 		/* Strict Type-Checking Options */
 		"strict": true,
 		/* Enable all strict type-checking options. */
@@ -84,5 +84,11 @@
 	},
 	"include": [
 		"./app/src"
-	]
+	],
+	"ts-node": {
+		"compilerOptions": {
+			"target": "ES2019",
+			"module": "CommonJS"
+		}
+    },
 }

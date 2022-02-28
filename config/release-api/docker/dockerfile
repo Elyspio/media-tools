@@ -1,0 +1,22 @@
+FROM electronuserland/builder:wine
+
+RUN yarn global add electron-builder
+
+
+COPY ./package.json /project/package.json
+COPY ./yarn.lock /project/yarn.lock
+RUN cd /project && yarn
+
+COPY ./app/package.json /project/app/package.json
+COPY ./app/yarn.lock /project/app/yarn.lock
+RUN cd /project && electron-builder install-app-deps
+RUN cd /project/app && yarn
+
+COPY . /project
+
+WORKDIR /project
+
+
+RUN yarn build
+
+CMD ["electron-builder", "-wl"]

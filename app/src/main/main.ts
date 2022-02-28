@@ -8,7 +8,6 @@ import { windowOption } from "../config/electron";
 import * as remoteMain from "@electron/remote/main";
 
 remoteMain.initialize();
-
 app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
 app.commandLine.appendSwitch("disable-site-isolation-trials");
 

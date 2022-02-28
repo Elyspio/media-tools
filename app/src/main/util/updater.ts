@@ -1,8 +1,7 @@
 import * as remote from "@electron/remote";
-import axios from "axios";
 import * as config from "../../config/update";
 import { pathToInstaller, updateRefreshRate } from "../../config/update";
-import { platform } from "os";
+import { arch, platform } from "os";
 import { ensureDir, writeFile } from "fs-extra";
 import * as path from "path";
 import { store } from "../../renderer/store";
@@ -11,15 +10,26 @@ import { spawn } from "child_process";
 import { setPath } from "../../renderer/store/module/router/action";
 import { Logger } from "./logger";
 
+import { AppArch, AppsApi, AppVersion } from "../apis/updater";
+
 const { app, dialog } = remote;
 
 const logger = Logger("Updater");
 
-const getPlatform = (): "windows" | "linux" => {
+const getPlatform = (): AppArch => {
+	const currentArch = arch();
 	let plat = platform();
-	if (plat === "win32") return "windows";
-	else if (plat === "linux") return "linux";
-	else throw Error("Unsupported platform");
+	const exception = new Error("Unsupported platform");
+	if (plat === "win32") {
+		if (currentArch === "x32") return "Win32";
+		if (currentArch === "x64") return "Win64";
+		throw exception;
+	}
+	if (plat === "linux") {
+		if (currentArch === "x32") return "Linux32";
+		if (currentArch === "x64") return "Linux64";
+	}
+	throw exception;
 };
 
 export function getVersion() {
@@ -30,36 +40,41 @@ const getServerUrl = () => {
 	return store.getState().updater.serverUrl;
 };
 
+let isUpdating = false;
+
 export async function checkUpdate() {
+	const api = new AppsApi(undefined, getServerUrl());
+
 	const version = getVersion();
 
 	const plat = getPlatform();
 
 	try {
-		const call: { data: { date: string; val: string } } = await axios.get(`${getServerUrl()}${config.app_name}/${plat}/version/`);
+		if (isUpdating) return;
 
-		const current = version.split(".").map(x => parseInt(x));
-		const server = call.data.val.split(".").map((x: string) => parseInt(x));
+		const [major, minor, revision] = version.split(".").map(x => parseInt(x));
+		const { data: server } = await api.getLatestArchSpecificVersion(config.appName, plat);
 
-		store.dispatch(setServerLatestVersion(call.data.val));
+		store.dispatch(setServerLatestVersion(server.raw));
 
-		if (server[0] > current[0] || server[1] > current[1] || server[2] > current[2]) {
-			const response = await dialog.showMessageBox({
+		if (server.major > major || server.minor > minor || server.revision > revision) {
+			isUpdating = true;
+			const { response } = await dialog.showMessageBox({
 				title: "Update",
 				message: "A new version is available",
-				buttons: ["Download", "Cancel"],
+				buttons: ["Download", "Don't ask again", "Cancel"],
 			});
 
-			if (response.response === 0) {
+			if (response === 0) {
 				store.dispatch(setPath("/updater"));
-				await downloadUpdate();
+				await downloadUpdate(server);
 
-				const response = await dialog.showMessageBox({
+				const { response } = await dialog.showMessageBox({
 					title: "Update",
 					message: "Application is ready to update",
 					buttons: ["Install", "Cancel"],
 				});
-				if (response.response === 0) {
+				if (response === 0) {
 					await installUpdate();
 				}
 			} else {
@@ -70,19 +85,24 @@ export async function checkUpdate() {
 		}
 	} catch (e) {
 		logger.error("checkUpdate", e);
+	} finally {
+		isUpdating = false;
 	}
 
 	setTimeout(checkUpdate, updateRefreshRate);
 }
 
-export async function downloadUpdate() {
+export async function downloadUpdate(version: AppVersion) {
 	const plat = getPlatform();
-	const bin = await axios.get(`${getServerUrl()}${config.app_name}/${plat}`, {
+	const api = new AppsApi(undefined, getServerUrl());
+
+	const bin = await api.getBinary(config.appName, version.raw, plat, {
 		responseType: "arraybuffer",
 		onDownloadProgress: progressEvent => {
 			store.dispatch(setDownloadPercentage((progressEvent.loaded * 100) / progressEvent.total));
 		},
 	});
+
 	const data = new Buffer(bin.data as any);
 	await ensureDir(path.dirname(pathToInstaller));
 	await writeFile(pathToInstaller, data);

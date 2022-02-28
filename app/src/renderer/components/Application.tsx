@@ -1,7 +1,6 @@
 import React from "react";
 import Frame from "./frame/Frame";
 import Router from "./router/Router";
-import { checkUpdate } from "../../main/util/updater";
 import { Configuration, ConfigurationService } from "../../main/services/configuration/configuration.service";
 import { store } from "../store";
 import { useInjection } from "inversify-react";
@@ -30,7 +29,7 @@ export function Application() {
 	};
 
 	React.useEffect(() => {
-		setTimeout(checkUpdate, 1000);
+		// setTimeout(checkUpdate, 1000);
 		setInterval(checkHeight, 250);
 	}, []);
 

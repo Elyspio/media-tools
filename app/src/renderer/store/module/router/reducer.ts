@@ -2,13 +2,13 @@ import { createReducer } from "@reduxjs/toolkit";
 import { addRoute, setPath } from "./action";
 
 const requires = [
-	"external/lights/Light",
 	"external/home-assistant/HomeAssistant",
 	"internal/encoder/Encoder",
 	"internal/encoder/recap/Recap",
 	"internal/purge/Purge",
 	"internal/projects/Projects",
 	"internal/vpn/Vpn",
+	"internal/test/Apps",
 	"internal/renamer/Renamer",
 	"internal/updater/Updater",
 	"internal/torrent/Torrent",

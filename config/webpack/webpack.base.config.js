@@ -2,11 +2,13 @@
 
 const path = require("path");
 
+const { appPath } = require("./paths");
+
 module.exports = {
 	context: path.resolve(__dirname),
 	mode: "development",
 	output: {
-		path: path.resolve(__dirname, "..", "app", "dist"),
+		path: path.resolve(appPath, "dist"),
 		filename: "[name].js",
 	},
 	node: {

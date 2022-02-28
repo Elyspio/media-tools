@@ -1,5 +1,5 @@
 node_modules/
 dist/
-release/
 .idea
 *.private.*
+config/release-api/releases

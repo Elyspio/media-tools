@@ -1,6 +1,6 @@
 import path from "path";
 
-export const app_name = "media-tools";
-export const updateServer = "https://elyspio.fr/updater/api/";
+export const appName = "Elytools";
+export const updateServer = process.env.NODE_ENV !== "production" ? "http://localhost:4000" : "https://elyspio.fr/updater";
 export const updateRefreshRate = 30 * 1e3;
-export const pathToInstaller = path.join(process.env.USERPROFILE as string, "temp", app_name + ".exe");
+export const pathToInstaller = path.join(process.env.USERPROFILE as string, "temp", appName + ".exe");

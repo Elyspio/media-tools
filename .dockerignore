@@ -1,0 +1,3 @@
+**/node_modules
+app/dist
+config/release-api/release

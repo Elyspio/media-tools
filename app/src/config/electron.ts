@@ -8,6 +8,7 @@ export const windowOption: BrowserWindowConstructorOptions = {
 		webSecurity: false,
 		contextIsolation: false,
 	},
+
 	hasShadow: true,
 	frame: false,
 	resizable: true,

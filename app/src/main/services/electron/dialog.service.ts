@@ -1,11 +1,11 @@
 import { BrowserWindowConstructorOptions } from "electron";
 import * as fs from "fs-extra";
-import * as path from "path";
-import * as url from "url";
-import { windowOption } from "../../../config/electron";
 import { injectable } from "inversify";
+import { windowOption } from "../../../config/electron";
+import url from "url";
+import path from "path";
 
-const { dialog, BrowserWindow } = require("@electron/remote");
+const { dialog, BrowserWindow, require: nodeRequire } = require("@electron/remote");
 
 @injectable()
 export class DialogService {
@@ -30,25 +30,56 @@ export class DialogService {
 	public async createWindow(target: string, frame: createWindowCustomOption, option?: Partial<BrowserWindowConstructorOptions>) {
 		const win = new BrowserWindow({
 			...windowOption,
-			...option,
 		});
 
-		const { store } = await import("../../../renderer/store");
+		nodeRequire("@electron/remote/main").enable(win.webContents);
+		win.webContents.openDevTools();
 
-		const search = `route=${target}&options=${JSON.stringify(frame)}&store=${JSON.stringify(store.getState())}`;
-		const param = "data=" + btoa(search);
 		if (process.env.NODE_ENV !== "production") {
-			return win.loadURL(`http://localhost:2003/?${param}`);
+			process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "1"; // eslint-disable-line require-atomic-updates
+			await win.loadURL(`http://localhost:2003`);
 		} else {
-			return win.loadURL(
+			await win.loadURL(
 				url.format({
 					pathname: path.join(__dirname, "index.html"),
 					protocol: "file:",
-					query: search,
 					slashes: true,
 				})
 			);
 		}
+
+		if (process.env.NODE_ENV !== "production") {
+			// Open DevTools, see https://github.com/electron/electron/issues/12438 for why we wait for dom-ready
+			win.webContents.once("dom-ready", () => {
+				win!.webContents.openDevTools();
+			});
+		}
+
+		// const win = new BrowserWindow({
+		// 	...windowOption,
+		// 	...option,
+		// });
+		//
+		//
+		// nodeRequire("@electron/remote/main").enable(win.webContents);
+		// win.webContents.openDevTools();
+		//
+		// const { store } = await import("../../../renderer/store");
+		//
+		// const search = `route=${target}&options=${JSON.stringify(frame)}&store=${JSON.stringify(store.getState())}`;
+		// const param = "data=" + btoa(search);
+		// if (process.env.NODE_ENV !== "production") {
+		// 	return win.loadURL(`http://localhost:2003/?${param}`);
+		// } else {
+		// 	return win.loadURL(
+		// 		url.format({
+		// 			pathname: path.join(__dirname, "index.html"),
+		// 			protocol: "file:",
+		// 			query: search,
+		// 			slashes: true,
+		// 		})
+		// 	);
+		// }
 	}
 
 	private escape = (path: string) => path.replace(/\\/g, "\\\\");

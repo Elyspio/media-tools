@@ -5,22 +5,28 @@ const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const path = require("path");
 
 const baseConfig = require("./webpack.base.config");
+const { appPath, rootPath } = require("./paths");
 
 module.exports = merge(baseConfig, {
 	target: "electron-renderer",
 	entry: {
-		app: ["@babel/polyfill", "../app/src/renderer/app.tsx"],
+		app: [path.resolve(appPath, "src/renderer/app.tsx")],
 	},
 	module: {
 		rules: [
 			{
 				test: /\.tsx?$/,
 				exclude: /node_modules/,
-				loader: "babel-loader",
+				loader: "swc-loader",
 				options: {
-					cacheDirectory: true,
-					babelrc: true,
-					configFile: path.resolve(__dirname, "./.babelrc.js"),
+					jsc: {
+						parser: {
+							syntax: "typescript",
+							tsx: true,
+							decorators: true,
+							dynamicImport: true,
+						},
+					},
 				},
 			},
 			{
@@ -55,8 +61,8 @@ module.exports = merge(baseConfig, {
 
 	plugins: [
 		new ForkTsCheckerWebpackPlugin({
-			reportFiles: ["../app/src/renderer/**/*"],
-			tsconfig: "../tsconfig.json",
+			reportFiles: [path.resolve(appPath, "src/renderer/**/*")],
+			tsconfig: path.resolve(rootPath, "tsconfig.json"),
 		}),
 		new webpack.NamedModulesPlugin(),
 		new HtmlWebpackPlugin({

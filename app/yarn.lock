@@ -122,7 +122,7 @@
   dependencies:
     "@date-io/core" "^2.13.1"
 
-"@electron/remote@^2.0.1":
+"@electron/remote@^2.0.5":
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/@electron/remote/-/remote-2.0.5.tgz#d38bcd2ad2825cca42c5ea4c92efafa99720c52a"
   integrity sha512-Ot8VsYCwAJ+9DgqRuYCiAobS8TVKvnXJMncR14/28ORso1iWFG0X6geyk3hc13N48Oc/WJnPYlYI3o7g5Ja2Qg==
@@ -1919,9 +1919,9 @@ supports-preserve-symlinks-flag@^1.0.0:
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
 systeminformation@^5.9.8:
-  version "5.11.4"
-  resolved "https://registry.yarnpkg.com/systeminformation/-/systeminformation-5.11.4.tgz#3ed99533c67d0b4bd357871687e014f1c2a37194"
-  integrity sha512-rh7bjpjP5whUaTknim5CiGdAiKZcgWhmbmxjzBRXDWqUc/k67bz2OP+03DdcX6/SN/CDSAi/NeUwM5o2gjHJoA==
+  version "5.11.5"
+  resolved "https://registry.yarnpkg.com/systeminformation/-/systeminformation-5.11.5.tgz#0262c1e892ef6925330f11d401cee8df47eea805"
+  integrity sha512-AtJreEPwOAnMstMRtVbQwq8V+dOgOJa8fqzjXjrb46JnVIqrRHRP6+L8VU4WvDbPgdRHA7Nr0l6jH42dmGoACQ==
 
 to-fast-properties@^2.0.0:
   version "2.0.0"
