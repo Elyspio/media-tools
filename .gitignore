@@ -2,4 +2,7 @@ node_modules/
 dist/
 .idea
 *.private.*
-config/release-api/releases
+releases
+.vs
+bin
+obj

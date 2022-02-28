@@ -1,5 +1,5 @@
 {
-	"version": "0.90.0",
+	"version": "0.94.0",
 	"name": "elytools",
 	"main": "./app/dist/main.js",
 	"scripts": {
@@ -9,7 +9,7 @@
 		"start-renderer-dev": "webpack-dev-server --config config/webpack/webpack.renderer.dev.config.js",
 		"start-main-dev": "webpack --config config/webpack/webpack.main.config.js && nodemon  -e ts,json --watch app/src/main -x \"electron ./app/dist/main.js\"",
 		"start-dev": "cross-env START_HOT=1 npm run start-renderer-dev",
-		"release": "ts-node config/release-api/release.ts"
+		"release": "cd config/release-app && dotnet run"
 	},
 	"build": {
 		"productName": "Elytools",
@@ -22,7 +22,9 @@
 		"linux": {
 			"category": "Utility",
 			"target": [
-				"deb", "rpm", "snap"
+				"deb",
+				"rpm",
+				"snap"
 			]
 		},
 		"win": {

@@ -3,7 +3,7 @@ services:
   electron-builder:
     container_name: elytools-electron-builder
     build: 
-      dockerfile: config/release-api/docker/dockerfile
+      dockerfile: config/release-app/docker/dockerfile
       context: ../../..
     volumes:
       - "../releases:/project/release"
