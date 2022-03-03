@@ -8,7 +8,7 @@ const requires = [
 	"internal/purge/Purge",
 	"internal/projects/Projects",
 	"internal/vpn/Vpn",
-	"internal/test/Apps",
+	"internal/updater/Apps",
 	"internal/renamer/Renamer",
 	"internal/updater/Updater",
 	"internal/torrent/Torrent",

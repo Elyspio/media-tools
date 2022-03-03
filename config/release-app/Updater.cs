@@ -1,5 +1,4 @@
-﻿using ReleaseApp.Updater.Api;
-using ReleaseApp.Updater.Model;
+﻿using ReleaseApp.Updater;
 
 namespace ReleaseApp;
 
@@ -7,11 +6,12 @@ public class UpdaterApi
 {
     public static async Task Upload(string path, AppVersion version, AppArch arch)
     {
-        var api = new AppsApi("http://127.0.0.1:4000");
-        var bytes = File.ReadAllBytes(path).Select(x => (int)x).ToList();
+        var t = DateTime.Now;
+        var api = new AppsClient { BaseUrl = "http://localhost:4000" };
+        var bytes = File.ReadAllBytes(path);
         Console.WriteLine("Adding " + path);
-        await api.AddAsync(new AddApp(bytes, new AppMetadata("Elytools", version, arch)));
-        Console.WriteLine("Added " + path);
+        await api.AddAsync("Elytools", version.ToString(), arch, bytes);
+        Console.WriteLine($"Added {path} in {(DateTime.Now - t).Seconds}s");
 
     }
 }

@@ -1,6 +1,6 @@
 {
 	"name": "elytools",
-	"version": "0.94.0",
+	"version": "0.91.0",
 	"main": "dist/main.js",
 	"description": "Automatize actions what I was doing too often",
 	"author": {

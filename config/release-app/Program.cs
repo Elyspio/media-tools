@@ -2,6 +2,7 @@
 
 
 using ReleaseApp;
+using ReleaseApp.Updater;
 
 Console.WriteLine("Releasing Elytools");
 
@@ -11,7 +12,12 @@ Console.WriteLine($"dockerDir {Internal.DockerDir}");
 
 var oldVersion = Internal.GetRootVersion();
 
-var newVersion = oldVersion.Clone();
+var newVersion = new AppVersion {
+    Major = oldVersion.Major,  
+    Minor = oldVersion.Minor,
+    Revision = oldVersion.Revision,
+    Raw = oldVersion.Raw,   
+};
 
 newVersion.Minor += 1;
 
@@ -33,26 +39,26 @@ var files = Directory.GetFiles(Internal.ReleasesDir).Select(f => Path.Combine(In
 var winInstaller = files.Find(f => f.EndsWith(".exe") && f.Contains(newVersion.Raw));
 if (winInstaller != null)
 {
-    tasks.Add(UpdaterApi.Upload(winInstaller, newVersion, ReleaseApp.Updater.Model.AppArch.Win64));
-    tasks.Add(UpdaterApi.Upload(winInstaller, newVersion, ReleaseApp.Updater.Model.AppArch.Win32));
+    tasks.Add(UpdaterApi.Upload(winInstaller, newVersion, AppArch.Win64));
+    tasks.Add(UpdaterApi.Upload(winInstaller, newVersion, AppArch.Win32));
 }
 
-var debInstaller = files.Find(f => f.EndsWith(".deb") && f.Contains(newVersion.Raw));
+var debInstaller = files.Find(f => f.EndsWith(".deb"));
 if (debInstaller != null)
 {
-    tasks.Add(UpdaterApi.Upload(debInstaller, newVersion, ReleaseApp.Updater.Model.AppArch.LinuxDeb));
+    tasks.Add(UpdaterApi.Upload(debInstaller, newVersion, AppArch.LinuxDeb));
 }
 
 var snapInstaller = files.Find(f => f.EndsWith(".snap") && f.Contains(newVersion.Raw));
 if (snapInstaller != null)
 {
-    tasks.Add(UpdaterApi.Upload(snapInstaller, newVersion, ReleaseApp.Updater.Model.AppArch.LinuxSnap));
+    tasks.Add(UpdaterApi.Upload(snapInstaller, newVersion, AppArch.LinuxSnap));
 }
 
 var rpmInstaller = files.Find(f => f.EndsWith(".rpm") && f.Contains(newVersion.Raw));
 if (rpmInstaller != null)
 {
-    tasks.Add(UpdaterApi.Upload(rpmInstaller, newVersion, ReleaseApp.Updater.Model.AppArch.LinuxRpm));
+    tasks.Add(UpdaterApi.Upload(rpmInstaller, newVersion, AppArch.LinuxRpm));
 }
 
 

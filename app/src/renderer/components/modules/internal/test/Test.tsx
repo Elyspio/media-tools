@@ -14,7 +14,7 @@ const Torrent = () => {
 	};
 
 	const click = () => {
-		services.dialog.createWindow("/test", {
+		services.dialog.createWindow("/updater", {
 			bottom: true,
 			top: true,
 			modal: true,
@@ -29,4 +29,4 @@ const Torrent = () => {
 	);
 };
 
-register(Torrent, { name: "Test", path: "/test" });
+register(Torrent, { name: "Test", path: "/updater" });

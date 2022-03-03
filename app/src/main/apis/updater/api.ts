@@ -34,34 +34,15 @@ import { BASE_PATH, BaseAPI, COLLECTION_FORMATS, RequestArgs, RequiredError } fr
 /**
  *
  * @export
- * @interface AddApp
- */
-export interface AddApp {
-	/**
-	 *
-	 * @type {Array<number>}
-	 * @memberof AddApp
-	 */
-	binary: Array<number>;
-	/**
-	 *
-	 * @type {AppMetadata}
-	 * @memberof AddApp
-	 */
-	metadata: AppMetadata;
-}
-
-/**
- *
- * @export
  * @enum {string}
  */
 
 export const AppArch = {
 	Win32: "Win32",
 	Win64: "Win64",
-	Linux64: "Linux64",
-	Linux32: "Linux32",
+	LinuxDeb: "LinuxDeb",
+	LinuxRpm: "LinuxRpm",
+	LinuxSnap: "LinuxSnap",
 } as const;
 
 export type AppArch = typeof AppArch[keyof typeof AppArch];
@@ -171,12 +152,26 @@ export const AppsApiAxiosParamCreator = function (configuration?: Configuration)
 		},
 		/**
 		 *
-		 * @param {AddApp} [addApp]
+		 * @param {string} name
+		 * @param {string} version
+		 * @param {AppArch} arch
+		 * @param {string} body
 		 * @param {*} [options] Override http request option.
 		 * @throws {RequiredError}
 		 */
-		add: async (addApp?: AddApp, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-			const localVarPath = `/api/apps`;
+		add: async (name: string, version: string, arch: AppArch, body: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+			// verify required parameter 'name' is not null or undefined
+			assertParamExists("add", "name", name);
+			// verify required parameter 'version' is not null or undefined
+			assertParamExists("add", "version", version);
+			// verify required parameter 'arch' is not null or undefined
+			assertParamExists("add", "arch", arch);
+			// verify required parameter 'body' is not null or undefined
+			assertParamExists("add", "body", body);
+			const localVarPath = `/api/apps/{name}/{arch}/{version}`
+				.replace(`{${"name"}}`, encodeURIComponent(String(name)))
+				.replace(`{${"version"}}`, encodeURIComponent(String(version)))
+				.replace(`{${"arch"}}`, encodeURIComponent(String(arch)));
 			// use dummy base URL string because the URL constructor only accepts absolute URLs.
 			const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
 			let baseOptions;
@@ -193,7 +188,7 @@ export const AppsApiAxiosParamCreator = function (configuration?: Configuration)
 			setSearchParams(localVarUrlObj, localVarQueryParameter);
 			let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
 			localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-			localVarRequestOptions.data = serializeDataIfNeeded(addApp, localVarRequestOptions, configuration);
+			localVarRequestOptions.data = serializeDataIfNeeded(body, localVarRequestOptions, configuration);
 
 			return {
 				url: toPathString(localVarUrlObj),
@@ -385,12 +380,21 @@ export const AppsApiFp = function (configuration?: Configuration) {
 		},
 		/**
 		 *
-		 * @param {AddApp} [addApp]
+		 * @param {string} name
+		 * @param {string} version
+		 * @param {AppArch} arch
+		 * @param {string} body
 		 * @param {*} [options] Override http request option.
 		 * @throws {RequiredError}
 		 */
-		async add(addApp?: AddApp, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-			const localVarAxiosArgs = await localVarAxiosParamCreator.add(addApp, options);
+		async add(
+			name: string,
+			version: string,
+			arch: AppArch,
+			body: string,
+			options?: AxiosRequestConfig
+		): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+			const localVarAxiosArgs = await localVarAxiosParamCreator.add(name, version, arch, body, options);
 			return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
 		},
 		/**
@@ -420,7 +424,7 @@ export const AppsApiFp = function (configuration?: Configuration) {
 		 * @param {*} [options] Override http request option.
 		 * @throws {RequiredError}
 		 */
-		async getBinary(name: string, version: string, arch: AppArch, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<any>> {
+		async getBinary(name: string, version: string, arch: AppArch, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
 			const localVarAxiosArgs = await localVarAxiosParamCreator.getBinary(name, version, arch, options);
 			return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
 		},
@@ -475,12 +479,15 @@ export const AppsApiFactory = function (configuration?: Configuration, basePath?
 		},
 		/**
 		 *
-		 * @param {AddApp} [addApp]
+		 * @param {string} name
+		 * @param {string} version
+		 * @param {AppArch} arch
+		 * @param {string} body
 		 * @param {*} [options] Override http request option.
 		 * @throws {RequiredError}
 		 */
-		add(addApp?: AddApp, options?: any): AxiosPromise<void> {
-			return localVarFp.add(addApp, options).then(request => request(axios, basePath));
+		add(name: string, version: string, arch: AppArch, body: string, options?: any): AxiosPromise<void> {
+			return localVarFp.add(name, version, arch, body, options).then(request => request(axios, basePath));
 		},
 		/**
 		 *
@@ -507,7 +514,7 @@ export const AppsApiFactory = function (configuration?: Configuration, basePath?
 		 * @param {*} [options] Override http request option.
 		 * @throws {RequiredError}
 		 */
-		getBinary(name: string, version: string, arch: AppArch, options?: any): AxiosPromise<any> {
+		getBinary(name: string, version: string, arch: AppArch, options?: any): AxiosPromise<object> {
 			return localVarFp.getBinary(name, version, arch, options).then(request => request(axios, basePath));
 		},
 		/**
@@ -556,14 +563,17 @@ export class AppsApi extends BaseAPI {
 
 	/**
 	 *
-	 * @param {AddApp} [addApp]
+	 * @param {string} name
+	 * @param {string} version
+	 * @param {AppArch} arch
+	 * @param {string} body
 	 * @param {*} [options] Override http request option.
 	 * @throws {RequiredError}
 	 * @memberof AppsApi
 	 */
-	public add(addApp?: AddApp, options?: AxiosRequestConfig) {
+	public add(name: string, version: string, arch: AppArch, body: string, options?: AxiosRequestConfig) {
 		return AppsApiFp(this.configuration)
-			.add(addApp, options)
+			.add(name, version, arch, body, options)
 			.then(request => request(this.axios, this.basePath));
 	}
 

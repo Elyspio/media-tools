@@ -3,7 +3,7 @@
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using ReleaseApp.Updater.Model;
+using ReleaseApp.Updater;
 using System.Globalization;
 
 public static class Converter

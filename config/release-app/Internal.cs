@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using ReleaseApp.Json;
-using ReleaseApp.Updater.Model;
+using ReleaseApp.Updater;
 
 
 namespace ReleaseApp
@@ -23,12 +23,12 @@ namespace ReleaseApp
         {
             var packageJson = Path.Combine(RootDir, "package.json");
             var data = JsonConvert.DeserializeObject<RootPackage>(File.ReadAllText(packageJson));
-            data.Version = version.Raw;
+            data.Version = version.ToString();
             Stringify(packageJson, data);
 
             var appPackageJson = Path.Combine(AppDir, "package.json");
             var appData = JsonConvert.DeserializeObject<AppPackage>(File.ReadAllText(appPackageJson));
-            appData.Version = version.Raw;
+            appData.Version = version.ToString();
             Stringify(appPackageJson, appData);
         }
         public static AppVersion GetRootVersion()

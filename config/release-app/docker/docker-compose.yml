@@ -1,9 +1,9 @@
 version: "3"
 services:
-  electron-builder:
-    container_name: elytools-electron-builder
-    build: 
-      dockerfile: config/release-app/docker/dockerfile
-      context: ../../..
-    volumes:
-      - "../releases:/project/release"
+    electron-builder:
+        container_name: elytools-electron-builder
+        build:
+            dockerfile: config/release-app/docker/dockerfile
+            context: ../../..
+        volumes:
+            - "../releases:/project/release"
