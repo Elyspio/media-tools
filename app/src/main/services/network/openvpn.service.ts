@@ -1,8 +1,9 @@
-import { isInstalled } from "../../util";
 import { vpnConfig } from "../../../config/networks/vpn";
 import { spawn } from "child_process";
-import { EventManager } from "../../util/events";
+import { EventManager } from "../../utils/events";
 import { injectable } from "inversify";
+import { container } from "../dependency-injection/dependency-injection.container";
+import { ProcessService } from "../common/process.service";
 
 type StatusListener = "connected" | "disconnected";
 type StdioListener = string;
@@ -17,8 +18,12 @@ export class OpenvpnService extends EventManager<["data", "status"], [StdioListe
 	private static spawned: ReturnType<typeof spawn>;
 	public stdout: string[] = [];
 
-	public static async isClientInstalled() {
-		return isInstalled("openvpn");
+	private services = {
+		process: container.get(ProcessService),
+	};
+
+	public async isClientInstalled() {
+		return this.services.process.isInstalled("openvpn");
 	}
 
 	async isConnected(): Promise<boolean> {
@@ -26,7 +31,7 @@ export class OpenvpnService extends EventManager<["data", "status"], [StdioListe
 	}
 
 	public connect() {
-		if (!OpenvpnService.isClientInstalled()) {
+		if (!this.isClientInstalled()) {
 			throw OpenvpnService.errors.vpnCLientNotInstalled;
 		}
 
@@ -42,11 +47,11 @@ export class OpenvpnService extends EventManager<["data", "status"], [StdioListe
 		}
 	}
 
-	public disconnect() {
+	public async disconnect() {
 		if (!OpenvpnService.spawned) {
 			throw OpenvpnService.errors.notConnected;
 		}
-		OpenvpnService.spawned.kill("SIGTERM");
+		await this.services.process.kill(OpenvpnService.spawned);
 		this.emit("status", "disconnected");
 	}
 }

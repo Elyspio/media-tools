@@ -3,11 +3,10 @@ import { Repository, Template } from "./types";
 import * as path from "path";
 import * as fs from "fs-extra";
 import { github as githubConf } from "../../../config/projects/projects.private";
-import { spawnBinary } from "../../util";
 import { injectable } from "inversify";
 import { FilesService } from "../files/files.service";
-import { DependencyInjectionKeys } from "../dependency-injection/dependency-injection.keys";
 import { container } from "../dependency-injection/dependency-injection.container";
+import { ProcessService } from "../common/process.service";
 
 const github = new Octokit({
 	log: {
@@ -23,11 +22,12 @@ const github = new Octokit({
 
 @injectable()
 export class GithubService {
-	private services: { files: FilesService };
+	private services: { files: FilesService; process: ProcessService };
 
 	constructor() {
 		this.services = {
-			files: container.get<FilesService>(DependencyInjectionKeys.files),
+			files: container.get(FilesService),
+			process: container.get(ProcessService),
 		};
 	}
 
@@ -66,11 +66,11 @@ export class GithubService {
 	 */
 	public async init(folder: string, name: string, description?: string, isTemplate?: boolean) {
 		const info = await github.repos.createForAuthenticatedUser({ name, description, is_template: isTemplate });
-		await spawnBinary("git", ["init"], folder);
-		await spawnBinary("git", ["add", "."], folder);
-		await spawnBinary("git", ["commit", "-m", "Initial commit"], folder);
-		await spawnBinary("git", ["remote", "add", "origin", info.data.html_url], folder);
-		await spawnBinary("git", ["push", "--set-upstream", "origin", "master"], folder);
+		await this.services.process.spawnBinary("git", ["init"], folder);
+		await this.services.process.spawnBinary("git", ["add", "."], folder);
+		await this.services.process.spawnBinary("git", ["commit", "-m", "Initial commit"], folder);
+		await this.services.process.spawnBinary("git", ["remote", "add", "origin", info.data.html_url], folder);
+		await this.services.process.spawnBinary("git", ["push", "--set-upstream", "origin", "master"], folder);
 		return info.data.html_url;
 	}
 

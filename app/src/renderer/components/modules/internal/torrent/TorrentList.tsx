@@ -4,13 +4,12 @@ import { DataGrid, GridCellParams, GridColumns } from "@mui/x-data-grid";
 import { useAsyncState } from "../../../../hooks/useAsyncState";
 
 import { Torrent, TorrentState } from "@ctrl/qbittorrent/dist/types";
-import { useAppDimension } from "../../../../../main/util/hooks";
 import * as dayjs from "dayjs";
 import "dayjs/plugin/duration";
 import { useInjection } from "inversify-react";
 import { FilesService } from "../../../../../main/services/files/files.service";
 import { TorrentService } from "../../../../../main/services/media/torrent.service";
-import { DependencyInjectionKeys } from "../../../../../main/services/dependency-injection/dependency-injection.keys";
+import { useAppDimension } from "../../../../hooks/useAppDimension";
 
 const duration = require("dayjs/plugin/duration");
 const relativeTime = require("dayjs/plugin/relativeTime");
@@ -156,8 +155,8 @@ const initialPopoverPosition: PopoverInfo = {};
 
 const TorrentList = () => {
 	const services = {
-		torrent: useInjection<TorrentService>(DependencyInjectionKeys.media.torrent),
-		files: useInjection<FilesService>(DependencyInjectionKeys.files),
+		torrent: useInjection(TorrentService),
+		files: useInjection(FilesService),
 	};
 
 	const [popoverPosition, setPopoverPosition] = React.useState(initialPopoverPosition);

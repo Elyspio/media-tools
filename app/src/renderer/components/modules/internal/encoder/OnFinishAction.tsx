@@ -1,8 +1,8 @@
 import { store, StoreState } from "../../../../store";
 import { DialogContent, DialogTitle, InputLabel, MenuItem, Select } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
-import { runOnFinishAction, setOnFinishAction } from "../../../../store/module/encoder/action";
-import { onFinishActionList } from "../../../../store/module/encoder/reducer";
+import { runOnFinishAction, setOnFinishAction } from "../../../../store/module/encoder/encoder.action";
+import { onFinishActionList } from "../../../../store/module/encoder/encoder.reducer";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import React from "react";

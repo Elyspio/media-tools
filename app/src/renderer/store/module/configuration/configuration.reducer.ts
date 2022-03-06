@@ -1,15 +1,14 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { setConfig } from "./action";
+import { setConfig } from "./configuration.action";
 
 import { Configuration, ConfigurationService } from "../../../../main/services/configuration/configuration.service";
-import { DependencyInjectionKeys } from "../../../../main/services/dependency-injection/dependency-injection.keys";
 import { container } from "../../../../main/services/dependency-injection/dependency-injection.container";
 
 export interface ConfigurationRouter {
 	current: Configuration;
 }
 
-const configurationService = container.get<ConfigurationService>(DependencyInjectionKeys.configuration);
+const configurationService = container.get(ConfigurationService);
 
 const defaultState: ConfigurationRouter = {
 	current: configurationService.get(false) as Configuration,

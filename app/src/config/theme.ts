@@ -1,5 +1,5 @@
 import { createTheme as createMuiTheme } from "@mui/material/styles";
-import { Logger } from "../main/util/logger";
+import { Logger } from "../main/utils/logger";
 // @ts-ignore
 import * as style from "../renderer/App.scss";
 

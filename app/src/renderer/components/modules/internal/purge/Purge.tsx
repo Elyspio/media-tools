@@ -10,10 +10,9 @@ import Select from "@mui/material/Select";
 import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
 import { Register } from "../../../../decorators/Module";
-import { Logger } from "../../../../../main/util/logger";
+import { Logger } from "../../../../../main/utils/logger";
 import { resolve } from "inversify-react";
 import { FilesService } from "../../../../../main/services/files/files.service";
-import { DependencyInjectionKeys } from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 
 interface State {
 	match: string;
@@ -36,7 +35,7 @@ let exclusions = ["node_modules", ".git", ".expo", ".bit"];
 
 @Register({ name: "Purge", description: "Removes files that match a pattern ", path: "/purge" })
 export class Purge extends Component<{}, State> {
-	@resolve(DependencyInjectionKeys.files)
+	@resolve(FilesService)
 	filesService!: FilesService;
 
 	override state: State = {

@@ -3,12 +3,15 @@ import { exec as _exec, spawn } from "child_process";
 import { File, Media, MediaData, Stream } from "../../../renderer/components/modules/internal/encoder/type";
 import { EventEmitter } from "events";
 import * as path from "path";
-import { isInstalled } from "../../util";
 import { setFFmpegInstalled, setProgress } from "../../../renderer/store/module/media/media.action";
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
+import { ProcessService } from "../common/process.service";
 
 @injectable()
 export class MediaService {
+	@inject(ProcessService)
+	private processService!: ProcessService;
+
 	public async getInfo(file: File): Promise<MediaData> {
 		try {
 			const { stdout } = await exec(`ffprobe.exe  -v quiet -print_format json -show_format -show_streams "${file.path}"`);
@@ -20,7 +23,7 @@ export class MediaService {
 	}
 
 	public async checkIfFFmpegInstalled() {
-		const bool = await isInstalled("ffmpeg");
+		const bool = await this.processService.isInstalled("ffmpeg");
 		const { store } = await import("../../../renderer/store");
 		store.dispatch(setFFmpegInstalled(bool));
 		return bool;

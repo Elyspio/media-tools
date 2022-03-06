@@ -7,7 +7,6 @@ import { injectable } from "inversify";
 import { GithubService } from "./github.service";
 import { DockerService } from "./docker.service";
 import { FilesService } from "../files/files.service";
-import { DependencyInjectionKeys } from "../dependency-injection/dependency-injection.keys";
 import { container } from "../dependency-injection/dependency-injection.container";
 
 @injectable()
@@ -28,10 +27,10 @@ export class ProjectBuilder {
 
 	public constructor() {
 		this.services = {
-			files: container.get<FilesService>(DependencyInjectionKeys.files),
-			docker: container.get<DockerService>(DependencyInjectionKeys.projects.docker),
-			github: container.get<GithubService>(DependencyInjectionKeys.projects.github),
-			feature: container.get<FeatureService>(DependencyInjectionKeys.projects.feature),
+			files: container.get(FilesService),
+			docker: container.get(DockerService),
+			github: container.get(GithubService),
+			feature: container.get(FeatureService),
 		};
 	}
 

@@ -1,13 +1,12 @@
 import "reflect-metadata";
 import { container } from "../main/services/dependency-injection/dependency-injection.container";
-import "../main/services/dependency-injection/dependency-injection.service";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import Application from "./components/Application";
 import { store } from "./store";
 import { StyledEngineProvider, Theme, ThemeProvider } from "@mui/material/styles";
-import { Logger } from "../main/util/logger";
+import { Logger } from "../main/utils/logger";
 import { Provider as DiProvider } from "inversify-react";
 import { theme } from "../config/theme";
 import { ToastContainer } from "react-toastify";

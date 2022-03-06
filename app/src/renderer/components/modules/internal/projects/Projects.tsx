@@ -12,9 +12,8 @@ import { Register } from "../../../../decorators/Module";
 import { resolve } from "inversify-react";
 import { Feature } from "../../../../../main/services/projects/types";
 import { ProjectBuilder } from "../../../../../main/services/projects/projectBuilder";
-import { Logger } from "../../../../../main/util/logger";
+import { Logger } from "../../../../../main/utils/logger";
 import { FeatureService } from "../../../../../main/services/projects/feature.service";
-import { DependencyInjectionKeys } from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 import { toast } from "react-toastify";
 
 interface State {
@@ -37,7 +36,7 @@ interface State {
 	autoResize: { height: true, width: false },
 })
 export class Projects extends Component<{}, State> {
-	@resolve(DependencyInjectionKeys.projects.feature)
+	@resolve(FeatureService)
 	featureService!: FeatureService;
 
 	override state: State = {

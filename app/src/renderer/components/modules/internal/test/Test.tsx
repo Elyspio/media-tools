@@ -4,13 +4,12 @@ import { register } from "../../../../decorators/Module";
 import { Button, Grid } from "@mui/material";
 import { useInjection } from "inversify-react";
 import { FilesService } from "../../../../../main/services/files/files.service";
-import { DependencyInjectionKeys } from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 import { DialogService } from "../../../../../main/services/electron/dialog.service.new";
 
 const Torrent = () => {
 	const services = {
-		dialog: useInjection<DialogService>(DependencyInjectionKeys.electron.dialog),
-		files: useInjection<FilesService>(DependencyInjectionKeys.files),
+		dialog: useInjection(DialogService),
+		files: useInjection(FilesService),
 	};
 
 	const click = () => {

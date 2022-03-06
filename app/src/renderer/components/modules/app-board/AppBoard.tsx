@@ -4,7 +4,7 @@ import { connect, ConnectedProps } from "react-redux";
 import { Button } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 import { Register } from "../../../decorators/Module";
-import { setPath } from "../../../store/module/router/action";
+import { setPath } from "../../../store/module/router/router.action";
 import { withContext } from "../../common/hoc/withContext";
 import AppBoardContextMenu from "./AppBoardContextMenu";
 import { StoreState } from "../../../store";

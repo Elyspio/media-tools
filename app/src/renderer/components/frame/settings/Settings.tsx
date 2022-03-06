@@ -5,11 +5,10 @@ import React from "react";
 import "./Settings.scss";
 import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
 import { Configuration } from "../../../../main/services/configuration/configuration.service";
-import { setConfig } from "../../../store/module/configuration/action";
+import { setConfig } from "../../../store/module/configuration/configuration.action";
 import { StoreState } from "../../../store";
 import { resolve } from "inversify-react";
 import { WindowService } from "../../../../main/services/electron/window.service";
-import { DependencyInjectionKeys } from "../../../../main/services/dependency-injection/dependency-injection.keys";
 
 type OwnProps = ReduxTypes & {
 	isOpen: boolean;
@@ -17,7 +16,7 @@ type OwnProps = ReduxTypes & {
 };
 
 class Settings extends React.Component<OwnProps> {
-	@resolve(DependencyInjectionKeys.electron.window)
+	@resolve(WindowService)
 	private windowService!: WindowService;
 
 	override render() {

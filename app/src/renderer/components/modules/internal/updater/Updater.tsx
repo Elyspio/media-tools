@@ -5,9 +5,9 @@ import { CircularProgressWithLabel } from "../../../common/progress";
 import { Dispatch } from "redux";
 import { connect, ConnectedProps } from "react-redux";
 import Button from "@mui/material/Button";
-import { checkUpdate, downloadUpdate, getVersion, installUpdate } from "../../../../../main/util/updater";
+import { checkUpdate, downloadUpdate, getVersion, installUpdate } from "../../../../../main/utils/updater";
 import { Grid, Typography } from "@mui/material";
-import { setServerUrl } from "../../../../store/module/updater/action";
+import { setServerUrl } from "../../../../store/module/updater/updater.action";
 import { StoreState } from "../../../../store";
 
 const mapStateToProps = (state: StoreState) => ({
@@ -68,16 +68,20 @@ class Updater extends React.Component<ReduxTypes, State> {
 								Check for update
 							</Button>
 						</Grid>
-						<Grid item>
-							<Button fullWidth color={"secondary"} onClick={downloadUpdate} variant={"outlined"}>
-								Force Download
-							</Button>
-						</Grid>
-						<Grid item>
-							<Button fullWidth color={"primary"} onClick={installUpdate} variant={"contained"} disabled={progress !== 100}>
-								Install
-							</Button>
-						</Grid>
+						{serverVersion && (
+							<Grid item>
+								<Button fullWidth color={"secondary"} onClick={() => downloadUpdate(serverVersion)} variant={"outlined"}>
+									Force Download
+								</Button>
+							</Grid>
+						)}
+						{serverVersion && (
+							<Grid item>
+								<Button fullWidth color={"primary"} onClick={installUpdate} variant={"contained"} disabled={progress !== 100}>
+									Install
+								</Button>
+							</Grid>
+						)}
 					</Grid>
 				</Grid>
 

@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { setConfigurationFile, setStdioOutput, setVpnConnected } from "./action";
+import { setConfigurationFile, setStdioOutput, setVpnConnected } from "./vpn.action";
 import { vpnConfig } from "../../../../config/networks/vpn";
 
 export interface VpnState {

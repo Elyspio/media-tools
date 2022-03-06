@@ -10,14 +10,13 @@ import AddNewTorrent from "./AddNewTorrent";
 import { useInjection } from "inversify-react";
 import { SystemService } from "../../../../../main/services/system/system.service";
 import { FilesService } from "../../../../../main/services/files/files.service";
-import { DependencyInjectionKeys } from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 
 let stopWatchingFolder: Function;
 
 const Torrent = () => {
 	const services = {
-		system: useInjection<SystemService>(DependencyInjectionKeys.system),
-		files: useInjection<FilesService>(DependencyInjectionKeys.files),
+		system: useInjection(SystemService),
+		files: useInjection(FilesService),
 	};
 
 	const [addingTorrent, setAddingTorrent] = useState<string>();

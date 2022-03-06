@@ -2,6 +2,9 @@ import { createAction as _createAction, createAsyncThunk } from "@reduxjs/toolki
 import { Encoder, Media, ProcessData } from "../../../components/modules/internal/encoder/type";
 import { ChildProcess } from "child_process";
 import { StoreState } from "../../index";
+import { container } from "../../../../main/services/dependency-injection/dependency-injection.container";
+import { ProcessService } from "../../../../main/services/common/process.service";
+import { stopConverting } from "../encoder/encoder.action";
 
 const createAction = <T>(name: string) => _createAction<T>(`media/${name}`);
 
@@ -15,13 +18,13 @@ export const setCurrentProcess = createAction<ChildProcess | undefined>("setCurr
 export let encodingProcess: { current?: ChildProcess } = {};
 
 export const stopCurrentProcess = createAsyncThunk("media/stopCurrentProcess", (arg, thunkAPI) => {
-	const {
-		media: { encoder },
-	} = thunkAPI.getState() as StoreState;
+	const processService = container.get(ProcessService);
+	const { encoder } = thunkAPI.getState() as StoreState;
 	if (encoder.currentProcessPid && encodingProcess.current) {
-		encodingProcess.current.kill("SIGKILL");
+		processService.kill(encodingProcess.current!);
 		thunkAPI.dispatch(setCurrentProcess(undefined));
 		thunkAPI.dispatch(setMedias([]));
 		thunkAPI.dispatch(setProcesses([]));
+		stopConverting.ref = true;
 	}
 });

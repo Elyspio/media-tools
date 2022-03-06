@@ -9,7 +9,6 @@ import * as os from "os";
 import { injectable } from "inversify";
 import { GithubService } from "./github.service";
 import { FilesService } from "../files/files.service";
-import { DependencyInjectionKeys } from "../dependency-injection/dependency-injection.keys";
 import { container } from "../dependency-injection/dependency-injection.container";
 
 @injectable()
@@ -18,8 +17,8 @@ export class FeatureService {
 
 	constructor() {
 		this.services = {
-			files: container.get<FilesService>(DependencyInjectionKeys.files),
-			github: container.get<GithubService>(DependencyInjectionKeys.projects.github),
+			files: container.get(FilesService),
+			github: container.get(GithubService),
 		};
 	}
 

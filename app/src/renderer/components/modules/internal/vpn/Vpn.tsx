@@ -9,9 +9,8 @@ import Box from "@mui/material/Box";
 import { countries, Country, NordvpnService } from "../../../../../main/services/network/nordvpn.service";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
-import { Logger } from "../../../../../main/util/logger";
+import { Logger } from "../../../../../main/utils/logger";
 import { resolve } from "inversify-react";
-import { DependencyInjectionKeys } from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 import { toast } from "react-toastify";
 
 const mapStateToProps = (state: StoreState) => ({
@@ -41,7 +40,7 @@ type State = {
 	connector
 )
 export class Vpn extends Component<ReduxTypes, State> {
-	@resolve(DependencyInjectionKeys.networks.nordvpn)
+	@resolve(NordvpnService)
 	nordvpnService!: NordvpnService;
 
 	override state: State = {

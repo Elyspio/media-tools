@@ -5,7 +5,6 @@ import "./os.scss";
 import { useLogger } from "../../hooks/useLogger";
 import { DialogService } from "../../../main/services/electron/dialog.service";
 import { useInjection } from "inversify-react";
-import { DependencyInjectionKeys } from "../../../main/services/dependency-injection/dependency-injection.keys";
 
 type Props = Omit<HTMLAttributes<any>, "onChange"> & {
 	label?: string;
@@ -27,7 +26,7 @@ type SelectFolder = {
 
 export function SelectFolder(props: Props) {
 	const services = {
-		dialog: useInjection<DialogService>(DependencyInjectionKeys.electron.dialog),
+		dialog: useInjection(DialogService),
 	};
 
 	const [files, setFiles] = React.useState<string>("");
@@ -60,6 +59,7 @@ export function SelectFolder(props: Props) {
 			for (const f of e.target.files) {
 				files.push(f.path);
 			}
+			e.target.files = null;
 			props.onChange(files);
 			setFiles(files[0]);
 		}

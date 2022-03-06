@@ -1,7 +1,8 @@
-import { isInstalled } from "../../util";
 import { spawn } from "child_process";
 import { VpnService } from "./vpn.service";
 import { injectable } from "inversify";
+import { container } from "../dependency-injection/dependency-injection.container";
+import { ProcessService } from "../common/process.service";
 
 export const countries = ["Switzerland", "France", "Germany"] as const;
 export type Country = typeof countries[number];
@@ -12,8 +13,12 @@ export class NordvpnService extends VpnService {
 		vpnCLientNotInstalled: new Error("Nordvpn client could not be found in PATH"),
 	};
 
+	private services = {
+		process: container.get(ProcessService),
+	};
+
 	public async isClientInstalled() {
-		return isInstalled("nordvpn");
+		return this.services.process.isInstalled("nordvpn");
 	}
 
 	public async connect(region?: Country) {

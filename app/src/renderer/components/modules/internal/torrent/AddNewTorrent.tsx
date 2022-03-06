@@ -5,7 +5,6 @@ import { useModal } from "../../../../hooks/useModal";
 import * as remote from "@electron/remote";
 import { useInjection } from "inversify-react";
 import { TorrentService } from "../../../../../main/services/media/torrent.service";
-import { DependencyInjectionKeys } from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 
 const { Notification } = remote.require("electron");
 
@@ -17,7 +16,7 @@ function AddNewTorrent(props: { name: string; clear: () => void }) {
 	const { open, setClose } = useModal(true);
 
 	const services = {
-		torrent: useInjection<TorrentService>(DependencyInjectionKeys.media.torrent),
+		torrent: useInjection(TorrentService),
 	};
 
 	const launchApp = async (add: boolean) => {

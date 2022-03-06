@@ -1,5 +1,5 @@
-import * as remote from "@electron/remote";
 import * as React from "react";
+import * as remote from "@electron/remote";
 
 export function useAppDimension() {
 	const [width, setWidth] = React.useState(() => remote.getCurrentWindow().getSize()[0]);

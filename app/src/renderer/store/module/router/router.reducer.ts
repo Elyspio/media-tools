@@ -1,5 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { addRoute, setPath } from "./action";
+import { addRoute, setPath } from "./router.action";
 
 const requires = [
 	"external/home-assistant/HomeAssistant",
@@ -8,8 +8,8 @@ const requires = [
 	"internal/purge/Purge",
 	"internal/projects/Projects",
 	"internal/vpn/Vpn",
-	"internal/updater/Apps",
-	"internal/renamer/Renamer",
+	"internal/updater/Updater",
+	"internal/test/Test",
 	"internal/updater/Updater",
 	"internal/torrent/Torrent",
 	"internal/config/Config",

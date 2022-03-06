@@ -1,7 +1,7 @@
 import * as fs from "fs-extra";
 import { configMainFile, defaultConfiguration } from "../../../config/configuration";
 import * as remote from "@electron/remote";
-import { setConfig } from "../../../renderer/store/module/configuration/action";
+import { setConfig } from "../../../renderer/store/module/configuration/configuration.action";
 import { injectable } from "inversify";
 
 export const BaseConfig = {

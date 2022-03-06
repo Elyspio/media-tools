@@ -1,4 +1,4 @@
-import { Logger } from "../../main/util/logger";
+import { Logger } from "../../main/utils/logger";
 import * as React from "react";
 
 export function useLogger() {

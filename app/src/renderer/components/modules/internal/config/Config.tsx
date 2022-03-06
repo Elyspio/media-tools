@@ -12,7 +12,6 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { StoreState } from "../../../../store";
 import { ConfigurationService } from "../../../../../main/services/configuration/configuration.service";
-import { DependencyInjectionKeys } from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 import { resolve } from "inversify-react";
 
 const mapStateToProps = (state: StoreState) => ({ config: state.config.current });
@@ -35,7 +34,7 @@ type ReduxTypes = ConnectedProps<typeof connector>;
 export class Config extends Component<ReduxTypes> {
 	node = 0;
 
-	@resolve(DependencyInjectionKeys.configuration)
+	@resolve(ConfigurationService)
 	configurationService!: ConfigurationService;
 
 	override render() {

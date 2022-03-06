@@ -3,7 +3,6 @@ import Button from "@mui/material/Button";
 import { Alert, Grid, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import { File, Media, ProcessData } from "./type";
 import { MediaService } from "../../../../../main/services/media/media.service";
-import * as fs from "fs-extra";
 import * as path from "path";
 import List from "@mui/material/List";
 import Process from "./process/Process";
@@ -16,11 +15,11 @@ import { withContext } from "../../../common/hoc/withContext";
 import { useDispatch } from "react-redux";
 import { bindActionCreators } from "redux";
 import OnFinishAction from "./OnFinishAction";
-import { runOnFinishAction } from "../../../../store/module/encoder/action";
+import { convert } from "../../../../store/module/encoder/encoder.action";
 import { useAppSelector } from "../../../../store";
 import { encoders } from "../../../../../config/media/encoder";
-import { getAppParams } from "../../../../../main/util/args";
-import { Logger } from "../../../../../main/util/logger";
+import { getAppParams } from "../../../../../main/utils/args";
+import { Logger } from "../../../../../main/utils/logger";
 import {
 	setCurrentProcess,
 	setFFmpegInstalled,
@@ -31,15 +30,14 @@ import {
 	stopCurrentProcess,
 } from "../../../../store/module/media/media.action";
 import { FilesService } from "../../../../../main/services/files/files.service";
-import { DependencyInjectionKeys } from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 import { useInjection } from "inversify-react";
 
 function Encoder() {
 	const logger = React.useMemo(() => Logger(Encoder), []);
 
 	const services = {
-		files: useInjection<FilesService>(DependencyInjectionKeys.files),
-		media: useInjection<MediaService>(DependencyInjectionKeys.media.convert),
+		files: useInjection(FilesService),
+		media: useInjection(MediaService),
 	};
 
 	// region store
@@ -57,6 +55,7 @@ function Encoder() {
 					setMedias,
 					setProgress,
 					stopCurrentProcess,
+					convert,
 				},
 				dispatch
 			),
@@ -65,10 +64,12 @@ function Encoder() {
 
 	const {
 		action,
-		media: { medias, encoder, process: processes },
+		encoder,
+		media: { medias, process: processes },
 	} = useAppSelector(state => ({
 		action: state.encoder.onFinishAction,
 		media: state.media,
+		encoder: state.encoder,
 	}));
 
 	// endregion store
@@ -120,56 +121,13 @@ function Encoder() {
 
 	// endregion onSelect
 
-	// region encode
-
-	const encodeFile = React.useCallback(
-		(media: Media): Promise<string> => {
-			return new Promise(async resolve => {
-				const process = processes.find(p => p.media.file.path === media.file.path);
-
-				if (!process) throw `Invalid State, could not found in store a media with type="${media.file.path}"`;
-
-				actions.setProgress({ ...process, percentage: 0 });
-
-				const outputPath = path.join(path.dirname(media.file.path), "current.mkv");
-				const [s, createdProcess] = await new MediaService().convert(media, encoder.format, { outputPath: outputPath });
-
-				actions.setCurrentProcess(createdProcess);
-
-				s.on("progress", async percentage => {
-					logger.info("receving progress", percentage);
-				});
-
-				s.on("finished", async () => {
-					actions.setProgress({ ...process, percentage: 100 });
-					resolve(outputPath);
-				});
-			});
-		},
-		[actions, encoder]
-	);
-
-	const stopEncoding = React.useCallback(() => {
-		actions.stopCurrentProcess();
-	}, [actions]);
-
-	const doAction = React.useCallback(async (): Promise<void> => {
+	const doAction = React.useCallback(async () => {
 		if (encoder.currentProcessPid) {
-			stopEncoding();
+			await actions.stopCurrentProcess();
 		} else {
-			for (const { media } of processes) {
-				const output = await encodeFile(media);
-				const old = path.join(path.dirname(media.file.path), "old");
-				await fs.ensureDir(old);
-				await fs.move(media.file.path, path.join(old, media.file.name));
-				await fs.move(output, media.file.path);
-			}
-
-			await runOnFinishAction();
+			await actions.convert();
 		}
-	}, [stopEncoding, encodeFile]);
-
-	// endregion encode
+	}, [actions, encoder]);
 
 	React.useEffect(() => {
 		(async () => {
@@ -235,7 +193,7 @@ function Encoder() {
 			{softInstalled === true && (
 				<>
 					<div className={"header"}>
-						<SelectFolder onChange={onFileSelect} mode={"file"} showSelected />
+						<SelectFolder onChange={onFileSelect} mode={"file"} />
 						{optionsUi}
 					</div>
 					{processUi}

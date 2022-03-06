@@ -3,7 +3,7 @@ import "./Frame.scss";
 import { Paper } from "@mui/material";
 import Titlebar from "./titlebar/Titlebar";
 import ResourceUtilization from "./resource-utilization/ResourceUtilization";
-import { getUriParam } from "../../util/url";
+import { getUriParam } from "../../utils/url";
 import { connect, ConnectedProps } from "react-redux";
 import { Dispatch } from "redux";
 import { StoreState } from "../../store";

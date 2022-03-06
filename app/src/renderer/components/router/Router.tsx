@@ -1,9 +1,9 @@
 import React from "react";
 import { connect, ConnectedProps } from "react-redux";
 import Module from "../modules/Module";
-import { setPath } from "../../store/module/router/action";
-import { getComponent } from "../../store/module/router/reducer";
-import { getUriParam } from "../../util/url";
+import { setPath } from "../../store/module/router/router.action";
+import { getComponent } from "../../store/module/router/router.reducer";
+import { getUriParam } from "../../utils/url";
 import { StoreState } from "../../store";
 
 interface Props extends ConnectedProps<typeof connector> {}

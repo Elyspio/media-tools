@@ -5,12 +5,11 @@ import { Configuration, ConfigurationService } from "../../main/services/configu
 import { store } from "../store";
 import { useInjection } from "inversify-react";
 import { WindowService } from "../../main/services/electron/window.service";
-import { DependencyInjectionKeys } from "../../main/services/dependency-injection/dependency-injection.keys";
 
 export function Application() {
 	const services = {
-		configuration: useInjection<ConfigurationService>(DependencyInjectionKeys.configuration),
-		window: useInjection<WindowService>(DependencyInjectionKeys.electron.window),
+		configuration: useInjection(ConfigurationService),
+		window: useInjection(WindowService),
 	};
 	const checkHeight = async () => {
 		const {

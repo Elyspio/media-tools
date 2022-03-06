@@ -3,10 +3,9 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import { TransitionProps } from "@mui/material/transitions";
 import { useModal } from "../../../../hooks/useModal";
 import * as remote from "@electron/remote";
-import { spawnAsync } from "../../../../../main/util";
 import { useInjection } from "inversify-react";
 import { SystemService } from "../../../../../main/services/system/system.service";
-import { DependencyInjectionKeys } from "../../../../../main/services/dependency-injection/dependency-injection.keys";
+import { ProcessService } from "../../../../../main/services/common/process.service";
 
 const { Notification } = remote.require("electron");
 
@@ -17,7 +16,8 @@ const Transition = React.forwardRef(function Transition(props: TransitionProps &
 function AppNotStarted() {
 	const { open, setClose, setOpen } = useModal(false);
 	const services = {
-		system: useInjection<SystemService>(DependencyInjectionKeys.system),
+		system: useInjection(SystemService),
+		process: useInjection(ProcessService),
 	};
 
 	React.useEffect(() => {
@@ -33,7 +33,7 @@ function AppNotStarted() {
 		new Notification({
 			title: "Launching qBittorent",
 		}).show();
-		return spawnAsync("qbittorrent");
+		return services.process.spawnAsync("qbittorrent");
 	};
 
 	return (

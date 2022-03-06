@@ -5,9 +5,9 @@ import { arch, platform } from "os";
 import { ensureDir, writeFile } from "fs-extra";
 import * as path from "path";
 import { store } from "../../renderer/store";
-import { setDownloadPercentage, setServerLatestVersion } from "../../renderer/store/module/updater/action";
+import { setDownloadPercentage, setServerLatestVersion } from "../../renderer/store/module/updater/updater.action";
 import { spawn } from "child_process";
-import { setPath } from "../../renderer/store/module/router/action";
+import { setPath } from "../../renderer/store/module/router/router.action";
 import { Logger } from "./logger";
 
 import { AppArch, AppsApi, AppVersion } from "../apis/updater";
@@ -23,11 +23,6 @@ const getPlatform = (): AppArch => {
 	if (plat === "win32") {
 		if (currentArch === "x32") return "Win32";
 		if (currentArch === "x64") return "Win64";
-		throw exception;
-	}
-	if (plat === "linux") {
-		if (currentArch === "x32") return "Linux32";
-		if (currentArch === "x64") return "Linux64";
 	}
 	throw exception;
 };
@@ -55,7 +50,7 @@ export async function checkUpdate() {
 		const [major, minor, revision] = version.split(".").map(x => parseInt(x));
 		const { data: server } = await api.getLatestArchSpecificVersion(config.appName, plat);
 
-		store.dispatch(setServerLatestVersion(server.raw));
+		store.dispatch(setServerLatestVersion(server));
 
 		if (server.major > major || server.minor > minor || server.revision > revision) {
 			isUpdating = true;

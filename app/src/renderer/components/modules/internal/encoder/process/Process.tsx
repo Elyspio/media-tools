@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import LinearProgress from "@mui/material/LinearProgress";
 import { ProcessData } from "../type";
 import { Dayjs } from "dayjs";
-import { formatDuration } from "../../../../../util/date";
+import { formatDuration } from "../../../../../utils/date";
 
 const dayjs = require("dayjs");
 
@@ -43,20 +43,20 @@ function Process({ data }: Props) {
 	return (
 		<ListItem className={"Process"}>
 			<Grid container direction={"row"} spacing={2}>
-				<Grid item xs={4}>
+				<Grid item xs={6}>
 					<Typography className={"name"} title={data.media.file.name}>
 						{data.media.file.name}
 					</Typography>
 				</Grid>
 
-				<Grid item xs>
+				<Grid item xs={2}>
 					<LinearProgress className={"bar"} variant="determinate" title={data.percentage.toString()} value={data.percentage} />
 				</Grid>
 
-				<Grid item xs={2}>
+				<Grid item xs={1}>
 					<Typography color={"textPrimary"}>{data.percentage.toFixed(2)}%</Typography>
 				</Grid>
-				<Grid item xs={4}>
+				<Grid item xs={2}>
 					<Typography color={"textPrimary"} noWrap>
 						{eta}
 					</Typography>

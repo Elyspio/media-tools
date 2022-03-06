@@ -1,8 +1,8 @@
-import { addRoute } from "../store/module/router/action";
+import { addRoute } from "../store/module/router/router.action";
 import { store } from "../store";
-import { addComponent, ModuleDescription } from "../store/module/router/reducer";
+import { addComponent, ModuleDescription } from "../store/module/router/router.reducer";
 import * as React from "react";
-import { Logger } from "../../main/util/logger";
+import { Logger } from "../../main/utils/logger";
 
 type Info = Omit<ModuleDescription, "component">;
 

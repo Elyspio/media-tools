@@ -5,7 +5,7 @@ import { DialogContent, DialogTitle, InputLabel, MenuItem, Select } from "@mui/m
 import FormControl from "@mui/material/FormControl";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
-import { setConfig } from "../../../store/module/configuration/action";
+import { setConfig } from "../../../store/module/configuration/configuration.action";
 import { BaseConfig, Configuration } from "../../../../main/services/configuration/configuration.service";
 import { StoreState } from "../../../store";
 

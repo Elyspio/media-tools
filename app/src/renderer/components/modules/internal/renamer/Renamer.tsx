@@ -6,11 +6,10 @@ import * as path from "path";
 import { SelectFolder } from "../../../common/os";
 import { Register } from "../../../../decorators/Module";
 import "./Renamer.scss";
-import { getAppParams } from "../../../../../main/util/args";
-import { Logger } from "../../../../../main/util/logger";
+import { getAppParams } from "../../../../../main/utils/args";
+import { Logger } from "../../../../../main/utils/logger";
 import { resolve } from "inversify-react";
 import { FilesService } from "../../../../../main/services/files/files.service";
-import { DependencyInjectionKeys } from "../../../../../main/services/dependency-injection/dependency-injection.keys";
 
 interface State {
 	episodes: Episode[];
@@ -31,7 +30,7 @@ interface Episode {
 
 @Register({ name: "Renamer", path: "/renamer" })
 export class Renamer extends React.Component<{}, State> {
-	@resolve(DependencyInjectionKeys.files)
+	@resolve(FilesService)
 	filesService!: FilesService;
 
 	override state: State = {
