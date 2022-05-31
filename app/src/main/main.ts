@@ -56,6 +56,10 @@ app.on("activate", () => {
 	}
 });
 
+app.on("browser-window-created", (_, window) => {
+	require("@electron/remote/main").enable(window.webContents);
+});
+
 const gotTheLock = app.requestSingleInstanceLock();
 
 if (!gotTheLock) {
