@@ -1,70 +1,53 @@
 import React from "react";
 import "./AppBoard.scss";
-import { connect, ConnectedProps } from "react-redux";
 import { Button } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
-import { Register } from "../../../decorators/Module";
+import { register } from "../../../decorators/Module";
 import { setPath } from "../../../store/module/router/router.action";
-import { withContext } from "../../common/hoc/withContext";
-import AppBoardContextMenu from "./AppBoardContextMenu";
-import { StoreState } from "../../../store";
+import { ContextMenuWrapper } from "../../common/hoc/withContextMenu";
+import { AppBoardContextMenu } from "./AppBoardContextMenu";
+import { useAppDispatch, useAppSelector } from "../../../store";
+import { ModuleDescription } from "../../../store/module/router/router.reducer";
+import { AppBoardShow } from "../../../../config/configuration";
 
-const mapStateToProps = (state: StoreState) => {
-	const config = state.config.current;
+export function AppBoard() {
+	const apps = useAppSelector(state => {
+		const config = state.config.current;
+		let appsRoute = Object.keys(state.routing.routes);
+		let apps = appsRoute.map(route => state.routing.routes[route]);
+		if (!config.appboard.show.includes(AppBoardShow.hidden)) apps = apps.filter(app => app.show.appboard);
+		if (!config.appboard.show.includes(AppBoardShow.external)) apps = apps.filter(app => !app.external);
+		if (!config.appboard.show.includes(AppBoardShow.internal)) apps = apps.filter(app => app.external);
 
-	let apps = Object.values(state.routing.routes);
-	if (!config.appboard.show.includes("hidden")) apps = apps.filter(app => app.show.appboard);
-	if (!config.appboard.show.includes("external")) apps = apps.filter(app => !app.external);
-	if (!config.appboard.show.includes("internal")) apps = apps.filter(app => app.external);
+		apps.sort((a1, a2) => a1.name.localeCompare(a2.name));
 
-	apps.sort((a1, a2) => a1.name.localeCompare(a2.name));
+		return apps;
+	});
 
-	return {
-		apps: apps,
-	};
-};
-const mapDispatchToProps = (dispatch: Function) => {
-	return {
-		setCurrent: (path: string) => {
-			dispatch(setPath(path));
-		},
-	};
-};
+	const dispatch = useAppDispatch();
 
-const connector = connect(mapStateToProps, mapDispatchToProps);
+	const setCurrent = React.useCallback((path: ModuleDescription["path"]) => () => dispatch(setPath(path)), [dispatch]);
 
-const menu = withContext({
-	items: [
-		{
-			label: "Filter",
-			show:
-				() =>
-				({ close }) =>
-					<AppBoardContextMenu close={close} />,
-		},
-	],
-	redux: connector,
-});
-
-@Register({ name: "AppBoard", path: "/", show: { appboard: false, name: false } }, menu)
-class AppBoard extends React.Component<ConnectedProps<typeof connector>> {
-	override render() {
-		return (
+	return (
+		<ContextMenuWrapper
+			items={[
+				{
+					label: "Filter",
+					show: ({ close }) => <AppBoardContextMenu close={close} />,
+				},
+			]}
+		>
 			<div className={"AppBoard"}>
-				{this.props.apps.map(app => (
+				{apps.map(app => (
 					<Tooltip title={app.description ?? ""} key={app.name}>
-						<Button
-							color={app.external ? "secondary" : "primary"}
-							size={"large"}
-							className={"app"}
-							variant={"outlined"}
-							onClick={() => this.props.setCurrent(app.path)}
-						>
+						<Button color={app.external ? "secondary" : "primary"} size={"large"} className={"app"} variant={"outlined"} onClick={setCurrent(app.path)}>
 							{app.name}
 						</Button>
 					</Tooltip>
 				))}
 			</div>
-		);
-	}
+		</ContextMenuWrapper>
+	);
 }
+
+register(AppBoard, { name: "AppBoard", path: "/", show: { appboard: false, name: false } });

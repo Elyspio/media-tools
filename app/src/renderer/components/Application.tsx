@@ -1,6 +1,6 @@
 import React from "react";
 import Frame from "./frame/Frame";
-import Router from "./router/Router";
+import { Router } from "./router/Router";
 import { Configuration, ConfigurationService } from "../../main/services/configuration/configuration.service";
 import { store } from "../store";
 import { useInjection } from "inversify-react";

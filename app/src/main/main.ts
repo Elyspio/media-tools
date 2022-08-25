@@ -12,31 +12,33 @@ app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
 app.commandLine.appendSwitch("disable-site-isolation-trials");
 
 let win: BrowserWindow | null;
+const isDev = process.env.NODE_ENV !== "production";
 
 const createWindow = async () => {
 	win = new BrowserWindow({
 		...windowOption,
 	});
+
+	if (isDev) {
+		// Open DevTools, see https://github.com/electron/electron/issues/12438 for why we wait for dom-ready
+		win.webContents.once("dom-ready", () => {
+			win!.webContents.openDevTools();
+		});
+	}
+
 	remoteMain.enable(win.webContents);
 
-	if (process.env.NODE_ENV !== "production") {
+	if (isDev) {
 		process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "1"; // eslint-disable-line require-atomic-updates
 		await win.loadURL(`http://localhost:2003`);
 	} else {
 		await win.loadURL(
 			url.format({
-				pathname: path.join(__dirname, "index.html"),
+				pathname: path.join(__dirname, "renderer", "index.html"),
 				protocol: "file:",
 				slashes: true,
 			})
 		);
-	}
-
-	if (process.env.NODE_ENV !== "production") {
-		// Open DevTools, see https://github.com/electron/electron/issues/12438 for why we wait for dom-ready
-		win.webContents.once("dom-ready", () => {
-			win!.webContents.openDevTools();
-		});
 	}
 
 	win.on("closed", () => {
@@ -77,3 +79,6 @@ if (!gotTheLock) {
 	// Create myWindow, load the rest of the app, etc...
 	app.on("ready", createWindow);
 }
+
+
+// find how to resolve sudoku

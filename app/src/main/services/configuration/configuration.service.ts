@@ -1,19 +1,12 @@
 import * as fs from "fs-extra";
-import { configMainFile, defaultConfiguration } from "../../../config/configuration";
-import * as remote from "@electron/remote";
+import { AppBoardShow, configMainFile, defaultConfiguration, version } from "../../../config/configuration";
 import { setConfig } from "../../../renderer/store/module/configuration/configuration.action";
 import { injectable } from "inversify";
-
-export const BaseConfig = {
-	appboard: {
-		show: ["external", "internal", "hidden"] as const,
-	},
-};
 
 export interface Configuration {
 	version: string;
 	appboard: {
-		show: typeof BaseConfig["appboard"]["show"][number][];
+		show: AppBoardShow[];
 	};
 	frame: {
 		show: {
@@ -25,7 +18,6 @@ export interface Configuration {
 		};
 	};
 	endpoints: {
-		lightManager: string;
 		homeAssistant: string;
 	};
 }
@@ -33,7 +25,7 @@ export interface Configuration {
 @injectable()
 export class ConfigurationService {
 	private static mergeConfig(obj: Configuration) {
-		const runningVersion = remote.app.getVersion();
+		const runningVersion = version;
 		if (runningVersion !== obj.version) {
 			console.log("Configuration file are outdated, merging with default config");
 			obj = {

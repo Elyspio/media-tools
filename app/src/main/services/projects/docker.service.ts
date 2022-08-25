@@ -1,5 +1,3 @@
-// @ts-ignore
-import dockerHubAPI from "docker-hub-api";
 import { docker } from "../../../config/projects/projects.private";
 import { Feature } from "./types";
 import * as path from "path";
@@ -9,19 +7,7 @@ import { injectable } from "inversify";
 export class DockerService {
 	public addDockerSupport = async (dockerName: string, description: string, features: Feature[], projectRoot: string) => {
 		const dockerFolder = path.join(projectRoot, "docker");
-		await Promise.all([
-			// this.createRepository(dockerName, description, description),
-			this.addDockerfile(features, path.join(dockerFolder, "DockerFile")),
-		]);
-	};
-
-	private createRepository = async (name: string, description: string, fullDescription: string, visibility: "public" | "private" = "public") => {
-		await dockerHubAPI.login(docker.username, docker.password);
-		await dockerHubAPI.createRepository(docker.username, name, {
-			description,
-			full_description: fullDescription,
-			is_private: visibility === "private",
-		});
+		await Promise.all([this.addDockerfile(features, path.join(dockerFolder, "DockerFile"))]);
 	};
 
 	private addDockerfile = async (features: Feature[], output: string) => {

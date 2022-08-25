@@ -48,7 +48,7 @@ class Updater extends React.Component<ReduxTypes, State> {
 						<div>
 							<Typography className={"input"}>
 								<span className="label">Version:</span>
-								<span className="content">{serverVersion}</span>
+								<span className="content">{JSON.stringify(serverVersion)}</span>
 							</Typography>
 						</div>
 

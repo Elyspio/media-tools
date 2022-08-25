@@ -86,4 +86,3 @@ const encodeFile = (dispatch: Dispatch, encoder: EncoderState, processes: MediaS
 		});
 	});
 };
-;

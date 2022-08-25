@@ -11,7 +11,7 @@ import { register } from "../../../../decorators/Module";
 import { SelectFolder } from "../../../common/os";
 import AlertTitle from "@mui/material/AlertTitle";
 import Link from "@mui/material/Link";
-import { withContext } from "../../../common/hoc/withContext";
+import { ContextMenuWrapper } from "../../../common/hoc/withContextMenu";
 import { useDispatch } from "react-redux";
 import { bindActionCreators } from "redux";
 import OnFinishAction from "./OnFinishAction";
@@ -19,7 +19,6 @@ import { convert } from "../../../../store/module/encoder/encoder.action";
 import { useAppSelector } from "../../../../store";
 import { encoders } from "../../../../../config/media/encoder";
 import { getAppParams } from "../../../../../main/utils/args";
-import { Logger } from "../../../../../main/utils/logger";
 import {
 	setCurrentProcess,
 	setFFmpegInstalled,
@@ -31,10 +30,9 @@ import {
 } from "../../../../store/module/media/media.action";
 import { FilesService } from "../../../../../main/services/files/files.service";
 import { useInjection } from "inversify-react";
+import { EncoderState } from "../../../../store/module/encoder/encoder.reducer";
 
 function Encoder() {
-	const logger = React.useMemo(() => Logger(Encoder), []);
-
 	const services = {
 		files: useInjection(FilesService),
 		media: useInjection(MediaService),
@@ -89,11 +87,11 @@ function Encoder() {
 		[actions, encoder, medias]
 	);
 
-	// region onSelection
+	// region onSelect
 
 	const onFormatChange = React.useCallback(
-		async (e: SelectChangeEvent<any>) => {
-			dispatch(setFormat(e.target.value));
+		async (e: SelectChangeEvent<EncoderState["format"][]>) => {
+			dispatch(setFormat(e.target.value as EncoderState["format"]));
 			setProcesses();
 		},
 		[dispatch]
@@ -146,7 +144,7 @@ function Encoder() {
 		const optionsUi = (
 			<div className={"options"}>
 				<InputLabel id="demo-customized-select-label">Encoder</InputLabel>
-				<Select labelId="demo-customized-select-label" id="demo-customized-select" value={encoder.format} onChange={onFormatChange}>
+				<Select labelId="demo-customized-select-label" id="demo-customized-select" value={encoder.format as any} onChange={onFormatChange}>
 					{encoders.map(encoder => (
 						<MenuItem value={encoder.value.ffmpeg} key={encoder.value.ffmpeg}>
 							{encoder.type} - {encoder.format}
@@ -188,56 +186,49 @@ function Encoder() {
 		return null;
 	}, [processes]);
 
+	let menuItems = React.useMemo(
+		() => [
+			{
+				label: "Action",
+				show: ({ close }: any) => <OnFinishAction close={close} />,
+			},
+		],
+		[]
+	);
 	return (
-		<div className={"Encoder"}>
-			{softInstalled === true && (
-				<>
-					<div className={"header"}>
-						<SelectFolder onChange={onFileSelect} mode={"file"} />
-						{optionsUi}
-					</div>
-					{processUi}
-					<div className="actions">{actionsUi}</div>
-				</>
-			)}
+		<ContextMenuWrapper items={menuItems}>
+			<div className={"Encoder"}>
+				{softInstalled === true && (
+					<>
+						<div className={"header"}>
+							<SelectFolder onChange={onFileSelect} mode={"file"} />
+							{optionsUi}
+						</div>
+						{processUi}
+						<div className="actions">{actionsUi}</div>
+					</>
+				)}
 
-			{softInstalled === false && (
-				<>
+				{softInstalled === false && (
 					<Alert severity="error">
 						<AlertTitle>This module requires FFmpeg</AlertTitle>
 						It can be downloaded <Link href="https://ffmpeg.org/download.html">here</Link>
 					</Alert>
-				</>
-			)}
+				)}
 
-			{softInstalled === undefined && (
-				<>
+				{softInstalled === undefined && (
 					<Alert severity="info">
 						<AlertTitle>Please wait</AlertTitle>
 						Checking if FFmpeg is installed
 					</Alert>
-				</>
-			)}
-		</div>
+				)}
+			</div>
+		</ContextMenuWrapper>
 	);
 }
 
-register(
-	Encoder,
-	{
-		name: "Encoder",
-		description: "Encode video in different formats",
-		path: "/encoder",
-	},
-	withContext({
-		items: [
-			{
-				label: "Action",
-				show:
-					() =>
-					({ close }) =>
-						<OnFinishAction close={close} />,
-			},
-		],
-	})
-);
+register(Encoder, {
+	name: "Encoder",
+	description: "Encode video in different formats",
+	path: "/encoder",
+});

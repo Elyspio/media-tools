@@ -8,10 +8,18 @@ export const configMainFile = path.join(configFolder, "settings.json");
 
 console.log("Setings will be stored in file " + configMainFile);
 
+export enum AppBoardShow {
+	external = "external",
+	internal = "internal",
+	hidden = "hidden",
+}
+
+export const version = process.env.npm_package_version ?? remote.app.getVersion();
+
 export const defaultConfiguration: Configuration = {
-	version: "",
+	version,
 	appboard: {
-		show: ["internal", "external"],
+		show: [AppBoardShow.internal, AppBoardShow.external],
 	},
 	frame: {
 		show: {
@@ -23,7 +31,6 @@ export const defaultConfiguration: Configuration = {
 		},
 	},
 	endpoints: {
-		lightManager: "https://elyspio.fr/light-manager/",
 		homeAssistant: "https://ha.elyspio.fr",
 	},
 };

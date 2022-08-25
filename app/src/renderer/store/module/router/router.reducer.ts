@@ -1,5 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { addRoute, setPath } from "./router.action";
+import { ReactElement } from "react";
 
 const requires = [
 	"external/home-assistant/HomeAssistant",
@@ -8,7 +9,7 @@ const requires = [
 	"internal/purge/Purge",
 	"internal/projects/Projects",
 	"internal/vpn/Vpn",
-	"internal/updater/Updater",
+	"internal/renamer/Renamer",
 	"internal/test/Test",
 	"internal/updater/Updater",
 	"internal/torrent/Torrent",
@@ -20,7 +21,7 @@ for (const c of requires) {
 	import(`../../../components/modules/${c}.tsx`);
 }
 
-type ReactComponent = any;
+type ReactComponent = () => ReactElement;
 
 export type ModuleDescription = {
 	name: string;
@@ -41,9 +42,11 @@ export type ModuleDescription = {
 	};
 };
 
+export type ModuleDescriptionStore = Omit<ModuleDescription, "component"> & { component: string };
+
 export interface RouterState {
 	path: string;
-	routes: { [key: string]: Omit<ModuleDescription, "component"> & { component: string } };
+	routes: { [key: string]: ModuleDescriptionStore };
 }
 
 const defaultState: RouterState = {
@@ -53,11 +56,11 @@ const defaultState: RouterState = {
 
 const components: { [key: string]: ReactComponent } = {};
 
-export function addComponent(route: string, component: ReactComponent) {
+export function addComponent(route: ModuleDescription["path"], component: ReactComponent) {
 	components[route] = component;
 }
 
-export function getComponent(route: string) {
+export function getComponent(route: ModuleDescription["path"]): ReactComponent {
 	return components[route];
 }
 

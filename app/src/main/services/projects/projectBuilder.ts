@@ -74,7 +74,7 @@ export class ProjectBuilder {
 			const content = [
 				"# " + this.config.github,
 				"",
-				"Bootstrapped with [Elytools](https://github.com/Elyspio/media-tools) project",
+				"Bootstrapped with [Elytools](https://github.com/elyspio/media-tools) project",
 				"",
 				...(this.config.features.length ? ["Features included: ", ...this.config.features.map(f => `- ${f.name}`), ""] : []),
 				"",

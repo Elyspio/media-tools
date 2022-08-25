@@ -36,22 +36,20 @@ export function Register(info: Must, ...connector: Function[]) {
 	};
 }
 
-export function register(WrappedComponent: React.ComponentType, info: Must, ...connector: Function[]) {
+export function register<T>(WrappedComponent: React.ComponentType<T>, info: Must, ...connector: Function[]) {
 	store.dispatch(addRoute({ ...defaultModuleDescription, ...info, component: info.name }));
-	logger.info("Registering component", { name: info.name, component: WrappedComponent.name });
+	logger.info("Registering component", {
+		name: info.name,
+		component: WrappedComponent.displayName ?? WrappedComponent.name,
+	});
 
-	let comp = class extends React.Component {
-		override render() {
-			// Enrobe le composant initial dans un conteneur, sans le modifier. Mieux !
-			return <WrappedComponent {...this.props} />;
-		}
-	};
+	let comp = (props: any) => <WrappedComponent {...props} />;
 
 	connector.reverse().forEach(f => {
 		comp = f(comp);
 	});
 
-	addComponent(info.path, comp);
+	addComponent(info.path, comp as any);
 
 	return comp;
 }

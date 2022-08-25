@@ -109,7 +109,7 @@ export interface AppVersion {
  * AppsApi - axios parameter creator
  * @export
  */
-export const AppsApiAxiosParamCreator = function (configuration?: Configuration) {
+export const AppsApiAxiosParamCreator = function(configuration?: Configuration) {
 	return {
 		/**
 		 *
@@ -363,7 +363,7 @@ export const AppsApiAxiosParamCreator = function (configuration?: Configuration)
  * AppsApi - functional programming interface
  * @export
  */
-export const AppsApiFp = function (configuration?: Configuration) {
+export const AppsApiFp = function(configuration?: Configuration) {
 	const localVarAxiosParamCreator = AppsApiAxiosParamCreator(configuration);
 	return {
 		/**
@@ -392,7 +392,7 @@ export const AppsApiFp = function (configuration?: Configuration) {
 			version: string,
 			arch: AppArch,
 			body: string,
-			options?: AxiosRequestConfig
+			options?: AxiosRequestConfig,
 		): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
 			const localVarAxiosArgs = await localVarAxiosParamCreator.add(name, version, arch, body, options);
 			return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
@@ -438,7 +438,7 @@ export const AppsApiFp = function (configuration?: Configuration) {
 		async getLatestArchSpecificVersion(
 			name: string,
 			arch: AppArch,
-			options?: AxiosRequestConfig
+			options?: AxiosRequestConfig,
 		): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AppVersion>> {
 			const localVarAxiosArgs = await localVarAxiosParamCreator.getLatestArchSpecificVersion(name, arch, options);
 			return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
@@ -451,7 +451,7 @@ export const AppsApiFp = function (configuration?: Configuration) {
 		 */
 		async getLatestVersions(
 			name: string,
-			options?: AxiosRequestConfig
+			options?: AxiosRequestConfig,
 		): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<{ [key: string]: Array<AppVersion> }>> {
 			const localVarAxiosArgs = await localVarAxiosParamCreator.getLatestVersions(name, options);
 			return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
@@ -463,7 +463,7 @@ export const AppsApiFp = function (configuration?: Configuration) {
  * AppsApi - factory interface
  * @export
  */
-export const AppsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+export const AppsApiFactory = function(configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
 	const localVarFp = AppsApiFp(configuration);
 	return {
 		/**

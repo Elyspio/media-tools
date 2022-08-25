@@ -1,38 +1,32 @@
 import React from "react";
-import { connect, ConnectedProps } from "react-redux";
 import Module from "../modules/Module";
 import { setPath } from "../../store/module/router/router.action";
 import { getComponent } from "../../store/module/router/router.reducer";
 import { getUriParam } from "../../utils/url";
-import { StoreState } from "../../store";
+import { useAppDispatch, useAppSelector } from "../../store";
+import { bindActionCreators } from "redux";
 
-interface Props extends ConnectedProps<typeof connector> {}
-
-function Router(props: Props) {
+export function Router() {
 	const route = getUriParam("route", {});
 
-	if (route) {
-		props.setPath(route);
-	}
+	const { current, path } = useAppSelector(state => ({
+		current: getComponent(state.routing.path),
+		path: state.routing.path,
+	}));
 
-	if (!props.current) return null;
+	const dispatch = useAppDispatch();
 
-	return (
-		<Module>
-			<props.current />
-		</Module>
-	);
+	const actions = React.useMemo(() => bindActionCreators({ setPath }, dispatch), [dispatch]);
+
+	React.useEffect(() => {
+		if (route) {
+			actions.setPath(route);
+		}
+	}, [actions]);
+
+	const component = React.useMemo(() => React.createElement(current, {}), [current]);
+
+	if (!current) return null;
+
+	return <Module>{component}</Module>;
 }
-
-const mapStateToProps = (state: StoreState) => ({
-	current: getComponent(state.routing.path),
-	path: state.routing.path,
-});
-
-const mapDispatchToProps = (dispatch: Function) => ({
-	setPath: (path: string) => dispatch(setPath(path)),
-});
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-export default connector(Router);

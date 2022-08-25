@@ -36,6 +36,7 @@ export const getOnFinishAction = () => {
 		None: () => {},
 	};
 
+	// @ts-ignore
 	return actions[store.getState().encoder.onFinishAction ?? "None"];
 };
 

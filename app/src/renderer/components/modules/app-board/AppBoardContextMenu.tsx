@@ -1,39 +1,35 @@
 import * as React from "react";
-import { Dispatch } from "redux";
-import { connect, ConnectedProps } from "react-redux";
-import { DialogContent, DialogTitle, InputLabel, MenuItem, Select } from "@mui/material";
+import { DialogContent, DialogTitle, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import { setConfig } from "../../../store/module/configuration/configuration.action";
-import { BaseConfig, Configuration } from "../../../../main/services/configuration/configuration.service";
-import { StoreState } from "../../../store";
+import { useAppDispatch, useAppSelector } from "../../../store";
+import { AppBoardShow } from "../../../../config/configuration";
 
-const mapStateToProps = (state: StoreState) => ({
-	config: state.config.current,
-});
+type Props = { close: () => void };
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-	setShowed: (elem: Configuration["appboard"]["show"], config: Configuration) =>
-		dispatch(
-			setConfig({
-				...config,
-				appboard: {
-					...config.appboard,
-					show: elem,
-				},
-			})
-		),
-});
+export function AppBoardContextMenu({ close }: Props) {
+	const config = useAppSelector(state => state.config.current);
 
-const connector = connect(mapStateToProps, mapDispatchToProps);
-type ReduxTypes = ConnectedProps<typeof connector>;
+	const dispatch = useAppDispatch();
+	const setShowed = React.useCallback(
+		(e: SelectChangeEvent<AppBoardShow[]>) => {
+			dispatch(
+				setConfig({
+					...config,
+					appboard: {
+						...config.appboard,
+						show: e.target.value as AppBoardShow[],
+					},
+				})
+			);
+		},
+		[dispatch]
+	);
 
-type Props = ReduxTypes & { close: () => void };
-
-function AppBoardContextMenu({ config, setShowed, close }: Props) {
 	return (
-		<div>
+		<>
 			<DialogTitle id="responsive-dialog-title">Filter applications</DialogTitle>
 			<DialogContent>
 				<FormControl variant="outlined" fullWidth>
@@ -41,12 +37,12 @@ function AppBoardContextMenu({ config, setShowed, close }: Props) {
 					<Select
 						labelId="demo-simple-select-outlined-label"
 						id="demo-simple-select-outlined"
-						value={config.appboard.show}
-						onChange={e => setShowed(e.target.value as any, config)}
+						value={config.appboard.show as any}
+						onChange={setShowed}
 						label="Show"
 						multiple={true}
 					>
-						{BaseConfig.appboard.show.map(l => (
+						{Object.values(AppBoardShow).map((l: AppBoardShow) => (
 							<MenuItem value={l} key={l}>
 								{l}
 							</MenuItem>
@@ -59,8 +55,6 @@ function AppBoardContextMenu({ config, setShowed, close }: Props) {
 					Ok
 				</Button>
 			</DialogActions>
-		</div>
+		</>
 	);
 }
-
-export default connector(AppBoardContextMenu);

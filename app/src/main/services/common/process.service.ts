@@ -6,6 +6,8 @@ import { injectable } from "inversify";
 
 @injectable()
 export class ProcessService {
+	public readonly exec = promisify(_exec);
+
 	async spawnBinary(binary: string, param: string[], folder: string = process.cwd()) {
 		const child = spawn(binary, param, { cwd: folder });
 		let stdout = "",
@@ -58,8 +60,6 @@ export class ProcessService {
 			throw new Error(`subprocess error exit ${exitCode} for command ${command}`);
 		}
 	}
-
-	public readonly exec = promisify(_exec);
 
 	async isInstalled(app: string) {
 		let command = "";

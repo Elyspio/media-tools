@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { container } from "../main/services/dependency-injection/dependency-injection.container";
 import * as React from "react";
-import * as ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import Application from "./components/Application";
 import { store } from "./store";
@@ -10,24 +10,20 @@ import { Logger } from "../main/utils/logger";
 import { Provider as DiProvider } from "inversify-react";
 import { theme } from "../config/theme";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import "./App.scss";
+import "./index.scss";
 
 declare module "@mui/material/styles" {
 	// eslint-disable-next-line @typescript-eslint/no-empty-interface
 	interface DefaultTheme extends Theme {}
 }
 
-downloadFont("https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap");
-
 const logger = Logger("App");
 
 // Create main element
-const mainElement = document.createElement("div");
-mainElement.classList.add("root");
-document.body.appendChild(mainElement);
 
-ReactDOM.render(
+const root = createRoot(document.getElementById("root")!);
+
+root.render(
 	<DiProvider container={container}>
 		<StyledEngineProvider injectFirst>
 			<ThemeProvider theme={theme}>
@@ -37,14 +33,5 @@ ReactDOM.render(
 				</Provider>
 			</ThemeProvider>
 		</StyledEngineProvider>
-	</DiProvider>,
-	mainElement
+	</DiProvider>
 );
-
-function downloadFont(url: string) {
-	const css = document.createElement("link");
-	css.rel = "stylesheet";
-	css.href = url;
-
-	document.head.appendChild(css);
-}

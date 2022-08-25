@@ -1,11 +1,4 @@
 import { createTheme as createMuiTheme } from "@mui/material/styles";
-import { Logger } from "../main/utils/logger";
-// @ts-ignore
-import * as style from "../renderer/App.scss";
-
-const logger = Logger("Theme");
-
-logger.info("style", style);
 
 export const theme = createMuiTheme({
 	components: {
@@ -27,14 +20,14 @@ export const theme = createMuiTheme({
 	palette: {
 		mode: "dark",
 		primary: {
-			main: style.primary,
+			main: "#4fd2ff",
 		},
 		secondary: {
-			main: style.secondary,
+			main: "#00FF88",
 		},
 		background: {
-			default: style.background,
-			paper: style.background,
+			default: "#131313",
+			paper: "#1b1b1b",
 		},
 	},
 });
