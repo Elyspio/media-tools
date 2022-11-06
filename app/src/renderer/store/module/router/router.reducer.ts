@@ -14,6 +14,7 @@ const requires = [
 	"internal/updater/Updater",
 	"internal/torrent/Torrent",
 	"internal/config/Config",
+	"internal/screen-share/ScreenShare",
 	"app-board/AppBoard",
 ];
 

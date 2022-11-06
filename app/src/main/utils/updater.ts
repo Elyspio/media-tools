@@ -94,7 +94,7 @@ export async function downloadUpdate(version: AppVersion) {
 	const bin = await api.getBinary(config.appName, version.raw, plat, {
 		responseType: "arraybuffer",
 		onDownloadProgress: progressEvent => {
-			store.dispatch(setDownloadPercentage((progressEvent.loaded * 100) / progressEvent.total));
+			store.dispatch(setDownloadPercentage((progressEvent.loaded * 100) / progressEvent.total!));
 		},
 	});
 

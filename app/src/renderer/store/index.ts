@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { logger } from "redux-logger";
 import { getUriParam } from "../utils/url";
 import { reducer as updaterReducer } from "./module/updater/updater.reducer";
+import { reducer as screenShareReducer } from "./module/screen-share/screen-share.reducer";
 import { reducer as encoderReducer } from "./module/encoder/encoder.reducer";
 import { reducer as routerReducer } from "./module/router/router.reducer";
 import { reducer as vpnReducer } from "./module/vpn/vpn.reducer";
@@ -15,6 +16,7 @@ export const store = configureStore({
 		encoder: encoderReducer,
 		routing: routerReducer,
 		config: configurationRouter,
+		screenShare: screenShareReducer,
 		vpn: vpnReducer,
 		media: mediaSlice.reducer,
 	},
