@@ -1,7 +1,7 @@
 import { createAction as _createAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { EncoderState } from "./encoder.reducer";
 import { DialogService } from "../../../../main/services/electron/dialog.service";
-import { container } from "../../../../main/services/dependency-injection/dependency-injection.container";
+import { container } from "../../../../main/di/di.container";
 import path from "path";
 import * as fs from "fs-extra";
 import { StoreState } from "../../index";

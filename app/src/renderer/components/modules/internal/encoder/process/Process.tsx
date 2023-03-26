@@ -53,7 +53,7 @@ function Process({ data }: Props) {
 					<LinearProgress className={"bar"} variant="determinate" title={data.percentage.toString()} value={data.percentage} />
 				</Grid>
 
-				<Grid item xs={1}>
+				<Grid item xs={2}>
 					<Typography color={"textPrimary"}>{data.percentage.toFixed(2)}%</Typography>
 				</Grid>
 				<Grid item xs={2}>

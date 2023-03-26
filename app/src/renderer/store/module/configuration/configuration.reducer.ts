@@ -2,7 +2,7 @@ import { createReducer } from "@reduxjs/toolkit";
 import { setConfig } from "./configuration.action";
 
 import { Configuration, ConfigurationService } from "../../../../main/services/configuration/configuration.service";
-import { container } from "../../../../main/services/dependency-injection/dependency-injection.container";
+import { container } from "../../../../main/di/di.container";
 
 export interface ConfigurationRouter {
 	current: Configuration;

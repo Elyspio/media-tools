@@ -23,6 +23,7 @@ export const mediaSlice = createSlice({
 
 		addCase(setProcesses, (state, action) => {
 			state.process = action.payload;
+			state.process.sort((p1, p2) => p1.media.file.path.localeCompare(p2.media.file.path));
 		});
 
 		addCase(setProgress, (state, action) => {

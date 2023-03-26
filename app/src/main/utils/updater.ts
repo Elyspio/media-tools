@@ -10,7 +10,7 @@ import { spawn } from "child_process";
 import { setPath } from "../../renderer/store/module/router/router.action";
 import { Logger } from "./logger";
 
-import { AppArch, AppsApi, AppVersion } from "../apis/updater";
+import { AppArch, AppsApi, AppVersion } from "../apis/rest/updater";
 
 const { app, dialog } = remote;
 

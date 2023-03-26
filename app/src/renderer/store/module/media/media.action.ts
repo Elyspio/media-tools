@@ -2,7 +2,7 @@ import { createAction as _createAction, createAsyncThunk } from "@reduxjs/toolki
 import { Encoder, Media, ProcessData } from "../../../components/modules/internal/encoder/type";
 import { ChildProcess } from "child_process";
 import { StoreState } from "../../index";
-import { container } from "../../../../main/services/dependency-injection/dependency-injection.container";
+import { container } from "../../../../main/di/di.container";
 import { ProcessService } from "../../../../main/services/common/process.service";
 import { stopConverting } from "../encoder/encoder.action";
 

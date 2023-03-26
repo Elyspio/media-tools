@@ -1,6 +1,6 @@
-import { createAction as _createAction } from "@reduxjs/toolkit";
 import { ScreenShareState } from "./screen-share";
+import { createActionGenerator } from "../../utils/utils.actions";
 
-const createAction = <T>(type: string) => _createAction<T>(`screen-share/${type}`);
+const createAction = createActionGenerator("screen-share");
 
 export const setStreamId = createAction<ScreenShareState["streamId"]>("setScreenId");

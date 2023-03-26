@@ -161,7 +161,6 @@ function Encoder() {
 						{encoder.currentProcessPid ? "Stop" : "Encode Files"}
 					</Button>
 				</Grid>
-				<Grid item></Grid>
 			</Grid>
 		);
 

@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "../../../../store";
 import { setStreamId } from "../../../../store/module/screen-share/screen-share.action";
 import { ScreenElements } from "./ScreenElements";
 import { ScreenShareDialogPreview } from "./ScreenShareDialogPreview";
+import { startScreenShare, stopScreenShare } from "../../../../store/module/screen-share/screen-share.async.actions";
 
 function ScreenShare() {
 	const dispatch = useAppDispatch();
@@ -19,10 +20,6 @@ function ScreenShare() {
 
 	const { open, toggle } = useModal(false);
 
-	React.useEffect(() => {
-		getAvailableStreamInfos();
-	}, []);
-
 	// Get all available apps and screens
 	const getAvailableStreamInfos = React.useCallback(() => {
 		return desktopCapturer.getSources({ types: ["window", "screen"] }).then(async sources => {
@@ -33,7 +30,15 @@ function ScreenShare() {
 
 	const stopRecording = React.useCallback(() => {
 		dispatch(setStreamId());
+		dispatch(stopScreenShare());
 	}, [dispatch]);
+
+	React.useEffect(() => {
+		getAvailableStreamInfos();
+		dispatch(startScreenShare());
+
+		return stopRecording;
+	}, [dispatch, getAvailableStreamInfos]);
 
 	return (
 		<Stack spacing={1}>

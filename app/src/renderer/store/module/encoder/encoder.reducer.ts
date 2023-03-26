@@ -2,7 +2,7 @@ import { createReducer } from "@reduxjs/toolkit";
 import { store } from "../../index";
 import { setOnFinishAction, setProcessStatus, updateProcessPercentage } from "./encoder.action";
 import { SystemService } from "../../../../main/services/system/system.service";
-import { container } from "../../../../main/services/dependency-injection/dependency-injection.container";
+import { container } from "../../../../main/di/di.container";
 import { Encoder } from "../../../components/modules/internal/encoder/type";
 import { encodingProcess, setCurrentProcess, setFFmpegInstalled, setFormat } from "../media/media.action";
 

@@ -2,7 +2,7 @@ import { vpnConfig } from "../../../config/networks/vpn";
 import { spawn } from "child_process";
 import { EventManager } from "../../utils/events";
 import { injectable } from "inversify";
-import { container } from "../dependency-injection/dependency-injection.container";
+import { container } from "../../di/di.container";
 import { ProcessService } from "../common/process.service";
 
 type StatusListener = "connected" | "disconnected";

@@ -29,7 +29,13 @@ export class MediaService {
 		return bool;
 	}
 
-	public async convert(input: Media, format: string, options?: { outputPath: string }): Promise<[EventEmitter, ReturnType<typeof spawn>]> {
+	public async convert(
+		input: Media,
+		format: string,
+		options?: {
+			outputPath: string;
+		}
+	): Promise<[EventEmitter, ReturnType<typeof spawn>]> {
 		const { store } = await import("../../../renderer/store");
 
 		try {

@@ -5,7 +5,7 @@ import * as fs from "fs-extra";
 import { github as githubConf } from "../../../config/projects/projects.private";
 import { injectable } from "inversify";
 import { FilesService } from "../files/files.service";
-import { container } from "../dependency-injection/dependency-injection.container";
+import { container } from "../../di/di.container";
 import { ProcessService } from "../common/process.service";
 
 const github = new Octokit({

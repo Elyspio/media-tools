@@ -1,8 +1,8 @@
 {
-	"version": "1.2.1",
+	"version": "1.2.4",
 	"name": "elytools",
+	"main": null,
 	"scripts": {
-		"install": "cd app && yarn",
 		"dev": "npm-run-all -p dev:react electron:serve",
 		"dev:electron": "cross-env NODE_ENV=development webpack --config config/webpack/electron.webpack.ts --mode=development && npm run start:electron",
 		"dev:react": "cross-env NODE_ENV=development webpack serve --config config/webpack/react.webpack.ts --mode=development",
@@ -11,7 +11,8 @@
 		"build": "npm-run-all -p build:electron build:react",
 		"build:electron": "webpack --config config/webpack/electron.webpack.ts --mode=production",
 		"build:react": "webpack --config config/webpack/react.webpack.ts --mode=production",
-		"package": "cd config/release-app && dotnet run"
+		"package": "cd config/release-app && dotnet run",
+		"refresh-clients": "ts-node app/scripts/generate-api.ts"
 	},
 	"build": {
 		"productName": "Elytools",

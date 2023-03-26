@@ -9,7 +9,7 @@ import * as os from "os";
 import { injectable } from "inversify";
 import { GithubService } from "./github.service";
 import { FilesService } from "../files/files.service";
-import { container } from "../dependency-injection/dependency-injection.container";
+import { container } from "../../di/di.container";
 
 @injectable()
 export class FeatureService {

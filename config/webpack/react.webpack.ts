@@ -2,6 +2,7 @@ import HtmlWebpackPlugin from "html-webpack-plugin";
 import * as path from "path";
 import { Configuration as WebpackConfiguration } from "webpack";
 import { Configuration as WebpackDevServerConfiguration } from "webpack-dev-server";
+import tsconfig from "../../tsconfig.json";
 
 const rootPath = path.resolve(__dirname, "..", "..");
 
@@ -9,10 +10,17 @@ interface Configuration extends WebpackConfiguration {
 	devServer?: WebpackDevServerConfiguration;
 }
 
+let paths = tsconfig.compilerOptions.paths;
+const alias = (Object.keys(paths) as (keyof typeof paths)[]).reduce((acc, key) => {
+	let p = paths[key][0];
+	acc[key] = path.resolve(rootPath, p.slice(0, p.length - 1));
+	return acc;
+}, {} as Record<string, string>);
+
 const config: Configuration = {
 	resolve: {
 		extensions: [".tsx", ".ts", ".js"],
-		mainFields: ["main", "module", "browser"],
+		alias,
 	},
 	entry: path.resolve(rootPath, "app/src/renderer", "index.tsx"),
 	target: "electron-renderer",

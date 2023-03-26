@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { container } from "../main/services/dependency-injection/dependency-injection.container";
+import { container } from "../main/di/di.container";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
@@ -22,7 +22,6 @@ const logger = Logger("App");
 // Create main element
 
 const root = createRoot(document.getElementById("root")!);
-
 root.render(
 	<DiProvider container={container}>
 		<StyledEngineProvider injectFirst>

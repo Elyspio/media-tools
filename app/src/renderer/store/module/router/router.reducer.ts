@@ -10,7 +10,6 @@ const requires = [
 	"internal/projects/Projects",
 	"internal/vpn/Vpn",
 	"internal/renamer/Renamer",
-	"internal/test/Test",
 	"internal/updater/Updater",
 	"internal/torrent/Torrent",
 	"internal/config/Config",

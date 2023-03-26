@@ -9,6 +9,8 @@ import { reducer as vpnReducer } from "./module/vpn/vpn.reducer";
 import { reducer as configurationRouter } from "./module/configuration/configuration.reducer";
 import { mediaSlice } from "./module/media/media.reducer";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+import { container } from "../../main/di/di.container";
+import { Container } from "inversify";
 
 export const store = configureStore({
 	reducer: {
@@ -26,6 +28,11 @@ export const store = configureStore({
 			serializableCheck: {
 				ignoredActions: ["media/setCurrentProcess"],
 			},
+			thunk: {
+				extraArgument: {
+					container,
+				},
+			},
 		}).concat(logger),
 	preloadedState: getUriParam<any>("store", { json: true, remove: true }) ?? undefined,
 });
@@ -38,3 +45,7 @@ export type AppDispatch = typeof store.dispatch;
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<StoreState> = useSelector;
+
+export type ExtraArgument = {
+	container: Container;
+};

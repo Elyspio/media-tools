@@ -1,5 +1,5 @@
 import { createAction as _createAction } from "@reduxjs/toolkit";
-import { AppVersion } from "../../../../main/apis/updater";
+import { AppVersion } from "../../../../main/apis/rest/updater";
 
 const createAction = <T>(type: string) => _createAction<T>(`update/${type}`);
 
