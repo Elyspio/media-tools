@@ -1,0 +1,27 @@
+version: "3"
+services:
+    elytools-api:
+        container_name: "elytools-api"
+        image: elyspio/elytools-api
+        volumes:
+            - "./config/front/conf.js:/back/wwwroot/conf.js"
+            - "./config/back/appsettings.json:/back/appsettings.json"
+        networks:
+            - external
+            - internal
+        labels:
+            - "traefik.enable=true"
+            - "traefik.docker.network=external"
+            - "traefik.http.middlewares.elytools-api-prefix.stripprefix.prefixes=/elytools-api"
+            - "traefik.http.routers.elytools-api.middlewares=elytools-api-prefix@docker"
+            - "traefik.http.routers.elytools-api.rule=PathPrefix(`/elytools-api`)"
+            - "traefik.http.services.elytools-api.loadbalancer.server.port=4000"
+            - "traefik.http.routers.elytools-api.entrypoints=external"
+
+
+
+networks:
+    internal:
+        external: true
+    external:
+        external: true
