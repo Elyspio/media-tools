@@ -3,7 +3,7 @@
   "defaultVariables": null,
   "documentGenerator": {
     "fromDocument": {
-      "url": "http://localhost:4000/swagger/v1/swagger.json",
+      "url": "https://elyspio.fr/updater/swagger/v1/swagger.json",
       "output": "UpdaterClient.nswag.json",
       "newLineBehavior": "Auto"
     }
@@ -55,7 +55,7 @@
       "wrapResponseMethods": [],
       "generateResponseClasses": true,
       "responseClass": "SwaggerResponse",
-      "namespace": "release_app.updater",
+      "namespace": "SwaggerMerge.ReleaseApp.UpdaterClient",
       "requiredPropertiesMustBeDefined": true,
       "dateType": "System.DateTimeOffset",
       "jsonConverters": null,
@@ -84,13 +84,12 @@
       "inlineNamedTuples": true,
       "inlineNamedAny": false,
       "generateDtoTypes": true,
-      "generateOptionalPropertiesAsNullable": false,
-      "generateNullableReferenceTypes": false,
+      "generateOptionalPropertiesAsNullable": true,
+      "generateNullableReferenceTypes": true,
       "templateDirectory": null,
       "typeNameGeneratorType": null,
       "propertyNameGeneratorType": null,
       "enumNameGeneratorType": null,
-      "checksumCacheEnabled": false,
       "serviceHost": null,
       "serviceSchemes": null,
       "output": "UpdaterClient.cs",

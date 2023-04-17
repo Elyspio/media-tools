@@ -1,7 +1,6 @@
 {
-	"version": "1.2.5",
+	"version": "0.0.0",
 	"name": "elytools",
-	"main": null,
 	"scripts": {
 		"dev": "npm-run-all -p dev:react electron:serve",
 		"dev:electron": "cross-env NODE_ENV=development webpack --config config/webpack/electron.webpack.ts --mode=development && npm run start:electron",
@@ -11,7 +10,7 @@
 		"build": "npm-run-all -p build:electron build:react",
 		"build:electron": "webpack --config config/webpack/electron.webpack.ts --mode=production",
 		"build:react": "webpack --config config/webpack/react.webpack.ts --mode=production",
-		"package": "cd config/release-app && dotnet run",
+		"package": "cd deploy/release-app && dotnet run",
 		"refresh-clients": "ts-node app/scripts/generate-api.ts"
 	},
 	"build": {
@@ -46,26 +45,28 @@
 	},
 	"license": "MIT",
 	"devDependencies": {
-		"@types/node": "^18.11.9",
+		"@types/node": "^18.15.10",
+		"eslint": "^8.36.0",
 		"@types/webpack-dev-server": "^4.7.2",
-		"@typescript-eslint/eslint-plugin": "^5.42.0",
-		"@typescript-eslint/parser": "^5.42.0",
+		"@typescript-eslint/eslint-plugin": "^5.57.0",
+		"@typescript-eslint/parser": "^5.57.0",
+		"eslint-plugin-react": "^7.32.2",
 		"cross-env": "^7.0.3",
-		"electron": "^21.2.2",
+		"electron": "^23.2.0",
 		"electron-builder": "^23.6.0",
 		"html-webpack-plugin": "^5.5.0",
-		"style-loader": "^3.3.1",
-		"css-loader": "^6.7.1",
+		"style-loader": "^3.3.2",
+		"css-loader": "^6.7.3",
 		"npm-run-all": "^4.1.5",
-		"prettier": "^2.7.1",
-		"sass-loader": "^13.1.0",
-		"sass": "^1.56.0",
-		"ts-loader": "^9.4.1",
+		"prettier": "^2.8.7",
+		"sass-loader": "^13.2.2",
+		"sass": "^1.60.0",
+		"ts-loader": "^9.4.2",
 		"ts-node": "^10.9.1",
-		"typescript": "^4.8.4",
-		"wait-on": "^6.0.1",
-		"webpack": "^5.74.0",
-		"webpack-cli": "^4.10.0",
-		"webpack-dev-server": "^4.11.1"
+		"typescript": "^4.9.5",
+		"wait-on": "^7.0.1",
+		"webpack": "5.76.3",
+		"webpack-cli": "^5.0.1",
+		"webpack-dev-server": "^4.13.1"
 	}
 }
