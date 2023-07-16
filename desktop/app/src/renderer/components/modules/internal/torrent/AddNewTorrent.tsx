@@ -1,39 +1,35 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import { useModal } from "../../../../hooks/useModal";
-import * as remote from "@electron/remote";
-import { useInjection } from "inversify-react";
-import { TorrentService } from "../../../../../main/services/media/torrent.service";
+import { setAddingTorrent } from "../../../../store/module/torrent/torrent.action";
+import { useAppDispatch } from "../../../../store";
+import { downloadTorrent } from "../../../../store/module/torrent/torrent.async.actions";
 
-const { Notification } = remote.require("electron");
 
 const Transition = React.forwardRef(function Transition(
 	props: TransitionProps & {
 		children?: React.ReactElement<any, any>;
 	},
-	ref: React.Ref<unknown>
+	ref: React.Ref<unknown>,
 ) {
 	return <Slide direction="up" ref={ref} {...props} children={props.children!} />;
 });
 
-function AddNewTorrent(props: { name: string; clear: () => void }) {
+export function AddNewTorrent(props: { name: string }) {
+
+	const dispatch = useAppDispatch();
+
 	const { open, setClose } = useModal(true);
 
-	const services = {
-		torrent: useInjection(TorrentService),
-	};
 
-	const launchApp = async (add: boolean) => {
+	const launchApp = useCallback(async (add: boolean) => {
 		setClose();
+		dispatch(setAddingTorrent(undefined));
 		if (add) {
-			await services.torrent.add(props.name);
-			new Notification({
-				title: `Starting to download ${props.name}`,
-			}).show();
-			props.clear();
+			dispatch(downloadTorrent());
 		}
-	};
+	}, []);
 
 	return (
 		<Dialog
@@ -44,7 +40,7 @@ function AddNewTorrent(props: { name: string; clear: () => void }) {
 			aria-labelledby="alert-dialog-slide-title"
 			aria-describedby="alert-dialog-slide-description"
 		>
-			<DialogTitle id="alert-dialog-slide-title">{"Add a new torrent"}</DialogTitle>
+			<DialogTitle id="alert-dialog-slide-title">Add a new torrent</DialogTitle>
 			<DialogContent>
 				<DialogContentText id="alert-dialog-slide-description">{props.name}</DialogContentText>
 			</DialogContent>
@@ -61,4 +57,3 @@ function AddNewTorrent(props: { name: string; clear: () => void }) {
 	);
 }
 
-export default AddNewTorrent;

@@ -1,11 +1,11 @@
 import { BrowserWindowConstructorOptions } from "electron";
 import * as fs from "fs-extra";
-import { injectable } from "inversify";
+import * as path from "path";
+import * as url from "url";
 import { windowOption } from "../../../config/electron";
-import url from "url";
-import path from "path";
-
-const { dialog, BrowserWindow, require: nodeRequire } = require("@electron/remote");
+import { injectable } from "inversify";
+import * as remote from "@electron/remote";
+import { enable } from "@electron/remote/main";
 
 @injectable()
 export class DialogService {
@@ -13,13 +13,13 @@ export class DialogService {
 	 * @param returnFiles flag to make the function return files in the folder
 	 */
 	public async selectFolder(returnFiles?: boolean) {
-		const path = await dialog.showOpenDialog({
+		const { canceled, filePaths } = await remote.dialog.showOpenDialog({
 			properties: ["openDirectory"],
 		});
 
-		if (path.canceled) return null;
+		if (canceled) return null;
 
-		let folder = this.escape(path.filePaths[0]);
+		let folder = this.escape(filePaths[0]);
 
 		return {
 			folder: folder,
@@ -28,16 +28,26 @@ export class DialogService {
 	}
 
 	public async createWindow(target: string, frame: createWindowCustomOption, option?: Partial<BrowserWindowConstructorOptions>) {
-		const win = new BrowserWindow({
+		const win = new remote.BrowserWindow({
 			...windowOption,
+			...option,
+			show: false,
 		});
 
-		nodeRequire("@electron/remote/main").enable(win.webContents);
+		const { store } = await import("../../../renderer/store");
+
+		const params = {
+			store: store.getState(),
+			route: target,
+			frame,
+		};
+
+		enable(win.webContents);
+		// win.webContents.executeJavaScript(`window.params = "${JSON.stringify(params)}"`);
 		win.webContents.openDevTools();
 
 		if (process.env.NODE_ENV !== "production") {
-			process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "1"; // eslint-disable-line require-atomic-updates
-			await win.loadURL(`http://localhost:2003`);
+			await win.loadURL(`http://localhost:2003/`);
 		} else {
 			await win.loadURL(
 				url.format({
@@ -48,38 +58,7 @@ export class DialogService {
 			);
 		}
 
-		if (process.env.NODE_ENV !== "production") {
-			// Open DevTools, see https://github.com/electron/electron/issues/12438 for why we wait for dom-ready
-			win.webContents.once("dom-ready", () => {
-				win!.webContents.openDevTools();
-			});
-		}
-
-		// const win = new BrowserWindow({
-		// 	...windowOption,
-		// 	...option,
-		// });
-		//
-		//
-		// nodeRequire("@electron/remote/main").enable(win.webContents);
-		// win.webContents.openDevTools();
-		//
-		// const { store } = await import("../../../renderer/store");
-		//
-		// const search = `route=${target}&options=${JSON.stringify(frame)}&store=${JSON.stringify(store.getState())}`;
-		// const param = "data=" + btoa(search);
-		// if (process.env.NODE_ENV !== "production") {
-		// 	return win.loadURL(`http://localhost:2003/?${param}`);
-		// } else {
-		// 	return win.loadURL(
-		// 		url.format({
-		// 			pathname: path.join(__dirname, "index.html"),
-		// 			protocol: "file:",
-		// 			query: search,
-		// 			slashes: true,
-		// 		})
-		// 	);
-		// }
+		win.show();
 	}
 
 	private escape = (path: string) => path.replace(/\\/g, "\\\\");

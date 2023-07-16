@@ -2,25 +2,6 @@ import { createReducer } from "@reduxjs/toolkit";
 import { addRoute, setPath } from "./router.action";
 import { ReactElement } from "react";
 
-const requires = [
-	"external/home-assistant/HomeAssistant",
-	"internal/encoder/Encoder",
-	"internal/encoder/recap/Recap",
-	"internal/purge/Purge",
-	"internal/projects/Projects",
-	"internal/vpn/Vpn",
-	"internal/renamer/Renamer",
-	"internal/updater/Updater",
-	"internal/torrent/Torrent",
-	"internal/config/Config",
-	"internal/screen-share/ScreenShare",
-	"app-board/AppBoard",
-];
-
-for (const c of requires) {
-	import(`../../../components/modules/${c}.tsx`);
-}
-
 type ReactComponent = () => ReactElement;
 
 export type ModuleDescription = {

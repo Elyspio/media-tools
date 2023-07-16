@@ -1,7 +1,7 @@
 import { Container } from "inversify";
 import { ProcessService } from "../services/common/process.service";
 import { WindowService } from "../services/electron/window.service";
-import { DialogService } from "../services/electron/dialog.service.new";
+import { DialogService } from "../services/electron/dialog.service";
 import { MediaService } from "../services/media/media.service";
 import { TorrentService } from "../services/media/torrent.service";
 import { SystemService } from "../services/system/system.service";

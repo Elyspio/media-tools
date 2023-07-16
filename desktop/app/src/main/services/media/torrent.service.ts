@@ -1,13 +1,10 @@
 import { qbittorent } from "../../../config/media/torents.private";
-import { QBittorrent as IQBittorrent } from "@ctrl/qbittorrent";
+import { QBittorrent } from "@ctrl/qbittorrent";
 import { readFile } from "fs/promises";
 import { injectable } from "inversify";
 
-import * as remote from "@electron/remote";
 
-const { QBittorrent } = remote.require("@ctrl/qbittorrent");
-
-const client: IQBittorrent = new QBittorrent({
+const client = new QBittorrent({
 	baseUrl: qbittorent.uri,
 	password: qbittorent.password,
 	username: qbittorent.login,

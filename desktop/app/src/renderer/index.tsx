@@ -5,19 +5,12 @@ import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import Application from "./components/Application";
 import { store } from "./store";
-import { StyledEngineProvider, Theme, ThemeProvider } from "@mui/material/styles";
-import { Logger } from "../main/utils/logger";
+import { StyledEngineProvider, ThemeProvider } from "@mui/material/styles";
 import { Provider as DiProvider } from "inversify-react";
 import { theme } from "../config/theme";
 import { ToastContainer } from "react-toastify";
 import "./index.scss";
-
-declare module "@mui/material/styles" {
-	// eslint-disable-next-line @typescript-eslint/no-empty-interface
-	interface DefaultTheme extends Theme {}
-}
-
-const logger = Logger("App");
+import "./store/module/router/router.import";
 
 // Create main element
 
@@ -32,5 +25,5 @@ root.render(
 				</Provider>
 			</ThemeProvider>
 		</StyledEngineProvider>
-	</DiProvider>
+	</DiProvider>,
 );

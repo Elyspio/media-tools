@@ -1,6 +1,5 @@
 import { promises as fs } from "fs";
 import * as fse from "fs-extra";
-import { WatchListener } from "fs-extra";
 import * as path from "path";
 import { Readable } from "stream";
 import { Extract } from "unzipper";
@@ -54,7 +53,8 @@ export class FilesService {
 				} else {
 					files.push(...(await this.find(node, filter)));
 				}
-			} catch (e) {}
+			} catch (e) {
+			}
 		}
 
 		return files;
@@ -74,7 +74,8 @@ export class FilesService {
 						files.push(...(await this.list(node, ignore)));
 					}
 				}
-			} catch (e) {}
+			} catch (e) {
+			}
 		});
 
 		await Promise.all(promises);
@@ -91,7 +92,8 @@ export class FilesService {
 	 */
 	public async unzip(data: ArrayBuffer, output: string) {
 		const readable = new Readable();
-		readable._read = () => {}; // _read is required but you can noop it
+		readable._read = () => {
+		}; // _read is required but you can noop it
 		readable.push(Buffer.from(data));
 		readable.push(null);
 
@@ -104,13 +106,13 @@ export class FilesService {
 		await fs.rmdir(src, { recursive: true });
 	}
 
-	public watch(folder: string, action: WatchListener<string>) {
+	public watch(folder: string, action: (filename: string) => void) {
 		console.debug("Watch folder", folder);
 
-		let fsWatcher = fse.watch(folder, { recursive: true, encoding: "utf8" }, (event, filename) => {
+		let fsWatcher = fse.watch(folder, { recursive: true, encoding: "utf8" }, (_, filename) => {
+			if (!filename) return;
 			filename = path.join(folder, filename);
-			console.debug("new action", { event, filename });
-			action(event, filename);
+			action(filename);
 		});
 		return () => {
 			console.debug("Unwatch folder", folder);

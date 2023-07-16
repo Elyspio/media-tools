@@ -1,21 +1,12 @@
 import React, { useMemo } from "react";
-import { Box, Menu, MenuItem, Typography } from "@mui/material";
-import { DataGrid, GridCellParams, GridColumns } from "@mui/x-data-grid";
-import { useAsyncState } from "../../../../hooks/useAsyncState";
-
-import { Torrent, TorrentState } from "@ctrl/qbittorrent/dist/types";
+import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid";
+import { StoreState, useAppSelector } from "../../../../../store";
+import { useAppDimension } from "../../../../../hooks/useAppDimension";
+import { Torrent, TorrentState } from "@ctrl/qbittorrent";
+import { createSelector } from "reselect";
+import { Typography } from "@mui/material";
 import * as dayjs from "dayjs";
-import "dayjs/plugin/duration";
-import { useInjection } from "inversify-react";
-import { FilesService } from "../../../../../main/services/files/files.service";
-import { TorrentService } from "../../../../../main/services/media/torrent.service";
-import { useAppDimension } from "../../../../hooks/useAppDimension";
 
-const duration = require("dayjs/plugin/duration");
-const relativeTime = require("dayjs/plugin/relativeTime");
-
-dayjs.extend(duration);
-dayjs.extend(relativeTime);
 
 const keys = ["id", "name", "dlspeed", "progress", "eta", "size", "state", "priority"] as const;
 type Keys = typeof keys[number];
@@ -58,8 +49,8 @@ function getTorrentStateStr(state: TorrentState) {
 	return ["", undefined];
 }
 
-const columns: Record<Keys, GridColumns[number] & { field: Keys }> = {
-	id: { field: "id", headerName: "id", width: 0, hide: true },
+const columns: Record<Keys, GridColDef & { field: Keys }> = {
+	id: { field: "id", headerName: "id", width: 0 },
 	priority: {
 		field: "priority",
 		headerName: "#",
@@ -145,23 +136,23 @@ const allColumns = [columns.id, columns.priority, columns.name, columns.progress
 
 const smallColumns = [columns.id, columns.priority, columns.name, columns.state, columns.progress];
 
-type PopoverInfo = {
+
+export type PopoverInfo = {
 	mouseX?: number;
 	mouseY?: number;
 	torrent?: Record<Keys, any>;
 };
 
-const initialPopoverPosition: PopoverInfo = {};
 
-const TorrentList = () => {
-	const services = {
-		torrent: useInjection(TorrentService),
-		files: useInjection(FilesService),
-	};
+const torrentListSelector = createSelector([(s: StoreState) => s.torrent.list], list => ({ data: list }));
+type TorrentDataGridProps = {
+	setPopoverPosition: (state: PopoverInfo) => void
+}
 
-	const [popoverPosition, setPopoverPosition] = React.useState(initialPopoverPosition);
+export function TorrentDataGrid({ setPopoverPosition }: TorrentDataGridProps) {
 
-	const { data, reload } = useAsyncState(services.torrent.list, [], 1000);
+
+	const { data } = useAppSelector(torrentListSelector);
 
 	const { width } = useAppDimension();
 
@@ -187,49 +178,13 @@ const TorrentList = () => {
 		});
 	}, []);
 
-	const handleClose = React.useCallback(
-		async (item?: "resume" | "pause" | "delete") => {
-			setPopoverPosition(initialPopoverPosition);
-			const func = {
-				resume: services.torrent.resume,
-				pause: services.torrent.pause,
-				delete: services.torrent.delete,
-			};
 
-			if (item) {
-				await func[item](popoverPosition.torrent!!.id);
-				await reload();
-			}
-		},
-		[popoverPosition]
-	);
-
-	return (
-		<Box className={"TorrentList"}>
-			<DataGrid
-				sortModel={[{ sort: "asc", field: "priority" }]}
-				isRowSelectable={() => false}
-				sortingMode={"client"}
-				onCellClick={onCellClick}
-				rows={rows}
-				columns={width > 1000 ? allColumns : smallColumns}
-			/>
-
-			{popoverPosition.mouseY && popoverPosition.mouseX && (
-				<Menu
-					keepMounted
-					open={true}
-					onClose={() => handleClose()}
-					anchorReference="anchorPosition"
-					anchorPosition={{ top: popoverPosition.mouseY, left: popoverPosition.mouseX }}
-				>
-					<MenuItem onClick={() => handleClose("resume")}>Resume</MenuItem>
-					<MenuItem onClick={() => handleClose("pause")}>Pause</MenuItem>
-					<MenuItem onClick={() => handleClose("delete")}>Delete</MenuItem>
-				</Menu>
-			)}
-		</Box>
-	);
-};
-
-export default TorrentList;
+	return <DataGrid
+		sortModel={[{ sort: "asc", field: "priority" }]}
+		isRowSelectable={() => false}
+		sortingMode={"client"}
+		onCellClick={onCellClick}
+		rows={rows}
+		columns={width > 1000 ? allColumns : smallColumns}
+	/>;
+}

@@ -21,23 +21,22 @@
 		"resolveJsonModule": true,
 		"emitDecoratorMetadata": true,
 		"paths": {
-			"@services": [
+			"@services/*": [
 				"app/src/main/services/*"
 			],
-			"@apis": [
+			"@apis/*": [
 				"app/src/main/apis/*"
 			],
-			"@modules": [
+			"@components/*": [
 				"app/src/renderer/components/modules/*"
 			],
-			"@store": [
-				"app/src/renderer/store/*"
+			"@modules/*": [
+				"app/src/renderer/store/module/*"
 			]
 		}
 	},
 	"include": [
 		"./app",
-		"./config",
-		"app/node_modules/@types/dom-webcodecs/webcodecs.generated.d.ts"
+		"./config"
 	]
 }

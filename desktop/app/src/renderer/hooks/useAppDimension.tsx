@@ -1,6 +1,9 @@
 import * as React from "react";
 import * as remote from "@electron/remote";
 
+/**
+ * This is a custom React hook that keeps track of the size of the application window.
+ */
 export function useAppDimension() {
 	const [width, setWidth] = React.useState(() => remote.getCurrentWindow().getSize()[0]);
 	const [height, setHeight] = React.useState(() => remote.getCurrentWindow().getSize()[1]);
