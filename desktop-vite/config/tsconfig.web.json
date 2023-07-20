@@ -1,0 +1,43 @@
+{
+	"extends": "@elyspio/vite-eslint-config/tsconfig.json",
+	"include": [
+		"../app/src"
+	],
+	"compilerOptions": {
+		"target": "ES2021",
+		"lib": [
+			"DOM",
+			"ESNext"
+		],
+		"baseUrl": "../app/",
+		"rootDir": "../app/",
+		"composite": true,
+		"jsx": "react-jsx",
+		"paths": {
+			"@/*": [
+				"./src/*"
+			],
+			"@apis/*": [
+				"./src/core/apis/*"
+			],
+			"@components/*": [
+				"./src/view/components/*"
+			],
+			"@hooks/*": [
+				"./src/view/hooks/*"
+			],
+			"@modules/*": [
+				"./src/store/modules/*"
+			],
+			"@services/*": [
+				"./src/core/services/*"
+			],
+			"@store": [
+				"./src/store/index.ts"
+			],
+			"@store/*": [
+				"./src/store/*"
+			]
+		}
+	}
+}

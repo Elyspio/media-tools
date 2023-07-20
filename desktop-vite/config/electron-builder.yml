@@ -1,0 +1,32 @@
+appId: com.electron.app
+productName: electron-app
+directories:
+    buildResources: build
+files:
+    - '!src/*'
+    - '!electron.vite.config.{js,ts,mjs,cjs}'
+    - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
+    - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
+    - '!config/*'
+win:
+    executableName: electron-app
+nsis:
+    artifactName: ${name}-${version}-setup.${ext}
+    shortcutName: ${productName}
+    uninstallDisplayName: ${productName}
+    createDesktopShortcut: always
+dmg:
+    artifactName: ${name}-${version}.${ext}
+linux:
+    target:
+        - AppImage
+        - snap
+        - deb
+    maintainer: elyspio.fr
+    category: Utility
+appImage:
+    artifactName: ${name}-${version}.${ext}
+npmRebuild: false
+publish:
+    provider: generic
+    url: https://example.com/auto-updates

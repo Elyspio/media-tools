@@ -1,0 +1,15 @@
+{
+	"extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
+	"include": [
+		"electron.vite.config.*",
+		"../app/src/main/*",
+		"../app/src/preload/*"
+	],
+	"compilerOptions": {
+		"target": "ES2021",
+		"composite": true,
+		"types": [
+			"electron-vite/node"
+		]
+	}
+}

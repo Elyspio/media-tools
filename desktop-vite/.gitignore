@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.idea
+*.private.*
+releases
+.vs
+bin
+obj
