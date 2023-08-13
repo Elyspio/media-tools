@@ -1,6 +1,6 @@
 import { createAsyncActionGenerator, getService } from "../../utils/utils.actions";
-import { Frame } from "../../../../main/apis/rest/backend/generated";
-import { ScreenShareSocket } from "../../../../main/apis/sockets/screen-share.socket";
+import { Frame } from "@apis/rest/backend/generated";
+import { ScreenShareSocket } from "@apis/sockets/screen-share.socket";
 
 const createAsyncThunk = createAsyncActionGenerator("screen-share");
 

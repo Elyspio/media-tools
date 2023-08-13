@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Media, ProcessData } from "../../../components/modules/internal/encoder/type";
+import { Media, ProcessData } from "@components/internal/encoder/type";
 import { setMedias, setProcesses, setProgress } from "./media.action";
 
 export type MediaState = {
@@ -27,7 +27,7 @@ export const mediaSlice = createSlice({
 		});
 
 		addCase(setProgress, (state, action) => {
-			let process = state.process.find(p => p.media.file.path === action.payload.media.file.path);
+			const process = state.process.find((p) => p.media.file.path === action.payload.media.file.path);
 			if (process) {
 				process.percentage = action.payload.percentage;
 			}

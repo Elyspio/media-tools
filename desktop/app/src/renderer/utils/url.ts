@@ -13,8 +13,8 @@ export function injectParams() {
 }
 
 export function getUriParam<T = any>(param: string, { json }: getUriParamOptions = {}) {
-	let search = new URL(document.location.href).searchParams;
-	let elem = search.get(param);
-	let value: T = elem && json ? JSON.parse(elem) : elem;
+	const search = new URL(document.location.href).searchParams;
+	const elem = search.get(param);
+	const value: T = elem && json ? JSON.parse(elem) : elem;
 	return value;
 }

@@ -46,7 +46,7 @@ class Titlebar extends Component<Props, State> {
 	}
 
 	private toggleModal = () => {
-		this.setState(prev => ({ settingModalOpened: !prev.settingModalOpened }));
+		this.setState((prev) => ({ settingModalOpened: !prev.settingModalOpened }));
 	};
 
 	private close(): void {

@@ -1,5 +1,4 @@
 import store, { StoreState } from "../../index";
-import { setTheme } from "../theme/theme.action";
 import { toast } from "react-toastify";
 import { container } from "../../../core/di";
 import { LocalStorageService } from "../../../core/services/common/localStorage.service";
@@ -89,6 +88,8 @@ window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e)
 	const newColorScheme = e.matches ? "dark" : "light";
 	const { settings } = store.getState().authentication;
 	if (settings?.theme === SettingsType.System) {
-		store.dispatch(setTheme(newColorScheme));
+		window.store.dispatch(setTheme(newColorScheme);
+	)
+		;
 	}
 });

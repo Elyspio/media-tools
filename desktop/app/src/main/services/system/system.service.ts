@@ -29,7 +29,7 @@ export class SystemService {
 	}
 
 	public async gpuLoad(): Promise<{ encode: number; decode: number; overall: number; memory: number }> {
-		let xml = (await exec("nvidia-smi -x -q")).stdout;
+		const xml = (await exec("nvidia-smi -x -q")).stdout;
 		const data: NvidiaSmi = xml2js(xml, { compact: true }) as any;
 		const use = data.nvidia_smi_log.gpu.utilization;
 		const parse = (number: string) => Number.parseFloat(number.slice(0, -1));
@@ -51,21 +51,21 @@ export class SystemService {
 
 	public async getDownloadFolder() {
 		let folder;
-		let platform = os.platform();
+		const platform = os.platform();
 
 		if (platform === "win32") {
 			const { stdout } = await exec('REG QUERY "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders"');
 			const nodes = stdout
 				.split("\r\n")
-				.map(x =>
+				.map((x) =>
 					x
 						.trim()
 						.split(" ")
-						.filter(line => line.length)
+						.filter((line) => line.length)
 				)
-				.filter(line => line.length);
+				.filter((line) => line.length);
 
-			const folder_array = nodes.find(n => n[0] === "{7D83EE9B-2244-4E70-B1F5-5393042AF1E4}");
+			const folder_array = nodes.find((n) => n[0] === "{7D83EE9B-2244-4E70-B1F5-5393042AF1E4}");
 			if (folder_array) {
 				folder = folder_array[2];
 			}
@@ -82,7 +82,7 @@ export class SystemService {
 	}
 
 	public async open(thing: string) {
-		let platform = os.platform();
+		const platform = os.platform();
 		try {
 			switch (platform) {
 				case "linux":
@@ -93,11 +93,13 @@ export class SystemService {
 					await exec("explorer.exe " + thing);
 					break;
 			}
-		} catch (e) {}
+		} catch (e) {
+			//
+		}
 	}
 
 	public async isAppStarted(name: string) {
 		const apps = await processes();
-		return apps.list.some(app => app.name.includes(name));
+		return apps.list.some((app) => app.name.includes(name));
 	}
 }

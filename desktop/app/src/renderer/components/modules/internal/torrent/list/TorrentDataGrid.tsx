@@ -1,15 +1,14 @@
 import React, { useMemo } from "react";
 import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid";
-import { StoreState, useAppSelector } from "../../../../../store";
-import { useAppDimension } from "../../../../../hooks/useAppDimension";
+import { StoreState, useAppSelector } from "@store";
+import { useAppDimension } from "@hooks/useAppDimension";
 import { Torrent, TorrentState } from "@ctrl/qbittorrent";
 import { createSelector } from "reselect";
 import { Typography } from "@mui/material";
 import * as dayjs from "dayjs";
 
-
 const keys = ["id", "name", "dlspeed", "progress", "eta", "size", "state", "priority"] as const;
-type Keys = typeof keys[number];
+type Keys = (typeof keys)[number];
 
 function getTorrentStateStr(state: TorrentState) {
 	switch (state) {
@@ -64,7 +63,7 @@ const columns: Record<Keys, GridColDef & { field: Keys }> = {
 		field: "name",
 		headerName: "Name",
 		flex: 1,
-		renderCell: params => {
+		renderCell: (params) => {
 			const val = params.value as string;
 			return <Typography title={val}>{val}</Typography>;
 		},
@@ -74,7 +73,7 @@ const columns: Record<Keys, GridColDef & { field: Keys }> = {
 		headerName: "Done",
 		width: 130,
 		type: "string",
-		renderCell: params => {
+		renderCell: (params) => {
 			const val = Number(params.value) * 100;
 			return `${val.toFixed(2)}%`;
 		},
@@ -83,9 +82,9 @@ const columns: Record<Keys, GridColDef & { field: Keys }> = {
 		field: "state",
 		headerName: "State",
 		width: 130,
-		renderCell: params => {
+		renderCell: (params) => {
 			const val = params.value as TorrentState;
-			let [str, color] = getTorrentStateStr(val);
+			const [str, color] = getTorrentStateStr(val);
 			return <Typography style={{ color }}>{str}</Typography>;
 		},
 	},
@@ -94,9 +93,9 @@ const columns: Record<Keys, GridColDef & { field: Keys }> = {
 		headerName: "Download speed",
 		width: 185,
 		type: "string",
-		renderCell: params => {
+		renderCell: (params) => {
 			const row = params.row as Torrent;
-			let val = Number(params.value) / 1024 ** 2;
+			const val = Number(params.value) / 1024 ** 2;
 			return row.state === TorrentState.Downloading ? `${val.toFixed(2)} Mo/s` : "N/A";
 		},
 	},
@@ -104,8 +103,8 @@ const columns: Record<Keys, GridColDef & { field: Keys }> = {
 		field: "eta",
 		headerName: "ETA",
 		width: 120,
-		renderCell: params => {
-			let value = params.value === 8640000 ? "N/A" : dayjs.duration(params.value as number, "seconds").humanize();
+		renderCell: (params) => {
+			const value = params.value === 8640000 ? "N/A" : dayjs.duration(params.value as number, "seconds").humanize();
 
 			console.log(value);
 
@@ -117,14 +116,14 @@ const columns: Record<Keys, GridColDef & { field: Keys }> = {
 		headerName: "Size",
 		width: 150,
 		type: "number",
-		renderCell: params => {
-			let val = Number(params.value) / 1024 ** 3;
+		renderCell: (params) => {
+			const val = Number(params.value) / 1024 ** 3;
 			return `${val.toFixed(2)} GB`;
 		},
 	},
 };
 
-Object.values(columns).forEach(col => {
+Object.values(columns).forEach((col) => {
 	col["align"] ??= "right";
 	col["headerAlign"] ??= "right";
 	col["sortable"] = false;
@@ -136,22 +135,18 @@ const allColumns = [columns.id, columns.priority, columns.name, columns.progress
 
 const smallColumns = [columns.id, columns.priority, columns.name, columns.state, columns.progress];
 
-
 export type PopoverInfo = {
 	mouseX?: number;
 	mouseY?: number;
 	torrent?: Record<Keys, any>;
 };
 
-
-const torrentListSelector = createSelector([(s: StoreState) => s.torrent.list], list => ({ data: list }));
+const torrentListSelector = createSelector([(s: StoreState) => s.torrent.list], (list) => ({ data: list }));
 type TorrentDataGridProps = {
-	setPopoverPosition: (state: PopoverInfo) => void
-}
+	setPopoverPosition: (state: PopoverInfo) => void;
+};
 
 export function TorrentDataGrid({ setPopoverPosition }: TorrentDataGridProps) {
-
-
 	const { data } = useAppSelector(torrentListSelector);
 
 	const { width } = useAppDimension();
@@ -169,22 +164,26 @@ export function TorrentDataGrid({ setPopoverPosition }: TorrentDataGridProps) {
 		}));
 	}, [data]);
 
-	const onCellClick = React.useCallback((torrent: GridCellParams, event: React.MouseEvent) => {
-		event.preventDefault();
-		setPopoverPosition({
-			mouseX: event.clientX - 2,
-			mouseY: event.clientY - 4,
-			torrent: torrent.row as any,
-		});
-	}, []);
+	const onCellClick = React.useCallback(
+		(torrent: GridCellParams, event: React.MouseEvent) => {
+			event.preventDefault();
+			setPopoverPosition({
+				mouseX: event.clientX - 2,
+				mouseY: event.clientY - 4,
+				torrent: torrent.row as any,
+			});
+		},
+		[setPopoverPosition],
+	);
 
-
-	return <DataGrid
-		sortModel={[{ sort: "asc", field: "priority" }]}
-		isRowSelectable={() => false}
-		sortingMode={"client"}
-		onCellClick={onCellClick}
-		rows={rows}
-		columns={width > 1000 ? allColumns : smallColumns}
-	/>;
+	return (
+		<DataGrid
+			sortModel={[{ sort: "asc", field: "priority" }]}
+			isRowSelectable={() => false}
+			sortingMode={"client"}
+			onCellClick={onCellClick}
+			rows={rows}
+			columns={width > 1000 ? allColumns : smallColumns}
+		/>
+	);
 }

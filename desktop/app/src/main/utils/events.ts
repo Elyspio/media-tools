@@ -8,6 +8,6 @@ export class EventManager<Keys extends string[], CallbackArgs extends any[]> {
 	}
 
 	emit(event: Keys[number], data: CallbackArgs[number]) {
-		this.listeners[event.toString()]?.forEach(l => l(data));
+		this.listeners[event.toString()]?.forEach((l) => l(data));
 	}
 }

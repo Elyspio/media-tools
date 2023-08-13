@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./ResourceUtilization.scss";
-import { SystemService } from "../../../../main/services/system/system.service";
+import { SystemService } from "@services/system/system.service";
 import { Box } from "@mui/material";
 import Paper from "@mui/material/Paper";
 
@@ -10,7 +10,7 @@ interface State {
 	memLoad?: number;
 }
 
-class ResourceUtilization extends Component<{}, State> {
+class ResourceUtilization extends Component<object, State> {
 	override state: State = {};
 
 	private timeoutId?: NodeJS.Timeout;

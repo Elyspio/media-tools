@@ -3,14 +3,14 @@ import { DialogContent, DialogTitle, InputLabel, MenuItem, Select, SelectChangeE
 import FormControl from "@mui/material/FormControl";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
-import { setConfig } from "../../../store/module/configuration/configuration.action";
-import { useAppDispatch, useAppSelector } from "../../../store";
-import { AppBoardShow } from "../../../../config/configuration";
+import { setConfig } from "@modules/configuration/configuration.action";
+import { useAppDispatch, useAppSelector } from "@store";
+import { AppBoardShow } from "@/config/configuration";
 
 type Props = { close: () => void };
 
 export function AppBoardContextMenu({ close }: Props) {
-	const config = useAppSelector(state => state.config.current);
+	const config = useAppSelector((state) => state.config.current);
 
 	const dispatch = useAppDispatch();
 	const setShowed = React.useCallback(
@@ -22,10 +22,10 @@ export function AppBoardContextMenu({ close }: Props) {
 						...config.appboard,
 						show: e.target.value as AppBoardShow[],
 					},
-				})
+				}),
 			);
 		},
-		[dispatch]
+		[config, dispatch],
 	);
 
 	return (

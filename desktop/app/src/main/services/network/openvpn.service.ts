@@ -1,4 +1,4 @@
-import { vpnConfig } from "../../../config/networks/vpn";
+import { vpnConfig } from "@/config/networks/vpn";
 import { spawn } from "child_process";
 import { EventManager } from "../../utils/events";
 import { injectable } from "inversify";
@@ -37,7 +37,7 @@ export class OpenvpnService extends EventManager<["data", "status"], [StdioListe
 
 		if (!OpenvpnService.spawned) {
 			OpenvpnService.spawned = spawn("openvpn --config " + vpnConfig.configFile, { stdio: "pipe" });
-			OpenvpnService.spawned.stdout?.on("data", args => {
+			OpenvpnService.spawned.stdout?.on("data", (args) => {
 				this.stdout.push(args.toString());
 				this.emit("data", this.stdout.join());
 				this.emit("status", "disconnected");

@@ -4,7 +4,7 @@ import {
 	createAction as _createAction,
 	createAsyncThunk as _createAsyncThunk,
 } from "@reduxjs/toolkit";
-import { ExtraArgument, StoreState } from "../index";
+import { ExtraArgument, StoreState } from "@store";
 import {
 	AsyncThunkFulfilledActionCreator,
 	AsyncThunkPendingActionCreator,
@@ -13,16 +13,12 @@ import {
 
 type Constructor<T> = new (...args: any[]) => T;
 
-
 export function getService<T>(service: Constructor<T>, extra: ExtraArgument): T {
 	return extra.container.get(service);
 }
 
-
 type InstanceTypes<T> = {
-	[K in keyof T]: T[K] extends new (...args: any[]) => infer I
-		? I
-		: never
+	[K in keyof T]: T[K] extends new (...args: any[]) => infer I ? I : never;
 };
 
 export function getServices<T extends Record<any, any>>(services: T, extra: ExtraArgument): InstanceTypes<T> {
@@ -31,7 +27,6 @@ export function getServices<T extends Record<any, any>>(services: T, extra: Extr
 		return acc;
 	}, {} as InstanceTypes<T>);
 }
-
 
 type ActionCreator =
 	AsyncThunkPendingActionCreator<any, any>

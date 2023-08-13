@@ -2,7 +2,6 @@ import "../../../components/modules/external/home-assistant/HomeAssistant";
 import "../../../components/modules/internal/encoder/Encoder";
 import "../../../components/modules/internal/encoder/recap/Recap";
 import "../../../components/modules/internal/purge/Purge";
-import "../../../components/modules/internal/projects/Projects";
 import "../../../components/modules/internal/vpn/Vpn";
 import "../../../components/modules/internal/renamer/Renamer";
 import "../../../components/modules/internal/updater/Updater";

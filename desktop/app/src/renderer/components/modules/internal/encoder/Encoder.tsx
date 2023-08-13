@@ -2,12 +2,12 @@ import React, { useMemo } from "react";
 import Button from "@mui/material/Button";
 import { Alert, Grid, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import { File, Media, ProcessData } from "./type";
-import { MediaService } from "../../../../../main/services/media/media.service";
+import { MediaService } from "@services/media/media.service";
 import * as path from "path";
 import List from "@mui/material/List";
 import Process from "./process/Process";
 import "./Encoder.scss";
-import { register } from "../../../../decorators/Module";
+import { register } from "@/renderer/decorators/Module";
 import { SelectFolder } from "../../../common/os";
 import AlertTitle from "@mui/material/AlertTitle";
 import Link from "@mui/material/Link";
@@ -15,10 +15,10 @@ import { ContextMenuWrapper } from "../../../common/hoc/withContextMenu";
 import { useDispatch } from "react-redux";
 import { bindActionCreators } from "redux";
 import OnFinishAction from "./OnFinishAction";
-import { convert } from "../../../../store/module/encoder/encoder.action";
-import { useAppSelector } from "../../../../store";
-import { encoders } from "../../../../../config/media/encoder";
-import { getAppParams } from "../../../../../main/utils/args";
+import { convert } from "@modules/encoder/encoder.action";
+import { useAppSelector } from "@store";
+import { encoders } from "@/config/media/encoder";
+import { getAppParams } from "@/main/utils/args";
 import {
 	setCurrentProcess,
 	setFFmpegInstalled,
@@ -28,9 +28,9 @@ import {
 	setProgress,
 	stopCurrentProcess,
 } from "../../../../store/module/media/media.action";
-import { FilesService } from "../../../../../main/services/files/files.service";
+import { FilesService } from "@services/files/files.service";
 import { useInjection } from "inversify-react";
-import { EncoderState } from "../../../../store/module/encoder/encoder.reducer";
+import { EncoderState } from "@modules/encoder/encoder.reducer";
 
 function Encoder() {
 	const services = {
@@ -55,16 +55,15 @@ function Encoder() {
 					stopCurrentProcess,
 					convert,
 				},
-				dispatch
+				dispatch,
 			),
-		[dispatch]
+		[dispatch],
 	);
 
 	const {
-		action,
 		encoder,
 		media: { medias, process: processes },
-	} = useAppSelector(state => ({
+	} = useAppSelector((state) => ({
 		action: state.encoder.onFinishAction,
 		media: state.media,
 		encoder: state.encoder,
@@ -74,17 +73,17 @@ function Encoder() {
 
 	const setProcesses = React.useCallback(
 		(media?: Media[]) => {
-			const enc = encoders.find(enc => enc.value.ffmpeg === encoder.format);
+			const enc = encoders.find((enc) => enc.value.ffmpeg === encoder.format);
 			const process: ProcessData[] = (media ?? medias)
-				.filter(media => media.property.streams.find(s => s.codec_type === "video")?.codec_name !== enc?.value.ffprobe)
-				.map(media => ({
+				.filter((media) => media.property.streams.find((s) => s.codec_type === "video")?.codec_name !== enc?.value.ffprobe)
+				.map((media) => ({
 					percentage: 0,
 					media,
 				}));
 
 			actions.setProcessStore(process);
 		},
-		[actions, encoder, medias]
+		[actions, encoder, medias],
 	);
 
 	// region onSelect
@@ -94,18 +93,18 @@ function Encoder() {
 			dispatch(setFormat(e.target.value as EncoderState["format"]));
 			setProcesses();
 		},
-		[dispatch]
+		[dispatch, setProcesses],
 	);
 
 	const onFileSelect = React.useCallback(
 		async (result: string[]) => {
-			const files: File[] = result.map(f => ({ name: f.slice(f.lastIndexOf(path.sep)), path: f }));
+			const files: File[] = result.map((f) => ({ name: f.slice(f.lastIndexOf(path.sep)), path: f }));
 
 			const media: Media[] = await Promise.all(
-				files.map(async file => ({
+				files.map(async (file) => ({
 					file: file,
 					property: await new MediaService().getInfo(file),
-				}))
+				})),
 			);
 
 			actions.setMedias(media);
@@ -114,7 +113,7 @@ function Encoder() {
 				setProcesses(media);
 			}
 		},
-		[actions, encoder, setProcesses]
+		[actions, encoder, setProcesses],
 	);
 
 	// endregion onSelect
@@ -136,16 +135,17 @@ function Encoder() {
 				await onFileSelect(await services.files.list(appParams.folder));
 			}
 		})();
-	}, [services.media, services.files]);
+	}, [services.media, services.files, onFileSelect]);
 
-	let softInstalled = encoder.isSoftInstalled;
+	const softInstalled = encoder.isSoftInstalled;
 
 	const { optionsUi, actionsUi } = React.useMemo(() => {
 		const optionsUi = (
 			<div className={"options"}>
 				<InputLabel id="demo-customized-select-label">Encoder</InputLabel>
-				<Select labelId="demo-customized-select-label" id="demo-customized-select" value={encoder.format as any} onChange={onFormatChange}>
-					{encoders.map(encoder => (
+				<Select labelId="demo-customized-select-label" id="demo-customized-select" value={encoder.format as any}
+				        onChange={onFormatChange}>
+					{encoders.map((encoder) => (
 						<MenuItem value={encoder.value.ffmpeg} key={encoder.value.ffmpeg}>
 							{encoder.type} - {encoder.format}
 						</MenuItem>
@@ -168,14 +168,14 @@ function Encoder() {
 			actionsUi: medias.length ? actionsUi : null,
 			optionsUi: medias.length ? optionsUi : null,
 		};
-	}, [encoder, medias.length]);
+	}, [doAction, encoder.currentProcessPid, encoder.format, medias.length, onFormatChange]);
 
 	const processUi = React.useMemo(() => {
 		if (processes) {
 			return (
 				<div className={"processes"}>
 					<List className={"content"}>
-						{processes.map(p => (
+						{processes.map((p) => (
 							<Process key={p.media.file.name} data={p} />
 						))}
 					</List>
@@ -185,14 +185,14 @@ function Encoder() {
 		return null;
 	}, [processes]);
 
-	let menuItems = React.useMemo(
+	const menuItems = React.useMemo(
 		() => [
 			{
 				label: "Action",
 				show: ({ close }: any) => <OnFinishAction close={close} />,
 			},
 		],
-		[]
+		[],
 	);
 	return (
 		<ContextMenuWrapper items={menuItems}>

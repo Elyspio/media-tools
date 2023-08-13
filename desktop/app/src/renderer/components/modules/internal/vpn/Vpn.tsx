@@ -1,26 +1,22 @@
 import React, { Component } from "react";
 import "./Vpn.scss";
 import { Button, Container, Divider, MenuItem, Typography } from "@mui/material";
-import { Register } from "../../../../decorators/Module";
+import { Register } from "@/renderer/decorators/Module";
 import { connect, ConnectedProps } from "react-redux";
-import { Dispatch } from "redux";
-import { StoreState } from "../../../../store";
+import { StoreState } from "@store";
 import Box from "@mui/material/Box";
-import { countries, Country, NordvpnService } from "../../../../../main/services/network/nordvpn.service";
+import { countries, Country, NordvpnService } from "@services/network/nordvpn.service";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
-import { Logger } from "../../../../../main/utils/logger";
-import { resolve } from "inversify-react";
 import { toast } from "react-toastify";
+import { inject } from "inversify";
 
 const mapStateToProps = (state: StoreState) => ({
 	content: state.vpn.stdio,
 	connected: state.vpn.connected,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({});
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
+const connector = connect(mapStateToProps);
 type ReduxTypes = ConnectedProps<typeof connector>;
 
 type State = {
@@ -37,10 +33,10 @@ type State = {
 		description: "Start or stop VPN",
 		path: "/vpn",
 	},
-	connector
+	connector,
 )
 export class Vpn extends Component<ReduxTypes, State> {
-	@resolve(NordvpnService)
+	@inject(NordvpnService)
 	nordvpnService!: NordvpnService;
 
 	override state: State = {
@@ -50,7 +46,7 @@ export class Vpn extends Component<ReduxTypes, State> {
 			},
 		},
 	};
-	private logger = Logger(Vpn);
+	private logger = console;
 	private openvpn = {
 		connect: () => {
 			// 	Services.vpn.openvpn.connect().catch((e: Error) => {
@@ -85,10 +81,12 @@ export class Vpn extends Component<ReduxTypes, State> {
 					<Typography align={"center"}>OpenVpn</Typography>
 					<Divider className={"divider"} />
 					<div className="btns">
-						<Button disabled={this.props.connected.openvpn} color={"primary"} onClick={() => this.openvpn.connect()}>
+						<Button disabled={this.props.connected.openvpn} color={"primary"}
+						        onClick={() => this.openvpn.connect()}>
 							Connect
 						</Button>
-						<Button disabled={!this.props.connected.openvpn} color={"error"} onClick={() => this.openvpn.disconnect()}>
+						<Button disabled={!this.props.connected.openvpn} color={"error"}
+						        onClick={() => this.openvpn.disconnect()}>
 							Disconnect
 						</Button>
 					</div>
@@ -100,10 +98,12 @@ export class Vpn extends Component<ReduxTypes, State> {
 					<Typography align={"center"}>NordVpn</Typography>
 					<Divider className={"divider"} />
 					<div className="btns">
-						<Button disabled={this.props.connected.nordvpn} color={"primary"} onClick={() => this.nordvpn.connect()}>
+						<Button disabled={this.props.connected.nordvpn} color={"primary"}
+						        onClick={() => this.nordvpn.connect()}>
 							Connect
 						</Button>
-						<Button disabled={!this.props.connected.nordvpn} color={"error"} onClick={() => this.nordvpn.disconnect()}>
+						<Button disabled={!this.props.connected.nordvpn} color={"error"}
+						        onClick={() => this.nordvpn.disconnect()}>
 							Disconnect
 						</Button>
 					</div>
@@ -117,7 +117,7 @@ export class Vpn extends Component<ReduxTypes, State> {
 							value={this.state.config.nordvpn.country}
 							onChange={this.onChange}
 						>
-							{countries.map(name => (
+							{countries.map((name) => (
 								<MenuItem key={name} value={name} className={"exclude"}>
 									<Typography>{name}</Typography>
 								</MenuItem>
@@ -132,7 +132,7 @@ export class Vpn extends Component<ReduxTypes, State> {
 	}
 
 	onChange = (e: any) => {
-		this.setState(prev => ({
+		this.setState((prev) => ({
 			...prev,
 			config: {
 				...prev.config,

@@ -1,8 +1,8 @@
 import { Dialog, DialogTitle } from "@mui/material";
 import React, { useRef } from "react";
-import { useAppDispatch, useAppSelector } from "../../../../store";
-import { useAsyncEffect } from "../../../../hooks/useAsyncEffect";
-import { sendFrame } from "../../../../store/module/screen-share/screen-share.async.actions";
+import { useAppDispatch, useAppSelector } from "@store";
+import { useAsyncEffect } from "@hooks/useAsyncEffect";
+import { sendFrame } from "@modules/screen-share/screen-share.async.actions";
 
 type ScreenShareDialogPreviewProps = {
 	open: boolean;
@@ -12,9 +12,8 @@ type ScreenShareDialogPreviewProps = {
 const fps = 60;
 
 export function ScreenShareDialogPreview({ toggle, open }: ScreenShareDialogPreviewProps) {
-	const { streamId } = useAppSelector(s => s.screenShare);
+	const { streamId } = useAppSelector((s) => s.screenShare);
 
-	const refVideo = useRef<HTMLVideoElement>(null);
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
 	const [stream, setStream] = React.useState<MediaStream>();
@@ -22,7 +21,6 @@ export function ScreenShareDialogPreview({ toggle, open }: ScreenShareDialogPrev
 	const dispatch = useAppDispatch();
 
 	const continuePublish = useRef(true);
-
 
 	// Create the stream from its id
 	useAsyncEffect(async () => {
@@ -41,7 +39,6 @@ export function ScreenShareDialogPreview({ toggle, open }: ScreenShareDialogPrev
 							chromeMediaSource: "desktop",
 							chromeMediaSourceId: streamId,
 						},
-
 					},
 				} as any),
 			);
@@ -52,10 +49,8 @@ export function ScreenShareDialogPreview({ toggle, open }: ScreenShareDialogPrev
 
 	// Watch the stream once it's been received
 
-
 	useAsyncEffect(async () => {
 		if (!stream || !canvasRef.current) return;
-
 
 		const videoElement = document.createElement("video");
 
@@ -75,15 +70,12 @@ export function ScreenShareDialogPreview({ toggle, open }: ScreenShareDialogPrev
 			if (continuePublish.current) setTimeout(publishFrame, 1000 / fps);
 		};
 
-
 		publishFrame();
 
 		return () => {
 			continuePublish.current = false;
 		};
-
 	}, [stream, canvasRef.current]);
-
 
 	return (
 		<Dialog open={open} onClose={toggle}>
@@ -91,4 +83,4 @@ export function ScreenShareDialogPreview({ toggle, open }: ScreenShareDialogPrev
 			<canvas style={{ opacity: 0 }} height={1080} width={1920} ref={canvasRef} />
 		</Dialog>
 	);
-} 
+}

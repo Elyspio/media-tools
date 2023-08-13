@@ -1,19 +1,19 @@
 import React from "react";
-import { register } from "../../../../decorators/Module";
+import { register } from "@/renderer/decorators/Module";
 import { desktopCapturer } from "@electron/remote";
 import { DesktopCapturerSource } from "electron";
 import { Button, Stack } from "@mui/material";
-import { useModal } from "../../../../hooks/useModal";
-import { useAppDispatch, useAppSelector } from "../../../../store";
-import { setStreamId } from "../../../../store/module/screen-share/screen-share.action";
+import { useModal } from "@hooks/useModal";
+import { useAppDispatch, useAppSelector } from "@store";
+import { setStreamId } from "@modules/screen-share/screen-share.action";
 import { ScreenElements } from "./ScreenElements";
 import { ScreenShareDialogPreview } from "./ScreenShareDialogPreview";
-import { startScreenShare, stopScreenShare } from "../../../../store/module/screen-share/screen-share.async.actions";
+import { startScreenShare, stopScreenShare } from "@modules/screen-share/screen-share.async.actions";
 
 function ScreenShare() {
 	const dispatch = useAppDispatch();
 
-	const { streamId } = useAppSelector(s => s.screenShare);
+	const { streamId } = useAppSelector((s) => s.screenShare);
 
 	const [screens, setScreens] = React.useState<DesktopCapturerSource[]>([]);
 	const [windows, setWindows] = React.useState<DesktopCapturerSource[]>([]);
@@ -22,9 +22,9 @@ function ScreenShare() {
 
 	// Get all available apps and screens
 	const getAvailableStreamInfos = React.useCallback(() => {
-		return desktopCapturer.getSources({ types: ["window", "screen"] }).then(async sources => {
-			setScreens(sources.filter(src => src.name.startsWith("Screen")));
-			setWindows(sources.filter(src => !src.name.startsWith("Screen")));
+		return desktopCapturer.getSources({ types: ["window", "screen"] }).then(async (sources) => {
+			setScreens(sources.filter((src) => src.name.startsWith("Screen")));
+			setWindows(sources.filter((src) => !src.name.startsWith("Screen")));
 		});
 	}, []);
 
@@ -38,7 +38,7 @@ function ScreenShare() {
 		dispatch(startScreenShare());
 
 		return stopRecording;
-	}, [dispatch, getAvailableStreamInfos]);
+	}, [dispatch, getAvailableStreamInfos, stopRecording]);
 
 	return (
 		<Stack spacing={1}>

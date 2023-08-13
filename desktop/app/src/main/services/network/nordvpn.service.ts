@@ -5,7 +5,7 @@ import { container } from "../../di/di.container";
 import { ProcessService } from "../common/process.service";
 
 export const countries = ["Switzerland", "France", "Germany"] as const;
-export type Country = typeof countries[number];
+export type Country = (typeof countries)[number];
 
 @injectable()
 export class NordvpnService extends VpnService {
@@ -34,11 +34,10 @@ export class NordvpnService extends VpnService {
 	}
 
 	public async waitForConnect(region?: Country) {
-		const { store } = await import("../../../renderer/store");
-		return new Promise<void>(async resolve => {
-			await this.connect(region);
+		await this.connect(region);
+		return new Promise<void>((resolve) => {
 			const timer = setInterval(() => {
-				const { nordvpn } = store.getState().vpn.connected;
+				const { nordvpn } = window.store.getState().vpn.connected;
 				if (nordvpn) {
 					clearInterval(timer);
 					resolve();
@@ -54,6 +53,8 @@ export class NordvpnService extends VpnService {
 	private async runIgnoringError(command: string, ...params: string[]) {
 		try {
 			spawn(command, params, { detached: true, stdio: "ignore" });
-		} catch (e) {}
+		} catch (e) {
+			// ignore
+		}
 	}
 }

@@ -1,10 +1,9 @@
 import React, { useCallback } from "react";
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
-import { useAppDispatch, useAppSelector } from "../../../../store";
-import { checkQBittorrentProcess, startQBittorrent } from "../../../../store/module/torrent/torrent.async.actions";
-import { useInterval } from "../../../../hooks/useInterval";
-
+import { useAppDispatch, useAppSelector } from "@store";
+import { checkQBittorrentProcess, startQBittorrent } from "@modules/torrent/torrent.async.actions";
+import { useInterval } from "@hooks/useInterval";
 
 const Transition = React.forwardRef(function Transition(
 	props: TransitionProps & {
@@ -16,17 +15,15 @@ const Transition = React.forwardRef(function Transition(
 });
 
 export function AppNotStarted() {
-
 	const dispatch = useAppDispatch();
 
-	const { launched } = useAppSelector(s => ({
+	const { launched } = useAppSelector((s) => ({
 		launched: s.torrent.isQbittorrentStarted,
 	}));
 
 	const launchApp = useCallback(() => {
 		dispatch(startQBittorrent());
-	}, []);
-
+	}, [dispatch]);
 
 	useInterval(() => dispatch(checkQBittorrentProcess()), 1000, [dispatch]);
 
@@ -41,9 +38,7 @@ export function AppNotStarted() {
 		>
 			<DialogTitle id="alert-dialog-slide-title">Start QBittorrent ?</DialogTitle>
 			<DialogContent>
-				<DialogContentText id="alert-dialog-slide-description">
-					QBittorrent is not started
-				</DialogContentText>
+				<DialogContentText id="alert-dialog-slide-description">QBittorrent is not started</DialogContentText>
 			</DialogContent>
 			<DialogActions>
 				<Button onClick={launchApp} color="primary">
@@ -53,5 +48,3 @@ export function AppNotStarted() {
 		</Dialog>
 	);
 }
-
-

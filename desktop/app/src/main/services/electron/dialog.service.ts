@@ -1,8 +1,8 @@
 import { BrowserWindowConstructorOptions } from "electron";
-import * as fs from "fs-extra";
+import * as fs from "fs/promises";
 import * as path from "path";
 import * as url from "url";
-import { windowOption } from "../../../config/electron";
+import { windowOption } from "@/config/electron";
 import { injectable } from "inversify";
 import * as remote from "@electron/remote";
 import { enable } from "@electron/remote/main";
@@ -19,11 +19,11 @@ export class DialogService {
 
 		if (canceled) return null;
 
-		let folder = this.escape(filePaths[0]);
+		const folder = this.escape(filePaths[0]);
 
 		return {
 			folder: folder,
-			files: returnFiles ? (await fs.readdir(folder)).map(file => this.escape(path.join(folder, file))) : undefined,
+			files: returnFiles ? (await fs.readdir(folder)).map((file) => this.escape(path.join(folder, file))) : undefined,
 		};
 	}
 
@@ -33,14 +33,6 @@ export class DialogService {
 			...option,
 			show: false,
 		});
-
-		const { store } = await import("../../../renderer/store");
-
-		const params = {
-			store: store.getState(),
-			route: target,
-			frame,
-		};
 
 		enable(win.webContents);
 		// win.webContents.executeJavaScript(`window.params = "${JSON.stringify(params)}"`);
@@ -54,7 +46,7 @@ export class DialogService {
 					pathname: path.join(__dirname, "index.html"),
 					protocol: "file:",
 					slashes: true,
-				})
+				}),
 			);
 		}
 

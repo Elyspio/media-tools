@@ -6,11 +6,12 @@ import { reducer as screenShareReducer } from "./module/screen-share/screen-shar
 import { reducer as torrentReducer } from "./module/torrent/torrent.reducer";
 import { reducer as encoderReducer } from "./module/encoder/encoder.reducer";
 import { reducer as routerReducer } from "./module/router/router.reducer";
+import { reducer as renamerReducer } from "./module/renamer/renamer.reducer";
 import { reducer as vpnReducer } from "./module/vpn/vpn.reducer";
 import { reducer as configurationRouter } from "./module/configuration/configuration.reducer";
 import { mediaSlice } from "./module/media/media.reducer";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import { container } from "../../main/di/di.container";
+import { container } from "@/main/di/di.container";
 import { Container } from "inversify";
 
 export const store = configureStore({
@@ -23,9 +24,10 @@ export const store = configureStore({
 		vpn: vpnReducer,
 		media: mediaSlice.reducer,
 		torrent: torrentReducer,
+		renamer: renamerReducer,
 	},
 	devTools: true,
-	middleware: defaults =>
+	middleware: (defaults) =>
 		defaults({
 			serializableCheck: {
 				ignoredActions: ["media/setCurrentProcess"],
@@ -42,6 +44,8 @@ export const store = configureStore({
 export type StoreState = ReturnType<typeof store.getState>;
 
 export default store;
+
+window.store = store;
 
 export type AppDispatch = typeof store.dispatch;
 

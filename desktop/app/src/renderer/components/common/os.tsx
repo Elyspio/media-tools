@@ -2,8 +2,8 @@ import React, { HTMLAttributes } from "react";
 import Button, { ButtonProps } from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import "./os.scss";
-import { useLogger } from "../../hooks/useLogger";
-import { DialogService } from "../../../main/services/electron/dialog.service";
+import { useLogger } from "@hooks/useLogger";
+import { DialogService } from "@services/electron/dialog.service";
 import { useInjection } from "inversify-react";
 
 type Props = Omit<HTMLAttributes<any>, "onChange"> & {
@@ -37,7 +37,7 @@ export function SelectFolder(props: Props) {
 
 	async function openDialog(e: React.MouseEvent) {
 		if (props.mode === "folder") {
-			let choice = await services.dialog.selectFolder(false);
+			const choice = await services.dialog.selectFolder(false);
 			logger.info("files", files);
 
 			if (choice !== null) {
@@ -67,8 +67,10 @@ export function SelectFolder(props: Props) {
 
 	return (
 		<div className={"SelectFolder"} style={{ margin: "1rem 0", width: "100%" }}>
-			<Button className={"header"} color={props.color ?? "primary"} fullWidth={props.fullWidth} onClick={openDialog} variant={props.variant ?? "outlined"}>
-				{props.mode === "folder" ? <> {props.label ?? "Select folder"}</> : <label htmlFor={"select-file-id"}>Select files</label>}
+			<Button className={"header"} color={props.color ?? "primary"} fullWidth={props.fullWidth}
+			        onClick={openDialog} variant={props.variant ?? "outlined"}>
+				{props.mode === "folder" ? <> {props.label ?? "Select folder"}</> :
+					<label htmlFor={"select-file-id"}>Select files</label>}
 			</Button>
 
 			<input type="file" multiple id={"select-file-id"} ref={inputRef} hidden={true} onChange={onFileChange} />

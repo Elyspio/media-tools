@@ -1,24 +1,18 @@
 import React, { useCallback, useEffect } from "react";
 
-import { register } from "../../../../decorators/Module";
+import { register } from "@/renderer/decorators/Module";
 import { Button, Grid } from "@mui/material";
 import "./Torrent.scss";
 import TorrentList from "./list/TorrentList";
 import { AppNotStarted } from "./AppNotStarted";
 import { AddNewTorrent } from "./AddNewTorrent";
-import { useAppDispatch, useAppSelector } from "../../../../store";
-import {
-	openTorrentBrowser,
-	stopWatchNewTorrents,
-	watchNewTorrents,
-} from "../../../../store/module/torrent/torrent.async.actions";
-
+import { useAppDispatch, useAppSelector } from "@store";
+import { openTorrentBrowser, stopWatchNewTorrents, watchNewTorrents } from "@modules/torrent/torrent.async.actions";
 
 const Torrent = () => {
-
 	const dispatch = useAppDispatch();
 
-	const { addingTorrent } = useAppSelector(s => ({ addingTorrent: s.torrent.adding }));
+	const { addingTorrent } = useAppSelector((s) => ({ addingTorrent: s.torrent.adding }));
 
 	useEffect(() => {
 		dispatch(watchNewTorrents());
@@ -29,7 +23,7 @@ const Torrent = () => {
 
 	const gotoYggTorrent = useCallback(() => {
 		dispatch(openTorrentBrowser());
-	}, []);
+	}, [dispatch]);
 
 	return (
 		<Grid className={"Torrent"}>

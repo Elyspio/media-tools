@@ -9,7 +9,7 @@ export function useAppDimension() {
 	const [height, setHeight] = React.useState(() => remote.getCurrentWindow().getSize()[1]);
 
 	const win = React.useMemo(() => {
-		let currentWindow = remote.getCurrentWindow();
+		const currentWindow = remote.getCurrentWindow();
 		currentWindow.on("resize", () => {
 			const sizes = win.getSize();
 			setWidth(sizes[0]);

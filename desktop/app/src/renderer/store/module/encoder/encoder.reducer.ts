@@ -1,15 +1,15 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { store } from "../../index";
+import { store } from "@store";
 import { setOnFinishAction, setProcessStatus, updateProcessPercentage } from "./encoder.action";
-import { SystemService } from "../../../../main/services/system/system.service";
-import { container } from "../../../../main/di/di.container";
-import { Encoder } from "../../../components/modules/internal/encoder/type";
+import { SystemService } from "@services/system/system.service";
+import { container } from "@/main/di/di.container";
+import { Encoder } from "@components/internal/encoder/type";
 import { encodingProcess, setCurrentProcess, setFFmpegInstalled, setFormat } from "../media/media.action";
 
 export const onFinishActionList = <const>["Sleep", "Shutdown", "Hibernate", "Lock", "None"];
 
 export interface EncoderState {
-	onFinishAction?: typeof onFinishActionList[number];
+	onFinishAction?: (typeof onFinishActionList)[number];
 	processes?: {
 		finished: number;
 		total: number;
@@ -28,12 +28,14 @@ const defaultState: EncoderState = {
 const systemService = container.get(SystemService);
 
 export const getOnFinishAction = () => {
-	const actions: { [key in typeof onFinishActionList[number]]: () => any } = {
+	const actions: { [key in (typeof onFinishActionList)[number]]: () => any } = {
 		Hibernate: systemService.hibernate,
 		Lock: systemService.lock,
 		Shutdown: systemService.shutdown,
 		Sleep: systemService.sleep,
-		None: () => {},
+		None: () => {
+			//
+		},
 	};
 
 	// @ts-ignore

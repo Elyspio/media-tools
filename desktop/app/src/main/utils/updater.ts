@@ -1,16 +1,16 @@
 import * as remote from "@electron/remote";
 import * as config from "../../config/update";
-import { pathToInstaller, updateRefreshRate } from "../../config/update";
+import { pathToInstaller, updateRefreshRate } from "@/config/update";
 import { arch, platform } from "os";
-import { ensureDir, writeFile } from "fs-extra";
+import { access, mkdir, writeFile } from "fs/promises";
 import * as path from "path";
-import { store } from "../../renderer/store";
-import { setDownloadPercentage, setServerLatestVersion } from "../../renderer/store/module/updater/updater.action";
+import { store } from "@store";
 import { spawn } from "child_process";
-import { setPath } from "../../renderer/store/module/router/router.action";
 import { Logger } from "./logger";
 
-import { AppArch, AppsApi, AppVersion } from "../apis/rest/updater";
+import { AppArch, AppsApi, AppVersion } from "@apis/rest/updater";
+import { setPath } from "@modules/router/router.action";
+import { setDownloadPercentage, setServerLatestVersion } from "@modules/updater/updater.action";
 
 const { app, dialog } = remote;
 
@@ -18,7 +18,7 @@ const logger = Logger("Updater");
 
 const getPlatform = (): AppArch => {
 	const currentArch = arch();
-	let plat = platform();
+	const plat = platform();
 	const exception = new Error("Unsupported platform");
 	if (plat === "win32") {
 		if (currentArch === "x32") return "Win32";
@@ -47,10 +47,10 @@ export async function checkUpdate() {
 	try {
 		if (isUpdating) return;
 
-		const [major, minor, revision] = version.split(".").map(x => parseInt(x));
+		const [major, minor, revision] = version.split(".").map((x) => parseInt(x));
 		const { data: server } = await api.getLatestArchSpecificVersion(config.appName, plat);
 
-		store.dispatch(setServerLatestVersion(server));
+		window.store.dispatch(setServerLatestVersion(server));
 
 		if (server.major > major || server.minor > minor || server.revision > revision) {
 			isUpdating = true;
@@ -61,7 +61,7 @@ export async function checkUpdate() {
 			});
 
 			if (response === 0) {
-				store.dispatch(setPath("/updater"));
+				window.store.dispatch(setPath("/updater"));
 				await downloadUpdate(server);
 
 				const { response } = await dialog.showMessageBox({
@@ -93,13 +93,21 @@ export async function downloadUpdate(version: AppVersion) {
 
 	const bin = await api.getBinary(config.appName, version.raw, plat, {
 		responseType: "arraybuffer",
-		onDownloadProgress: progressEvent => {
-			store.dispatch(setDownloadPercentage((progressEvent.loaded * 100) / progressEvent.total!));
+		onDownloadProgress: (progressEvent) => {
+			window.store.dispatch(setDownloadPercentage((progressEvent.loaded * 100) / progressEvent.total!));
 		},
 	});
 
-	const data = new Buffer(bin.data as any);
-	await ensureDir(path.dirname(pathToInstaller));
+	const data = Buffer.from(bin.data as ArrayBuffer);
+
+	const installerDir = path.dirname(pathToInstaller);
+	if (
+		!(await access(installerDir)
+			.catch(() => false)
+			.then(() => true))
+	) {
+		await mkdir(installerDir, { recursive: true });
+	}
 	await writeFile(pathToInstaller, data);
 	return pathToInstaller;
 }

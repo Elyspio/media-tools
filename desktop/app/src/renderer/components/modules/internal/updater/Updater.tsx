@@ -1,14 +1,14 @@
 import React from "react";
 import "./Updater.scss";
-import { Register } from "../../../../decorators/Module";
+import { Register } from "@/renderer/decorators/Module";
 import { CircularProgressWithLabel } from "../../../common/progress";
 import { Dispatch } from "redux";
 import { connect, ConnectedProps } from "react-redux";
 import Button from "@mui/material/Button";
-import { checkUpdate, downloadUpdate, getVersion, installUpdate } from "../../../../../main/utils/updater";
+import { checkUpdate, downloadUpdate, getVersion, installUpdate } from "@/main/utils/updater";
 import { Grid, Typography } from "@mui/material";
-import { setServerUrl } from "../../../../store/module/updater/updater.action";
-import { StoreState } from "../../../../store";
+import { setServerUrl } from "@modules/updater/updater.action";
+import { StoreState } from "@store";
 
 const mapStateToProps = (state: StoreState) => ({
 	progress: state.updater.download,
@@ -28,7 +28,7 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 type ReduxTypes = ConnectedProps<typeof connector>;
 
 @Register({ name: "Updater", path: "/updater", description: "Check for update and apply it" }, connector)
-class Updater extends React.Component<ReduxTypes, State> {
+export default class Updater extends React.Component<ReduxTypes, State> {
 	override render() {
 		const { progress, serverVersion } = this.props;
 
@@ -40,7 +40,8 @@ class Updater extends React.Component<ReduxTypes, State> {
 
 		return (
 			<Grid className={"Updater"} container direction={"column"} justifyContent={"space-between"}>
-				<Grid container direction={"column"} className={"text"} justifyContent={"space-evenly"} alignItems={"center"}>
+				<Grid container direction={"column"} className={"text"} justifyContent={"space-evenly"}
+				      alignItems={"center"}>
 					<Grid item className={"info"}>
 						<Typography variant={"h6"} component={"p"} className={"version-title-app"}>
 							Server
@@ -62,7 +63,8 @@ class Updater extends React.Component<ReduxTypes, State> {
 							</Typography>
 						</div>
 					</Grid>
-					<Grid item className="buttons" container direction={"column"} spacing={2} justifyContent={"space-between"} alignItems={"center"}>
+					<Grid item className="buttons" container direction={"column"} spacing={2}
+					      justifyContent={"space-between"} alignItems={"center"}>
 						<Grid item>
 							<Button fullWidth color={"primary"} onClick={checkUpdate} variant={"outlined"}>
 								Check for update
@@ -70,14 +72,16 @@ class Updater extends React.Component<ReduxTypes, State> {
 						</Grid>
 						{serverVersion && (
 							<Grid item>
-								<Button fullWidth color={"secondary"} onClick={() => downloadUpdate(serverVersion)} variant={"outlined"}>
+								<Button fullWidth color={"secondary"} onClick={() => downloadUpdate(serverVersion)}
+								        variant={"outlined"}>
 									Force Download
 								</Button>
 							</Grid>
 						)}
 						{serverVersion && (
 							<Grid item>
-								<Button fullWidth color={"primary"} onClick={installUpdate} variant={"contained"} disabled={progress !== 100}>
+								<Button fullWidth color={"primary"} onClick={installUpdate} variant={"contained"}
+								        disabled={progress !== 100}>
 									Install
 								</Button>
 							</Grid>
@@ -87,7 +91,9 @@ class Updater extends React.Component<ReduxTypes, State> {
 
 				<Grid item className={"main"} container justifyContent={"center"} alignItems={"center"}>
 					<Grid item className="progress">
-						{progress && <CircularProgressWithLabel size={size} label={(progress || 0) < 100 ? "Downloading" : "Downloaded"} value={progress ?? 0} />}
+						{progress && <CircularProgressWithLabel size={size}
+																label={(progress || 0) < 100 ? "Downloading" : "Downloaded"}
+																value={progress ?? 0} />}
 					</Grid>
 				</Grid>
 			</Grid>

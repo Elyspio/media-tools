@@ -9,7 +9,7 @@ export function useWatcherEffect<E = any, T = any>(obj: (event: E, callback: any
 		obj(event, (x?: any) => {
 			setData(watcher(x));
 		});
-	}, [event, watcher]);
+	}, [event, obj, watcher]);
 
 	return { data: data ?? defaultValue };
 }

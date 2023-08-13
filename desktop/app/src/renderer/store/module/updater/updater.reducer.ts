@@ -1,7 +1,7 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { setDownloadPercentage, setServerLatestVersion, setServerUrl } from "./updater.action";
-import { updateServer } from "../../../../config/update";
-import { AppVersion } from "../../../../main/apis/rest/updater";
+import { updateServer } from "@/config/update";
+import { AppVersion } from "@apis/rest/updater";
 
 export interface UpdateState {
 	download?: number;
@@ -13,7 +13,7 @@ const defaultState: UpdateState = {
 	serverUrl: updateServer,
 };
 
-export const reducer = createReducer<UpdateState>(defaultState, builder => {
+export const reducer = createReducer<UpdateState>(defaultState, (builder) => {
 	builder.addCase(setDownloadPercentage, (state, action) => {
 		state.download = action.payload;
 	});

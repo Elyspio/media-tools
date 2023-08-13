@@ -16,7 +16,7 @@ export function useModal(defaultState: boolean) {
 		setOpenState(false);
 	}, []);
 
-	const toggle = React.useCallback(() => setOpenState(open => !open), []);
+	const toggle = React.useCallback(() => setOpenState((open) => !open), []);
 
 	return {
 		open: open,

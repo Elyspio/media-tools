@@ -45,7 +45,7 @@ export function getComponent(route: ModuleDescription["path"]): ReactComponent {
 	return components[route];
 }
 
-export const reducer = createReducer<RouterState>(defaultState, builder => {
+export const reducer = createReducer<RouterState>(defaultState, (builder) => {
 	builder.addCase(setPath, (state, action) => {
 		state.path = action.payload;
 	});

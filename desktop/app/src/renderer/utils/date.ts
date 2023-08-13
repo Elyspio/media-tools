@@ -1,7 +1,7 @@
 import { CreateDurationType } from "dayjs/plugin/duration";
 
 export function formatDuration(duration: ReturnType<CreateDurationType>, prefix = false) {
-	let parts = [];
+	const parts = [];
 
 	if (duration.years() >= 1) {
 		const years = Math.floor(duration.years());

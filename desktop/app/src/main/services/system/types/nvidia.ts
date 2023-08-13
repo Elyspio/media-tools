@@ -74,14 +74,11 @@ export interface GPU {
 	clock_policy: ClockPolicy;
 	supported_clocks: Text;
 	processes: Processes;
-	accounted_processes: AccountedProcesses;
 }
 
 export interface GPUAttributes {
 	id: string;
 }
-
-export interface AccountedProcesses {}
 
 export interface ApplicationsClocks {
 	graphics_clock: Text;

@@ -1,6 +1,6 @@
-import { useAppDispatch, useAppSelector } from "../../../../store";
+import { useAppDispatch, useAppSelector } from "@store";
 import React from "react";
-import { setStreamId } from "../../../../store/module/screen-share/screen-share.action";
+import { setStreamId } from "@modules/screen-share/screen-share.action";
 import { Button, Stack, Typography } from "@mui/material";
 import { DesktopCapturerSource } from "electron";
 
@@ -18,20 +18,20 @@ type ScreenElementsProps = {
 export function ScreenElements({ elements, label }: ScreenElementsProps) {
 	const dispatch = useAppDispatch();
 
-	const { streamId } = useAppSelector(s => s.screenShare);
+	const { streamId } = useAppSelector((s) => s.screenShare);
 
 	const handleChange = React.useCallback(
 		(id: string) => () => {
 			dispatch(setStreamId(id));
 		},
-		[dispatch]
+		[dispatch],
 	);
 
 	return (
 		<Stack alignItems={"center"}>
 			<Typography>{label}</Typography>
 			<Stack direction={"row"} flexWrap={"wrap"} p={2} maxHeight={"26vh"} overflow={"auto"} width={"95%"}>
-				{elements.map(src => (
+				{elements.map((src) => (
 					<Button
 						key={src.id}
 						color={streamId === src.id ? "primary" : "inherit"}
@@ -39,7 +39,8 @@ export function ScreenElements({ elements, label }: ScreenElementsProps) {
 						variant={"outlined"}
 						sx={{ textTransform: "none", m: 1 }}
 					>
-						<Stack direction={"column"} spacing={2} alignItems={"center"} justifyContent={"center"} pb={1} width={200}>
+						<Stack direction={"column"} spacing={2} alignItems={"center"} justifyContent={"center"} pb={1}
+						       width={200}>
 							<Typography noWrap maxWidth={180} fontSize={"smaller"}>
 								{src.name}
 							</Typography>

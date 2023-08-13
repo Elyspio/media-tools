@@ -15,7 +15,7 @@ import { makeStyles } from "@mui/styles";
 export interface Action {
 	text: React.ReactNode;
 	icon: React.ReactNode;
-	onClick?: Function;
+	onClick?: () => {};
 }
 
 type Props = {

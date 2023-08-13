@@ -1,9 +1,9 @@
 import { promisify } from "util";
 import { exec as _exec, spawn } from "child_process";
-import { File, Media, MediaData, Stream } from "../../../renderer/components/modules/internal/encoder/type";
+import { File, Media, MediaData, Stream } from "@components/internal/encoder/type";
 import { EventEmitter } from "events";
 import * as path from "path";
-import { setFFmpegInstalled, setProgress } from "../../../renderer/store/module/media/media.action";
+import { setFFmpegInstalled, setProgress } from "@modules/media/media.action";
 import { inject, injectable } from "inversify";
 import { ProcessService } from "../common/process.service";
 
@@ -24,8 +24,7 @@ export class MediaService {
 
 	public async checkIfFFmpegInstalled() {
 		const bool = await this.processService.isInstalled("ffmpeg");
-		const { store } = await import("../../../renderer/store");
-		store.dispatch(setFFmpegInstalled(bool));
+		window.store.dispatch(setFFmpegInstalled(bool));
 		return bool;
 	}
 
@@ -36,8 +35,6 @@ export class MediaService {
 			outputPath: string;
 		}
 	): Promise<[EventEmitter, ReturnType<typeof spawn>]> {
-		const { store } = await import("../../../renderer/store");
-
 		try {
 			const outputPath = options?.outputPath ?? path.join(__dirname, "output.mkv");
 			const process = spawn("ffmpeg.exe", ["-y", "-i", input.file.path, "-map", "0", "-c:v", format, "-progress", "-", "-nostats", outputPath], { stdio: "pipe" });
@@ -46,21 +43,21 @@ export class MediaService {
 				input.property = await this.getInfo(input.file);
 			}
 
-			const stream = input.property.streams.find(stream => stream.codec_type === "video") as Stream;
-			let parts = stream.avg_frame_rate.split("/");
+			const stream = input.property.streams.find((stream) => stream.codec_type === "video") as Stream;
+			const parts = stream.avg_frame_rate.split("/");
 			const framerate = Number.parseFloat(parts[0]) / Number.parseFloat(parts[1]);
 
 			const nbFrames = framerate * Number.parseFloat(input.property.format.duration);
 
 			process.on("error", console.error);
-			process.stderr.on("data", e => console.error("process.data", e.toString()));
-			process.stderr.on("error", e => console.error("process.stdeer", e.toString()));
-			process.stdout.on("error", e => console.error("process.stdout", e.toString()));
+			process.stderr.on("data", (e) => console.error("process.data", e.toString()));
+			process.stderr.on("error", (e) => console.error("process.stdeer", e.toString()));
+			process.stdout.on("error", (e) => console.error("process.stdout", e.toString()));
 			process.stdout.on("data", (chunk: string) => {
 				const obj = this.getFFMpegProgress(chunk);
-				let percentage = (obj.frame / nbFrames) * 100;
+				const percentage = (obj.frame / nbFrames) * 100;
 				s.emit("progress", percentage);
-				store.dispatch(setProgress({ media: input, percentage }));
+				window.store.dispatch(setProgress({ media: input, percentage }));
 			});
 
 			process.on("close", () => s.emit("finished", outputPath));
@@ -75,7 +72,7 @@ export class MediaService {
 		const data = chunk
 			.toString()
 			.split("\n")
-			.map(line => line.split("="));
+			.map((line) => line.split("="));
 		return {
 			frame: Number.parseInt(data[0][1]),
 			fps: Number.parseInt(data[1][1]),

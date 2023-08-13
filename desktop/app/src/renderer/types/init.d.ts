@@ -1,5 +1,6 @@
-import type { StoreState } from "../store";
-import { createWindowCustomOption } from "../../main/services/electron/dialog.service.new";
+import type { StoreState } from "@store";
+import { Store } from "redux";
+import { createWindowCustomOption } from "@services/electron/dialog.service";
 
 export type InitParams = {
 	store: StoreState;
@@ -10,5 +11,6 @@ export type InitParams = {
 declare global {
 	interface Window {
 		params: InitParams;
+		store: Store<StoreState>;
 	}
 }

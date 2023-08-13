@@ -1,18 +1,19 @@
 import { Configuration } from "../configuration/configuration.service";
 import { injectable } from "inversify";
-import { windowOption } from "../../../config/electron";
+import { windowOption } from "@/config/electron";
 
-const { BrowserWindow } = require("@electron/remote");
+import { BrowserWindow } from "@electron/remote";
+
 type Dimensions = (keyof Configuration["frame"]["resize"])[];
 
 @injectable()
 export class WindowService {
 	public async isUnderSized(dimensions: Dimensions): Promise<{ height: number; width: number }> {
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 			let incrementWidth = 0;
 			let incrementHeight = 0;
 
-			document.querySelectorAll("div").forEach(elem => {
+			document.querySelectorAll("div").forEach((elem) => {
 				if (dimensions.includes("width") && elem.scrollWidth > elem.clientWidth) {
 					incrementWidth = incrementWidth > elem.scrollWidth - elem.clientWidth ? incrementWidth : elem.scrollWidth - elem.clientWidth;
 				}

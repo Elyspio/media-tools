@@ -14,17 +14,17 @@ export class ProcessService {
 			stderr = "";
 
 		if (child.stdout)
-			child.stdout.on("data", data => {
+			child.stdout.on("data", (data) => {
 				stdout += data.toString();
 			});
 
 		if (child.stderr)
-			child.stderr.on("data", data => {
+			child.stderr.on("data", (data) => {
 				stderr += data.toString();
 			});
 
-		return new Promise<{ code: number | null; stdout: string; stderr: string }>(resolve => {
-			child.on("close", code => {
+		return new Promise<{ code: number | null; stdout: string; stderr: string }>((resolve) => {
+			child.on("close", (code) => {
 				console.log(`child process exited with code ${code}`, { binary, param, folder, stdout, stderr, code });
 				resolve({ code, stdout, stderr });
 			});
@@ -34,23 +34,18 @@ export class ProcessService {
 	async spawnAsync(command: string, options?: Partial<SpawnOptions> & { ignoreErrors?: boolean; color?: boolean }) {
 		const child = spawn(`cmd.exe`, ["/c", ...command.split(" ")], { stdio: "inherit", ...options });
 
-		let stdout = "",
-			stderr = "";
-
 		if (child.stdout)
-			child.stdout.on("data", data => {
+			child.stdout.on("data", (data) => {
 				console.log("spawnAsync", data.toString());
-				stdout += data.toString();
 			});
 
 		if (child.stderr)
-			child.stderr.on("data", data => {
+			child.stderr.on("data", (data) => {
 				console.error("spawnAsync", data.toString());
-				stderr += data.toString();
 			});
 
-		const exitCode: number | null = await new Promise(resolve => {
-			child.on("close", code => {
+		const exitCode: number | null = await new Promise((resolve) => {
+			child.on("close", (code) => {
 				console.error("spawnAsync close", code);
 				resolve(code);
 			});

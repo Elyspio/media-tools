@@ -1,7 +1,9 @@
-import * as fs from "fs-extra";
-import { AppBoardShow, configMainFile, defaultConfiguration, version } from "../../../config/configuration";
-import { setConfig } from "../../../renderer/store/module/configuration/configuration.action";
-import { injectable } from "inversify";
+import { AppBoardShow, configMainFile, defaultConfiguration, version } from "@/config/configuration";
+import { setConfig } from "@modules/configuration/configuration.action";
+import { inject, injectable } from "inversify";
+import fs from "fs/promises";
+import { readFileSync, writeFileSync } from "fs";
+import { FilesService } from "@services/files/files.service";
 
 export interface Configuration {
 	version: string;
@@ -24,7 +26,11 @@ export interface Configuration {
 
 @injectable()
 export class ConfigurationService {
-	private static mergeConfig(obj: Configuration) {
+
+	@inject(FilesService)
+	filesService!: FilesService;
+
+	private mergeConfig(obj: Configuration) {
 		const runningVersion = version;
 		if (runningVersion !== obj.version) {
 			console.log("Configuration file are outdated, merging with default config");
@@ -39,21 +45,34 @@ export class ConfigurationService {
 
 	public get(async = true): Promise<Configuration> | Configuration {
 		if (async) {
-			return new Promise(async resolve => {
-				if (!(await fs.pathExists(configMainFile))) {
+			return (async () => {
+				if (!(await this.filesService.checkPathExists(configMainFile))) {
 					await this.set(defaultConfiguration);
 				}
-				const str = await fs.readFile(configMainFile).then(x => x.toString());
-				let obj: Configuration = JSON.parse(str);
-				resolve(ConfigurationService.mergeConfig(obj));
-			});
+				let obj: Configuration = defaultConfiguration;
+				try {
+					const str = await fs.readFile(configMainFile).then((x) => x.toString());
+					obj = JSON.parse(str);
+				} catch {
+					// ignore
+				}
+				return this.mergeConfig(obj);
+			})();
 		} else {
-			if (!fs.pathExistsSync(configMainFile)) {
+			if (!this.filesService.checkPathExists(configMainFile)) {
 				this.set(defaultConfiguration, false);
 			}
-			const str = fs.readFileSync(configMainFile).toString();
-			const obj: Configuration = JSON.parse(str);
-			return ConfigurationService.mergeConfig(obj);
+
+
+			let obj: Configuration = defaultConfiguration;
+			try {
+				const str = readFileSync(configMainFile).toString();
+				obj = JSON.parse(str);
+			} catch {
+				// ignore
+			}
+
+			return this.mergeConfig(obj);
 		}
 	}
 
@@ -61,13 +80,12 @@ export class ConfigurationService {
 		if (async) {
 			return fs.writeFile(configMainFile, JSON.stringify(config));
 		} else {
-			return fs.writeFileSync(configMainFile, JSON.stringify(config));
+			return writeFileSync(configMainFile, JSON.stringify(config));
 		}
 	}
 
 	public async regenerate() {
-		const { store } = await import("../../../renderer/store");
 		await fs.writeFile(configMainFile, JSON.stringify(defaultConfiguration));
-		store.dispatch(setConfig(defaultConfiguration));
+		window.store.dispatch(setConfig(defaultConfiguration));
 	}
 }

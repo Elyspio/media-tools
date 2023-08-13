@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { connect, ConnectedProps } from "react-redux";
-import { Dispatch } from "redux";
-import { Register } from "../../../../decorators/Module";
+import { Register } from "@/renderer/decorators/Module";
 import Container from "@mui/material/Container";
 import { TreeItem, TreeView } from "@mui/lab";
 import { Divider, Grid } from "@mui/material";
@@ -10,17 +9,13 @@ import "./Config.scss";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { StoreState } from "../../../../store";
-import { ConfigurationService } from "../../../../../main/services/configuration/configuration.service";
-import { resolve } from "inversify-react";
+import { StoreState } from "@store";
+import { ConfigurationService } from "@services/configuration/configuration.service";
+import { inject } from "inversify";
 
 const mapStateToProps = (state: StoreState) => ({ config: state.config.current });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({});
-
-type Object = { [key in string]: any };
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
+const connector = connect(mapStateToProps);
 type ReduxTypes = ConnectedProps<typeof connector>;
 
 @Register(
@@ -29,12 +24,12 @@ type ReduxTypes = ConnectedProps<typeof connector>;
 		description: "Changes app config",
 		path: "/config",
 	},
-	connector
+	connector,
 )
 export class Config extends Component<ReduxTypes> {
 	node = 0;
 
-	@resolve(ConfigurationService)
+	@inject(ConfigurationService)
 	configurationService!: ConfigurationService;
 
 	override render() {
@@ -61,16 +56,17 @@ export class Config extends Component<ReduxTypes> {
 		);
 	}
 
-	private generateTree = (config: Object, key = "current") => {
+	private generateTree = (config: object, key = "current") => {
 		const keys = Object.keys(config);
-		const items = keys.map(k => {
+		const items = keys.map((k) => {
+			// @ts-ignore
 			const val = config[k];
 
 			if (typeof val === "object") {
 				return this.generateTree(val, k);
 			}
 
-			let id = (this.node++).toString();
+			const id = (this.node++).toString();
 			return (
 				<TreeItem
 					key={k + id}
@@ -84,7 +80,7 @@ export class Config extends Component<ReduxTypes> {
 			);
 		});
 
-		let id = (this.node++).toString();
+		const id = (this.node++).toString();
 		return (
 			<TreeItem key={key + id} nodeId={id} label={key}>
 				{items}

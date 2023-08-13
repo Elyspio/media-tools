@@ -1,11 +1,10 @@
 import React, { useCallback } from "react";
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
-import { useModal } from "../../../../hooks/useModal";
-import { setAddingTorrent } from "../../../../store/module/torrent/torrent.action";
-import { useAppDispatch } from "../../../../store";
-import { downloadTorrent } from "../../../../store/module/torrent/torrent.async.actions";
-
+import { useModal } from "@hooks/useModal";
+import { setAddingTorrent } from "@modules/torrent/torrent.action";
+import { useAppDispatch } from "@store";
+import { downloadTorrent } from "@modules/torrent/torrent.async.actions";
 
 const Transition = React.forwardRef(function Transition(
 	props: TransitionProps & {
@@ -17,19 +16,20 @@ const Transition = React.forwardRef(function Transition(
 });
 
 export function AddNewTorrent(props: { name: string }) {
-
 	const dispatch = useAppDispatch();
 
 	const { open, setClose } = useModal(true);
 
-
-	const launchApp = useCallback(async (add: boolean) => {
-		setClose();
-		dispatch(setAddingTorrent(undefined));
-		if (add) {
-			dispatch(downloadTorrent());
-		}
-	}, []);
+	const launchApp = useCallback(
+		async (add: boolean) => {
+			setClose();
+			dispatch(setAddingTorrent(undefined));
+			if (add) {
+				dispatch(downloadTorrent());
+			}
+		},
+		[dispatch, setClose],
+	);
 
 	return (
 		<Dialog
@@ -56,4 +56,3 @@ export function AddNewTorrent(props: { name: string }) {
 		</Dialog>
 	);
 }
-

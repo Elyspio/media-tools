@@ -1,8 +1,7 @@
-import { qbittorent } from "../../../config/media/torents.private";
+import { qbittorent } from "@/config/media/torents.private";
 import { QBittorrent } from "@ctrl/qbittorrent";
 import { readFile } from "fs/promises";
 import { injectable } from "inversify";
-
 
 const client = new QBittorrent({
 	baseUrl: qbittorent.uri,

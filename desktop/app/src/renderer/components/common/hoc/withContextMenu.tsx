@@ -4,6 +4,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Dialog from "@mui/material/Dialog";
 
 function extract<T>(init?: T) {
+	// eslint-disable-next-line react-hooks/rules-of-hooks
 	const [get, set] = React.useState<T>(init as T);
 	return {
 		value: get as T,
@@ -27,8 +28,8 @@ export function ContextMenuWrapper(config: ContextMenuWrapperProps) {
 		component: extract<ContextMenuWrapperProps["items"][number]["show"]>(),
 	};
 
-	const items = config.items.map(item => {
-		let onClicks: (() => void)[] = [];
+	const items = config.items.map((item) => {
+		const onClicks: (() => void)[] = [];
 
 		if (item.action) {
 			onClicks.push(item.action);
@@ -44,17 +45,17 @@ export function ContextMenuWrapper(config: ContextMenuWrapperProps) {
 		onClicks.push(() => setPos(undefined));
 
 		return (
-			<MenuItem key={item.label} onClick={() => onClicks.forEach(f => f())}>
+			<MenuItem key={item.label} onClick={() => onClicks.forEach((f) => f())}>
 				{item.label}
 			</MenuItem>
 		);
 	});
 
-	let handleClose = () => {
+	const handleClose = () => {
 		modal.open.set(false);
 	};
 
-	let onContextMenu = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+	const onContextMenu = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
 		setPos({
 			left: e.clientX,
 			top: e.clientY,

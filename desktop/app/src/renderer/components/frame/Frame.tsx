@@ -5,8 +5,7 @@ import Titlebar from "./titlebar/Titlebar";
 import ResourceUtilization from "./resource-utilization/ResourceUtilization";
 import { getUriParam } from "../../utils/url";
 import { connect, ConnectedProps } from "react-redux";
-import { Dispatch } from "redux";
-import { StoreState } from "../../store";
+import { StoreState } from "@store";
 
 type Props = ReduxTypes & {
 	children: ReactNode;
@@ -32,9 +31,7 @@ const mapStateToProps = (state: StoreState) => ({
 	config: state.config,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({});
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
+const connector = connect(mapStateToProps);
 type ReduxTypes = ConnectedProps<typeof connector>;
 
 export default connector(Frame);

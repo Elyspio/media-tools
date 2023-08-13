@@ -1,56 +1,56 @@
 .Purge {
-  height: 100%;
-  width: 100%;
-  position: relative;
+	height: 100%;
+	width: 100%;
+	position: relative;
 
-  .preview-title {
-    margin: 2rem 1.5rem 0 0;
-  }
+	.preview-title {
+		margin: 2rem 1.5rem 0 0;
+	}
 
-  .itemCount {
-    font-size: small;
-    opacity: 90%;
-    font-family: "Fira Code Retina";
-  }
+	.itemCount {
+		font-size: small;
+		opacity: 90%;
+		font-family: "Fira Code Retina";
+	}
 
-  .preview-items {
-    overflow-y: auto;
-    overflow-x: hidden;
-    max-height: 36vh;
+	.preview-items {
+		overflow-y: auto;
+		overflow-x: hidden;
+		max-height: 36vh;
 
-    * {
-      margin-bottom: 0.2rem;
-    }
-  }
+		* {
+			margin-bottom: 0.2rem;
+		}
+	}
 
-  .filter {
-    display: flex;
-    margin-top: 2rem;
+	.filter {
+		display: flex;
+		margin-top: 2rem;
 
 
-    > div {
-      margin-right: 2rem;
-    }
-  }
+		> div {
+			margin-right: 2rem;
+		}
+	}
 
-  .RemoveBtn {
-    position: absolute;
-    bottom: 1.5rem;
-  }
+	.RemoveBtn {
+		position: absolute;
+		bottom: 1.5rem;
+	}
 
-  .actions {
-    display: flex;
-  }
+	.actions {
+		display: flex;
+	}
 }
 
 .exclude {
-  input[type="checkbox"],
-  span {
-    padding-top: 4px;
-    padding-bottom: 4px;
-  }
+	input[type="checkbox"],
+	span {
+		padding-top: 4px;
+		padding-bottom: 4px;
+	}
 
-  .item {
-    font-size: small;
-  }
+	.item {
+		font-size: small;
+	}
 }

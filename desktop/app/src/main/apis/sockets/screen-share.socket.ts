@@ -1,7 +1,7 @@
 import * as signalR from "@microsoft/signalr";
 import { HubConnection, LogLevel, Subject } from "@microsoft/signalr";
 import { injectable } from "inversify";
-import { screenShareHubUrl } from "../../../config/screen-share.config";
+import { screenShareHubUrl } from "@/config/screen-share.config";
 import { Frame } from "../rest/backend/generated";
 
 interface ScreenShareHub extends HubConnection {
@@ -12,6 +12,11 @@ interface ScreenShareHub extends HubConnection {
 export class ScreenShareSocket {
 	#connection: ScreenShareHub | undefined;
 	#subject: Subject<Frame> | undefined;
+
+	public get on() {
+		if (!this.initialized) throw new Error("ScreenShareSocket not initialized");
+		return this.#connection!.on;
+	}
 
 	private get initialized() {
 		return this.#subject && this.#connection;
@@ -44,10 +49,5 @@ export class ScreenShareSocket {
 		await this.#connection?.stop();
 
 		this.#connection = this.#subject = undefined;
-	}
-
-	public get on() {
-		if (!this.initialized) throw new Error("ScreenShareSocket not initialized");
-		return this.#connection!.on;
 	}
 }

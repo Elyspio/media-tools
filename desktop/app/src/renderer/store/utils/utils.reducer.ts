@@ -8,7 +8,7 @@ export function setPromiseStatus<T, U extends string>(
 	prop: U,
 	status: PromiseState[] = ["fulfilled", "pending", "rejected"]
 ) {
-	status.forEach(promiseStatus => {
+	status.forEach((promiseStatus) => {
 		builder.addCase(thunk[promiseStatus], (state, action) => {
 			getProps(state)[prop] = action.meta.requestStatus;
 		});
@@ -17,7 +17,7 @@ export function setPromiseStatus<T, U extends string>(
 
 export function addReplaceCase<T extends object>(builder: ActionReducerMapBuilder<T>, actionCreator: ActionCreatorWithPayload<T>) {
 	builder.addCase(actionCreator, (state: Draft<T>, action) => {
-		(Object.keys(action.payload) as (keyof T)[]).forEach(key => {
+		(Object.keys(action.payload) as (keyof T)[]).forEach((key) => {
 			console.log(action.type, key);
 			// @ts-ignore
 			state[key] = action.payload[key];

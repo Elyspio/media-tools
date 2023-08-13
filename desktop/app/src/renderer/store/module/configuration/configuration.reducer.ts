@@ -1,8 +1,8 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { setConfig } from "./configuration.action";
 
-import { Configuration, ConfigurationService } from "../../../../main/services/configuration/configuration.service";
-import { container } from "../../../../main/di/di.container";
+import { Configuration, ConfigurationService } from "@services/configuration/configuration.service";
+import { container } from "@/main/di/di.container";
 
 export interface ConfigurationRouter {
 	current: Configuration;
@@ -14,7 +14,7 @@ const defaultState: ConfigurationRouter = {
 	current: configurationService.get(false) as Configuration,
 };
 
-export const reducer = createReducer<ConfigurationRouter>(defaultState, builder => {
+export const reducer = createReducer<ConfigurationRouter>(defaultState, (builder) => {
 	builder.addCase(setConfig, (state, action) => {
 		state.current = action.payload;
 		configurationService.set(action.payload);

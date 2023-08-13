@@ -4,14 +4,12 @@ import "./Process.scss";
 import Typography from "@mui/material/Typography";
 import LinearProgress from "@mui/material/LinearProgress";
 import { ProcessData } from "../type";
-import { Dayjs } from "dayjs";
-import { formatDuration } from "../../../../../utils/date";
+import dayjs, { Dayjs } from "dayjs";
+import { formatDuration } from "@/renderer/utils/date";
 
-const dayjs = require("dayjs");
-
-const duration = require("dayjs/plugin/duration");
-const relativeTime = require("dayjs/plugin/relativeTime");
-const updateLocal = require("dayjs/plugin/updateLocale");
+import updateLocal from "dayjs/plugin/updateLocale";
+import relativeTime from "dayjs/plugin/relativeTime";
+import duration from "dayjs/plugin/duration";
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -38,7 +36,7 @@ function Process({ data }: Props) {
 
 		const timeToWait = ((100 - data.percentage) * nbSeconds) / data.percentage;
 		return formatDuration(dayjs.duration(timeToWait, "seconds"));
-	}, [data.percentage, data.media.file.path]);
+	}, [data.percentage]);
 
 	return (
 		<ListItem className={"Process"}>
@@ -50,7 +48,8 @@ function Process({ data }: Props) {
 				</Grid>
 
 				<Grid item xs={2}>
-					<LinearProgress className={"bar"} variant="determinate" title={data.percentage.toString()} value={data.percentage} />
+					<LinearProgress className={"bar"} variant="determinate" title={data.percentage.toString()}
+					                value={data.percentage} />
 				</Grid>
 
 				<Grid item xs={2}>

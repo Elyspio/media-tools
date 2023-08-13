@@ -3,15 +3,12 @@ import { IconButton, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { connect, ConnectedProps } from "react-redux";
 import "./Module.scss";
-import { setPath } from "../../store/module/router/router.action";
-import { createWindowCustomOption } from "../../../main/services/electron/dialog.service";
+import { setPath } from "@modules/router/router.action";
+import { createWindowCustomOption } from "@services/electron/dialog.service";
 import { getUriParam } from "../../utils/url";
-import { StoreState } from "../../store";
-import { Logger } from "../../../main/utils/logger";
+import { StoreState } from "@store";
 
 function Module(props: ConnectedProps<typeof connector> & { children?: any }) {
-	const logger = Logger(Module);
-
 	const options = getUriParam<createWindowCustomOption>("options", { json: true }) ?? {
 		modal: false,
 	};
@@ -40,9 +37,9 @@ const mapStateToProps = (state: StoreState) => ({
 	info: state.routing.routes[state.routing.path],
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: any) => ({
 	backHistory: () => dispatch(setPath("/")),
 });
 
-let connector = connect(mapStateToProps, mapDispatchToProps);
+const connector = connect(mapStateToProps, mapDispatchToProps);
 export default connector(Module);

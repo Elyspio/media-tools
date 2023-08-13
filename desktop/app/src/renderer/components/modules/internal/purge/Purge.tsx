@@ -9,10 +9,9 @@ import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
-import { Register } from "../../../../decorators/Module";
-import { Logger } from "../../../../../main/utils/logger";
-import { resolve } from "inversify-react";
-import { FilesService } from "../../../../../main/services/files/files.service";
+import { Register } from "@/renderer/decorators/Module";
+import { FilesService } from "@services/files/files.service";
+import { inject } from "inversify";
 
 interface State {
 	match: string;
@@ -31,11 +30,11 @@ interface State {
 }
 
 const defaultAmount = 30;
-let exclusions = ["node_modules", ".git", ".expo", ".bit"];
+const exclusions = ["node_modules", ".git", ".expo", ".bit"];
 
 @Register({ name: "Purge", description: "Removes files that match a pattern ", path: "/purge" })
-export class Purge extends Component<{}, State> {
-	@resolve(FilesService)
+export class Purge extends Component<object, State> {
+	@inject(FilesService)
 	filesService!: FilesService;
 
 	override state: State = {
@@ -50,13 +49,12 @@ export class Purge extends Component<{}, State> {
 
 		loading: false,
 	};
-	private logger = Logger(Purge);
 	private onMatchTimeout?: NodeJS.Timeout;
 
 	private items: HTMLDivElement | null = null;
 
 	override render() {
-		let { folder, match, preview, loading, alert } = this.state;
+		const { folder, match, preview, loading, alert } = this.state;
 
 		return (
 			<Container className="Purge">
@@ -80,7 +78,7 @@ export class Purge extends Component<{}, State> {
 									input={<Input />}
 									onChange={this.changePreviewExclusion}
 								>
-									{exclusions.map(name => (
+									{exclusions.map((name) => (
 										<MenuItem key={name} value={name} className={"exclude"}>
 											<Checkbox checked={preview.exclude.includes(name)} color={"secondary"} />
 											<Typography className={"item"}>{name}</Typography>
@@ -97,8 +95,9 @@ export class Purge extends Component<{}, State> {
 							</span>
 						</Typography>
 						<Container>
-							<div onScroll={this.onPreviewScroll} className={"preview-items"} ref={r => (this.items = r)}>
-								{preview.filtered.slice(0, preview.amount).map(f => (
+							<div onScroll={this.onPreviewScroll} className={"preview-items"}
+							     ref={(r) => (this.items = r)}>
+								{preview.filtered.slice(0, preview.amount).map((f) => (
 									<Typography noWrap key={f}>
 										<span title={f}>{f}</span>
 									</Typography>
@@ -107,7 +106,8 @@ export class Purge extends Component<{}, State> {
 						</Container>
 						{match && (
 							<div className={"actions"}>
-								<Button color={"secondary"} className={"RemoveBtn"} variant={"outlined"} onClick={this.remove}>
+								<Button color={"secondary"} className={"RemoveBtn"} variant={"outlined"}
+								        onClick={this.remove}>
 									Remove
 								</Button>
 
@@ -121,16 +121,15 @@ export class Purge extends Component<{}, State> {
 	}
 
 	private filter = (folders: string[], match: string) => {
-		let regExp = new RegExp(match);
-		let filtered = folders.filter(f => f.match(regExp));
+		const regExp = new RegExp(match);
+		const filtered = folders.filter((f) => f.match(regExp));
 		return filtered;
 	};
 
 	private onMatchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		this.logger.info("c");
-		let match = e.target.value;
+		const match = e.target.value;
 
-		this.setState(prev => ({
+		this.setState((prev) => ({
 			...prev,
 			match,
 		}));
@@ -138,7 +137,7 @@ export class Purge extends Component<{}, State> {
 		if (this.onMatchTimeout) clearTimeout(this.onMatchTimeout);
 
 		this.onMatchTimeout = setTimeout(() => {
-			this.setState(prev => ({
+			this.setState((prev) => ({
 				...prev,
 				preview: {
 					...prev.preview,
@@ -155,7 +154,7 @@ export class Purge extends Component<{}, State> {
 
 		const folders = await this.filesService.list(folder, ["node_modules", ".git", ".expo", ".bit"]);
 
-		this.setState(prev => ({
+		this.setState((prev) => ({
 			...prev,
 			folder,
 			preview: {
@@ -175,9 +174,9 @@ export class Purge extends Component<{}, State> {
 		try {
 			const nbNodesToDelete = this.state.preview.filtered.length;
 
-			await this.filesService.deleteNodes(this.state.preview.filtered.map(c => ({ type: "folder", path: c })));
+			await this.filesService.deleteNodes(this.state.preview.filtered.map((c) => ({ type: "folder", path: c })));
 			await this.onFolderSelect(this.state.folder as string);
-			this.setState(prev => ({
+			this.setState((prev) => ({
 				...prev,
 				alert: {
 					message: `${nbNodesToDelete} node has been deleted`,
@@ -185,7 +184,7 @@ export class Purge extends Component<{}, State> {
 				},
 			}));
 		} catch (e: any) {
-			this.setState(prev => ({
+			this.setState((prev) => ({
 				...prev,
 				alert: {
 					message: e.message,
@@ -195,7 +194,7 @@ export class Purge extends Component<{}, State> {
 		}
 
 		setTimeout(() => {
-			this.setState(prev => ({ ...prev, alert: undefined }));
+			this.setState((prev) => ({ ...prev, alert: undefined }));
 		}, 50000);
 	};
 	/**
@@ -205,7 +204,7 @@ export class Purge extends Component<{}, State> {
 		const element = this.items;
 
 		if (element && element.scrollHeight - element.scrollTop - element.scrollHeight / 10 < element.clientHeight) {
-			this.setState(prev => ({
+			this.setState((prev) => ({
 				...prev,
 				preview: {
 					...prev.preview,
@@ -216,7 +215,7 @@ export class Purge extends Component<{}, State> {
 	};
 
 	private changePreviewExclusion = (e: any) => {
-		this.setState(prev => ({
+		this.setState((prev) => ({
 			...prev,
 			preview: {
 				...prev.preview,

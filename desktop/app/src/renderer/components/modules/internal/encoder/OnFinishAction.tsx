@@ -1,34 +1,36 @@
-import { store, StoreState } from "../../../../store";
+import { StoreState, useAppDispatch } from "@store";
 import { DialogContent, DialogTitle, InputLabel, MenuItem, Select } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
-import { runOnFinishAction, setOnFinishAction } from "../../../../store/module/encoder/encoder.action";
-import { onFinishActionList } from "../../../../store/module/encoder/encoder.reducer";
+import { runOnFinishAction, setOnFinishAction } from "@modules/encoder/encoder.action";
+import { onFinishActionList } from "@modules/encoder/encoder.reducer";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import React from "react";
-import { Dispatch } from "redux";
 import { connect, ConnectedProps } from "react-redux";
 
 const mapStateToProps = (state: StoreState) => ({
 	action: state.encoder.onFinishAction,
 });
-
-const mapDispatchToProps = (dispatch: Dispatch) => ({});
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
+const connector = connect(mapStateToProps);
 type ReduxTypes = ConnectedProps<typeof connector>;
 
-function OnFinishAction(props: { close: () => void } & ReduxTypes) {
+function OnFinishAction(
+	props: {
+		close: () => void;
+	} & ReduxTypes,
+) {
 	const { close, action } = props;
 
 	const [current, setCurrent] = React.useState<StoreState["encoder"]["onFinishAction"]>(action);
 
+	const dispatch = useAppDispatch();
+
 	const validate = () => {
-		store.dispatch(setOnFinishAction(current));
+		dispatch(setOnFinishAction(current));
 		close();
 	};
 
-	const values = [...onFinishActionList].sort(s => (s === "None" ? -1 : 1));
+	const values = [...onFinishActionList].sort((s) => (s === "None" ? -1 : 1));
 	return (
 		<div>
 			<DialogTitle id="responsive-dialog-title">{"Action when processes are finished"}</DialogTitle>
@@ -39,10 +41,10 @@ function OnFinishAction(props: { close: () => void } & ReduxTypes) {
 						labelId="demo-simple-select-outlined-label"
 						id="demo-simple-select-outlined"
 						value={current}
-						onChange={e => setCurrent(e.target.value as any)}
+						onChange={(e) => setCurrent(e.target.value as any)}
 						label="Action"
 					>
-						{values.map(l => (
+						{values.map((l) => (
 							<MenuItem value={l} key={l}>
 								{l}
 							</MenuItem>
