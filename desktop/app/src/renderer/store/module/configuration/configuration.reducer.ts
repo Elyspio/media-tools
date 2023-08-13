@@ -1,22 +1,24 @@
-import { createReducer } from "@reduxjs/toolkit";
-import { setConfig } from "./configuration.action";
+import { createSlice } from "@reduxjs/toolkit";
+import { setConfig } from "./configuration.async.actions";
+import { defaultConfiguration } from "@/config/configuration";
+import { ConfigurationRouter } from "@modules/configuration/configuration.types";
 
-import { Configuration, ConfigurationService } from "@services/configuration/configuration.service";
-import { container } from "@/main/di/di.container";
 
-export interface ConfigurationRouter {
-	current: Configuration;
-}
-
-const configurationService = container.get(ConfigurationService);
-
-const defaultState: ConfigurationRouter = {
-	current: configurationService.get(false) as Configuration,
+const initialState: ConfigurationRouter = {
+	current: defaultConfiguration,
+	isWindowUnderSized: false,
 };
 
-export const reducer = createReducer<ConfigurationRouter>(defaultState, (builder) => {
-	builder.addCase(setConfig, (state, action) => {
-		state.current = action.payload;
-		configurationService.set(action.payload);
-	});
+export const slice = createSlice({
+	name: "configuration",
+	reducers: {},
+	initialState,
+	extraReducers: (builder) => {
+		builder.addCase(setConfig.fulfilled, (state, action) => {
+			state.current = action.meta.arg;
+		});
+	},
 });
+
+
+export const { reducer: configurationReducer } = slice;

@@ -8,26 +8,24 @@ type Dimensions = (keyof Configuration["frame"]["resize"])[];
 
 @injectable()
 export class WindowService {
-	public async isUnderSized(dimensions: Dimensions): Promise<{ height: number; width: number }> {
-		return new Promise((resolve) => {
-			let incrementWidth = 0;
-			let incrementHeight = 0;
+	public isUnderSized(dimensions: Dimensions) {
+		let incrementWidth = 0;
+		let incrementHeight = 0;
 
-			document.querySelectorAll("div").forEach((elem) => {
-				if (dimensions.includes("width") && elem.scrollWidth > elem.clientWidth) {
-					incrementWidth = incrementWidth > elem.scrollWidth - elem.clientWidth ? incrementWidth : elem.scrollWidth - elem.clientWidth;
-				}
+		document.querySelectorAll("div").forEach((elem) => {
+			if (dimensions.includes("width") && elem.scrollWidth > elem.clientWidth) {
+				incrementWidth = incrementWidth > elem.scrollWidth - elem.clientWidth ? incrementWidth : elem.scrollWidth - elem.clientWidth;
+			}
 
-				if (dimensions.includes("height") && elem.scrollHeight > elem.clientHeight) {
-					incrementHeight = incrementHeight > elem.scrollHeight - elem.clientHeight ? incrementHeight : elem.scrollHeight - elem.clientHeight;
-				}
-			});
-
-			resolve({
-				height: incrementHeight,
-				width: incrementWidth,
-			});
+			if (dimensions.includes("height") && elem.scrollHeight > elem.clientHeight) {
+				incrementHeight = incrementHeight > elem.scrollHeight - elem.clientHeight ? incrementHeight : elem.scrollHeight - elem.clientHeight;
+			}
 		});
+
+		return {
+			height: incrementHeight,
+			width: incrementWidth,
+		};
 	}
 
 	public resize(delta: { width: number; height: number }) {

@@ -9,7 +9,7 @@ import { countries, Country, NordvpnService } from "@services/network/nordvpn.se
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import { toast } from "react-toastify";
-import { inject } from "inversify";
+import { resolve } from "inversify-react";
 
 const mapStateToProps = (state: StoreState) => ({
 	content: state.vpn.stdio,
@@ -36,7 +36,7 @@ type State = {
 	connector,
 )
 export class Vpn extends Component<ReduxTypes, State> {
-	@inject(NordvpnService)
+	@resolve(NordvpnService)
 	nordvpnService!: NordvpnService;
 
 	override state: State = {

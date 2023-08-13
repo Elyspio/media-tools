@@ -8,7 +8,7 @@ import { reducer as encoderReducer } from "./module/encoder/encoder.reducer";
 import { reducer as routerReducer } from "./module/router/router.reducer";
 import { reducer as renamerReducer } from "./module/renamer/renamer.reducer";
 import { reducer as vpnReducer } from "./module/vpn/vpn.reducer";
-import { reducer as configurationRouter } from "./module/configuration/configuration.reducer";
+import { configurationReducer } from "./module/configuration/configuration.reducer";
 import { mediaSlice } from "./module/media/media.reducer";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { container } from "@/main/di/di.container";
@@ -19,7 +19,7 @@ export const store = configureStore({
 		updater: updaterReducer,
 		encoder: encoderReducer,
 		routing: routerReducer,
-		config: configurationRouter,
+		config: configurationReducer,
 		screenShare: screenShareReducer,
 		vpn: vpnReducer,
 		media: mediaSlice.reducer,

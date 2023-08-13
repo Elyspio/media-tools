@@ -3,7 +3,7 @@ import * as path from "path";
 import { Configuration as WebpackConfiguration } from "webpack";
 import { Configuration as WebpackDevServerConfiguration } from "webpack-dev-server";
 import { alias, rootPath } from "./internal.webpack";
-
+import swcConfig from "./.swcrc.json";
 
 interface Configuration extends WebpackConfiguration {
 	devServer?: WebpackDevServerConfiguration;
@@ -25,7 +25,8 @@ const config: Configuration = {
 				exclude: /node_modules/,
 				include: /src/,
 				use: {
-					loader: "ts-loader",
+					loader: "swc-loader",
+					options: swcConfig,
 				},
 			},
 			{

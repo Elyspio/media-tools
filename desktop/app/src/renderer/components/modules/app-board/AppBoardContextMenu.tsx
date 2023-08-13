@@ -3,7 +3,7 @@ import { DialogContent, DialogTitle, InputLabel, MenuItem, Select, SelectChangeE
 import FormControl from "@mui/material/FormControl";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
-import { setConfig } from "@modules/configuration/configuration.action";
+import { setConfig } from "@modules/configuration/configuration.async.actions";
 import { useAppDispatch, useAppSelector } from "@store";
 import { AppBoardShow } from "@/config/configuration";
 

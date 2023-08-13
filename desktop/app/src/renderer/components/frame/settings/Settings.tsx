@@ -15,7 +15,7 @@ import React, { useCallback } from "react";
 import "./Settings.scss";
 import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
 import { Configuration } from "@services/configuration/configuration.service";
-import { resetDimensions, setConfig } from "@modules/configuration/configuration.action";
+import { resetDimensions, setConfig } from "@modules/configuration/configuration.async.actions";
 import { useAppDispatch, useAppSelector } from "@store";
 
 type OwnProps = {

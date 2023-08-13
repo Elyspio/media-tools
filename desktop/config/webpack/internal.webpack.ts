@@ -12,5 +12,3 @@ export const alias = Object.keys(paths)
 		acc[key.slice(0, key.length - 2)] = path.resolve(rootPath, p.slice(0, p.length - 1));
 		return acc;
 	}, {} as Record<string, string>);
-
-console.log({ alias });

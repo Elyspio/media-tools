@@ -22,5 +22,5 @@ export function useInterval(fn: () => any, timeout = 1000, deps: any[]) {
 			clearInterval(interval);
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [fn, ...deps]);
+	}, deps);
 }

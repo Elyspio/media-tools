@@ -1,90 +1,47 @@
-import React, { Component } from "react";
-import { connect, ConnectedProps } from "react-redux";
-import { Register } from "@/renderer/decorators/Module";
-import Container from "@mui/material/Container";
-import { TreeItem, TreeView } from "@mui/lab";
-import { Divider, Grid } from "@mui/material";
+import React, { useCallback } from "react";
+import { register } from "@/renderer/decorators/Module";
+import { Box, Divider, Stack } from "@mui/material";
 import Button from "@mui/material/Button";
 import "./Config.scss";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { StoreState } from "@store";
-import { ConfigurationService } from "@services/configuration/configuration.service";
-import { inject } from "inversify";
+import { useAppDispatch, useAppSelector } from "@store";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { a11yDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { setConfig } from "@modules/configuration/configuration.async.actions";
+import { defaultConfiguration } from "@/config/configuration";
 
-const mapStateToProps = (state: StoreState) => ({ config: state.config.current });
 
-const connector = connect(mapStateToProps);
-type ReduxTypes = ConnectedProps<typeof connector>;
+export function Config() {
+	const config = useAppSelector(state => state.config.current);
 
-@Register(
-	{
-		name: "Config",
-		description: "Changes app config",
-		path: "/config",
-	},
-	connector,
-)
-export class Config extends Component<ReduxTypes> {
-	node = 0;
+	const dispatch = useAppDispatch();
 
-	@inject(ConfigurationService)
-	configurationService!: ConfigurationService;
+	const regenerate = useCallback(() => {
+		dispatch(setConfig(defaultConfiguration));
+	}, [dispatch]);
 
-	override render() {
-		const { config } = this.props;
-		this.node = 0;
-		return (
-			<Container className={"Config"}>
-				<TreeView
-					defaultExpanded={["current"]}
-					defaultCollapseIcon={<ExpandMoreIcon />}
-					defaultExpandIcon={<ChevronRightIcon />}
-					// defaultCollapseIcon={<Remove style={{ color: "red" }} />}
-					// defaultExpandIcon={<Add style={{ color: "blue" }} />}
-					// defaultEndIcon={<Adjust />}
-				>
-					{this.generateTree(config)}
-				</TreeView>
 
-				<Divider className={"divider"} />
-				<Button color={"primary"} onClick={() => this.configurationService.regenerate()}>
-					Regenerate config
-				</Button>
-			</Container>
-		);
-	}
+	return (
+		<Stack spacing={2} height={"100%"}>
+			<Box maxHeight={"100%"} overflow={"auto"} px={2}>
+				<SyntaxHighlighter customStyle={{ background: "inherit", fontSize: "small" }} language={"json5"}
+				                   style={a11yDark}>
+					{JSON.stringify(config, null, 4)}
+				</SyntaxHighlighter>
+			</Box>
 
-	private generateTree = (config: object, key = "current") => {
-		const keys = Object.keys(config);
-		const items = keys.map((k) => {
-			// @ts-ignore
-			const val = config[k];
 
-			if (typeof val === "object") {
-				return this.generateTree(val, k);
-			}
+			<Divider className={"divider"} />
+			<Button color={"primary"} onClick={regenerate}>
+				Regenerate config
+			</Button>
+		</Stack>
 
-			const id = (this.node++).toString();
-			return (
-				<TreeItem
-					key={k + id}
-					nodeId={id}
-					label={
-						<Grid container alignItems={"center"}>
-							{k} <ArrowForwardIcon fontSize={"small"} opacity={0.5} /> {val.toString()}
-						</Grid>
-					}
-				/>
-			);
-		});
+	);
 
-		const id = (this.node++).toString();
-		return (
-			<TreeItem key={key + id} nodeId={id} label={key}>
-				{items}
-			</TreeItem>
-		);
-	};
 }
+
+register(Config, {
+	name: "Config",
+	description: "Changes app config",
+	path: "/config",
+});

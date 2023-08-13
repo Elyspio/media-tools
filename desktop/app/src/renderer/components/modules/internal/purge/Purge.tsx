@@ -11,7 +11,7 @@ import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
 import { Register } from "@/renderer/decorators/Module";
 import { FilesService } from "@services/files/files.service";
-import { inject } from "inversify";
+import { resolve } from "inversify-react";
 
 interface State {
 	match: string;
@@ -34,7 +34,7 @@ const exclusions = ["node_modules", ".git", ".expo", ".bit"];
 
 @Register({ name: "Purge", description: "Removes files that match a pattern ", path: "/purge" })
 export class Purge extends Component<object, State> {
-	@inject(FilesService)
+	@resolve(FilesService)
 	filesService!: FilesService;
 
 	override state: State = {

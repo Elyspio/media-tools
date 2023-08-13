@@ -27,6 +27,8 @@ export function AppNotStarted() {
 
 	useInterval(() => dispatch(checkQBittorrentProcess()), 1000, [dispatch]);
 
+	if (launched) return null;
+
 	return (
 		<Dialog
 			open={!launched}
