@@ -27,6 +27,21 @@ const createWindow = async () => {
 
 	remoteMain.enable(win.webContents);
 
+	win.webContents.session.webRequest.onHeadersReceived({ urls: ["https://ha.elyspio.fr/*"] }, ({ responseHeaders }, callback) => {
+		const headersToRemove = ["x-frame-options"]; //Keep lowercase, we remove the prop whatever its case is
+
+		headersToRemove.forEach(header => {
+			const headerKeyCaseIndependent = Object.keys(responseHeaders!).find(key => key.toLowerCase() === header)!;
+			// console.log(headerKeyCaseIndependent);
+			if (responseHeaders![headerKeyCaseIndependent]) {
+				// console.log('Removed header : ' + headerKeyCaseIndependent + ' => ' + responseHeaders[headerKeyCaseIndependent]);
+				delete responseHeaders![headerKeyCaseIndependent];
+			}
+		});
+
+		callback({ cancel: false, responseHeaders: responseHeaders });
+	});
+
 	if (isDev) {
 		process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "1"; // eslint-disable-line require-atomic-updates
 		await win.loadURL(`http://localhost:2003`);
