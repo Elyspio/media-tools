@@ -24,5 +24,5 @@ root.render(
 				</Provider>
 			</ThemeProvider>
 		</StyledEngineProvider>
-	</DiProvider>,
+	</DiProvider> as any,
 );
