@@ -1,16 +1,4 @@
-import {
-	Button,
-	Dialog,
-	DialogContent,
-	DialogTitle,
-	List,
-	ListItem,
-	ListItemText,
-	ListSubheader,
-	Stack,
-	Switch,
-	Typography,
-} from "@mui/material";
+import { Button, Dialog, DialogContent, DialogTitle, List, ListItem, ListItemText, ListSubheader, Stack, Switch, Typography } from "@mui/material";
 import React, { useCallback } from "react";
 import "./Settings.scss";
 import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
@@ -64,8 +52,7 @@ export const Settings: React.FC<OwnProps> = ({ close, isOpen }) => {
 	);
 
 	return (
-		<Dialog open={isOpen} onClose={close} aria-labelledby="alert-dialog-title"
-		        aria-describedby="alert-dialog-description">
+		<Dialog open={isOpen} onClose={close} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
 			<DialogTitle id="alert-dialog-title">Settings</DialogTitle>
 			<DialogContent className={"Settings"}>
 				<Stack direction="column" spacing={2}>
@@ -74,8 +61,7 @@ export const Settings: React.FC<OwnProps> = ({ close, isOpen }) => {
 							<ListItem>
 								<ListItemText primary="Show resource utilization" />
 								<ListItemSecondaryAction>
-									<Switch edge="end" checked={config.frame.show.resourceUtilization}
-									        onChange={(e) => toggleResources(e.target.checked)} />
+									<Switch edge="end" checked={config.frame.show.resourceUtilization} onChange={(e) => toggleResources(e.target.checked)} />
 								</ListItemSecondaryAction>
 							</ListItem>
 						</List>
@@ -85,8 +71,7 @@ export const Settings: React.FC<OwnProps> = ({ close, isOpen }) => {
 								<ListSubheader color={"primary"}>
 									<Stack direction="row" justifyContent="space-between" alignItems="center">
 										<Typography>Resize</Typography>
-										<Button style={{ marginRight: -16 }} variant={"outlined"}
-										        onClick={() => dispatch(resetDimensions())}>
+										<Button style={{ marginRight: -16 }} variant={"outlined"} onClick={() => dispatch(resetDimensions())}>
 											<Typography variant={"overline"}>Auto</Typography>
 										</Button>
 									</Stack>

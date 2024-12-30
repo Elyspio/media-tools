@@ -5,7 +5,6 @@ import { useAppDispatch } from "@store";
 import { initApp } from "@modules/workflow/workflow.async.actions";
 
 export function Application() {
-
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {

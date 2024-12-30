@@ -81,12 +81,10 @@ export class Vpn extends Component<ReduxTypes, State> {
 					<Typography align={"center"}>OpenVpn</Typography>
 					<Divider className={"divider"} />
 					<div className="btns">
-						<Button disabled={this.props.connected.openvpn} color={"primary"}
-						        onClick={() => this.openvpn.connect()}>
+						<Button disabled={this.props.connected.openvpn} color={"primary"} onClick={() => this.openvpn.connect()}>
 							Connect
 						</Button>
-						<Button disabled={!this.props.connected.openvpn} color={"error"}
-						        onClick={() => this.openvpn.disconnect()}>
+						<Button disabled={!this.props.connected.openvpn} color={"error"} onClick={() => this.openvpn.disconnect()}>
 							Disconnect
 						</Button>
 					</div>
@@ -98,12 +96,10 @@ export class Vpn extends Component<ReduxTypes, State> {
 					<Typography align={"center"}>NordVpn</Typography>
 					<Divider className={"divider"} />
 					<div className="btns">
-						<Button disabled={this.props.connected.nordvpn} color={"primary"}
-						        onClick={() => this.nordvpn.connect()}>
+						<Button disabled={this.props.connected.nordvpn} color={"primary"} onClick={() => this.nordvpn.connect()}>
 							Connect
 						</Button>
-						<Button disabled={!this.props.connected.nordvpn} color={"error"}
-						        onClick={() => this.nordvpn.disconnect()}>
+						<Button disabled={!this.props.connected.nordvpn} color={"error"} onClick={() => this.nordvpn.disconnect()}>
 							Disconnect
 						</Button>
 					</div>

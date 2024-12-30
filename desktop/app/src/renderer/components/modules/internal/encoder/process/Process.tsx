@@ -48,8 +48,7 @@ function Process({ data }: Props) {
 				</Grid>
 
 				<Grid item xs={2}>
-					<LinearProgress className={"bar"} variant="determinate" title={data.percentage.toString()}
-					                value={data.percentage} />
+					<LinearProgress className={"bar"} variant="determinate" title={data.percentage.toString()} value={data.percentage} />
 				</Grid>
 
 				<Grid item xs={2}>

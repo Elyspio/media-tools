@@ -61,7 +61,7 @@ export class SystemService {
 					x
 						.trim()
 						.split(" ")
-						.filter((line) => line.length)
+						.filter((line) => line.length),
 				)
 				.filter((line) => line.length);
 

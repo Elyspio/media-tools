@@ -67,10 +67,8 @@ export function SelectFolder(props: Props) {
 
 	return (
 		<div className={"SelectFolder"} style={{ margin: "1rem 0", width: "100%" }}>
-			<Button className={"header"} color={props.color ?? "primary"} fullWidth={props.fullWidth}
-			        onClick={openDialog} variant={props.variant ?? "outlined"}>
-				{props.mode === "folder" ? <> {props.label ?? "Select folder"}</> :
-					<label htmlFor={"select-file-id"}>Select files</label>}
+			<Button className={"header"} color={props.color ?? "primary"} fullWidth={props.fullWidth} onClick={openDialog} variant={props.variant ?? "outlined"}>
+				{props.mode === "folder" ? <> {props.label ?? "Select folder"}</> : <label htmlFor={"select-file-id"}>Select files</label>}
 			</Button>
 
 			<input type="file" multiple id={"select-file-id"} ref={inputRef} hidden={true} onChange={onFileChange} />

@@ -33,7 +33,7 @@ export class MediaService {
 		format: string,
 		options?: {
 			outputPath: string;
-		}
+		},
 	): Promise<[EventEmitter, ReturnType<typeof spawn>]> {
 		try {
 			const outputPath = options?.outputPath ?? path.join(__dirname, "output.mkv");

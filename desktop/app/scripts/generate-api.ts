@@ -24,7 +24,7 @@ function generateFromNswag({ outputFile, file, input }: NSwagConf) {
 if (require.main === module) {
 	console.log("Generating http clients for Api");
 	generateFromNswag({
-		input: "http://localhost:4000/swagger/Elytools.Api/swagger.json",
+		input: "https://localhost:4000/swagger/Elytools.Api/swagger.json",
 		file: path.resolve(__dirname, "nswag-api-rest.nswag"),
 		outputFile: path.resolve(__dirname, "..", "src", "main", "apis", "rest", "backend", "generated.ts"),
 	});

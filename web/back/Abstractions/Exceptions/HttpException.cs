@@ -1,15 +1,15 @@
 ﻿using System.Net;
 
-namespace Authentication.Api.Abstractions.Exceptions;
+namespace Elytools.Api.Abstractions.Exceptions;
 
 public class HttpException : Exception
 {
-	public HttpException(HttpStatusCode code, string? message, Exception? innerException) : base(message, innerException)
+	public HttpException(string message, Exception? innerException, HttpStatusCode code = HttpStatusCode.InternalServerError) : base(message, innerException)
 	{
 		Code = code;
 	}
 
-	public HttpException(HttpStatusCode code, string? message) : base(message)
+	public HttpException(string message, HttpStatusCode code = HttpStatusCode.InternalServerError) : base(message)
 	{
 		Code = code;
 	}

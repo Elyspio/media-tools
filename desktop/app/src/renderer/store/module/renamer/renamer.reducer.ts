@@ -29,7 +29,7 @@ const slice = createSlice({
 					name: filename,
 					num: number,
 					extension: path.extname(filename),
-				})
+				}),
 			);
 
 			state.min = state.files.reduce((acc, file) => {

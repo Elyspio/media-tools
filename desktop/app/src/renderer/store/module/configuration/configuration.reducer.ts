@@ -3,7 +3,6 @@ import { setConfig } from "./configuration.async.actions";
 import { defaultConfiguration } from "@/config/configuration";
 import { ConfigurationRouter } from "@modules/configuration/configuration.types";
 
-
 const initialState: ConfigurationRouter = {
 	current: defaultConfiguration,
 	isWindowUnderSized: false,
@@ -19,6 +18,5 @@ export const slice = createSlice({
 		});
 	},
 });
-
 
 export const { reducer: configurationReducer } = slice;

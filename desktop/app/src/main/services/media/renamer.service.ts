@@ -6,7 +6,6 @@ import * as fs from "fs/promises";
 // Custom service for renaming files
 @injectable()
 export class RenamerService {
-
 	/**
 	 * Given a list of filenames, split each filename into words and find an index for a sequence of numbers.
 	 * Optionally, transform any '-' or '_' into a space, and add a space before and after any '.'
@@ -43,10 +42,13 @@ export class RenamerService {
 			}
 		}
 
-		return filenames.reduce((acc, file, fileIndex) => {
-			acc[file] = Number.parseInt(splited[fileIndex][numIndex]);
-			return acc;
-		}, {} as Record<string, number>);
+		return filenames.reduce(
+			(acc, file, fileIndex) => {
+				acc[file] = Number.parseInt(splited[fileIndex][numIndex]);
+				return acc;
+			},
+			{} as Record<string, number>,
+		);
 	}
 
 	/**

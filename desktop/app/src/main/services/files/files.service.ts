@@ -22,7 +22,7 @@ export class FilesService {
 		nodes: {
 			type?: "folder" | "file";
 			path: string;
-		}[]
+		}[],
 	) {
 		const promises = nodes.map(async ({ path, type }) => {
 			switch (type) {
@@ -43,7 +43,7 @@ export class FilesService {
 		filter?: {
 			match: RegExp;
 			inverse?: boolean;
-		}
+		},
 	): Promise<string[]> {
 		const files: string[] = [];
 

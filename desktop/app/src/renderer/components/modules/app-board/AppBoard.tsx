@@ -40,8 +40,7 @@ export function AppBoard() {
 			<div className={"AppBoard"}>
 				{apps.map((app) => (
 					<Tooltip title={app.description ?? ""} key={app.name}>
-						<Button color={app.external ? "secondary" : "primary"} size={"large"} className={"app"}
-						        variant={"outlined"} onClick={setCurrent(app.path)}>
+						<Button color={app.external ? "secondary" : "primary"} size={"large"} className={"app"} variant={"outlined"} onClick={setCurrent(app.path)}>
 							{app.name}
 						</Button>
 					</Tooltip>

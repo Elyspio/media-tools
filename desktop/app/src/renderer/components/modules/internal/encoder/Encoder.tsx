@@ -143,8 +143,7 @@ function Encoder() {
 		const optionsUi = (
 			<div className={"options"}>
 				<InputLabel id="demo-customized-select-label">Encoder</InputLabel>
-				<Select labelId="demo-customized-select-label" id="demo-customized-select" value={encoder.format as any}
-				        onChange={onFormatChange}>
+				<Select labelId="demo-customized-select-label" id="demo-customized-select" value={encoder.format as any} onChange={onFormatChange}>
 					{encoders.map((encoder) => (
 						<MenuItem value={encoder.value.ffmpeg} key={encoder.value.ffmpeg}>
 							{encoder.type} - {encoder.format}

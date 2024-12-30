@@ -19,12 +19,15 @@ export interface Configuration {
 	};
 	endpoints: {
 		homeAssistant: string;
+		api: string;
+		hubs: {
+			screenshare: string;
+		};
 	};
 }
 
 @injectable()
 export class ConfigurationService {
-
 	@inject(FilesService)
 	filesService!: FilesService;
 
@@ -42,7 +45,6 @@ export class ConfigurationService {
 	}
 
 	public async get(): Promise<Configuration> {
-
 		if (!(await this.filesService.checkPathExists(configMainFile))) {
 			await this.set(defaultConfiguration);
 		}
@@ -54,12 +56,10 @@ export class ConfigurationService {
 			// ignore
 		}
 		return this.mergeConfig(obj);
-
 	}
 
 	public set(config: Configuration) {
 		return fs.writeFile(configMainFile, JSON.stringify(config));
-
 	}
 
 	public async regenerate() {

@@ -29,10 +29,7 @@ export const runReplaceChars = createAsyncThunk("run-replace-chars", async (_, {
 	await renamerService.replaceChar(renamer.replaceOptions.search, renamer.replaceOptions.replaceWith, renamer.files);
 });
 
-export const refreshRenamerExample = createAsyncThunk("refresh-example", (_, {
-	extra,
-	getState,
-}): RenamerState["example"] => {
+export const refreshRenamerExample = createAsyncThunk("refresh-example", (_, { extra, getState }): RenamerState["example"] => {
 	const { renamer } = getState();
 	const renamerService = getService(RenamerService, extra);
 

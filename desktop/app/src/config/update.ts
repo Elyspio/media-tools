@@ -1,6 +1,5 @@
 import path from "path";
 
-
 const getEnv = (key: string) => {
 	return require("process").env[key];
 };

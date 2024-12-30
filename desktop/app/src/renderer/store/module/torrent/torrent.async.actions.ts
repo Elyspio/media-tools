@@ -17,7 +17,7 @@ export const watchNewTorrents = createAsyncThunk("watch-new", async (_, { extra,
 			files: FilesService,
 			system: SystemService,
 		},
-		extra
+		extra,
 	);
 
 	const downloadFolder = await services.system.getDownloadFolder();
@@ -37,7 +37,7 @@ export const openTorrentBrowser = createAsyncThunk("open-browser", async (_, { e
 		{
 			system: SystemService,
 		},
-		extra
+		extra,
 	);
 
 	await services.system.open("https://yggtorrent.li/");
@@ -52,7 +52,7 @@ export const downloadTorrent = createAsyncThunk("download", async (_, { extra, g
 		{
 			torrent: TorrentService,
 		},
-		extra
+		extra,
 	);
 
 	await toast.promise(services.torrent.add(filename), {
@@ -66,7 +66,7 @@ export const startQBittorrent = createAsyncThunk("start-qbittorrent", async (_, 
 			{
 				process: ProcessService,
 			},
-			extra
+			extra,
 		);
 
 		await services.process.spawnAsync("qbittorrent");

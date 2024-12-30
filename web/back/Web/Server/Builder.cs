@@ -1,8 +1,10 @@
-﻿using Elytools.Api.Abstractions.Extensions;
+﻿using System.Net;
+using System.Text.Json.Serialization;
+using Elytools.Api.Abstractions.Extensions;
 using Elytools.Api.Abstractions.Helpers;
 using Elytools.Api.Abstractions.Interfaces.Injections;
-using Elytools.Api.Adapters.Injections;
-using Elytools.Api.Core.Injections;
+using Elytools.Api.Adapters.OpenWeatherMap;
+using Elytools.Api.Core;
 using Elytools.Api.Web.Filters;
 using Elytools.Api.Web.Processors;
 using Elytools.Api.Web.Utils;
@@ -14,50 +16,22 @@ using Newtonsoft.Json.Converters;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
-using System.Net;
-using System.Text.Json.Serialization;
 
 namespace Elytools.Api.Web.Server;
 
 public class ServerBuilder
 {
-	private const string AppPath = "/example";
 	private readonly string _frontPath = Env.Get("FRONT_PATH", "/front");
 
 	public ServerBuilder(string[] args)
 	{
 		var builder = WebApplication.CreateBuilder(args);
-		builder.WebHost.ConfigureKestrel((_, options) =>
-			{
-				options.Listen(IPAddress.Any, 4000, listenOptions =>
-					{
-						// Use HTTP/3
-						listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
-					}
-				);
-			}
-		);
 
 
-		// Setup CORS
-		builder.Services.AddCors(options =>
-			{
-				options.AddPolicy("Cors", b =>
-					{
-						b.WithOrigins("http://localhost:2003", "http://localhost:3000");
-						b.AllowAnyHeader();
-						b.AllowAnyMethod();
-						b.AllowCredentials();
-					}
-				);
-
-				options.DefaultPolicyName = "Cors";
-			}
-		);
-
-
-		builder.Services.AddModule<AdapterModule>(builder.Configuration);
-		builder.Services.AddModule<CoreModule>(builder.Configuration);
+		Log.Logger = new LoggerConfiguration()
+			.MinimumLevel.Debug()
+			.WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level} {SourceContext:l}] {Message:lj}{NewLine}{Exception}", theme: AnsiConsoleTheme.Sixteen)
+			.CreateLogger();
 
 		// Setup Logging
 		builder.Host.UseSerilog((_, lc) => lc
@@ -66,6 +40,30 @@ public class ServerBuilder
 			.Enrich.FromLogContext()
 			.WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level} {SourceContext:l}] {Message:lj}{NewLine}{Exception}", theme: AnsiConsoleTheme.Sixteen)
 		);
+
+		if (builder.Environment.IsDevelopment())
+		{
+			// Setup CORS
+			builder.Services.AddCors(options =>
+				{
+					options.AddPolicy("Cors", b =>
+						{
+							b.WithOrigins("http://localhost:3000");
+							b.AllowAnyHeader();
+							b.AllowAnyMethod();
+							b.AllowCredentials();
+						}
+					);
+
+					options.DefaultPolicyName = "Cors";
+				}
+			);
+		}
+
+
+
+		builder.Services.AddModule<OpenWeatherMapModule>(builder.Configuration);
+		builder.Services.AddModule<CoreModule>(builder.Configuration);
 
 		builder.Services.AddLogging(log => { log.AddConsole(); });
 
@@ -86,7 +84,7 @@ public class ServerBuilder
 		{
 			document.DocumentName = "Elytools.Api";
 			document.Title = "Elytools.Api";
-			document.SchemaProcessors.Add(new NullableSchemaProcessor());
+			document.SchemaSettings.SchemaProcessors.Add(new NullableSchemaProcessor());
 			document.OperationProcessors.Add(new NullableOperationProcessor());
 		});
 		// Setup SPA Serving

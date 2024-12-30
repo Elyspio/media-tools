@@ -6,5 +6,4 @@ const createAsyncThunk = createAsyncActionGenerator("workflow");
 export const initApp = createAsyncThunk("init-app", async (_, { extra, dispatch }) => {
 	dispatch(initConfig());
 	dispatch(watchWindowResize());
-
 });

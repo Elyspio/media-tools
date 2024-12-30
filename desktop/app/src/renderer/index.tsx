@@ -15,14 +15,16 @@ import "@modules/router/router.import";
 
 const root = createRoot(document.getElementById("root")!);
 root.render(
-	<DiProvider container={container}>
-		<StyledEngineProvider injectFirst>
-			<ThemeProvider theme={theme}>
-				<Provider store={store}>
-					<Application />
-					<ToastContainer theme={"dark"} position={"top-right"} className={"no-autoresize"} />
-				</Provider>
-			</ThemeProvider>
-		</StyledEngineProvider>
-	</DiProvider> as any,
+	(
+		<DiProvider container={container}>
+			<StyledEngineProvider injectFirst>
+				<ThemeProvider theme={theme}>
+					<Provider store={store}>
+						<Application />
+						<ToastContainer theme={"dark"} position={"top-right"} className={"no-autoresize"} />
+					</Provider>
+				</ThemeProvider>
+			</StyledEngineProvider>
+		</DiProvider>
+	) as any,
 );

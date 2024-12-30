@@ -1,4 +1,4 @@
-﻿using Authentication.Api.Abstractions.Exceptions;
+﻿using Elytools.Api.Abstractions.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 

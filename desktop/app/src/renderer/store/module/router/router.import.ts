@@ -6,6 +6,7 @@ import "../../../components/modules/internal/vpn/Vpn";
 import "../../../components/modules/internal/renamer/Renamer";
 import "../../../components/modules/internal/updater/Updater";
 import "../../../components/modules/internal/torrent/Torrent";
+import "../../../components/modules/internal/weather/WeatherPage";
 import "../../../components/modules/internal/config/Config";
 import "../../../components/modules/internal/screen-share/ScreenShare";
 import "../../../components/modules/app-board/AppBoard";

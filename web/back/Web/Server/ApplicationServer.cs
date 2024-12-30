@@ -10,7 +10,7 @@ public static class ApplicationServer
 		application.UseCors("Cors");
 
 		application.UseOpenApi();
-		application.UseSwaggerUi3();
+		application.UseSwaggerUi();
 
 		// Start Dependency Injection
 		application.UseAdvancedDependencyInjection();
@@ -22,27 +22,25 @@ public static class ApplicationServer
 
 		application.MapHub<ScreenShare>("/ws/screen-share");
 
+		if (!application.Environment.IsProduction()) return application;
 
 		// Start SPA serving
-		if (application.Environment.IsProduction())
-		{
-			application.UseRouting();
+		application.UseRouting();
 
-			application.UseDefaultFiles(new DefaultFilesOptions
+		application.UseDefaultFiles(new DefaultFilesOptions
+			{
+				DefaultFileNames = new List<string>
 				{
-					DefaultFileNames = new List<string>
-					{
-						"index.html"
-					},
-					RedirectToAppendTrailingSlash = true
-				}
-			);
+					"index.html"
+				},
+				RedirectToAppendTrailingSlash = true
+			}
+		);
 
 
-			application.UseStaticFiles();
+		application.UseStaticFiles();
 
-			application.MapFallbackToFile("/index.html");
-		}
+		application.MapFallbackToFile("/index.html");
 
 		return application;
 	}

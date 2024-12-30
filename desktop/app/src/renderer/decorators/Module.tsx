@@ -22,7 +22,7 @@ const logger = Logger("Module");
 
 export function Register(info: Must, ...connector: ((...any: any[]) => any)[]) {
 	window.store.dispatch(addRoute({ ...defaultModuleDescription, ...info, component: info.name }));
-	return function(target: any) {
+	return function (target: any) {
 		logger.info("Registering component", { name: info.name, component: target.name });
 
 		let ret = target;

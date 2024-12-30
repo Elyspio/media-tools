@@ -7,10 +7,10 @@ import { TorrentService } from "@services/media/torrent.service";
 import { SystemService } from "@services/system/system.service";
 import { FilesService } from "@services/files/files.service";
 import { ConfigurationService } from "@services/configuration/configuration.service";
-
 import { OpenvpnService } from "@services/network/openvpn.service";
 import { NordvpnService } from "@services/network/nordvpn.service";
 import { RenamerService } from "@services/media/renamer.service";
+import { WeatherService } from "@services/weather/weather.service";
 
 export function initDiServices(container: Container) {
 	container.bind(ProcessService).toSelf();
@@ -24,4 +24,5 @@ export function initDiServices(container: Container) {
 	container.bind(OpenvpnService).toSelf();
 	container.bind(NordvpnService).toSelf();
 	container.bind(RenamerService).toSelf();
+	container.bind(WeatherService).toSelf();
 }

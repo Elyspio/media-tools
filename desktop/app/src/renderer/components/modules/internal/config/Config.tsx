@@ -9,9 +9,8 @@ import { a11yDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { setConfig } from "@modules/configuration/configuration.async.actions";
 import { defaultConfiguration } from "@/config/configuration";
 
-
 export function Config() {
-	const config = useAppSelector(state => state.config.current);
+	const config = useAppSelector((state) => state.config.current);
 
 	const dispatch = useAppDispatch();
 
@@ -19,25 +18,20 @@ export function Config() {
 		dispatch(setConfig(defaultConfiguration));
 	}, [dispatch]);
 
-
 	return (
 		<Stack spacing={2} height={"100%"}>
 			<Box maxHeight={"100%"} overflow={"auto"} px={2}>
-				<SyntaxHighlighter customStyle={{ background: "inherit", fontSize: "small" }} language={"json5"}
-				                   style={a11yDark}>
+				<SyntaxHighlighter customStyle={{ background: "inherit", fontSize: "small" }} language={"json5"} style={a11yDark}>
 					{JSON.stringify(config, null, 4)}
 				</SyntaxHighlighter>
 			</Box>
-
 
 			<Divider className={"divider"} />
 			<Button color={"primary"} onClick={regenerate}>
 				Regenerate config
 			</Button>
 		</Stack>
-
 	);
-
 }
 
 register(Config, {

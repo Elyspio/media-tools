@@ -7,12 +7,7 @@ import Button from "@mui/material/Button";
 import { StoreState, useAppDispatch, useAppSelector } from "@store";
 import { RenamerField, setRenamerField } from "@modules/renamer/renamer.action";
 import { createSelector } from "reselect";
-import {
-	refreshRenamerExample,
-	runRename,
-	runReplaceChars,
-	setRenamerFiles,
-} from "@modules/renamer/renamer.async.actions";
+import { refreshRenamerExample, runRename, runReplaceChars, setRenamerFiles } from "@modules/renamer/renamer.async.actions";
 
 const renamerSelector = createSelector([(s: StoreState) => s.renamer], (renamer) => ({
 	...renamer,
@@ -61,8 +56,7 @@ const RenamerComponent = () => {
 			files.length && (
 				<Stack spacing={1.5}>
 					<Stack spacing={1}>
-						<TextField id={"renamer-new-name-input"} label={"Futur nom"} onChange={updateField("newName")}
-						           fullWidth error={newNameError} />
+						<TextField id={"renamer-new-name-input"} label={"Futur nom"} onChange={updateField("newName")} fullWidth error={newNameError} />
 
 						<Stack>
 							<Typography variant={"overline"}>Début: {min}</Typography>

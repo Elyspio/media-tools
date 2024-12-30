@@ -1,4 +1,6 @@
-﻿using Elytools.Api.Abstractions.Interfaces.Hubs;
+﻿using System.Net;
+using Elytools.Api.Abstractions.Exceptions;
+using Elytools.Api.Abstractions.Interfaces.Hubs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Elytools.Api.Web.Controllers;
@@ -8,10 +10,7 @@ namespace Elytools.Api.Web.Controllers;
 public class TypingController
 {
 	[HttpGet]
-	public Types GetTypes()
-	{
-		return null;
-	}
+	public Types GetTypes() => throw new HttpException("Controller only used for type generation purpose", HttpStatusCode.NotImplemented);
 }
 
-public record Types(Frame Frame);
+public sealed record Types(Frame Frame);

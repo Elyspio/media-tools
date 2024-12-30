@@ -51,7 +51,7 @@ export class Purge extends Component<object, State> {
 	};
 	private onMatchTimeout?: NodeJS.Timeout;
 
-	private items: HTMLDivElement | null = null;
+	private items?: HTMLDivElement;
 
 	override render() {
 		const { folder, match, preview, loading, alert } = this.state;
@@ -95,8 +95,7 @@ export class Purge extends Component<object, State> {
 							</span>
 						</Typography>
 						<Container>
-							<div onScroll={this.onPreviewScroll} className={"preview-items"}
-							     ref={(r) => (this.items = r)}>
+							<div onScroll={this.onPreviewScroll} className={"preview-items"}>
 								{preview.filtered.slice(0, preview.amount).map((f) => (
 									<Typography noWrap key={f}>
 										<span title={f}>{f}</span>
@@ -106,8 +105,7 @@ export class Purge extends Component<object, State> {
 						</Container>
 						{match && (
 							<div className={"actions"}>
-								<Button color={"secondary"} className={"RemoveBtn"} variant={"outlined"}
-								        onClick={this.remove}>
+								<Button color={"secondary"} className={"RemoveBtn"} variant={"outlined"} onClick={this.remove}>
 									Remove
 								</Button>
 

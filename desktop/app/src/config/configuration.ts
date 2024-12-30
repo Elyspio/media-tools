@@ -16,6 +16,8 @@ export enum AppBoardShow {
 
 export const version = process.env.npm_package_version ?? remote.app.getVersion();
 
+const isDev = process.env.NODE_ENV === "development";
+
 export const defaultConfiguration: Configuration = {
 	version,
 	appboard: {
@@ -32,5 +34,9 @@ export const defaultConfiguration: Configuration = {
 	},
 	endpoints: {
 		homeAssistant: "https://ha.elyspio.fr",
+		api: isDev ? "https://localhost:4000" : "https://elyspio.fr/elytools/",
+		hubs: {
+			screenshare: isDev ? "ws://localhost:4000/ws/screen-share" : "wss://elyspio.fr/elytools/ws/screen-share",
+		},
 	},
 };

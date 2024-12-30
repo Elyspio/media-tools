@@ -40,8 +40,7 @@ export default class Updater extends React.Component<ReduxTypes, State> {
 
 		return (
 			<Grid className={"Updater"} container direction={"column"} justifyContent={"space-between"}>
-				<Grid container direction={"column"} className={"text"} justifyContent={"space-evenly"}
-				      alignItems={"center"}>
+				<Grid container direction={"column"} className={"text"} justifyContent={"space-evenly"} alignItems={"center"}>
 					<Grid item className={"info"}>
 						<Typography variant={"h6"} component={"p"} className={"version-title-app"}>
 							Server
@@ -63,8 +62,7 @@ export default class Updater extends React.Component<ReduxTypes, State> {
 							</Typography>
 						</div>
 					</Grid>
-					<Grid item className="buttons" container direction={"column"} spacing={2}
-					      justifyContent={"space-between"} alignItems={"center"}>
+					<Grid item className="buttons" container direction={"column"} spacing={2} justifyContent={"space-between"} alignItems={"center"}>
 						<Grid item>
 							<Button fullWidth color={"primary"} onClick={checkUpdate} variant={"outlined"}>
 								Check for update
@@ -72,16 +70,14 @@ export default class Updater extends React.Component<ReduxTypes, State> {
 						</Grid>
 						{serverVersion && (
 							<Grid item>
-								<Button fullWidth color={"secondary"} onClick={() => downloadUpdate(serverVersion)}
-								        variant={"outlined"}>
+								<Button fullWidth color={"secondary"} onClick={() => downloadUpdate(serverVersion)} variant={"outlined"}>
 									Force Download
 								</Button>
 							</Grid>
 						)}
 						{serverVersion && (
 							<Grid item>
-								<Button fullWidth color={"primary"} onClick={installUpdate} variant={"contained"}
-								        disabled={progress !== 100}>
+								<Button fullWidth color={"primary"} onClick={installUpdate} variant={"contained"} disabled={progress !== 100}>
 									Install
 								</Button>
 							</Grid>
@@ -91,9 +87,7 @@ export default class Updater extends React.Component<ReduxTypes, State> {
 
 				<Grid item className={"main"} container justifyContent={"center"} alignItems={"center"}>
 					<Grid item className="progress">
-						{progress && <CircularProgressWithLabel size={size}
-																label={(progress || 0) < 100 ? "Downloading" : "Downloaded"}
-																value={progress ?? 0} />}
+						{progress && <CircularProgressWithLabel size={size} label={(progress || 0) < 100 ? "Downloading" : "Downloaded"} value={progress ?? 0} />}
 					</Grid>
 				</Grid>
 			</Grid>

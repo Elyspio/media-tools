@@ -30,8 +30,8 @@ const createWindow = async () => {
 	win.webContents.session.webRequest.onHeadersReceived({ urls: ["https://ha.elyspio.fr/*"] }, ({ responseHeaders }, callback) => {
 		const headersToRemove = ["x-frame-options"]; //Keep lowercase, we remove the prop whatever its case is
 
-		headersToRemove.forEach(header => {
-			const headerKeyCaseIndependent = Object.keys(responseHeaders!).find(key => key.toLowerCase() === header)!;
+		headersToRemove.forEach((header) => {
+			const headerKeyCaseIndependent = Object.keys(responseHeaders!).find((key) => key.toLowerCase() === header)!;
 			// console.log(headerKeyCaseIndependent);
 			if (responseHeaders![headerKeyCaseIndependent]) {
 				// console.log('Removed header : ' + headerKeyCaseIndependent + ' => ' + responseHeaders[headerKeyCaseIndependent]);
@@ -93,6 +93,5 @@ if (!gotTheLock) {
 	// Create myWindow, load the rest of the app, etc...
 	app.on("ready", createWindow);
 }
-
 
 // find how to resolve sudoku

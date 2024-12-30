@@ -9,14 +9,12 @@ export const setConfig = createAsyncThunk("set-config", async (config: Configura
 	const services = getServices({ config: ConfigurationService }, extra);
 
 	await services.config.set(config);
-
 });
 
 export const regenerateConfig = createAsyncThunk("regenerate-config", async (config: Configuration, { extra }) => {
 	const services = getServices({ config: ConfigurationService }, extra);
 
 	await services.config.regenerate();
-
 });
 
 export const initConfig = createAsyncThunk("init-config", async (_, { extra, dispatch }) => {
@@ -25,22 +23,20 @@ export const initConfig = createAsyncThunk("init-config", async (_, { extra, dis
 	dispatch(setConfig(await services.config.get()));
 });
 
-
 export const resetDimensions = createAsyncThunk("reset-dimensions", async (_, { extra, dispatch }) => {
 	const services = getServices({ window: WindowService }, extra);
 
 	services.window.resetDimensions();
 
 	dispatch(setConfig(defaultConfiguration));
-
 });
-
 
 export const watchWindowResize = createAsyncThunk("watch-window-resize", async (_, { extra, getState, dispatch }) => {
 	setInterval(() => {
-
-		const { config: { current: config }, routing: { routes, path } } = getState();
-
+		const {
+			config: { current: config },
+			routing: { routes, path },
+		} = getState();
 
 		const services = getServices({ window: WindowService, config: ConfigurationService }, extra);
 
@@ -50,10 +46,8 @@ export const watchWindowResize = createAsyncThunk("watch-window-resize", async (
 			const dim = keys.filter((k) => config.frame.resize[k] && current.autoResize[k]);
 			const delta = services.window.isUnderSized(dim);
 			if (dim.map((d) => delta[d]).some((v) => v > 0)) {
-
 				services.window.resize(delta);
 			}
 		}
 	}, 250);
-
 });

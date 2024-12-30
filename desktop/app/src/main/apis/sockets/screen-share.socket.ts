@@ -1,8 +1,8 @@
 import * as signalR from "@microsoft/signalr";
 import { HubConnection, LogLevel, Subject } from "@microsoft/signalr";
-import { injectable } from "inversify";
-import { screenShareHubUrl } from "@/config/screen-share.config";
+import { inject, injectable } from "inversify";
 import { Frame } from "../rest/backend/generated";
+import { ConfigurationService } from "@services/configuration/configuration.service";
 
 interface ScreenShareHub extends HubConnection {
 	on(event: "FrameUpdate", callback: (frame: Frame) => void): void;
@@ -12,6 +12,9 @@ interface ScreenShareHub extends HubConnection {
 export class ScreenShareSocket {
 	#connection: ScreenShareHub | undefined;
 	#subject: Subject<Frame> | undefined;
+
+	@inject(ConfigurationService)
+	private configurationService!: ConfigurationService;
 
 	public get on() {
 		if (!this.initialized) throw new Error("ScreenShareSocket not initialized");
@@ -25,8 +28,10 @@ export class ScreenShareSocket {
 	async init() {
 		if (this.#connection) await this.#connection.stop();
 
+		const config = await this.configurationService.get();
+
 		this.#connection = new signalR.HubConnectionBuilder()
-			.withUrl(screenShareHubUrl)
+			.withUrl(config.endpoints.hubs.screenshare)
 			.configureLogging(LogLevel.Information)
 			.withAutomaticReconnect({ nextRetryDelayInMilliseconds: () => 5000 })
 			.build();

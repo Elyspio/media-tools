@@ -1,12 +1,19 @@
-import { ActionCreatorWithPayload, ActionReducerMapBuilder, AsyncThunk, Draft } from "@reduxjs/toolkit";
+import {
+	ActionCreatorWithPayload,
+	ActionReducerMapBuilder,
+	AsyncThunk,
+	createDraftSafeSelector,
+	Draft,
+} from "@reduxjs/toolkit";
 import { PromiseState } from "./utils.types";
+import { StoreState } from "@store";
 
 export function setPromiseStatus<T, U extends string>(
 	builder: ActionReducerMapBuilder<T>,
 	thunk: AsyncThunk<any, any, any>,
 	getProps: (state: Draft<T>) => Record<U, PromiseState>,
 	prop: U,
-	status: PromiseState[] = ["fulfilled", "pending", "rejected"]
+	status: PromiseState[] = ["fulfilled", "pending", "rejected"],
 ) {
 	status.forEach((promiseStatus) => {
 		builder.addCase(thunk[promiseStatus], (state, action) => {
@@ -24,3 +31,5 @@ export function addReplaceCase<T extends object>(builder: ActionReducerMapBuilde
 		});
 	});
 }
+
+export const createAppSelector = createDraftSafeSelector.withTypes<StoreState>();

@@ -39,8 +39,7 @@ export function ScreenElements({ elements, label }: ScreenElementsProps) {
 						variant={"outlined"}
 						sx={{ textTransform: "none", m: 1 }}
 					>
-						<Stack direction={"column"} spacing={2} alignItems={"center"} justifyContent={"center"} pb={1}
-						       width={200}>
+						<Stack direction={"column"} spacing={2} alignItems={"center"} justifyContent={"center"} pb={1} width={200}>
 							<Typography noWrap maxWidth={180} fontSize={"smaller"}>
 								{src.name}
 							</Typography>
