@@ -1,0 +1,137 @@
+import * as util from "node:util";
+import { AppLoggerService } from "../modules/log.module";
+
+function getArguments(logArguments: LogArgument | undefined, args: unknown[], argsName: string[]) {
+	if (typeof logArguments === "function") {
+		return logArguments(...args);
+	}
+
+	if (logArguments !== false) {
+		return argsName.reduce((previousValue, currentValue, currentIndex) => {
+			if (logArguments !== true) {
+				if (Array.isArray(logArguments) && !logArguments.includes(currentIndex)) return previousValue;
+			}
+			return `${previousValue} ${currentValue}=${util.inspect(args[currentIndex], false, null)}`;
+		}, "");
+	}
+
+	return "";
+}
+
+/**
+ * Gestion de comment les paramètres vont être loggué
+ *
+ * true | undefined => on log tous les paramètres
+ *
+ * false => on ne log aucun paramètre
+ *
+ * [0,1] => Seulement les deux premiers paramètres vont être loggué
+ *
+ * (a,b,c) => string => fn custom pour formatter les paramètres commme on le souhaite
+ */
+type LogArgument = number[] | ((...args: any[]) => string) | boolean;
+
+/**
+ * Gère le log de fin de la fonction en fonction du type de retour (promise vs primitive)
+ * @param logger le logger du module
+ * @param level le niveau de log
+ * @param startAt l'instant en ms où la fonction a démarré
+ * @param str le log construit avec les paramètres
+ * @param result
+ */
+function handleResult(logger: AppLoggerService, level: "debug" | "log", startAt: number, str: string, result: unknown) {
+	const promiseResult = result as Promise<unknown> | undefined;
+	if (typeof promiseResult?.then === "function" && typeof promiseResult?.catch === "function") {
+		return promiseResult
+			.catch((err: any) => {
+				const exitMessage = `Exit ${str} (${formatTime(startAt)})`;
+				logger.error(exitMessage, err);
+				throw err;
+			})
+			.then((res: unknown) => {
+				const exitMessage = `Exit ${str} (${formatTime(startAt)})`;
+				logger[level](exitMessage);
+				return res;
+			});
+	}
+
+	const exitMessage = `Exit ${str} (${formatTime(startAt)})`;
+	logger[level](exitMessage);
+
+	return result;
+}
+
+interface ILoggable {
+	logger: AppLoggerService;
+}
+
+/**
+ * Décorateur permettant de logger les entrées et sorties des méthodes
+ *
+ * ! La classe doit avoir un attribut logger et avoir une variable static nommée "instance" qui contient une instance de la classe !
+ * @param logArguments
+ * @param level
+ */
+export function log(logArguments?: LogArgument, level: "debug" | "log" = "log") {
+	return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+		const targetFunc = descriptor.value;
+		descriptor.value = function (...args: any[]) {
+			const method = propertyKey;
+			const logger = (this as ILoggable).logger;
+
+			if (!logger) {
+				throw new Error("Logger not found in target " + target.constructor.name);
+			}
+
+			let str = `${method}`;
+
+			const argsName = getFunctionArgs(targetFunc);
+
+			let argsStr = getArguments(logArguments, args, argsName);
+
+			if (argsStr) {
+				argsStr = argsStr.trim();
+				str = `${str} ${argsStr}`;
+			}
+
+			logger[level](`Enter ${str}`);
+
+			const startAt = performance.now();
+
+			const result = targetFunc.apply(this, args);
+
+			return handleResult(logger, level, startAt, str, result);
+		};
+		return descriptor;
+	};
+}
+
+/**
+ * Wrapper de la fonction log avec le level forcé à debug
+ * @param logArguments
+ */
+log.debug = (logArguments: number[] | ((...args: any[]) => string) | boolean = true) => log(logArguments, "debug");
+
+/**
+ * Récupère le nom de la fonction passé en paramètre
+ */
+// eslint-disable-next-line @typescript-eslint/ban-types
+function getFunctionArgs(func: Function) {
+	return (func + "")
+		.replaceAll(/\/\/.*$/gm, "") // strip single-line comments
+		.replaceAll(/\s+/g, "") // strip white space
+		.replaceAll(/\/[*][^/*]*[*]\//g, "") // strip multi-line comments
+		.split("){", 1)[0]
+		.replace(/^[^(]*[(]/, "") // extract the parameters
+		.replaceAll(/=[^,]+/g, "") // strip any ES6 defaults
+		.split(",")
+		.filter(Boolean); // split & filter [""]
+}
+
+/**
+ * Renvoie le temps en ms entre l'instant passé en paramètre et maintenant
+ * @param startedAt
+ */
+function formatTime(startedAt: number) {
+	return `${(performance.now() - startedAt).toFixed(3)}ms`;
+}
