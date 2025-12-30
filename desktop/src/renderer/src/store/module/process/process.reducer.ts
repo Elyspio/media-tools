@@ -1,40 +1,45 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { addProcessStd, completeProcess, setCurrentProcess } from "@modules/process/process.actions";
 
 type ProcessState = {
-	std: {
+	byPids: {
 		[pid: string]: {
 			stdout: string;
 			stderr: string;
-			completed: boolean;
+			exitStatus?: number;
 		};
 	};
 	current?: string;
 };
 const initialState: ProcessState = {
-	std: {},
+	byPids: {},
 };
 
 export const processSlice = createSlice({
 	name: "process",
 	initialState,
-	reducers: {},
+	reducers: {
+		setProcessExistStatus: (state, action: PayloadAction<{ pid: string; existStatus: number }>) => {
+			const { pid, existStatus } = action.payload;
+			state.byPids[pid].exitStatus = existStatus;
+		},
+	},
 	extraReducers: (builder) => {
 		builder.addCase(addProcessStd, (state, action) => {
 			const { pid, type, data } = action.payload;
-			if (!state.std[pid]) {
-				state.std[pid] = { stdout: "", stderr: "", completed: false };
+			if (!state.byPids[pid]) {
+				state.byPids[pid] = { stdout: "", stderr: "" };
 			}
-			state.std[pid][type] += data + "\n";
+			state.byPids[pid][type] += data + "\n";
 		});
 
 		builder.addCase(completeProcess, (state, action) => {
-			// Mark the process as completed
-			// and clear the current std to free up memory
-			state.std[action.payload.pid] = {
+			// // Mark the process as completed
+			// // and clear the current std to free up memory
+			state.byPids[action.payload.pid] = {
 				stdout: "",
 				stderr: "",
-				completed: false,
+				exitStatus: action.payload.exitStatus,
 			};
 			state.current = undefined;
 		});
@@ -44,3 +49,5 @@ export const processSlice = createSlice({
 		});
 	},
 });
+
+export const { setProcessExistStatus } = processSlice.actions;

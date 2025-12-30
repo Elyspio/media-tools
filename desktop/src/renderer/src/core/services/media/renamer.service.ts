@@ -18,7 +18,7 @@ export class RenamerService {
 				.trim()
 				.replace(/-_/g, " ")
 				.replace(/\./g, " . ")
-				.replace(/([0-9]*)E([0-9]+)/g, "$1 E $2"),
+				.replace(/([0-9]*)E([0-9]+)/g, "$1 E $2")
 		);
 
 		const splited = names.map((name) => name.split(" "));
@@ -47,7 +47,7 @@ export class RenamerService {
 				acc[file] = Number.parseInt(splited[fileIndex][numIndex]);
 				return acc;
 			},
-			{} as Record<string, number>,
+			{} as Record<string, number>
 		);
 	}
 
@@ -69,16 +69,18 @@ export class RenamerService {
 	 * @param files - The collection of files to rename
 	 * @return A Promise that resolves once all files have been renamed
 	 */
-	public async rename(newName: string, files: RenamerState["files"]): Promise<any> {
+	public async renameEpisodes(newName: string, files: RenamerState["files"]): Promise<void> {
 		if (!(newName !== undefined && newName?.length > 0)) throw new Error("New name is empty");
 
-		return Promise.all(
+		await Promise.all(
 			files.map((file) => {
-				return async () => {
-					await fs.rename(file.name, this.getNewEpisodeName(newName, file));
-				};
-			}),
+				return this.rename(file.name, this.getNewEpisodeName(newName, file));
+			})
 		);
+	}
+
+	public async rename(from: string, to: string): Promise<void> {
+		await window.preload.ipc.send.file.rename(from, to);
 	}
 
 	/**
@@ -106,7 +108,7 @@ export class RenamerService {
 					const newFileName = path.basename(episode.name).replace(regExp, replaceWith);
 					await fs.rename(episode.name, path.join(path.dirname(episode.name), newFileName));
 				}
-			}),
+			})
 		);
 	}
 }

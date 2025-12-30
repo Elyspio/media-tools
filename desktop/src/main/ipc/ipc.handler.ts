@@ -3,15 +3,29 @@ import * as Electron from "electron";
 import { app, BrowserWindow, ipcMain, IpcMainInvokeEvent } from "electron";
 import { WindowModule } from "../modules/window/window.module";
 import { ConfigModule } from "../modules/config/config.module";
-import * as si from "systeminformation";
+import si from "systeminformation";
 import { UpdateModule } from "../modules/update.module";
 import { FileModule } from "../modules/file.module";
 import { mainContainer } from "@main/di/container.di";
 import { ProcessModule } from "@main/modules/process/process.module";
 import { ExecResult, SpawnResult } from "@shared/types/process.types";
 import { Stats } from "node:fs";
+import { FfmpegProcessModule } from "@main/modules/process/ffmpeg.process.module";
+import { Encoder, FfmpegConvertOptions } from "@shared/types/ffmpeg.types";
+import type { FfprobeResult } from "@shared/types/ffprobe.types";
+import path from "node:path";
+import os from "os";
 
 const ipcHandlers: IpcHandledEvents = {
+	"system:meta:get"(): Promise<{
+		eol: string;
+		pathSeparator: string;
+	}> {
+		return Promise.resolve({
+			eol: os.EOL,
+			pathSeparator: path.sep,
+		});
+	},
 	"app:close"(event): void {
 		const win = BrowserWindow.fromWebContents(event.sender)!;
 		win.close();
@@ -20,7 +34,7 @@ const ipcHandlers: IpcHandledEvents = {
 		const win = BrowserWindow.fromWebContents(event.sender)!;
 
 		// Récupérer la sélection de texte
-		event.sender
+		void event.sender
 			.executeJavaScript(
 				`
 			(function() {
@@ -61,9 +75,9 @@ const ipcHandlers: IpcHandledEvents = {
 	},
 	"app:ipc:main-ready"() {
 		// noinspection JSIgnoredPromiseFromCall
-		mainContainer.get(UpdateModule).checkForUpdates();
+		void mainContainer.get(UpdateModule).checkForUpdates();
 	},
-	"app:launch-on-start-up:get"(_) {
+	"app:launch-on-start-up:get"() {
 		const conf = app.getLoginItemSettings({});
 		return conf.openAtLogin;
 	},
@@ -99,15 +113,19 @@ const ipcHandlers: IpcHandledEvents = {
 	},
 	"app:screen:toggle-fullscreen"(event) {
 		const win = BrowserWindow.fromWebContents(event.sender)!;
-		win.isMaximized() ? win.unmaximize() : win.maximize();
+		if (win.isMaximized()) {
+			win.unmaximize();
+		} else {
+			win.maximize();
+		}
 	},
 	"app:version:public:get"(): string {
 		return Electron.app.getVersion();
 	},
-	"config:local:get"(_) {
+	"config:local:get"() {
 		return mainContainer.get(ConfigModule).getConfig();
 	},
-	"config:local:regenerate"(_) {
+	"config:local:regenerate"() {
 		return mainContainer.get(ConfigModule).regenerateConfig();
 	},
 	"config:local:set"(_, config) {
@@ -140,14 +158,26 @@ const ipcHandlers: IpcHandledEvents = {
 	async "file:write"(_, filePath, binaryContent) {
 		await mainContainer.get(FileModule).writeFile(binaryContent, filePath);
 	},
-
 	async "process:exec"(_, command, args, options): Promise<ExecResult> {
-		command += " " + args.join(" ");
+		command += ` ${args.join(" ")}`;
 		return await mainContainer.get(ProcessModule).execute(command, options);
 	},
+	"process:ffmpeg:convert"(_: IpcMainInvokeEvent, opts: FfmpegConvertOptions): Promise<string> {
+		return mainContainer.get(FfmpegProcessModule).convert(opts);
+	},
+	"process:ffmpeg:get:available"(): Promise<boolean> {
+		return mainContainer.get(FfmpegProcessModule).isAvailable();
+	},
+	"process:ffmpeg:get:encoders"(): Promise<Encoder[]> {
+		return mainContainer.get(FfmpegProcessModule).getEncoders();
+	},
 
-	async "process:kill"(_, pid, signal): Promise<void> {
-		await mainContainer.get(ProcessModule).kill(pid, signal);
+	"process:ffmpeg:get:info"(_, path): Promise<FfprobeResult> {
+		return mainContainer.get(FfmpegProcessModule).probe(path);
+	},
+
+	"process:kill"(_, pid, signal): void {
+		mainContainer.get(ProcessModule).kill(pid, signal);
 	},
 	async "process:spawn"(_, command, args, options): Promise<SpawnResult> {
 		return await mainContainer.get(ProcessModule).spawn(command, args, options);
@@ -171,6 +201,7 @@ const ipcHandlers: IpcHandledEvents = {
 
 export function registerIpcHandlers() {
 	for (const channel of Object.keys(ipcHandlers)) {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 		ipcMain.handle(channel, ipcHandlers[channel]);
 	}
 }

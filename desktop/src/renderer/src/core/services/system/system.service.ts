@@ -11,7 +11,7 @@ export class SystemService {
 	private readonly xmlParser = new XMLParser();
 
 	public async cpuLoad(): Promise<number> {
-		let data = await window.preload.ipc.send.system.getInformation("currentLoad");
+		const data = await window.preload.ipc.send.system.getInformation("currentLoad");
 		return data.currentLoad;
 	}
 

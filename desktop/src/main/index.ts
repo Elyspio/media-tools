@@ -32,7 +32,7 @@ app.whenReady().then(async () => {
 		optimizer.watchWindowShortcuts(window);
 	});
 
-	let windowModule = mainContainer.get(WindowModule);
+	const windowModule = mainContainer.get(WindowModule);
 
 	const mainWindow = await windowModule.createMainWindow();
 

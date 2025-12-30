@@ -13,7 +13,7 @@ type InstanceTypes<T> = {
 
 export function getServices<T extends Record<any, any>>(services: T, extra: ExtraArgument): InstanceTypes<T> {
 	return Object.keys(services).reduce((acc, key) => {
-		acc[key as keyof T] = extra.container.get(services[key] as any);
+		acc[key as keyof T] = extra.container.get(services[key]);
 		return acc;
 	}, {} as InstanceTypes<T>);
 }

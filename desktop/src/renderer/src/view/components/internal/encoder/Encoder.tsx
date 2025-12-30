@@ -1,200 +1,141 @@
-import React, { useMemo } from "react";
-import Button from "@mui/material/Button";
-import { Alert, Grid, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
-import { File, Media, ProcessData } from "./type";
-import { MediaService } from "@services/media/media.service";
-import * as path from "path";
-import List from "@mui/material/List";
-import Process from "./process/Process";
+import React, { useEffect, useMemo } from "react";
+import { Autocomplete, Box, Button, Stack, TextField, Typography } from "@mui/material";
 import "./Encoder.scss";
-import AlertTitle from "@mui/material/AlertTitle";
-import Link from "@mui/material/Link";
 import { useDispatch } from "react-redux";
 import { bindActionCreators } from "redux";
-import OnFinishAction from "./OnFinishAction";
-import { convert } from "@modules/encoder/encoder.action";
 import { useAppSelector } from "@store";
-import { encoders } from "@/config/media/encoder";
-import { setFFmpegInstalled, setFormat, setMedias, setProcesses as setProcessStore, setProgress } from "../../../../store/module/media/media.action";
-import { EncoderState } from "@modules/encoder/encoder.reducer";
 import { ContextMenuWrapper } from "../../shared/hoc/ContextMenuWrapper";
 import { SelectFolder } from "../../shared/nodes/SelectFolder";
 import { setCurrentProcess } from "@modules/process/process.actions";
 import { stopCurrentProcess } from "@modules/process/process.async.actions";
+import { convert, setupFfmpeg } from "@modules/encoder/encoder.async.actions";
+import { encodersSelectors } from "@modules/encoder/encoders.selectors";
+import { setFormat } from "@modules/encoder/encoder.reducer";
+import { setMedias } from "@modules/media/media.async.actions";
+import type { Encoder as EncoderType } from "@shared/types/ffmpeg.types";
+import { PlayArrow } from "@mui/icons-material";
+import type { FileInfo } from "@shared/types/dialog.types";
+import { EncoderDashboard } from "@components/internal/encoder/EncoderDashboard";
+import { convertSizeToHumanFormat } from "@view/utils/data.utils";
+import { FFmpegNotInstalledAlert } from "@components/internal/encoder/FFmpegNotInstalledAlert";
 
 export function Encoder() {
-	// region store
+	const [manufacturer, setManufacturer] = React.useState<string>();
 
 	const dispatch = useDispatch();
+
+	const isFfmpegInstalled = useAppSelector(encodersSelectors.ffmpeg.isAvailable);
+	const encoders = useAppSelector(encodersSelectors.ffmpeg.encoders);
+	const files = useAppSelector((s) => s.media.data);
+	const format = useAppSelector((s) => s.encoder.current.format);
+	const encoding = useAppSelector((s) => !!s.encoder.current.pid);
 
 	const actions = useMemo(
 		() =>
 			bindActionCreators(
 				{
-					setProcessStore,
 					setFormat,
 					setCurrentProcess,
-					setFFmpegInstalled,
 					setMedias,
-					setProgress,
 					stopCurrentProcess,
 					convert,
+					setupFfmpeg,
 				},
 				dispatch
 			),
 		[dispatch]
 	);
 
-	const {
-		encoder,
-		media: { medias, process: processes },
-	} = useAppSelector((state) => ({
-		action: state.encoder.onFinishAction,
-		media: state.media,
-		encoder: state.encoder,
-	}));
+	useEffect(() => {
+		actions.setupFfmpeg();
+	}, [actions]);
 
 	// endregion store
 
-	const setProcesses = React.useCallback(
-		(media?: Media[]) => {
-			const enc = encoders.find((enc) => enc.value.ffmpeg === encoder.format);
-			const process: ProcessData[] = (media ?? medias)
-				.filter((media) => media.property.streams.find((s) => s.codec_type === "video")?.codec_name !== enc?.value.ffprobe)
-				.map((media) => ({
-					percentage: 0,
-					media,
-				}));
-
-			actions.setProcessStore(process);
-		},
-		[actions, encoder, medias]
-	);
-
-	// region onSelect
-
 	const onFormatChange = React.useCallback(
-		async (e: SelectChangeEvent<EncoderState["format"][]>) => {
-			dispatch(setFormat(e.target.value as EncoderState["format"]));
-			setProcesses();
+		(_: React.SyntheticEvent, val: EncoderType | null) => {
+			dispatch(setFormat(val?.id));
 		},
-		[dispatch, setProcesses]
+		[dispatch]
 	);
 
 	const onFileSelect = React.useCallback(
-		async (result: string[]) => {
-			const files: File[] = result.map((f) => ({ name: f.slice(f.lastIndexOf(path.sep)), path: f }));
-
-			const media: Media[] = await Promise.all(
-				files.map(async (file) => ({
-					file: file,
-					property: await new MediaService().getInfo(file),
-				}))
-			);
-
-			actions.setMedias(media);
-
-			if (encoder.format) {
-				setProcesses(media);
-			}
+		(result: FileInfo[]) => {
+			actions.setMedias(result);
 		},
-		[actions, encoder, setProcesses]
+		[actions]
 	);
 
-	// endregion onSelect
+	const manufacturers = useMemo(() => {
+		return [...new Set(encoders.flatMap((e) => e.manufacturer))];
+	}, [encoders]);
 
-	const softInstalled = encoder.isSoftInstalled;
+	const actionBtn = useMemo(() => {
+		if (!format) return null;
 
-	const doAction = React.useCallback(async () => {
-		if (encoder.currentProcessPid) {
-			await actions.stopCurrentProcess();
-		} else {
-			await actions.convert();
-		}
-	}, [actions, encoder]);
-
-	const { optionsUi, actionsUi } = React.useMemo(() => {
-		const optionsUi = (
-			<div className={"options"}>
-				<InputLabel id="demo-customized-select-label">Encoder</InputLabel>
-				<Select labelId="demo-customized-select-label" id="demo-customized-select" value={encoder.format as any} onChange={onFormatChange}>
-					{encoders.map((encoder) => (
-						<MenuItem value={encoder.value.ffmpeg} key={encoder.value.ffmpeg}>
-							{encoder.type} - {encoder.format}
-						</MenuItem>
-					))}
-				</Select>
-			</div>
-		);
-
-		const actionsUi = (
-			<Grid container className="actions" spacing={4}>
-				<Grid>
-					<Button color={"secondary"} onClick={doAction}>
-						{encoder.currentProcessPid ? "Stop" : "Encode Files"}
-					</Button>
-				</Grid>
-			</Grid>
-		);
-
-		return {
-			actionsUi: medias.length ? actionsUi : null,
-			optionsUi: medias.length ? optionsUi : null,
-		};
-	}, [doAction, encoder.currentProcessPid, encoder.format, medias.length, onFormatChange]);
-
-	const processUi = React.useMemo(() => {
-		if (processes) {
+		if (encoding)
 			return (
-				<div className={"processes"}>
-					<List className={"content"}>
-						{processes.map((p) => (
-							<Process key={p.media.file.name} data={p} />
-						))}
-					</List>
-				</div>
+				<Button size={"small"} color={"error"} variant="outlined" startIcon={<PlayArrow />}>
+					Annuler
+				</Button>
 			);
-		}
-		return null;
-	}, [processes]);
 
-	const menuItems = React.useMemo(
-		() => [
-			{
-				label: "Action",
-				show: ({ close }: any) => <OnFinishAction close={close} />,
-			},
-		],
-		[]
-	);
+		return (
+			<Button size={"small"} variant="outlined" startIcon={<PlayArrow />} onClick={() => actions.convert()}>
+				Tout Encoder
+			</Button>
+		);
+	}, [actions, encoding, format]);
+
 	return (
-		<ContextMenuWrapper items={menuItems}>
-			<div className={"Encoder"}>
-				{softInstalled === true && (
-					<>
-						<div className={"header"}>
-							<SelectFolder onChange={onFileSelect} mode={"file"} />
-							{optionsUi}
-						</div>
-						{processUi}
-						<div className="actions">{actionsUi}</div>
-					</>
+		<ContextMenuWrapper items={[]}>
+			<Stack height={"100%"} padding={2} spacing={1} alignItems={"center"} justifyContent={"center"}>
+				{isFfmpegInstalled && (
+					<Stack spacing={1.5} height={"100%"} width={"100%"}>
+						<Stack spacing={2}>
+							<Stack spacing={3} direction={"row"} justifyContent={"flex-start"} alignItems={"flex-end"}>
+								<SelectFolder variant={"outlined"} onChange={onFileSelect} mode={"files"} />
+
+								<Autocomplete
+									sx={{ width: 200 }}
+									onChange={(_, v) => setManufacturer(v)}
+									renderInput={(params) => <TextField {...params} size={"small"} variant={"standard"} fullWidth label="Manufacturer" />}
+									options={manufacturers}
+									disableClearable
+								/>
+								{manufacturer && (
+									<Autocomplete
+										sx={{ width: 150 }}
+										onChange={onFormatChange}
+										getOptionLabel={(option) => option.id}
+										renderInput={(params) => <TextField {...params} size={"small"} variant={"standard"} fullWidth label="Encoder" />}
+										options={encoders.filter((e) => e.manufacturer === manufacturer)}
+										disableClearable
+									/>
+								)}
+							</Stack>
+						</Stack>
+
+						{files.length > 0 && (
+							<>
+								<Box display={"flex"} justifyContent={"center"} alignItems={"center"} height={"100%"}>
+									<EncoderDashboard />
+								</Box>
+
+								<Stack spacing={2} direction={"row"} alignItems={"center"} justifyContent={"space-between"}>
+									<Typography variant="caption" color="text.secondary">
+										Total: {files.length} files • {convertSizeToHumanFormat(files.reduce((acc, f) => acc + f.file.size, 0))}
+									</Typography>
+
+									{actionBtn}
+								</Stack>
+							</>
+						)}
+					</Stack>
 				)}
 
-				{softInstalled === false && (
-					<Alert severity="error">
-						<AlertTitle>This module requires FFmpeg</AlertTitle>
-						It can be downloaded <Link href="https://ffmpeg.org/download.html">here</Link>
-					</Alert>
-				)}
-
-				{softInstalled === undefined && (
-					<Alert severity="info">
-						<AlertTitle>Please wait</AlertTitle>
-						Checking if FFmpeg is installed
-					</Alert>
-				)}
-			</div>
+				{!isFfmpegInstalled && <FFmpegNotInstalledAlert />}
+			</Stack>
 		</ContextMenuWrapper>
 	);
 }

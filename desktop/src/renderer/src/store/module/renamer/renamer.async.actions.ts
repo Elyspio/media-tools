@@ -16,7 +16,7 @@ export const runRename = createAsyncThunk("run", async (_, { extra, getState }) 
 
 	const { renamer } = getState();
 
-	await renamerService.rename(renamer.newName, renamer.files);
+	await renamerService.renameEpisodes(renamer.newName, renamer.files);
 });
 
 export const runReplaceChars = createAsyncThunk("run-replace-chars", async (_, { extra, getState }) => {

@@ -1,5 +1,4 @@
 import { BrowserWindowConstructorOptions } from "electron";
-import { AppBoardShow } from "../../renderer/src/config/configuration";
 
 export type PartialRecord<K extends keyof any, T> = Partial<Record<K, T>>;
 
@@ -18,6 +17,12 @@ export type FrameConfiguration = {
 		width: boolean;
 	};
 };
+
+export enum AppBoardShow {
+	external = "external",
+	internal = "internal",
+	hidden = "hidden",
+}
 
 export type LocalConfigV1 = {
 	/**

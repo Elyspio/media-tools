@@ -4,7 +4,7 @@ import { routes } from "@/config/routes.config";
 import { useNavigate } from "react-router";
 
 export function Dashboard() {
-	let navigate = useNavigate();
+	const navigate = useNavigate();
 
 	const links = useMemo(
 		() =>

@@ -13,9 +13,10 @@ import { useLocation } from "react-router";
 
 interface Props {
 	title?: string;
+	subtitle?: string;
 }
 
-const Titlebar: React.FC<Props> = ({ title }) => {
+const Titlebar: React.FC<Props> = ({ title, subtitle }) => {
 	const [fullscreen, setFullscreen] = useState<boolean>();
 	const [settingModalOpened, setSettingModalOpened] = useState<boolean>(false);
 
@@ -47,6 +48,15 @@ const Titlebar: React.FC<Props> = ({ title }) => {
 		<Stack id={"Titlebar"} bgcolor={theme.palette.background.default} direction={"row"} spacing={1} alignItems={"center"} pl={2} justifyContent={"space-between"}>
 			<Stack direction={"row"} spacing={1} alignItems={"center"}>
 				<Typography color={"gray"}>{title || window.preload.config.appName}</Typography>
+
+				{subtitle && (
+					<>
+						<Typography color={"gray"}>|</Typography>
+						<Typography fontSize={"small"} color={"gray"}>
+							{subtitle}
+						</Typography>
+					</>
+				)}
 
 				<Fade in={location.pathname !== routes["/"].path}>
 					<IconButton size={"small"} onClick={() => window.history.back()}>

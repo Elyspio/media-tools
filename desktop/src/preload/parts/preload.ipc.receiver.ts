@@ -20,19 +20,19 @@ export function getIpcReceiver() {
 		},
 		process: {
 			spawn: {
-				stdout: (callback: (pid: string, data: string) => void) => {
-					ipcRendererWrapper.on("process:spawn:stdout", (_, pid, data) => {
-						callback(pid, data);
+				stdout: (callback: (pid: string, data: string) => void | Promise<void>) => {
+					return ipcRendererWrapper.onAndGetRemover("process:spawn:stdout", (_, pid, data) => {
+						void callback(pid, data);
 					});
 				},
-				stderr: (callback: (pid: string, data: string) => void) => {
-					ipcRendererWrapper.on("process:spawn:stderr", (_, pid, data) => {
-						callback(pid, data);
+				stderr: (callback: (pid: string, data: string) => void | Promise<void>) => {
+					return ipcRendererWrapper.onAndGetRemover("process:spawn:stderr", (_, pid, data) => {
+						void callback(pid, data);
 					});
 				},
-				exit: (callback: (pid: string, code: number | null) => void) => {
-					ipcRendererWrapper.on("process:spawn:exit", (_, pid, code) => {
-						callback(pid, code);
+				exit: (callback: (pid: string, code: number | null) => void | Promise<void>) => {
+					return ipcRendererWrapper.onAndGetRemover("process:spawn:exit", (_, pid, code) => {
+						void callback(pid, code);
 					});
 				},
 			},

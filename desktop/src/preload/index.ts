@@ -19,5 +19,5 @@ if (process.contextIsolated) {
 		console.error(error);
 	}
 } else {
-	window.preload = preload;
+	globalThis.preload = preload;
 }

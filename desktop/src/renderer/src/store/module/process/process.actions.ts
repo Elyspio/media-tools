@@ -10,6 +10,7 @@ export const addProcessStd = createAction<{
 
 export const completeProcess = createAction<{
 	pid: string;
+	exitStatus: number;
 }>("complete");
 
 export const setCurrentProcess = createAction<{ pid: string } | undefined>("process");

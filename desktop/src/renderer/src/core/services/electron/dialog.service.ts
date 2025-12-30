@@ -12,4 +12,12 @@ export class DialogService {
 
 		return result;
 	}
+
+	public async selectFiles() {
+		const result = await window.preload.ipc.send.dialog.selectDirectory(true);
+
+		if (!result) return [];
+
+		return result.files.filter((file) => file.type === "file");
+	}
 }

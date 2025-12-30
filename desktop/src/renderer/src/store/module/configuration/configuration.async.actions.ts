@@ -67,8 +67,8 @@ export const initApp = createAsyncThunk("init-app", async (_, { dispatch }) => {
 	await dispatch(initConfig());
 	// dispatch(watchWindowResize());
 
-	window.preload.ipc.on.process.spawn.exit((pid) => {
-		dispatch(completeProcess({ pid }));
+	window.preload.ipc.on.process.spawn.exit((pid, code) => {
+		dispatch(completeProcess({ pid, exitStatus: code ?? -1 }));
 	});
 
 	window.preload.ipc.on.process.spawn.stdout((pid, data) => {

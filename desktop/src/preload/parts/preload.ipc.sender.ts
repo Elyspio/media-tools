@@ -7,6 +7,7 @@ import { GetFolderResult } from "@shared/types/dialog.types";
 import { ExecResult, SpawnResult } from "@shared/types/process.types";
 import { RmDirOptions } from "fs";
 import { Stats } from "node:fs";
+import { FfmpegConvertOptions } from "@shared/types/ffmpeg.types";
 
 export function getIpcSender() {
 	return {
@@ -39,6 +40,18 @@ export function getIpcSender() {
 			},
 			kill: async (pid: string, signal: NodeJS.Signals | number) => {
 				return await ipcRendererWrapper.invoke("process:kill", pid, signal);
+			},
+			ffmpeg: {
+				isAvailable: async () => await ipcRendererWrapper.invoke("process:ffmpeg:get:available"),
+				convert: async (opts: FfmpegConvertOptions) => {
+					return await ipcRendererWrapper.invoke("process:ffmpeg:convert", opts);
+				},
+				getEncoders: async () => {
+					return await ipcRendererWrapper.invoke("process:ffmpeg:get:encoders");
+				},
+				probe: async (path: string) => {
+					return await ipcRendererWrapper.invoke("process:ffmpeg:get:info", path);
+				},
 			},
 		},
 		file: {
@@ -74,6 +87,9 @@ export function getIpcSender() {
 			 */
 			async getInformation<K extends GetInformationKey>(key: K) {
 				return (await ipcRendererWrapper.invoke("system:info:get", key)) as GetInformationResult[K];
+			},
+			async getMeta() {
+				return await ipcRendererWrapper.invoke("system:meta:get");
 			},
 		},
 		update: {

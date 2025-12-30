@@ -49,10 +49,10 @@ export class ConfigModule extends LogModule {
 
 		if (this.configMigrationModule.requireMigration(config)) {
 			config = await this.configMigrationModule.migrate(config);
-			await this.writeConfig(config as LatestConfig);
+			await this.writeConfig(config);
 		}
 
-		this.configCache = config as LatestConfig;
+		this.configCache = config;
 
 		return this.configCache;
 	}

@@ -41,7 +41,7 @@ export class ProcessModule extends LogModule {
 	async spawn(command: string, args: string[], options: SpawnOptions): Promise<SpawnResult> {
 		const process = spawn(command, args, { ...options, stdio: "pipe" });
 
-		let pid = process.pid?.toString();
+		const pid = process.pid?.toString();
 
 		if (!pid) {
 			return { error: await text(process.stderr) };
@@ -49,24 +49,27 @@ export class ProcessModule extends LogModule {
 
 		this.cache.set(pid, process);
 
-		process.stderr.on("message", (err) => {
-			this.ipcModule.sendIpcToMainContent("process:spawn:stderr", pid!, err.toString());
+		process.stderr.on("data", (data: Buffer) => {
+			this.logger.debug("Process stderr", { pid: pid, data: data.toString("utf-8") });
+			this.ipcModule.sendIpcToMainContent("process:spawn:stderr", pid, data.toString("utf-8"));
 		});
 
-		process.stdout.on("message", (err) => {
-			this.ipcModule.sendIpcToMainContent("process:spawn:stdout", pid!, err.toString());
+		process.stdout.on("data", (data: Buffer) => {
+			this.logger.debug("Process stdout", { pid: pid, data: data.toString("utf-8") });
+			this.ipcModule.sendIpcToMainContent("process:spawn:stdout", pid, data.toString("utf-8"));
 		});
 
 		process.once("close", (code, signal) => {
+			this.logger.info("Process exit", { pid: pid, code: code, signal: signal });
 			process.stderr.removeAllListeners();
 			process.stdout.removeAllListeners();
-			this.ipcModule.sendIpcToMainContent("process:spawn:exit", pid!, code, signal);
+			this.ipcModule.sendIpcToMainContent("process:spawn:exit", pid, code, signal);
 		});
 
 		return { pid: pid };
 	}
 
-	async kill(pid: string, signal: NodeJS.Signals | number) {
+	kill(pid: string, signal: NodeJS.Signals | number) {
 		const process = this.cache.get(pid);
 
 		if (!process) {

@@ -5,6 +5,8 @@ import type { ExecOptions, SpawnOptions } from "node:child_process";
 import type { GetFolderResult } from "@shared/types/dialog.types";
 import type { ExecResult, SpawnResult } from "@shared/types/process.types";
 import { RmDirOptions, Stats } from "node:fs";
+import { Encoder, FfmpegConvertOptions } from "@shared/types/ffmpeg.types";
+import type { FfprobeResult } from "@shared/types/ffprobe.types";
 
 export type Dimensions = {
 	width: number;
@@ -45,7 +47,6 @@ export interface IpcHandledEvents {
 	"file:directory:create": (event: IpcMainInvokeEvent, filename: string) => Promise<void>;
 	"file:directory:read": (event: IpcMainInvokeEvent, filename: string, recursively?: boolean) => Promise<string[]>;
 	"file:lstat": (event: IpcMainInvokeEvent, filename: string) => Promise<Stats>;
-
 	/**
 	 * Exécute une commande et retourne le résultat une fois terminée
 	 * @param event
@@ -65,14 +66,42 @@ export interface IpcHandledEvents {
 	"process:spawn": (event: IpcMainInvokeEvent, command: string, args: string[], options: SpawnOptions) => Promise<SpawnResult>;
 
 	/**
+	 * Vérifie si ffmpeg est disponible sur le système
+	 */
+	"process:ffmpeg:get:available": (event: IpcMainInvokeEvent) => Promise<boolean>;
+
+	/**
+	 * Vérifie si ffmpeg est disponible sur le système
+	 */
+	"process:ffmpeg:get:info": (event: IpcMainInvokeEvent, path: string) => Promise<FfprobeResult>;
+
+	/**
+	 * Convertit une vidéo avec ffmpeg
+	 * @param opts
+	 * @return l'id du process ffmpeg
+	 * @
+	 */
+	"process:ffmpeg:convert": (event: IpcMainInvokeEvent, opts: FfmpegConvertOptions) => Promise<string>;
+
+	/**
+	 * Récupère la liste des encodeurs disponibles dans ffmpeg
+	 * @param event
+	 */
+	"process:ffmpeg:get:encoders": (event: IpcMainInvokeEvent) => Promise<Encoder[]>;
+
+	/**
 	 * Tue un process par son pid
 	 * @param event
 	 * @param pid id du process
 	 * @param signal signal à envoyer au process
 	 */
-	"process:kill": (event: IpcMainInvokeEvent, pid: string, signal: NodeJS.Signals | number) => Promise<void>;
+	"process:kill": (event: IpcMainInvokeEvent, pid: string, signal: NodeJS.Signals | number) => void;
 
 	"system:info:get": <T extends GetInformationKey>(event: IpcMainInvokeEvent, key: T) => GetInformationResult[T];
+	"system:meta:get": (event: IpcMainInvokeEvent) => Promise<{
+		eol: string;
+		pathSeparator: string;
+	}>;
 	/**
 	 * Lance la vérification de s'il y a une mise à jour disponible
 	 */

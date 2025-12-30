@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Menu, PopoverPosition } from "@mui/material";
+import { Menu, PopoverPosition, Stack } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import Dialog from "@mui/material/Dialog";
 
@@ -7,7 +7,7 @@ function extract<T>(init?: T) {
 	// eslint-disable-next-line react-hooks/rules-of-hooks
 	const [get, set] = React.useState<T>(init as T);
 	return {
-		value: get as T,
+		value: get,
 		set,
 	};
 }
@@ -63,12 +63,12 @@ export function ContextMenuWrapper(config: Readonly<ContextMenuWrapperProps>) {
 	};
 
 	return (
-		<div onContextMenu={onContextMenu} style={{ height: "100%" }}>
+		<Stack onContextMenu={onContextMenu} height={"100%"} width={"100%"}>
 			{config.children}
 			<Menu anchorReference="anchorPosition" anchorPosition={pos} keepMounted open={Boolean(pos?.left)} onClose={() => setPos(undefined)}>
 				{items}
 			</Menu>
-			<Dialog open={modal.open.value}>{modal.component.value && modal.component.value({ close: handleClose })}</Dialog>
-		</div>
+			<Dialog open={modal.open.value}>{modal.component.value?.({ close: handleClose })}</Dialog>
+		</Stack>
 	);
 }

@@ -1,52 +1,53 @@
 import React, { HTMLAttributes } from "react";
 import Button, { ButtonProps } from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { useAppDispatch, useAppSelector } from "@store";
-import { selectFolder } from "@modules/media/media.async.actions";
+import { useAppDispatch } from "@store";
+import { selectFolderOrFiles } from "@modules/media/media.async.actions";
+import { Stack } from "@mui/material";
+import type { FileInfo } from "@shared/types/dialog.types";
 
 type Props = Omit<HTMLAttributes<any>, "onChange"> & {
-	label?: string;
 	showSelected?: boolean;
 	color?: ButtonProps["color"];
 	variant?: ButtonProps["variant"];
 	fullWidth?: boolean;
-} & (SelectFile | SelectFolder);
+} & SelectFile;
 
 type SelectFile = {
-	mode: "file";
-	onChange: (item: string[]) => void;
-};
-
-type SelectFolder = {
-	mode: "folder";
-	onChange: (item: string) => void;
+	mode: "files";
+	onChange: (item: FileInfo[]) => void;
 };
 
 export function SelectFolder(props: Props) {
 	const dispatch = useAppDispatch();
 
-	async function openDialog(e: React.MouseEvent) {
-		if (props.mode === "folder") {
-			await dispatch(selectFolder()).unwrap();
-		}
+	const [files, setFiles] = React.useState<FileInfo[]>([]);
 
+	async function openDialog(e: React.MouseEvent) {
 		e.stopPropagation();
 		e.preventDefault();
+
+		const selectedFiles = await dispatch(selectFolderOrFiles("files")).unwrap();
+
+		if (!selectedFiles || !selectedFiles.files) {
+			return;
+		}
+
+		setFiles(selectedFiles.files ?? []);
+
+		props.onChange(selectedFiles.files);
 	}
 
-	const files = useAppSelector((s) => s.media.selected?.files ?? []);
-
 	return (
-		<div className={"SelectFolder"} style={{ margin: "1rem 0", width: "100%" }}>
+		<Stack direction={"column"} spacing={2} minWidth={200}>
 			<Button className={"header"} color={props.color ?? "primary"} fullWidth={props.fullWidth} onClick={openDialog} variant={props.variant ?? "outlined"}>
-				{props.mode === "folder" ? <> {props.label ?? "Select folder"}</> : <label htmlFor={"select-file-id"}>Select files</label>}
+				Select files
 			</Button>
-
 			{props.showSelected ? (
 				<Typography variant={"caption"} className={"files"} noWrap>
-					{files}
+					{files.map((f) => f.name).join(", ")}
 				</Typography>
 			) : null}
-		</div>
+		</Stack>
 	);
 }

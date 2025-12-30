@@ -19,7 +19,7 @@ export class ConfigMigrationModule extends LogModule {
 	public async migrate(conf: LocalConfig): Promise<LatestConfig> {
 		this.logger.info("Starting migration of local config");
 
-		return conf as LatestConfig;
+		return conf;
 	}
 
 	/**

@@ -1,4 +1,4 @@
-import * as si from "systeminformation";
+import si from "systeminformation";
 
 export type GetInformationKey = keyof typeof si;
 

@@ -1,12 +1,11 @@
 import { dialog, shell } from "electron";
-import { promises as fsPromises } from "node:fs";
-import path from "node:path";
+import { type Dirent, promises as fsPromises, type RmDirOptions } from "node:fs";
 import { LogModule } from "./log.module";
 import { log } from "../utils/logs.utils";
 import { injectable } from "inversify";
-import type { GetFolderOptions, GetFolderResult } from "@shared/types/dialog.types";
-import os from "node:os";
-import { RmDirOptions } from "fs";
+import type { FileInfo, GetFolderOptions, GetFolderResult } from "@shared/types/dialog.types";
+import path from "node:path";
+import os from "os";
 
 @injectable()
 export class FileModule extends LogModule {
@@ -23,16 +22,30 @@ export class FileModule extends LogModule {
 
 		if (!folderPath) return null;
 
-		let files: string[] | undefined;
+		let files: Dirent[] | undefined;
 
 		if (returnFiles) {
-			files = await fsPromises.readdir(folderPath, { recursive: true });
+			files = await fsPromises.readdir(folderPath, { recursive: true, withFileTypes: true });
 		}
+
+		const filesInfo = await Promise.all(
+			(files ?? []).map(async (dirent): Promise<FileInfo> => {
+				const filePath = path.resolve(dirent.parentPath, dirent.name);
+				const stats = await fsPromises.lstat(filePath);
+
+				return {
+					name: dirent.name,
+					type: stats.isDirectory() ? "directory" : "file",
+					path: filePath,
+					size: stats.size,
+				};
+			})
+		);
 
 		return {
 			folderPath,
-			files,
-		} as GetFolderResult<WithFiles>;
+			files: filesInfo,
+		} as unknown as GetFolderResult<WithFiles>;
 	}
 
 	@log.debug()
@@ -40,7 +53,7 @@ export class FileModule extends LogModule {
 		try {
 			await fsPromises.access(filePath);
 			return true;
-		} catch (err) {
+		} catch {
 			return false;
 		}
 	}
@@ -78,8 +91,12 @@ export class FileModule extends LogModule {
 		return fsPromises.lstat(filename);
 	}
 
-	rename(from: string, to: string) {
-		return fsPromises.rename(from, to);
+	async rename(from: string, to: string) {
+		const toDir = path.dirname(to);
+
+		await fsPromises.mkdir(toDir, { recursive: true });
+
+		await fsPromises.rename(from, to);
 	}
 
 	readdir(filename: string, recursively?: boolean) {
