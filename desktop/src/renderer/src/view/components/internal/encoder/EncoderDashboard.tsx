@@ -2,9 +2,17 @@ import { useAppSelector } from "@store";
 import { useMemo } from "react";
 import { DataGrid, type GridColDef, type GridRenderCellParams } from "@mui/x-data-grid";
 import type { Media } from "@components/internal/encoder/type";
-import { Box, Chip, IconButton, LinearProgress, Typography } from "@mui/material";
-import { Delete, Description } from "@mui/icons-material";
+import { Box, Chip, LinearProgress, Typography } from "@mui/material";
+import { Description } from "@mui/icons-material";
 import { convertSizeToHumanFormat } from "@view/utils/data.utils";
+import { SpecialEncodingProgressValues } from "@modules/encoder/encoder.async.actions";
+
+const statusLabels: Record<string, string> = {
+	InProgress: "In Progress",
+	Pending: "Pending",
+	Converted: "Converted",
+	Aborted: "Aborted",
+};
 
 export const EncoderDashboard = () => {
 	const files = useAppSelector((s) => s.media.data);
@@ -15,13 +23,16 @@ export const EncoderDashboard = () => {
 		() =>
 			files.reduce(
 				(acc, { file }) => {
-					const progress = progresses[file.path] * 100 || 0;
+					const progress = progresses[file.path] || 0;
+
 					if (progress === 0) {
-						acc[file.path] = "En attente";
-					} else if (progress > 0 && progress <= 99) {
-						acc[file.path] = "En cours";
+						acc[file.path] = "Pending";
+					} else if (progress > 0 && progress <= 0.99) {
+						acc[file.path] = "InProgress";
+					} else if (progress === SpecialEncodingProgressValues.Aborted) {
+						acc[file.path] = "Aborted";
 					} else {
-						acc[file.path] = "Terminé";
+						acc[file.path] = "Converted";
 					}
 					return acc;
 				},
@@ -73,7 +84,7 @@ export const EncoderDashboard = () => {
 		},
 		{
 			field: "status",
-			headerName: "Statut",
+			headerName: "Status",
 			width: 140,
 			sortable: false,
 			filterable: false,
@@ -81,12 +92,12 @@ export const EncoderDashboard = () => {
 			align: "center",
 			headerAlign: "center",
 			renderCell: (params: EncoderGridRenderCellParams) => (
-				<Chip label={params.row.status} size="small" variant="outlined" color={getStatusColor(params.row.status)} sx={{ height: 24, fontSize: "0.75rem" }} />
+				<Chip label={statusLabels[params.row.status]} size="small" variant="outlined" color={getStatusColor(params.row.status)} sx={{ height: 24, fontSize: "0.75rem" }} />
 			),
 		},
 		{
 			field: "progress",
-			headerName: "Progression",
+			headerName: "Progress",
 			minWidth: 150,
 			sortable: false,
 			filterable: false,
@@ -98,34 +109,10 @@ export const EncoderDashboard = () => {
 					<LinearProgress
 						variant="determinate"
 						value={params.row.progress * 100}
-						color={params.row.status === "Terminé" ? "success" : "primary"}
+						color={params.row.status === "Converted" ? "success" : "primary"}
 						sx={{ flexGrow: 1, height: 6, borderRadius: 3, bgcolor: "action.hover" }}
 					/>
-					{/*<Typography variant="caption" sx={{ width: 35, textAlign: "right", fontWeight: "medium" }}>*/}
-					{/*	{params.value}%*/}
-					{/*</Typography>*/}
 				</Box>
-			),
-		},
-		{
-			field: "actions",
-			headerName: "Actions",
-			width: 80,
-			sortable: false,
-			filterable: false,
-			disableColumnMenu: true,
-			align: "center",
-			headerAlign: "center",
-			renderCell: (_: EncoderGridRenderCellParams) => (
-				<IconButton
-					size="small"
-					onClick={() => {
-						console.log("TODO");
-					}}
-					sx={{ color: "text.secondary", "&:hover": { color: "error.main" } }}
-				>
-					<Delete fontSize="small" />
-				</IconButton>
 			),
 		},
 	];
@@ -133,7 +120,7 @@ export const EncoderDashboard = () => {
 	return <DataGrid sx={{ maxHeight: "calc(100vh - 230px)" }} hideFooter getRowId={(r) => r.file.path} columns={columns} rows={rows} />;
 };
 
-type FileStatus = "En attente" | "En cours" | "Terminé";
+type FileStatus = "InProgress" | "Pending" | "Converted" | "Aborted";
 
 type MediaWithEncoderProps = Media & {
 	status: FileStatus;
@@ -144,10 +131,12 @@ type EncoderGridRenderCellParams = GridRenderCellParams<MediaWithEncoderProps>;
 
 const getStatusColor = (status: FileStatus): "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning" => {
 	switch (status) {
-		case "En cours":
+		case "InProgress":
 			return "primary";
-		case "Terminé":
+		case "Converted":
 			return "success";
+		case "Aborted":
+			return "error";
 		default:
 			return "default";
 	}

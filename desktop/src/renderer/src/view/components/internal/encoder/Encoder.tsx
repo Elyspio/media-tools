@@ -7,13 +7,12 @@ import { useAppSelector } from "@store";
 import { ContextMenuWrapper } from "../../shared/hoc/ContextMenuWrapper";
 import { SelectFolder } from "../../shared/nodes/SelectFolder";
 import { setCurrentProcess } from "@modules/process/process.actions";
-import { stopCurrentProcess } from "@modules/process/process.async.actions";
-import { convert, setupFfmpeg } from "@modules/encoder/encoder.async.actions";
+import { convertMedia, setupFfmpeg, stopConvertMedia } from "@modules/encoder/encoder.async.actions";
 import { encodersSelectors } from "@modules/encoder/encoders.selectors";
 import { setFormat } from "@modules/encoder/encoder.reducer";
 import { setMedias } from "@modules/media/media.async.actions";
 import type { Encoder as EncoderType } from "@shared/types/ffmpeg.types";
-import { PlayArrow } from "@mui/icons-material";
+import { PlayArrow, Stop } from "@mui/icons-material";
 import type { FileInfo } from "@shared/types/dialog.types";
 import { EncoderDashboard } from "@components/internal/encoder/EncoderDashboard";
 import { convertSizeToHumanFormat } from "@view/utils/data.utils";
@@ -37,8 +36,8 @@ export function Encoder() {
 					setFormat,
 					setCurrentProcess,
 					setMedias,
-					stopCurrentProcess,
-					convert,
+					stopConvertMedia,
+					convert: convertMedia,
 					setupFfmpeg,
 				},
 				dispatch
@@ -75,14 +74,14 @@ export function Encoder() {
 
 		if (encoding)
 			return (
-				<Button size={"small"} color={"error"} variant="outlined" startIcon={<PlayArrow />}>
-					Annuler
+				<Button size={"small"} color={"error"} variant="outlined" startIcon={<Stop />} onClick={() => actions.stopConvertMedia()}>
+					Cancel
 				</Button>
 			);
 
 		return (
 			<Button size={"small"} variant="outlined" startIcon={<PlayArrow />} onClick={() => actions.convert()}>
-				Tout Encoder
+				Encode
 			</Button>
 		);
 	}, [actions, encoding, format]);

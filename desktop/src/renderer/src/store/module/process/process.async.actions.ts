@@ -1,27 +1,17 @@
-import { createAsyncActionGenerator } from "@store/utils/utils.actions";
-import { webContainer } from "@core/di/web.container";
-import { ProcessService } from "@services/common/process.service";
 import type { StoreState } from "@store";
 
-const createAsyncThunk = createAsyncActionGenerator("media");
-
-export const stopCurrentProcess = createAsyncThunk("media/stopCurrentProcess", async (_, { getState }) => {
-	const processService = webContainer.get(ProcessService);
-	const state = getState();
-	if (state.process.current) {
-		await processService.kill(state.process.current);
-	}
-});
-export function waitProcessExits(getState: () => StoreState, pid: string): Promise<void> {
+export function waitProcessExits(getState: () => StoreState, pid: string, timeoutInSecondes = 10 * 60): Promise<void> {
 	return new Promise<void>((resolve, reject) => {
-		const timeout = setInterval(() => {
+		setTimeout(() => reject(new Error(`process timeout after ${timeoutInSecondes}`)), timeoutInSecondes * 1000); // 10 minutes timeout
+
+		const interval = setInterval(() => {
 			const state = getState();
 
 			const exitStatus = state.process.byPids[pid].exitStatus;
 
 			if (exitStatus === undefined) return;
 
-			clearInterval(timeout);
+			clearInterval(interval);
 
 			if (exitStatus === 0) {
 				resolve();

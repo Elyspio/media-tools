@@ -7,6 +7,7 @@ import { setFileProcess, setProcessProgress } from "@modules/encoder/encoder.red
 import FilesService from "@services/files/files.service";
 import { PathService } from "@services/files/path.service";
 import type { Media } from "@components/internal/encoder/type";
+import { ProcessService } from "@services/common/process.service";
 
 const createAsyncThunk = createAsyncActionGenerator("encoder");
 
@@ -45,12 +46,18 @@ export const ignoreAlreadyConvertedFiles = createAsyncThunk("convert", async ({ 
 	return alreadyConverted;
 });
 
+export const encoderConvertStates = {
+	isConverting: false,
+};
+
 /**
  * Convert media files to the selected format
  * @throws Error if no format is selected
  * @throws Error if no files are selected
  */
-export const convert = createAsyncThunk("convert", async (_, { getState, dispatch, extra }) => {
+export const convertMedia = createAsyncThunk("convert", async (_, { getState, dispatch, extra }) => {
+	encoderConvertStates.isConverting = true;
+
 	const state = getState();
 
 	const format = state.encoder.current.format;
@@ -76,6 +83,8 @@ export const convert = createAsyncThunk("convert", async (_, { getState, dispatc
 	// endregion Skip already converted files
 
 	for (const file of files.filter((f) => !alreadyConverted.includes(f))) {
+		if (!encoderConvertStates.isConverting) break;
+
 		const outputPath = getConvertedFilePath(file.file.path);
 
 		const pid = await ffmpegService.convert({
@@ -124,6 +133,35 @@ export const convert = createAsyncThunk("convert", async (_, { getState, dispatc
 	}
 
 	dispatch(setFileProcess(null));
+});
+
+export const SpecialEncodingProgressValues = {
+	Aborted: -1,
+};
+
+export const stopConvertMedia = createAsyncThunk("stop-convert", async (_, { dispatch, getState, extra }) => {
+	const state = getState();
+
+	if (!state.encoder.current.pid) {
+		throw new Error("No ongoing conversion process");
+	}
+
+	encoderConvertStates.isConverting = false;
+
+	dispatch(setFileProcess(null));
+
+	const currentPath = Object.entries(state.encoder.processes.pids).find(([, pid]) => pid === state.encoder.current.pid)?.[0];
+
+	dispatch(
+		setProcessProgress({
+			path: currentPath!,
+			value: SpecialEncodingProgressValues.Aborted,
+		})
+	);
+
+	const processService = getService(ProcessService, extra);
+
+	await processService.kill(state.encoder.current.pid);
 });
 
 function getConvertedFilePath(filePath: string): string {

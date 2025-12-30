@@ -87,7 +87,7 @@ export class ConfigModule extends LogModule {
 			appboard: { show: [] },
 			frame: {
 				show: {
-					resourceUtilization: true,
+					resourceUtilization: false,
 				},
 				resize: {
 					height: true,

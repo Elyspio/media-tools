@@ -19,12 +19,18 @@ export const regenerateConfig = createAsyncThunk("regenerate", async (_, { extra
 	await services.config.regenerate();
 });
 
-export const initConfig = createAsyncThunk("init", async (_, { extra, dispatch }) => {
+export const initConfig = createAsyncThunk("init", async (_, { extra, dispatch, getState }) => {
 	const services = getServices({ config: ConfigurationService, system: SystemService }, extra);
 
 	await dispatch(setConfig(await services.config.get()));
 
 	setInterval(async () => {
+		const state = getState();
+
+		if (!state.config.current.frame.show.resourceUtilization) {
+			return;
+		}
+
 		const [cpu, mem, gpu] = await Promise.all([services.system.cpuLoad(), services.system.memoryUsed(), services.system.gpuLoad()]);
 		dispatch(
 			setSystemInformation({

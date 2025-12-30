@@ -25,7 +25,7 @@ export class FileModule extends LogModule {
 		let files: Dirent[] | undefined;
 
 		if (returnFiles) {
-			files = await fsPromises.readdir(folderPath, { recursive: true, withFileTypes: true });
+			files = await fsPromises.readdir(folderPath, { withFileTypes: true });
 		}
 
 		const filesInfo = await Promise.all(
