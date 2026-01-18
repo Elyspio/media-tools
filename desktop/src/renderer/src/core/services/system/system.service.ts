@@ -5,10 +5,9 @@ import { ProcessService } from "@services/common/process.service";
 
 @injectable()
 export class SystemService {
-	@inject(ProcessService)
-	private readonly processService!: ProcessService;
-
 	private readonly xmlParser = new XMLParser();
+
+	constructor(@inject(ProcessService) private readonly processService: ProcessService) {}
 
 	public async cpuLoad(): Promise<number> {
 		const data = await window.preload.ipc.send.system.getInformation("currentLoad");

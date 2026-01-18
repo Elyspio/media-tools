@@ -1,34 +1,41 @@
-import { qbittorent } from "@/config/media/torents.private";
-import { QBittorrent } from "@ctrl/qbittorrent";
-import { readFile } from "fs/promises";
 import { injectable } from "inversify";
-
-const client = new QBittorrent({
-	baseUrl: qbittorent.uri,
-	password: qbittorent.password,
-	username: qbittorent.login,
-});
+import { QBittorrent } from "@ctrl/qbittorrent";
+import { qbittorrentConfig } from "@/config/networks/torrent";
 
 @injectable()
 export class TorrentService {
-	async add(torrent: string) {
-		const read = await readFile(torrent);
-		await client.addTorrent(read, { firstLastPiecePrio: "true" });
+	private client = new QBittorrent({
+		baseUrl: qbittorrentConfig.baseUrl,
+		username: qbittorrentConfig.username,
+		password: qbittorrentConfig.password,
+	});
+
+	async addMagnet(magnet: string) {
+		await this.client.addMagnet(magnet, { firstLastPiecePrio: "true" });
 	}
 
-	async list() {
-		return client.listTorrents();
+	async addTorrentFromUrl(torrentUrl: string) {
+		const res = await fetch(torrentUrl);
+
+		if (!res.ok) throw new Error(`Failed to download torrent file (${res.status})`);
+
+		const buffer = new Uint8Array(await res.arrayBuffer());
+		await this.client.addTorrent(buffer, { firstLastPiecePrio: "true" });
+	}
+
+	list() {
+		return this.client.listTorrents({ limit: 50 });
 	}
 
 	resume(hash: string) {
-		return client.resumeTorrent(hash);
+		return this.client.resumeTorrent(hash);
 	}
 
 	pause(hash: string) {
-		return client.pauseTorrent(hash);
+		return this.client.pauseTorrent(hash);
 	}
 
-	delete(hash: string) {
-		return client.removeTorrent(hash, true);
+	delete(hash: string, deleteFiles = true) {
+		return this.client.removeTorrent(hash, deleteFiles);
 	}
 }

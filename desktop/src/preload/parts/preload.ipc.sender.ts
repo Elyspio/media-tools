@@ -8,6 +8,7 @@ import { ExecResult, SpawnResult } from "@shared/types/process.types";
 import { RmDirOptions } from "fs";
 import { Stats } from "node:fs";
 import { FfmpegConvertOptions } from "@shared/types/ffmpeg.types";
+import { NyaaTorrentItem } from "@shared/types/torrent.types";
 
 export function getIpcSender() {
 	return {
@@ -118,6 +119,13 @@ export function getIpcSender() {
 			 */
 			getId() {
 				return ipcRendererWrapper.invoke("window:id:get");
+			},
+		},
+		torrent: {
+			nyaa: {
+				list: async (query: string): Promise<NyaaTorrentItem[]> => {
+					return await ipcRendererWrapper.invoke("torrent:nyaa:list", query);
+				},
 			},
 		},
 	};

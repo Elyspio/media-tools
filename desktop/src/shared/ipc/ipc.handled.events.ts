@@ -7,6 +7,7 @@ import type { ExecResult, SpawnResult } from "@shared/types/process.types";
 import { RmDirOptions, Stats } from "node:fs";
 import { Encoder, FfmpegConvertOptions } from "@shared/types/ffmpeg.types";
 import type { FfprobeResult } from "@shared/types/ffprobe.types";
+import type { NyaaTorrentItem } from "@shared/types/torrent.types";
 
 export type Dimensions = {
 	width: number;
@@ -118,6 +119,7 @@ export interface IpcHandledEvents {
 	 * Récupère l'id de la window
 	 */
 	"window:id:get": (event: IpcMainInvokeEvent) => number;
+	"torrent:nyaa:list": (event: IpcMainInvokeEvent, query: string) => Promise<NyaaTorrentItem[]>;
 }
 
 export type * from "./payload/ipc.system.payload";

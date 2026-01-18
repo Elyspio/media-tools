@@ -1,11 +1,10 @@
-import { bytecodePlugin, defineConfig, externalizeDepsPlugin } from "electron-vite";
+import { defineConfig } from "electron-vite";
 import react from "@vitejs/plugin-react";
 import { convertPathToAlias } from "@elyspio/vite-eslint-config";
-// @ts-ignore
 import tsconfigNode from "../tsconfig.node.json";
-// @ts-ignore
 import tsconfigWeb from "../tsconfig.web.json";
 import path from "node:path";
+import svgr from "vite-plugin-svgr";
 
 const basePath = path.join(__dirname, "..");
 
@@ -19,13 +18,17 @@ console.log({
 
 export default defineConfig({
 	main: {
-		plugins: [externalizeDepsPlugin(), bytecodePlugin()],
+		build: {
+			bytecode: true,
+		},
 		resolve: {
 			alias: nodeAlias,
 		},
 	},
 	preload: {
-		plugins: [externalizeDepsPlugin(), bytecodePlugin()],
+		build: {
+			bytecode: true,
+		},
 		resolve: {
 			alias: nodeAlias,
 		},
@@ -34,6 +37,18 @@ export default defineConfig({
 		resolve: {
 			alias: rendererAlias,
 		},
-		plugins: [react({})],
+		plugins: [
+			svgr(),
+			react({
+				babel: {
+					plugins: [
+						["babel-plugin-react-compiler", {}],
+						"babel-plugin-transform-typescript-metadata",
+						["@babel/plugin-proposal-decorators", { legacy: true }],
+						["@babel/plugin-proposal-class-properties", { loose: true }],
+					],
+				},
+			}),
+		],
 	},
 });

@@ -6,6 +6,7 @@ import { Renamer } from "@components/internal/renamer/Renamer";
 import { Encoder } from "@components/internal/encoder/Encoder";
 import { routes } from "@/config/routes.config";
 import { Dashboard } from "@components/Dashboard";
+import { Torrent } from "@components/internal/torrent/Torrent";
 
 const routesData = createRoutesFromElements(
 	<Route path={"/"} element={<Root />}>
@@ -14,6 +15,7 @@ const routesData = createRoutesFromElements(
 		<Route id={routes["/internal/config"].name} path={routes["/internal/config"].path} element={<Config />} />
 		<Route id={routes["/internal/encoder"].name} path={routes["/internal/encoder"].path} element={<Encoder />} />
 		<Route id={routes["/internal/renamer"].name} path={routes["/internal/renamer"].path} element={<Renamer />} />
+		<Route id={routes["/internal/torrent"].name} path={routes["/internal/torrent"].path} element={<Torrent />} />
 	</Route>
 );
 

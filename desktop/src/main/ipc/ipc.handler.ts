@@ -15,6 +15,7 @@ import { Encoder, FfmpegConvertOptions } from "@shared/types/ffmpeg.types";
 import type { FfprobeResult } from "@shared/types/ffprobe.types";
 import path from "node:path";
 import os from "os";
+import { NyaaModule } from "@main/modules/torrent/nyaa.module";
 
 const ipcHandlers: IpcHandledEvents = {
 	"system:meta:get"(): Promise<{
@@ -196,6 +197,9 @@ const ipcHandlers: IpcHandledEvents = {
 	},
 	"window:id:get"(event) {
 		return event.sender.id;
+	},
+	async "torrent:nyaa:list"(_, query: string) {
+		return await mainContainer.get(NyaaModule).list(query);
 	},
 };
 
