@@ -4,7 +4,7 @@ import { LogModule } from "@main/modules/log.module";
 import type { NyaaRawItem, NyaaRssResult, NyaaTorrentItem } from "@shared/types/torrent.types";
 import fs from "fs";
 
-const RSS_URL = "https://nyaa.si/?page=rss&f=0&c=0_0&q=";
+const RSS_URL = "https://nyaa.si/?page=rss&f=0&c=0_0";
 
 @injectable()
 export class NyaaModule extends LogModule {
@@ -18,7 +18,7 @@ export class NyaaModule extends LogModule {
 		const trimmed = query.trim();
 		if (!trimmed) return [];
 
-		const url = `${RSS_URL}q=${encodeURIComponent(trimmed.replace(" ", "+"))}`;
+		const url = `${RSS_URL}&q=${trimmed.replaceAll(" ", "+")}`;
 		this.logger.debug("Fetching nyaa feed", url);
 
 		const res = await fetch(url, { method: "GET" });

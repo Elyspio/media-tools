@@ -1,5 +1,5 @@
-import { useCallback, useMemo } from "react";
-import { Box, IconButton, Stack, TextField, Tooltip } from "@mui/material";
+import { useCallback, useMemo, useState } from "react";
+import { Autocomplete, Box, Checkbox, FormControlLabel, IconButton, Stack, TextField, Tooltip } from "@mui/material";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { toast } from "react-toastify";
@@ -10,21 +10,35 @@ import { torrentActions } from "@modules/torrent/torrent.reducer";
 import dayjs from "dayjs";
 import { CopyAll, Download, SearchOutlined } from "@mui/icons-material";
 
+const resolutions = ["720p", "1080p", "2160p", "4K", "8K"] as const;
+
+type Resolution = (typeof resolutions)[number];
+
 export function Torrent() {
 	const dispatch = useAppDispatch();
 	const { query, results, loading, sendingId } = useAppSelector((s) => s.torrent);
+
+	const [forceVostfr, setForceVostfr] = useState(true);
+	const [forceResolution, setForceResolution] = useState<Resolution>("1080p");
 
 	const search = useCallback(
 		(e?: React.FormEvent) => {
 			e?.preventDefault();
 			if (!query.trim()) return;
-			void dispatch(searchTorrents(query.trim()))
+
+			let search = query.trim();
+
+			if (forceVostfr) search += " vostfr";
+
+			search += " " + forceResolution;
+
+			void dispatch(searchTorrents(search))
 				.unwrap()
 				.catch((error) => {
 					toast.error(error instanceof Error ? error.message : "Failed to search nyaa.si");
 				});
 		},
-		[dispatch, query]
+		[dispatch, forceResolution, forceVostfr, query]
 	);
 
 	const sendToQbittorrent = useCallback(
@@ -95,7 +109,7 @@ export function Torrent() {
 						)}{" "}
 						{row.torrentUrl.startsWith("magnet") && (
 							<Tooltip title="Copy Magnet Link">
-								<IconButton size="small" onClick={() => navigator.clipboard.writeText(row.torrentUrl)}>
+								<IconButton size="small" onClick={() => void navigator.clipboard.writeText(row.torrentUrl)}>
 									<CopyAll fontSize="inherit" />
 								</IconButton>
 							</Tooltip>
@@ -115,21 +129,34 @@ export function Torrent() {
 	const torrents = useMemo(() => [...results].filter((t) => t.seeders > 0).sort((a, b) => a.title.localeCompare(b.title)), [results]);
 
 	return (
-		<Stack spacing={2} padding={2} height={"100%"} width={"100%"}>
+		<Stack spacing={3} padding={2} height={"100%"} width={"100%"}>
 			<form onSubmit={search}>
 				<Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
 					<TextField
 						value={query}
 						onChange={(e) => dispatch(torrentActions.setQuery(e.target.value))}
 						label="Search nyaa.si"
-						variant="outlined"
+						variant="standard"
 						size="small"
 						fullWidth
 						placeholder="e.g. Some Anime 1080p"
 					/>
-					<IconButton disabled={loading || !query.trim()} type={"submit"}>
-						<SearchOutlined />
-					</IconButton>
+
+					<Autocomplete
+						renderInput={(params) => <TextField variant={"standard"} {...params} size={"small"} label={"Resolution"} />}
+						options={resolutions}
+						value={forceResolution}
+						sx={{ width: 200 }}
+						disableClearable
+						onChange={(_, v) => setForceResolution(v as Resolution)}
+					/>
+					<FormControlLabel control={<Checkbox size={"small"} checked={forceVostfr} />} checked={forceVostfr} onChange={(_, v) => setForceVostfr(v)} label="vostfr" />
+
+					<Box px={1}>
+						<IconButton color={"primary"} sx={{ border: 0.5 }} disabled={loading || !query.trim()} type={"submit"}>
+							<SearchOutlined />
+						</IconButton>
+					</Box>
 				</Stack>
 			</form>
 

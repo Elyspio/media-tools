@@ -11,7 +11,7 @@
 		"typecheck": "tsc --watch --noEmit",
 		"start": "electron-vite preview",
 		"dev": "electron-vite -c config/electron.vite.config.ts dev -w",
-		"build": "npm run typecheck && electron-vite -c config/electron.vite.config.ts build",
+		"build": "electron-vite -c config/electron.vite.config.ts build",
 		"postinstall": "electron-builder install-app-deps"
 	},
 	"dependencies": {
