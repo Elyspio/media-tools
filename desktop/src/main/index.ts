@@ -8,11 +8,18 @@ import { mainContainer } from "@main/di/container.di";
 import { WindowModule } from "@main/modules/window/window.module";
 import { UpdateModule } from "@main/modules/update.module";
 import { RequestInterceptionModule } from "@main/modules/request/interception.request.module";
+import { DeeplinkModule } from "@main/modules/deeplink.module";
+
+const hasSingleInstanceLock = app.requestSingleInstanceLock();
+if (!hasSingleInstanceLock) {
+	app.quit();
+}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(async () => {
+if (hasSingleInstanceLock) {
+	void app.whenReady().then(async () => {
 	// Set app user model id for windows
 	electronApp.setAppUserModelId("fr.elyspio.elytools.app");
 
@@ -33,6 +40,7 @@ app.whenReady().then(async () => {
 	});
 
 	const windowModule = mainContainer.get(WindowModule);
+	mainContainer.get(DeeplinkModule).register();
 
 	const mainWindow = await windowModule.createMainWindow();
 
@@ -43,9 +51,12 @@ app.whenReady().then(async () => {
 	app.on("activate", function () {
 		// On macOS it's common to re-create a window in the app when the
 		// dock icon is clicked and there are no other windows open.
-		if (BrowserWindow.getAllWindows().length === 0) windowModule.createMainWindow();
+		if (BrowserWindow.getAllWindows().length === 0) {
+			void windowModule.createMainWindow();
+		}
 	});
-});
+	});
+}
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits

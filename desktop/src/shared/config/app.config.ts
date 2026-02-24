@@ -2,9 +2,9 @@ import { BrowserWindowConstructorOptions } from "electron";
 
 export type PartialRecord<K extends keyof any, T> = Partial<Record<K, T>>;
 
-export type LocalConfig = LocalConfigV1;
+export type LocalConfig = LocalConfigV1 | LocalConfigV2;
 
-export type LatestConfig = LocalConfigV1;
+export type LatestConfig = LocalConfigV2;
 
 export type PositionWindowKey = "main";
 
@@ -16,6 +16,17 @@ export type FrameConfiguration = {
 		height: boolean;
 		width: boolean;
 	};
+};
+
+export type OidcConfiguration = {
+	issuerUrl: string;
+	clientId: string;
+	scopes: string;
+	redirectPath: string;
+};
+
+export type QBittorrentConfiguration = {
+	apiBaseUrl: string;
 };
 
 export enum AppBoardShow {
@@ -42,6 +53,14 @@ export type LocalConfigV1 = {
 		hubs: {
 			screenshare: string;
 		};
+	};
+};
+
+export type LocalConfigV2 = Omit<LocalConfigV1, "version" | "endpoints"> & {
+	version: 2;
+	endpoints: LocalConfigV1["endpoints"] & {
+		qbittorrent: QBittorrentConfiguration;
+		oidc: OidcConfiguration;
 	};
 };
 export type WindowPosition = Pick<BrowserWindowConstructorOptions, "x" | "y" | "width" | "height">;

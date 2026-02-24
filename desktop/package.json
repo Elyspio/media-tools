@@ -1,9 +1,13 @@
 {
-	"name": "app-vite",
-	"version": "1.0.0",
+	"name": "elytools",
+	"version": "1.4.0",
 	"description": "An Electron application with React and TypeScript",
 	"main": "./out/main/index.js",
-	"author": "example.com",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Elyspio/media-tools.git"
+	},
+	"author": "jona.guich69@gmail.com",
 	"homepage": "https://electron-vite.org",
 	"scripts": {
 		"format": "prettier --write .",
@@ -11,7 +15,9 @@
 		"typecheck": "tsc --watch --noEmit",
 		"start": "electron-vite preview",
 		"dev": "electron-vite -c config/electron.vite.config.ts dev -w",
+		"prebuild": "rimraf out dist",
 		"build": "electron-vite -c config/electron.vite.config.ts build",
+		"postbuild": "electron-builder --config config/electron-builder.yml -w",
 		"postinstall": "electron-builder install-app-deps"
 	},
 	"dependencies": {
@@ -60,6 +66,7 @@
 		"electron-builder": "^26.4.0",
 		"electron-vite": "^5.0.0",
 		"typescript": "^5.9.3",
-		"vite": "^7.3.1"
+		"vite": "^7.3.1",
+		"rimraf": "^6.1.3"
 	}
 }

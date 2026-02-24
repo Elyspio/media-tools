@@ -1,6 +1,5 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { getUriParam } from "@view/utils/url";
-import { reducer as renamerReducer } from "./module/renamer/renamer.reducer";
 import { reducer as encoderReducer } from "./module/encoder/encoder.reducer";
 import { torrentReducer } from "./module/torrent/torrent.reducer";
 import { configurationReducer } from "./module/configuration/configuration.reducer";
@@ -14,7 +13,6 @@ import { processSlice } from "@modules/process/process.reducer";
 const reducers = combineReducers({
 	config: configurationReducer,
 	media: mediaSlice.reducer,
-	renamer: renamerReducer,
 	encoder: encoderReducer,
 	process: processSlice.reducer,
 	torrent: torrentReducer,

@@ -6,13 +6,15 @@ import { LogModule } from "./log.module";
 import { IpcModule } from "./ipc.module";
 import { log } from "../utils/logs.utils";
 import { WindowModule } from "./window/window.module";
+import { OidcModule } from "@main/modules/auth/oidc.module";
 import { inject, injectable } from "inversify";
 
 @injectable()
 export class DeeplinkModule extends LogModule {
 	public constructor(
 		@inject(WindowModule) private readonly windowModule: WindowModule,
-		@inject(IpcModule) private readonly ipcModule: IpcModule
+		@inject(IpcModule) private readonly ipcModule: IpcModule,
+		@inject(OidcModule) private readonly oidcModule: OidcModule
 	) {
 		super("DeeplinkModule");
 	}
@@ -48,7 +50,16 @@ export class DeeplinkModule extends LogModule {
 
 	@log.debug()
 	private handle(url: string) {
-		this.logger.info("handle url", url);
+		void this.routeDeeplink(url);
+	}
+
+	private async routeDeeplink(url: string) {
+		this.logger.info("handle deeplink");
+		const handled = await this.oidcModule.tryHandleRedirect(url);
+		if (handled) {
+			return;
+		}
+
 		this.ipcModule.sendIpcToMainContent("app:deeplink:handle", url);
 	}
 }

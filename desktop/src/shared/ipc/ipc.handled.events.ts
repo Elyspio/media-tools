@@ -8,6 +8,7 @@ import { RmDirOptions, Stats } from "node:fs";
 import { Encoder, FfmpegConvertOptions } from "@shared/types/ffmpeg.types";
 import type { FfprobeResult } from "@shared/types/ffprobe.types";
 import type { NyaaTorrentItem } from "@shared/types/torrent.types";
+import type { OidcAuthStatus } from "@shared/types/auth.types";
 
 export type Dimensions = {
 	width: number;
@@ -120,6 +121,10 @@ export interface IpcHandledEvents {
 	 */
 	"window:id:get": (event: IpcMainInvokeEvent) => number;
 	"torrent:nyaa:list": (event: IpcMainInvokeEvent, query: string) => Promise<NyaaTorrentItem[]>;
+	"torrent:qbittorrent:add-from-url": (event: IpcMainInvokeEvent, torrentUrl: string) => Promise<void>;
+	"auth:oidc:login:start": (event: IpcMainInvokeEvent) => Promise<void>;
+	"auth:oidc:logout": (event: IpcMainInvokeEvent) => Promise<void>;
+	"auth:oidc:status:get": (event: IpcMainInvokeEvent) => Promise<OidcAuthStatus>;
 }
 
 export type * from "./payload/ipc.system.payload";

@@ -16,6 +16,8 @@ import type { FfprobeResult } from "@shared/types/ffprobe.types";
 import path from "node:path";
 import os from "os";
 import { NyaaModule } from "@main/modules/torrent/nyaa.module";
+import { QBittorrentModule } from "@main/modules/torrent/qbittorrent.module";
+import { OidcModule } from "@main/modules/auth/oidc.module";
 
 const ipcHandlers: IpcHandledEvents = {
 	"system:meta:get"(): Promise<{
@@ -200,6 +202,18 @@ const ipcHandlers: IpcHandledEvents = {
 	},
 	async "torrent:nyaa:list"(_, query: string) {
 		return await mainContainer.get(NyaaModule).list(query);
+	},
+	async "torrent:qbittorrent:add-from-url"(_, torrentUrl: string) {
+		await mainContainer.get(QBittorrentModule).addTorrentFromUrl(torrentUrl);
+	},
+	async "auth:oidc:login:start"() {
+		await mainContainer.get(OidcModule).startLogin();
+	},
+	async "auth:oidc:logout"() {
+		await mainContainer.get(OidcModule).logout();
+	},
+	async "auth:oidc:status:get"() {
+		return await mainContainer.get(OidcModule).getStatus();
 	},
 };
 

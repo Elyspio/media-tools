@@ -12,7 +12,7 @@ export type RouteDescription = {
 	};
 };
 
-export type RoutePath = "/" | "/internal/config" | "/internal/encoder" | "/internal/renamer" | "/internal/torrent" | "/external/home-assistant";
+export type RoutePath = "/" | "/internal/encoder" | "/internal/torrent" | "/external/home-assistant";
 
 const routesInfoBase: Record<RoutePath, RouteDescription> = {
 	"/": {
@@ -22,25 +22,9 @@ const routesInfoBase: Record<RoutePath, RouteDescription> = {
 			name: false,
 		},
 	},
-	"/internal/config": {
-		name: "Config",
-		description: "Configure the application settings",
-		show: {
-			appboard: true,
-			name: true,
-		},
-	},
 	"/internal/encoder": {
 		name: "Encoder",
 		description: "Video encoder tools and settings",
-		show: {
-			appboard: true,
-			name: true,
-		},
-	},
-	"/internal/renamer": {
-		name: "Renamer",
-		description: "Batch rename your files easily",
 		show: {
 			appboard: true,
 			name: true,

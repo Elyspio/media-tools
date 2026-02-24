@@ -37,6 +37,7 @@ export default defineConfig({
 		resolve: {
 			alias: rendererAlias,
 		},
+
 		plugins: [
 			svgr(),
 			react({
