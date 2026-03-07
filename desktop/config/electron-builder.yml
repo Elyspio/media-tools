@@ -32,7 +32,7 @@ appImage:
 publish:
     provider: github
     owner: Elyspio
-    repo: media-tools
+    repo: elytools
     releaseType: release
 electronFuses:
     # Enable ASAR integrity validation
