@@ -15,8 +15,12 @@ async function main() {
 
 	mkdirSync(distDir, { recursive: true });
 
-	await run("docker", ["build", "--build-arg", `GITHUB_TOKEN=${githubToken}`, "-f", dockerfilePath, "-t", imageTag, "."], {
+	await run("docker", ["build", "--secret", "id=github_token,env=GITHUB_TOKEN", "-f", dockerfilePath, "-t", imageTag, "."], {
 		cwd: desktopDir,
+		env: {
+			...process.env,
+			GITHUB_TOKEN: githubToken,
+		},
 	});
 
 	await run("docker", ["run", "--rm", "--volume", distMountPath, "--volume", cacheVolume, imageTag], {

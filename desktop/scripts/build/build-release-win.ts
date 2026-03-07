@@ -1,5 +1,4 @@
-import { rmSync } from "node:fs";
-import { desktopDir, distDir, electronBuilderCli, electronViteCli, outDir, run } from "../shared/release-utils";
+import { desktopDir, electronBuilderCli, electronViteCli, run } from "../shared/release-utils";
 
 async function main() {
 	rmSync(outDir, { force: true, recursive: true });

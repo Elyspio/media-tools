@@ -24,7 +24,7 @@
 		"build:release:linux": "tsx ./scripts/build/build-release-linux.ts",
 		"build:release:linux:container": "tsx ./scripts/build/build-release-linux-container.ts",
 		"publish:release": "tsx ./scripts/publish/publish-release.ts",
-		"release": "yarn build:release:win && yarn build:release:linux && yarn publish:release",
+		"release": "concurrently npm:build:release:win  npm:build:release:linux && yarn publish:release",
 		"postinstall": "electron-builder install-app-deps"
 	},
 	"dependencies": {
@@ -69,6 +69,7 @@
 		"@types/react-dom": "^19.2.3",
 		"@types/react-syntax-highlighter": "^15.5.13",
 		"@types/redux-logger": "^3.0.13",
+		"concurrently": "^9.2.1",
 		"babel-plugin-transform-typescript-metadata": "^0.4.0",
 		"electron": "^40.8.0",
 		"electron-builder": "^26.4.0",
