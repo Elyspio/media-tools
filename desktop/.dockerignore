@@ -1,7 +1,3 @@
-**/node_modules
-app/dist
-**/releases
-**/bin
-**/obj
-**/.vs
-**/.idea
+out
+dist
+node_modules

@@ -1,5 +1,4 @@
 export const autoUpdate = {
-	url: "https://eparcoursstorage.blob.core.windows.net/aura/monsisra-bureau/dev/",
 	/**
 	 * Délai en minutes entre les checks de mise à jour
 	 */

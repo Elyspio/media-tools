@@ -1,8 +1,0 @@
-﻿{
-	"AppName": "Elytools",
-	"Server": "https://elyspio.fr/updater/",
-	"Paths": {
-		"Root": "..",
-		"Releases": "../releases"
-	}
-}

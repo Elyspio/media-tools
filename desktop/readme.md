@@ -66,6 +66,18 @@ yarn run dev
 yarn run build
 ```
 
+### Build and publish a desktop release locally
+
+```bash
+yarn run release
+```
+
+This flow:
+
+- builds Windows artifacts on the host,
+- builds Linux artifacts in Docker and writes them back to `dist/`,
+- publishes the collected artifacts from the host to GitHub Releases using `GITHUB_TOKEN`.
+
 ### Preview built app
 
 ```bash

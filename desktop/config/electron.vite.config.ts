@@ -7,6 +7,7 @@ import path from "node:path";
 import svgr from "vite-plugin-svgr";
 
 const basePath = path.join(__dirname, "..");
+const disableMainBytecode = process.env["ELYTOOLS_DISABLE_MAIN_BYTECODE"] === "1";
 
 const nodeAlias = convertPathToAlias(tsconfigNode.compilerOptions.paths, basePath);
 const rendererAlias = convertPathToAlias(tsconfigWeb.compilerOptions.paths, basePath);
@@ -19,7 +20,8 @@ console.log({
 export default defineConfig({
 	main: {
 		build: {
-			bytecode: true,
+			externalizeDeps: false,
+			bytecode: !disableMainBytecode,
 		},
 		resolve: {
 			alias: nodeAlias,
