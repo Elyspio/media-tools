@@ -1,7 +1,9 @@
 appId: fr.elyspio.elytools.app
 productName: elytools
+electronUpdaterCompatibility: ">=2.16"
 directories:
     buildResources: build
+    output: dist
 files:
     - "!**/.vscode/*"
     - "!src/*"
@@ -21,12 +23,16 @@ nsis:
 linux:
     target:
         - AppImage
-        - snap
         - deb
     maintainer: electronjs.org
     category: Utility
 appImage:
     artifactName: ${name}-${version}.${ext}
+publish:
+    provider: github
+    owner: Elyspio
+    repo: media-tools
+    releaseType: release
 electronFuses:
     # Enable ASAR integrity validation
     enableEmbeddedAsarIntegrityValidation: true

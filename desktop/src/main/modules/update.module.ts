@@ -1,37 +1,26 @@
 import { LogModule } from "./log.module";
-import { MacUpdater, NsisUpdater } from "electron-updater";
+import { autoUpdater, type AppUpdater } from "electron-updater";
 import { mainConfig } from "@shared/config/main.config";
-import * as os from "node:os";
 import { IpcModule } from "./ipc.module";
 import { log } from "../utils/logs.utils";
 import { inject, injectable, LazyServiceIdentifier } from "inversify";
-
-const updateFeed = mainConfig.autoUpdate.url + (process.platform === "darwin" ? `mac/${os.arch()}` : "win");
-
-const AutoUpdater = process.platform === "darwin" ? MacUpdater : NsisUpdater;
+import { app } from "electron";
 
 @injectable()
 export class UpdateModule extends LogModule {
-	private readonly autoUpdater: MacUpdater | NsisUpdater | undefined;
+	private readonly autoUpdater: AppUpdater;
 	private checkTimeout: NodeJS.Timeout | undefined;
 
 	public constructor(@inject(new LazyServiceIdentifier(() => IpcModule)) private readonly ipcModule: IpcModule) {
 		super("UpdateModule");
-		if (!mainConfig.autoUpdate.url) {
-			this.logger.warn("No update feed provided");
-			return;
-		}
-
-		this.logger.info("UpdateFeed", updateFeed);
-
-		this.autoUpdater = new AutoUpdater({
-			url: updateFeed,
-			provider: "generic",
-		});
-
-		this.autoUpdater.allowDowngrade = true;
+		this.autoUpdater = autoUpdater;
 		this.autoUpdater.autoDownload = false;
-		this.autoUpdater.forceDevUpdateConfig = true;
+		this.autoUpdater.autoInstallOnAppQuit = false;
+		this.autoUpdater.logger = this.logger as AppUpdater["logger"];
+		if (!app.isPackaged) {
+			this.autoUpdater.forceDevUpdateConfig = true;
+			this.logger.info("Using dev-app-update.yml for update checks");
+		}
 
 		this.autoUpdater.on("update-available", (info) => {
 			this.ipcModule.sendIpcToMainContent("update:available", info.version);
@@ -55,7 +44,7 @@ export class UpdateModule extends LogModule {
 
 		this.autoUpdater.on("update-not-available", (info) => {
 			this.logger.debug("No update available");
-			this.ipcModule.sendIpcToMainContent("update:available", info.version);
+			this.logger.info("Current version is up to date", info.version);
 		});
 	}
 
@@ -63,10 +52,8 @@ export class UpdateModule extends LogModule {
 	public async checkForUpdates() {
 		this.logger.info("Checking for updates");
 
-		if (!this.autoUpdater) return;
-
 		try {
-			const result = await this.autoUpdater.checkForUpdatesAndNotify();
+			const result = await this.autoUpdater.checkForUpdates();
 			this.logger.info("Server version: ", result?.updateInfo.version);
 		} catch (e) {
 			this.logger.error("An error occurred while checking for updates", e);
@@ -80,13 +67,13 @@ export class UpdateModule extends LogModule {
 	public quitAndInstall() {
 		this.logger.info("Quitting and installing update");
 
-		this.autoUpdater!.quitAndInstall(false, true);
+		this.autoUpdater.quitAndInstall(false, true);
 	}
 
 	@log.debug()
 	async downloadUpdate() {
 		this.logger.info("Downloading update");
 
-		await this.autoUpdater!.downloadUpdate();
+		await this.autoUpdater.downloadUpdate();
 	}
 }

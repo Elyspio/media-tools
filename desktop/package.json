@@ -9,6 +9,8 @@
 	},
 	"author": "jona.guich69@gmail.com",
 	"scripts": {
+		"clean": "node ./scripts/clean-release.mjs",
+		"clean:bundle": "node ./scripts/clean-bundle.mjs",
 		"format": "prettier --write .",
 		"lint": "eslint --cache . --fix",
 		"typecheck": "tsc --watch --noEmit",
@@ -17,6 +19,12 @@
 		"prebuild": "rimraf out dist",
 		"build": "electron-vite -c config/electron.vite.config.ts build",
 		"postbuild": "electron-builder --config config/electron-builder.yml -w",
+		"build:bundle": "node ./scripts/build-bundle.mjs",
+		"build:release:win": "node ./scripts/build-release-win.mjs",
+		"build:release:linux": "node ./scripts/build-release-linux.mjs",
+		"build:release:linux:container": "node ./scripts/build-release-linux-container.mjs",
+		"publish:release": "node ./scripts/publish-release.mjs",
+		"release": "yarn build:release:win && yarn build:release:linux && yarn publish:release",
 		"postinstall": "electron-builder install-app-deps"
 	},
 	"dependencies": {
