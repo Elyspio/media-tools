@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import "./Frame.scss";
-import { Paper, Stack } from "@mui/material";
+import { Paper } from "@mui/material";
 import Titlebar from "./titlebar/Titlebar";
 import { ResourceUtilization } from "./resource-utilization/ResourceUtilization";
 import { useMatches } from "react-router";
@@ -18,9 +18,9 @@ export function Frame({ children }: Readonly<FrameProps>) {
 	return (
 		<Paper square className={"Frame"}>
 			<Titlebar title={window.preload.config.appName} subtitle={route?.id === "0-0" ? undefined : route?.id} />
-			<Stack component={"main"} alignItems={"center"} justifyContent={"center"} height={"100%"}>
-				{children}
-			</Stack>
+			<main className={"Frame__content"}>
+				<div className={"Frame__page"}>{children}</div>
+			</main>
 			{showResourceUtilization && <ResourceUtilization />}
 		</Paper>
 	);

@@ -27,7 +27,7 @@ export class ConfigModule extends LogModule {
 		return (this.#configFilePath ??= path.resolve(this.mainContextModule.appFolder, "config", "config.json"));
 	}
 
-	@log.debug()
+	@log.debug(false)
 	public async writeConfig(config: LatestConfig) {
 		this.configCache = config;
 		await fs.promises.writeFile(this.configFilePath, JSON.stringify(config, null, 4));

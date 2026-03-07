@@ -27,7 +27,7 @@ export default defineConfig({
 	},
 	preload: {
 		build: {
-			bytecode: true,
+			bytecode: false,
 		},
 		resolve: {
 			alias: nodeAlias,

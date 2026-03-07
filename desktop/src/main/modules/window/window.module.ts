@@ -27,6 +27,7 @@ export class WindowModule extends LogModule {
 		if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
 			await mainWindow.loadURL(process.env["ELECTRON_RENDERER_URL"]);
 		} else {
+			this.logger.info("Loading main window from file", { __dirname });
 			await mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
 		}
 	}

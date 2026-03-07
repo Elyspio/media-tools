@@ -115,6 +115,14 @@ Current schema is **`version: 2`** and includes:
 - Preload exposes typed sender/receiver wrappers.
 - Renderer never calls privileged Node/Electron APIs directly.
 
+## Debugging in Production
+
+DevTools are disabled by default in packaged builds. You can enable them explicitly:
+
+- `ELYTOOLS_DEBUG=1` enables DevTools.
+- `ELYTOOLS_DEVTOOLS_AUTOOPEN=1` auto-opens the DevTools window at startup.
+- CLI switches: `--debug`, `--devtools`, `--devtools-auto-open`.
+
 ## Notes
 
 - Legacy references in old docs/modules may still exist; this README describes the **current active flow**.

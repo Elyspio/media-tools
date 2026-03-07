@@ -8,12 +8,13 @@
 	-webkit-app-region: drag;
 	flex-direction: row;
 	align-items: center;
-	width: 100vw;
+	width: 100%;
 	padding: 4px 0;
 	color: $headerColor !important;
 	background-color: #0e0e0e !important;
 	border-radius: 0 !important;
 	height: math.div($titlebarHeight, 1.5);
+	flex-shrink: 0;
 
 	.item {
 		display: flex;

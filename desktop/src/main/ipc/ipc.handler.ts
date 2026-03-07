@@ -146,6 +146,12 @@ const ipcHandlers: IpcHandledEvents = {
 	"file:directory:read"(_, filename, recursively?: boolean): Promise<string[]> {
 		return mainContainer.get(FileModule).readdir(filename, recursively);
 	},
+	"file:directory:read:entries"(_, filename): Promise<{ name: string; isDirectory: boolean; isFile: boolean; isSymbolicLink: boolean }[]> {
+		return mainContainer.get(FileModule).readdirEntries(filename);
+	},
+	"file:directory:size"(_, filename): Promise<number> {
+		return mainContainer.get(FileModule).getDirectorySize(filename);
+	},
 	"file:exists"(_, filename: string): Promise<boolean> {
 		return mainContainer.get(FileModule).fileExists(filename);
 	},

@@ -3,7 +3,7 @@ import { GetInformationKey, GetInformationResult } from "../../shared/ipc/ipc.ha
 import { appIpcSender } from "./ipc/sender/app.sender.ipc.preload";
 import { LatestConfig } from "@shared/config/app.config";
 import { ExecOptions, SpawnOptions } from "node:child_process";
-import { GetFolderResult } from "@shared/types/dialog.types";
+import { DirectoryEntry, GetFolderResult } from "@shared/types/dialog.types";
 import { ExecResult, SpawnResult } from "@shared/types/process.types";
 import { RmDirOptions } from "fs";
 import { Stats } from "node:fs";
@@ -80,6 +80,12 @@ export function getIpcSender() {
 			},
 			async readdir(folder: string, recursively?: boolean): Promise<string[]> {
 				return await ipcRendererWrapper.invoke("file:directory:read", folder, recursively);
+			},
+			async readdirEntries(folder: string): Promise<DirectoryEntry[]> {
+				return await ipcRendererWrapper.invoke("file:directory:read:entries", folder);
+			},
+			async getDirectorySize(folder: string): Promise<number> {
+				return await ipcRendererWrapper.invoke("file:directory:size", folder);
 			},
 		},
 		system: {

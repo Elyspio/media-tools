@@ -6,6 +6,7 @@ import { injectable } from "inversify";
 import type { FileInfo, GetFolderOptions, GetFolderResult } from "@shared/types/dialog.types";
 import path from "node:path";
 import os from "os";
+import { execFile } from "node:child_process";
 
 @injectable()
 export class FileModule extends LogModule {
@@ -75,22 +76,27 @@ export class FileModule extends LogModule {
 		await fsPromises.writeFile(filePathResolved, binaryContent);
 	}
 
+	@log.debug()
 	getTempFilePath(filename: string) {
 		return path.resolve(os.tmpdir(), filename);
 	}
 
+	@log.debug()
 	delete(filename: string, options: RmDirOptions | undefined) {
 		return fsPromises.rm(filename, options);
 	}
 
+	@log.debug()
 	mkdir(filename: string) {
 		return fsPromises.mkdir(filename, { recursive: true });
 	}
 
+	@log.debug()
 	lstat(filename: string) {
 		return fsPromises.lstat(filename);
 	}
 
+	@log.debug()
 	async rename(from: string, to: string) {
 		const toDir = path.dirname(to);
 
@@ -99,7 +105,82 @@ export class FileModule extends LogModule {
 		await fsPromises.rename(from, to);
 	}
 
+	@log.debug()
 	readdir(filename: string, recursively?: boolean) {
 		return fsPromises.readdir(filename, { recursive: recursively });
+	}
+
+	@log.debug()
+	async readdirEntries(filename: string) {
+		const entries = await fsPromises.readdir(filename, { withFileTypes: true });
+
+		return entries.map((entry) => ({
+			name: entry.name,
+			isDirectory: entry.isDirectory(),
+			isFile: entry.isFile(),
+			isSymbolicLink: entry.isSymbolicLink(),
+		}));
+	}
+
+	@log.debug()
+	async getDirectorySize(directory: string): Promise<number> {
+		const stdout = await this.executeDirectorySizeCommand(directory);
+		const parsed = Number.parseFloat(stdout.trim());
+
+		if (Number.isNaN(parsed)) {
+			throw new Error(`Unable to parse directory size for ${directory}: ${stdout}`);
+		}
+
+		return Math.max(0, Math.round(parsed));
+	}
+
+	private async executeDirectorySizeCommand(directory: string): Promise<string> {
+		switch (process.platform) {
+			case "win32":
+				return await this.execFileText("powershell.exe", [
+					"-NoProfile",
+					"-NonInteractive",
+					"-Command",
+					this.getWindowsDirectorySizeScript(directory),
+				]);
+			case "darwin":
+				return await this.execFileText("/bin/sh", ["-lc", this.getMacDirectorySizeScript(), "sh", directory]);
+			default:
+				return await this.execFileText("/bin/sh", ["-lc", this.getLinuxDirectorySizeScript(), "sh", directory]);
+		}
+	}
+
+	private async execFileText(command: string, args: string[]): Promise<string> {
+		return await new Promise<string>((resolve, reject) => {
+			execFile(command, args, { windowsHide: true, maxBuffer: 1024 * 1024 * 16 }, (error, stdout, stderr) => {
+				if (error) {
+					this.logger.error("Directory size command failed", { command, args, stderr });
+					reject(error);
+					return;
+				}
+
+				resolve(stdout.toString());
+			});
+		});
+	}
+
+	private getWindowsDirectorySizeScript(directory: string): string {
+		const escapedPath = directory.replaceAll("'", "''");
+
+		return [
+			"$ErrorActionPreference = 'Stop'",
+			`$target = '${escapedPath}'`,
+			"$sum = (Get-ChildItem -LiteralPath $target -Recurse -Force -File | Measure-Object -Property Length -Sum -ErrorAction Stop).Sum",
+			"if ($null -eq $sum) { $sum = 0 }",
+			"[Console]::Out.Write($sum)",
+		].join("; ");
+	}
+
+	private getMacDirectorySizeScript(): string {
+		return `find "$1" -type f -exec stat -f %z {} + | awk '{ sum += $1 } END { print sum + 0 }'`;
+	}
+
+	private getLinuxDirectorySizeScript(): string {
+		return `find "$1" -type f -printf '%s\n' | awk '{ sum += $1 } END { print sum + 0 }'`;
 	}
 }

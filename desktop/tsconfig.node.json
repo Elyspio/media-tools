@@ -3,6 +3,7 @@
 	"include": ["./config", "./src/main", "./src/preload", "./src/shared", "tsconfig.web.json", "tsconfig.node.json"],
 	"compilerOptions": {
 		"composite": true,
+		"tsBuildInfoFile": "dist/.tsbuild.node.info",
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
 		"lib": ["ESNext"],

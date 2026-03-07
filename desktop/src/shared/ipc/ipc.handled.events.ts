@@ -2,7 +2,7 @@ import type { IpcMainInvokeEvent } from "electron";
 import type { LatestConfig } from "../config/app.config";
 import type { GetInformationKey, GetInformationResult } from "./payload/ipc.system.payload";
 import type { ExecOptions, SpawnOptions } from "node:child_process";
-import type { GetFolderResult } from "@shared/types/dialog.types";
+import type { DirectoryEntry, GetFolderResult } from "@shared/types/dialog.types";
 import type { ExecResult, SpawnResult } from "@shared/types/process.types";
 import { RmDirOptions, Stats } from "node:fs";
 import { Encoder, FfmpegConvertOptions } from "@shared/types/ffmpeg.types";
@@ -48,6 +48,8 @@ export interface IpcHandledEvents {
 	"file:rename": (event: IpcMainInvokeEvent, from: string, to: string) => Promise<void>;
 	"file:directory:create": (event: IpcMainInvokeEvent, filename: string) => Promise<void>;
 	"file:directory:read": (event: IpcMainInvokeEvent, filename: string, recursively?: boolean) => Promise<string[]>;
+	"file:directory:read:entries": (event: IpcMainInvokeEvent, filename: string) => Promise<DirectoryEntry[]>;
+	"file:directory:size": (event: IpcMainInvokeEvent, filename: string) => Promise<number>;
 	"file:lstat": (event: IpcMainInvokeEvent, filename: string) => Promise<Stats>;
 	/**
 	 * Exécute une commande et retourne le résultat une fois terminée

@@ -24,25 +24,27 @@ export const initConfig = createAsyncThunk("init", async (_, { extra, dispatch, 
 
 	await dispatch(setConfig(await services.config.get()));
 
-	setInterval(async () => {
-		const state = getState();
+	setInterval(() => {
+		void (async () => {
+			const state = getState();
 
-		if (!state.config.current.frame.show.resourceUtilization) {
-			return;
-		}
+			if (!state.config.current.frame.show.resourceUtilization) {
+				return;
+			}
 
-		const [cpu, mem, gpu] = await Promise.all([services.system.cpuLoad(), services.system.memoryUsed(), services.system.gpuLoad()]);
-		dispatch(
-			setSystemInformation({
-				cpuLoad: cpu,
-				mem: mem,
-				gpuLoad: gpu,
-			})
-		);
+			const [cpu, mem, gpu] = await Promise.all([services.system.cpuLoad(), services.system.memoryUsed(), services.system.gpuLoad()]);
+			dispatch(
+				setSystemInformation({
+					cpuLoad: cpu,
+					mem: mem,
+					gpuLoad: gpu,
+				})
+			);
+		})();
 	}, 1000);
 });
 
-export const resetDimensions = createAsyncThunk("reset-dimensions", async (_, {}) => {
+export const resetDimensions = createAsyncThunk("reset-dimensions", async () => {
 	// const services = getServices({ window: WindowService }, extra);
 	//
 	// services.window.resetDimensions();
