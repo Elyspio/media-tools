@@ -1,6 +1,6 @@
 {
 	"extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
-	"include": ["./config", "./src/main", "./src/preload", "./src/shared", "tsconfig.web.json", "tsconfig.node.json"],
+	"include": ["./config", "./src/main", "./src/preload", "./src/shared", "tsconfig.web.json", "tsconfig.node.json", "scripts"],
 	"compilerOptions": {
 		"composite": true,
 		"tsBuildInfoFile": "dist/.tsbuild.node.info",
