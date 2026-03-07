@@ -8,6 +8,8 @@ import { ExecResult, SpawnResult } from "@shared/types/process.types";
 import { RmDirOptions } from "fs";
 import { Stats } from "node:fs";
 import { FfmpegConvertOptions } from "@shared/types/ffmpeg.types";
+import { NyaaTorrentItem } from "@shared/types/torrent.types";
+import { OidcAuthStatus } from "@shared/types/auth.types";
 
 export function getIpcSender() {
 	return {
@@ -118,6 +120,31 @@ export function getIpcSender() {
 			 */
 			getId() {
 				return ipcRendererWrapper.invoke("window:id:get");
+			},
+		},
+		auth: {
+			oidc: {
+				startLogin: async () => {
+					await ipcRendererWrapper.invoke("auth:oidc:login:start");
+				},
+				logout: async () => {
+					await ipcRendererWrapper.invoke("auth:oidc:logout");
+				},
+				status: async (): Promise<OidcAuthStatus> => {
+					return await ipcRendererWrapper.invoke("auth:oidc:status:get");
+				},
+			},
+		},
+		torrent: {
+			qbittorrent: {
+				addFromUrl: async (torrentUrl: string): Promise<void> => {
+					await ipcRendererWrapper.invoke("torrent:qbittorrent:add-from-url", torrentUrl);
+				},
+			},
+			nyaa: {
+				list: async (query: string): Promise<NyaaTorrentItem[]> => {
+					return await ipcRendererWrapper.invoke("torrent:nyaa:list", query);
+				},
 			},
 		},
 	};

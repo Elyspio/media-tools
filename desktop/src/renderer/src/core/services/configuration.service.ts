@@ -1,12 +1,8 @@
-import { inject, injectable } from "inversify";
-import FilesService from "@services/files/files.service";
+import { injectable } from "inversify";
 import { LatestConfig } from "@shared/config/app.config";
 
 @injectable()
 export class ConfigurationService {
-	@inject(FilesService)
-	filesService!: FilesService;
-
 	public async get(): Promise<LatestConfig> {
 		return window.preload.ipc.send.config.local.get();
 	}

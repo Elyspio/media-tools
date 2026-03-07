@@ -3,7 +3,7 @@ import { webContainer } from "@core/di/web.container";
 import { FfmpegService } from "@services/media/ffmpeg.service";
 import type { Encoder } from "@shared/types/ffmpeg.types";
 import { waitProcessExits } from "@modules/process/process.async.actions";
-import { setFileProcess, setProcessProgress } from "@modules/encoder/encoder.reducer";
+import { removeFileProcess, setFileProcesses, setProcessProgress } from "@modules/encoder/encoder.reducer";
 import FilesService from "@services/files/files.service";
 import { PathService } from "@services/files/path.service";
 import type { Media } from "@components/internal/encoder/type";
@@ -22,7 +22,7 @@ type IgnoreAlreadyConvertedFilesParams = {
  * @warning This function only supports hevc, h264 and av1 for now
  * @warning Files will not be modified nor have an associated process
  */
-export const ignoreAlreadyConvertedFiles = createAsyncThunk("convert", async ({ files, format }: IgnoreAlreadyConvertedFilesParams, { dispatch }) => {
+export const ignoreAlreadyConvertedFiles = createAsyncThunk("convert", ({ files, format }: IgnoreAlreadyConvertedFilesParams, { dispatch }) => {
 	let alreadyConverted: Media[] = [];
 
 	if (format.includes("hevc")) {
@@ -82,57 +82,73 @@ export const convertMedia = createAsyncThunk("convert", async (_, { getState, di
 
 	// endregion Skip already converted files
 
-	for (const file of files.filter((f) => !alreadyConverted.includes(f))) {
-		if (!encoderConvertStates.isConverting) break;
+	const parallelConversions = 3;
 
-		const outputPath = getConvertedFilePath(file.file.path);
+	const conversionBatches: Media[][] = files.reduce((acc, curr, index) => {
+		const arrayIndex = index % parallelConversions;
 
-		const pid = await ffmpegService.convert({
-			format: { id: format },
-			files: {
-				input: file.file.path,
-				output: outputPath,
-			},
-		});
+		acc[arrayIndex] ??= [];
 
-		dispatch(setFileProcess({ path: file.file.path, pid }));
+		acc[arrayIndex].push(curr);
 
-		const nbFrames = ffmpegService.extractNbFrames(file.property);
+		return acc;
+	}, [] as Media[][]);
 
-		const removeListener = window.preload.ipc.on.process.spawn.stderr((pid1, data) => {
-			if (pid1 !== pid) return;
+	await Promise.all(
+		conversionBatches.map(async (batch) => {
+			for (const file of batch.filter((f) => !alreadyConverted.includes(f))) {
+				if (!encoderConvertStates.isConverting) break;
 
-			const frame = ffmpegService.extractNbFrameProcessed(data);
+				const outputPath = getConvertedFilePath(file.file.path);
 
-			if (frame === null) return;
+				const pid = await ffmpegService.convert({
+					format: { id: format },
+					files: {
+						input: file.file.path,
+						output: outputPath,
+					},
+				});
 
-			const percentProgress = frame / nbFrames;
+				dispatch(setFileProcesses({ path: file.file.path, pid }));
 
-			dispatch(
-				setProcessProgress({
-					path: file.file.path,
-					value: percentProgress,
-				})
-			);
-		});
+				const nbFrames = ffmpegService.extractNbFrames(file.property);
 
-		await waitProcessExits(getState, pid);
+				const removeListener = window.preload.ipc.on.process.spawn.stderr((pid1, data) => {
+					if (pid1 !== pid) return;
 
-		removeListener();
+					const frame = ffmpegService.extractNbFrameProcessed(data);
 
-		// Move converted file to original location
-		const originalDir = pathService.dirname(file.file.path);
+					if (frame === null) return;
 
-		const oldDir = pathService.join(originalDir, "old");
+					const percentProgress = frame / nbFrames;
 
-		const oldPath = pathService.join(oldDir, pathService.filename(file.file.path));
+					dispatch(
+						setProcessProgress({
+							path: file.file.path,
+							value: percentProgress,
+						})
+					);
+				});
 
-		await fileService.move(file.file.path, oldPath);
+				await waitProcessExits(getState, pid);
 
-		await fileService.move(outputPath, file.file.path);
-	}
+				removeListener();
 
-	dispatch(setFileProcess(null));
+				// Move converted file to original location
+				const originalDir = pathService.dirname(file.file.path);
+
+				const oldDir = pathService.join(originalDir, "old");
+
+				const oldPath = pathService.join(oldDir, pathService.filename(file.file.path));
+
+				await fileService.move(file.file.path, oldPath);
+
+				await fileService.move(outputPath, file.file.path);
+			}
+		})
+	);
+
+	dispatch(removeFileProcess({ pids: getState().encoder.current.pids }));
 });
 
 export const SpecialEncodingProgressValues = {
@@ -142,27 +158,36 @@ export const SpecialEncodingProgressValues = {
 export const stopConvertMedia = createAsyncThunk("stop-convert", async (_, { dispatch, getState, extra }) => {
 	const state = getState();
 
-	if (!state.encoder.current.pid) {
+	const pids = state.encoder.current.pids;
+	if (pids.length === 0) {
 		throw new Error("No ongoing conversion process");
 	}
 
 	encoderConvertStates.isConverting = false;
 
-	dispatch(setFileProcess(null));
-
-	const currentPath = Object.entries(state.encoder.processes.pids).find(([, pid]) => pid === state.encoder.current.pid)?.[0];
-
-	dispatch(
-		setProcessProgress({
-			path: currentPath!,
-			value: SpecialEncodingProgressValues.Aborted,
-		})
-	);
+	dispatch(removeFileProcess({ pids }));
 
 	const processService = getService(ProcessService, extra);
 
-	await processService.kill(state.encoder.current.pid);
+	for (const pid of pids) {
+		await processService.kill(pid);
+
+		await sleep(500);
+
+		const currentPath = Object.entries(state.encoder.processes.pids).find(([, p]) => p === pid)?.[0];
+
+		dispatch(
+			setProcessProgress({
+				path: currentPath!,
+				value: SpecialEncodingProgressValues.Aborted,
+			})
+		);
+	}
 });
+
+function sleep(milliseconds: number) {
+	return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
 
 function getConvertedFilePath(filePath: string): string {
 	const extensionIndex = filePath.lastIndexOf(".");

@@ -1,5 +1,5 @@
 appId: fr.elyspio.elytools.app
-productName: app-vite
+productName: elytools
 directories:
     buildResources: build
 files:
@@ -12,7 +12,7 @@ files:
 asarUnpack:
     - resources/**
 win:
-    executableName: app-vite
+    executableName: elytools
 nsis:
     artifactName: ${name}-${version}-setup.${ext}
     shortcutName: ${productName}

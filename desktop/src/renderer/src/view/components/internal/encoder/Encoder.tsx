@@ -4,7 +4,6 @@ import "./Encoder.scss";
 import { useDispatch } from "react-redux";
 import { bindActionCreators } from "redux";
 import { useAppSelector } from "@store";
-import { ContextMenuWrapper } from "../../shared/hoc/ContextMenuWrapper";
 import { SelectFolder } from "../../shared/nodes/SelectFolder";
 import { setCurrentProcess } from "@modules/process/process.actions";
 import { convertMedia, setupFfmpeg, stopConvertMedia } from "@modules/encoder/encoder.async.actions";
@@ -27,7 +26,7 @@ export function Encoder() {
 	const encoders = useAppSelector(encodersSelectors.ffmpeg.encoders);
 	const files = useAppSelector((s) => s.media.data);
 	const format = useAppSelector((s) => s.encoder.current.format);
-	const encoding = useAppSelector((s) => !!s.encoder.current.pid);
+	const encoding = useAppSelector((s) => s.encoder.current.pids.length > 0);
 
 	const actions = useMemo(
 		() =>
@@ -87,54 +86,52 @@ export function Encoder() {
 	}, [actions, encoding, format]);
 
 	return (
-		<ContextMenuWrapper items={[]}>
-			<Stack height={"100%"} padding={2} spacing={1} alignItems={"center"} justifyContent={"center"}>
-				{isFfmpegInstalled && (
-					<Stack spacing={1.5} height={"100%"} width={"100%"}>
-						<Stack spacing={2}>
-							<Stack spacing={3} direction={"row"} justifyContent={"flex-start"} alignItems={"flex-end"}>
-								<SelectFolder variant={"outlined"} onChange={onFileSelect} mode={"files"} />
+		<Stack height={"100%"} padding={2} spacing={1} alignItems={"center"} justifyContent={"center"}>
+			{isFfmpegInstalled && (
+				<Stack spacing={1.5} height={"100%"} width={"100%"}>
+					<Stack spacing={2}>
+						<Stack spacing={3} direction={"row"} justifyContent={"flex-start"} alignItems={"flex-end"}>
+							<SelectFolder variant={"outlined"} onChange={onFileSelect} mode={"files"} />
 
+							<Autocomplete
+								sx={{ width: 200 }}
+								onChange={(_, v) => setManufacturer(v)}
+								renderInput={(params) => <TextField {...params} size={"small"} variant={"standard"} fullWidth label="Manufacturer" />}
+								options={manufacturers}
+								disableClearable
+							/>
+							{manufacturer && (
 								<Autocomplete
-									sx={{ width: 200 }}
-									onChange={(_, v) => setManufacturer(v)}
-									renderInput={(params) => <TextField {...params} size={"small"} variant={"standard"} fullWidth label="Manufacturer" />}
-									options={manufacturers}
+									sx={{ width: 150 }}
+									onChange={onFormatChange}
+									getOptionLabel={(option) => option.id}
+									renderInput={(params) => <TextField {...params} size={"small"} variant={"standard"} fullWidth label="Encoder" />}
+									options={encoders.filter((e) => e.manufacturer === manufacturer)}
 									disableClearable
 								/>
-								{manufacturer && (
-									<Autocomplete
-										sx={{ width: 150 }}
-										onChange={onFormatChange}
-										getOptionLabel={(option) => option.id}
-										renderInput={(params) => <TextField {...params} size={"small"} variant={"standard"} fullWidth label="Encoder" />}
-										options={encoders.filter((e) => e.manufacturer === manufacturer)}
-										disableClearable
-									/>
-								)}
-							</Stack>
+							)}
 						</Stack>
-
-						{files.length > 0 && (
-							<>
-								<Box display={"flex"} justifyContent={"center"} alignItems={"center"} height={"100%"}>
-									<EncoderDashboard />
-								</Box>
-
-								<Stack spacing={2} direction={"row"} alignItems={"center"} justifyContent={"space-between"}>
-									<Typography variant="caption" color="text.secondary">
-										Total: {files.length} files • {convertSizeToHumanFormat(files.reduce((acc, f) => acc + f.file.size, 0))}
-									</Typography>
-
-									{actionBtn}
-								</Stack>
-							</>
-						)}
 					</Stack>
-				)}
 
-				{!isFfmpegInstalled && <FFmpegNotInstalledAlert />}
-			</Stack>
-		</ContextMenuWrapper>
+					{files.length > 0 && (
+						<>
+							<Box display={"flex"} justifyContent={"center"} alignItems={"center"} height={"100%"}>
+								<EncoderDashboard />
+							</Box>
+
+							<Stack spacing={2} direction={"row"} alignItems={"center"} justifyContent={"space-between"}>
+								<Typography variant="caption" color="text.secondary">
+									Total: {files.length} files • {convertSizeToHumanFormat(files.reduce((acc, f) => acc + f.file.size, 0))}
+								</Typography>
+
+								{actionBtn}
+							</Stack>
+						</>
+					)}
+				</Stack>
+			)}
+
+			{!isFfmpegInstalled && <FFmpegNotInstalledAlert />}
+		</Stack>
 	);
 }

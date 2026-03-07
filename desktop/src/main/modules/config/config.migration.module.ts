@@ -18,16 +18,40 @@ export class ConfigMigrationModule extends LogModule {
 	@log.debug()
 	public async migrate(conf: LocalConfig): Promise<LatestConfig> {
 		this.logger.info("Starting migration of local config");
+		if (configGuards.is.v2(conf)) {
+			return conf;
+		}
 
-		return conf;
+		const endpoints = conf.endpoints;
+
+		return {
+			...conf,
+			version: 2,
+			endpoints: {
+				homeAssistant: endpoints.homeAssistant,
+				api: endpoints.api,
+				hubs: {
+					screenshare: endpoints.hubs?.screenshare ?? "",
+				},
+				qbittorrent: {
+					apiBaseUrl: "",
+				},
+				oidc: {
+					issuerUrl: "",
+					clientId: "",
+					scopes: "openid profile offline_access",
+					redirectPath: "auth/callback",
+				},
+			},
+		};
 	}
 
 	/**
 	 * Indique si la configuration locale nécessite une migration
 	 * @param conf
 	 */
-	@log.debug((conf: LocalConfigV1) => `version=${conf.version}`)
-	public requireMigration(conf: LocalConfig): conf is LatestConfig {
-		return !configGuards.is.v1(conf);
+	@log.debug((conf: LocalConfig) => `version=${conf.version}`)
+	public requireMigration(conf: LocalConfig): conf is LocalConfigV1 {
+		return !configGuards.is.v2(conf);
 	}
 }

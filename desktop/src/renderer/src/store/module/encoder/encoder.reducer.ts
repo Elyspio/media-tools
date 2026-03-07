@@ -17,7 +17,7 @@ export interface EncoderState {
 		encoders: Encoder[];
 	};
 	current: {
-		pid?: string;
+		pids: string[];
 		format?: string;
 	};
 }
@@ -27,7 +27,9 @@ const defaultState: EncoderState = {
 		progress: {},
 		pids: {},
 	},
-	current: {},
+	current: {
+		pids: [],
+	},
 };
 
 const slice = createSlice({
@@ -37,14 +39,14 @@ const slice = createSlice({
 		setFormat: (state, action: PayloadAction<string | undefined>) => {
 			state.current.format = action.payload;
 		},
-		setFileProcess: (state, action: PayloadAction<{ path: string; pid: string } | null>) => {
-			if (!action.payload) {
-				state.current.pid = undefined;
-				return;
-			}
 
-			state.current.pid = action.payload.pid;
-			state.processes.pids[action.payload.path] = action.payload.pid;
+		removeFileProcess: (state, { payload: { pids } }: PayloadAction<{ pids: string[] }>) => {
+			state.current.pids = state.current.pids.filter((p) => !pids.includes(p));
+		},
+
+		setFileProcesses: (state, { payload: { pid, path } }: PayloadAction<{ path: string; pid: string }>) => {
+			state.current.pids.push(pid);
+			state.processes.pids[path] = pid;
 		},
 		setProcessProgress: (state, action: PayloadAction<{ path: string; value: number }>) => {
 			state.processes.progress[action.payload.path] = action.payload.value;
@@ -68,4 +70,4 @@ const slice = createSlice({
 
 export const reducer = slice.reducer;
 
-export const { setProcessProgress, setFileProcess, setFormat } = slice.actions;
+export const { setProcessProgress, setFileProcesses, setFormat, removeFileProcess } = slice.actions;

@@ -1,3 +1,19 @@
 .Settings {
-	width: 20rem;
+
+	height: 100%;
+	.main {
+		padding-right: 1rem;
+		overflow-y: auto;
+
+	}
+
+	.footer {
+		//position: sticky;
+		//bottom: 0;
+		//z-index: 2;
+		//padding-top: 2.75rem;
+		//padding-bottom: 0.25rem;
+		//background-color: #1b1b1b;
+		//border-top: 1px solid var(--mui-palette-divider);
+	}
 }

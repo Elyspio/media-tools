@@ -12,7 +12,7 @@ export type RouteDescription = {
 	};
 };
 
-export type RoutePath = "/" | "/internal/config" | "/internal/encoder" | "/internal/renamer" | "/external/home-assistant";
+export type RoutePath = "/" | "/internal/encoder" | "/internal/torrent" | "/external/home-assistant";
 
 const routesInfoBase: Record<RoutePath, RouteDescription> = {
 	"/": {
@@ -20,14 +20,6 @@ const routesInfoBase: Record<RoutePath, RouteDescription> = {
 		show: {
 			appboard: false,
 			name: false,
-		},
-	},
-	"/internal/config": {
-		name: "Config",
-		description: "Configure the application settings",
-		show: {
-			appboard: true,
-			name: true,
 		},
 	},
 	"/internal/encoder": {
@@ -38,9 +30,9 @@ const routesInfoBase: Record<RoutePath, RouteDescription> = {
 			name: true,
 		},
 	},
-	"/internal/renamer": {
-		name: "Renamer",
-		description: "Batch rename your files easily",
+	"/internal/torrent": {
+		name: "Torrent",
+		description: "Search nyaa.si and send torrents to qBittorrent",
 		show: {
 			appboard: true,
 			name: true,

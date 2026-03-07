@@ -82,7 +82,7 @@ export class ConfigModule extends LogModule {
 	@log.debug()
 	private async getDefaultConfig(): Promise<LatestConfig> {
 		return {
-			version: 1,
+			version: 2,
 			windows: { position: {} },
 			appboard: { show: [] },
 			frame: {
@@ -99,6 +99,15 @@ export class ConfigModule extends LogModule {
 				api: "",
 				hubs: {
 					screenshare: "",
+				},
+				qbittorrent: {
+					apiBaseUrl: "",
+				},
+				oidc: {
+					issuerUrl: "",
+					clientId: "",
+					scopes: "openid profile offline_access",
+					redirectPath: "auth/callback",
 				},
 			},
 		};

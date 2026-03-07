@@ -3,8 +3,7 @@ import { PathService } from "@services/files/path.service";
 
 @injectable()
 class FilesService {
-	@inject(PathService)
-	private readonly pathService!: PathService;
+	constructor(@inject(PathService) private readonly pathService: PathService) {}
 
 	public async delete(folder: string, match: RegExp, progress?: (number: number) => void) {
 		const folders = await this.find(folder, { match });
