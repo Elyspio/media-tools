@@ -60,7 +60,7 @@ class FilesService {
 						if ((match && !filter.inverse) || (!match && filter.inverse)) files.push(node);
 					}
 				}
-			} catch (e) {
+			} catch (__) {
 				//
 			}
 		}
@@ -82,7 +82,7 @@ class FilesService {
 						files.push(...(await this.list(node, ignore)));
 					}
 				}
-			} catch (e) {
+			} catch (__) {
 				//
 			}
 		});
@@ -90,6 +90,77 @@ class FilesService {
 		await Promise.all(promises);
 
 		return files;
+	}
+
+	public async scanDirectoriesByName(
+		root: string,
+		matchNames: string[],
+		options?: {
+			ignoreNames?: string[];
+			progress?: (scannedFolders: number) => void;
+		}
+	): Promise<string[]> {
+		const names = new Set(matchNames.map((name) => name.toLowerCase()));
+		const ignore = new Set((options?.ignoreNames ?? []).map((name) => name.toLowerCase()));
+		const results = new Set<string>();
+		const queue: string[] = [root];
+		let scanned = 0;
+
+		ignore.add("node_modules");
+
+		while (queue.length > 0) {
+			const current = queue.pop();
+			if (!current) continue;
+
+			try {
+				const entries = await window.preload.ipc.send.file.readdirEntries(current);
+				scanned += 1;
+				options?.progress?.(scanned);
+
+				for (const entry of entries) {
+					if (!entry.isDirectory || entry.isSymbolicLink) continue;
+
+					const entryName = entry.name.toLowerCase();
+					const nextPath = this.pathService.join(current, entry.name);
+
+					if (names.has(entryName)) {
+						results.add(nextPath);
+						continue;
+					}
+
+					if (ignore.has(entryName)) continue;
+
+					queue.push(nextPath);
+				}
+			} catch (__) {
+				//
+			}
+		}
+
+		return Array.from(results);
+	}
+
+	public async estimateDirectorySize(folder: string, progress?: (scannedFiles: number) => void): Promise<number> {
+		const total = await window.preload.ipc.send.file.getDirectorySize(folder);
+		progress?.(1);
+		return total;
+	}
+
+	public async estimateDirectoriesSize(directories: string[], progress?: (processed: number, total: number) => void): Promise<number> {
+		let totalSize = 0;
+		let processed = 0;
+
+		await Promise.all(
+			directories.map(async (dir) => {
+				const size = await this.estimateDirectorySize(dir, () => {
+					processed += 1;
+					progress?.(processed, directories.length);
+				});
+				totalSize += size;
+			})
+		);
+
+		return totalSize;
 	}
 
 	public escapePath = (path: string) => path.replaceAll("\\", "\\\\");

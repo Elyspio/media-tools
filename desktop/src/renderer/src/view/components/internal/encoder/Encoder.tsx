@@ -86,9 +86,9 @@ export function Encoder() {
 	}, [actions, encoding, format]);
 
 	return (
-		<Stack height={"100%"} padding={2} spacing={1} alignItems={"center"} justifyContent={"center"}>
+		<Stack height={"100%"} minHeight={0} padding={2} spacing={1} alignItems={"center"} justifyContent={"center"}>
 			{isFfmpegInstalled && (
-				<Stack spacing={1.5} height={"100%"} width={"100%"}>
+				<Stack spacing={1.5} height={"100%"} minHeight={0} width={"100%"}>
 					<Stack spacing={2}>
 						<Stack spacing={3} direction={"row"} justifyContent={"flex-start"} alignItems={"flex-end"}>
 							<SelectFolder variant={"outlined"} onChange={onFileSelect} mode={"files"} />
@@ -115,7 +115,7 @@ export function Encoder() {
 
 					{files.length > 0 && (
 						<>
-							<Box display={"flex"} justifyContent={"center"} alignItems={"center"} height={"100%"}>
+							<Box display={"flex"} justifyContent={"center"} alignItems={"center"} height={"100%"} minHeight={0} flex={1}>
 								<EncoderDashboard />
 							</Box>
 

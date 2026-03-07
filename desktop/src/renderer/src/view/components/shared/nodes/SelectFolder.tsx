@@ -40,7 +40,15 @@ export function SelectFolder(props: Props) {
 
 	return (
 		<Stack direction={"column"} spacing={2} minWidth={200}>
-			<Button className={"header"} color={props.color ?? "primary"} fullWidth={props.fullWidth} onClick={openDialog} variant={props.variant ?? "outlined"}>
+			<Button
+				className={"header"}
+				color={props.color ?? "primary"}
+				fullWidth={props.fullWidth}
+				onClick={(e) => {
+					void openDialog(e);
+				}}
+				variant={props.variant ?? "outlined"}
+			>
 				Select files
 			</Button>
 			{props.showSelected ? (

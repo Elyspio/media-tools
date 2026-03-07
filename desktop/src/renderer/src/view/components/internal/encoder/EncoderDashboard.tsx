@@ -117,7 +117,7 @@ export const EncoderDashboard = () => {
 		},
 	];
 
-	return <DataGrid sx={{ maxHeight: "calc(100vh - 230px)" }} hideFooter getRowId={(r) => r.file.path} columns={columns} rows={rows} />;
+	return <DataGrid sx={{ height: "100%" }} hideFooter getRowId={(r) => r.file.path} columns={columns} rows={rows} />;
 };
 
 type FileStatus = "InProgress" | "Pending" | "Converted" | "Aborted";

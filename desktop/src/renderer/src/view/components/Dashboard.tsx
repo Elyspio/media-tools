@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Button, Stack } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 import { routes } from "@/config/routes.config";
 import { useNavigate } from "react-router";
 
@@ -14,16 +14,24 @@ export function Dashboard() {
 					const isInternal = r.path.startsWith("/internal");
 
 					return (
-						<Button key={r.path} variant={"outlined"} onClick={() => navigate(r.path)} color={isInternal ? "primary" : "secondary"}>
-							{r.name}
-						</Button>
+						<Box key={r.path}>
+							<Button
+								variant={"outlined"}
+								onClick={() => {
+									void navigate(r.path);
+								}}
+								color={isInternal ? "primary" : "secondary"}
+							>
+								{r.name}
+							</Button>
+						</Box>
 					);
 				}),
 		[navigate]
 	);
 
 	return (
-		<Stack direction={"row"} flexWrap={"wrap"} spacing={2}>
+		<Stack direction={"row"} flexWrap={"wrap"} alignItems={"center"} justifyContent={"center"} spacing={2}>
 			{links}
 		</Stack>
 	);

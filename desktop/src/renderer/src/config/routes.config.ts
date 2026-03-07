@@ -12,7 +12,7 @@ export type RouteDescription = {
 	};
 };
 
-export type RoutePath = "/" | "/internal/encoder" | "/internal/torrent" | "/external/home-assistant";
+export type RoutePath = "/" | "/internal/encoder" | "/internal/torrent" | "/internal/purge" | "/external/home-assistant";
 
 const routesInfoBase: Record<RoutePath, RouteDescription> = {
 	"/": {
@@ -33,6 +33,14 @@ const routesInfoBase: Record<RoutePath, RouteDescription> = {
 	"/internal/torrent": {
 		name: "Torrent",
 		description: "Search nyaa.si and send torrents to qBittorrent",
+		show: {
+			appboard: true,
+			name: true,
+		},
+	},
+	"/internal/purge": {
+		name: "Purge",
+		description: "Purge node_modules and build caches",
 		show: {
 			appboard: true,
 			name: true,

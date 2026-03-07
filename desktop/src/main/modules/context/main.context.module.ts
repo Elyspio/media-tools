@@ -60,6 +60,16 @@ export class MainContextModule {
 	}
 
 	public get allowDebug() {
-		return is.dev;
+		const envFlag = process.env.ELYTOOLS_DEBUG;
+		const cliFlag = app.commandLine.hasSwitch("debug") || app.commandLine.hasSwitch("devtools");
+		const envEnabled = envFlag === "1" || envFlag?.toLowerCase() === "true";
+		return is.dev || envEnabled || cliFlag;
+	}
+
+	public get autoOpenDevTools() {
+		const envFlag = process.env.ELYTOOLS_DEVTOOLS_AUTOOPEN;
+		const cliFlag = app.commandLine.hasSwitch("devtools-auto-open");
+		const envEnabled = envFlag === "1" || envFlag?.toLowerCase() === "true";
+		return this.allowDebug && (is.dev || envEnabled || cliFlag);
 	}
 }

@@ -160,9 +160,9 @@ export function Torrent() {
 				</Stack>
 			</form>
 
-			<Box minHeight={0} sx={{ "& .value-low": { color: "orange" }, "& .value-none": { color: "red" }, "& .value-ok": { color: "limegreen" } }}>
+			<Box flex={1} minHeight={0} sx={{ "& .value-low": { color: "orange" }, "& .value-none": { color: "red" }, "& .value-ok": { color: "limegreen" } }}>
 				<DataGrid
-					sx={{ height: "calc(100vh - 150px)" }}
+					sx={{ height: "100%" }}
 					rows={torrents}
 					columns={columns}
 					loading={loading}

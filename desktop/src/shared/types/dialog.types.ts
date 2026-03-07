@@ -14,3 +14,10 @@ export type FileInfo = {
 	size: number;
 	type: "file" | "directory";
 };
+
+export type DirectoryEntry = {
+	name: string;
+	isDirectory: boolean;
+	isFile: boolean;
+	isSymbolicLink: boolean;
+};

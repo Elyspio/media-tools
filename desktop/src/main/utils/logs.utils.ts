@@ -2,6 +2,8 @@ import * as util from "node:util";
 import { AppLoggerService } from "../modules/log.module";
 
 function getArguments(logArguments: LogArgument | undefined, args: unknown[], argsName: string[]) {
+	if (logArguments === undefined) return "";
+
 	if (typeof logArguments === "function") {
 		return logArguments(...args);
 	}
@@ -74,17 +76,20 @@ interface ILoggable {
  */
 export function log(logArguments?: LogArgument, level: "debug" | "log" = "log") {
 	return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const targetFunc = descriptor.value;
 		descriptor.value = function (...args: any[]) {
 			const method = propertyKey;
 			const logger = (this as ILoggable).logger;
 
 			if (!logger) {
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 				throw new Error("Logger not found in target " + target.constructor.name);
 			}
 
 			let str = `${method}`;
 
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 			const argsName = getFunctionArgs(targetFunc);
 
 			let argsStr = getArguments(logArguments, args, argsName);
@@ -98,6 +103,7 @@ export function log(logArguments?: LogArgument, level: "debug" | "log" = "log") 
 
 			const startAt = performance.now();
 
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
 			const result = targetFunc.apply(this, args);
 
 			return handleResult(logger, level, startAt, str, result);
@@ -115,8 +121,9 @@ log.debug = (logArguments: number[] | ((...args: any[]) => string) | boolean = t
 /**
  * Récupère le nom de la fonction passé en paramètre
  */
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 function getFunctionArgs(func: Function) {
+	// eslint-disable-next-line @typescript-eslint/restrict-plus-operands
 	return (func + "")
 		.replaceAll(/\/\/.*$/gm, "") // strip single-line comments
 		.replaceAll(/\s+/g, "") // strip white space

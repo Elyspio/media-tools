@@ -4,6 +4,7 @@
 	"compilerOptions": {
 		"composite": true,
 		"jsx": "react-jsx",
+		"tsBuildInfoFile": "dist/.tsbuild.web.info",
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
 		"useDefineForClassFields": false,
