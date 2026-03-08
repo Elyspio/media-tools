@@ -5,18 +5,13 @@ import "./index.scss";
 import { Provider } from "react-redux";
 import store, { history, useAppSelector } from "./store";
 import Application from "./view/components/Application";
-import { StyledEngineProvider, Theme, ThemeProvider } from "@mui/material";
+import { StyledEngineProvider, ThemeProvider } from "@mui/material";
 import { themes } from "./config/theme";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.min.css";
+import "react-toastify/dist/ReactToastify.css";
 import { Provider as DiProvider } from "inversify-react";
 import { container } from "./core/di";
 import { ReduxRouter } from "@lagunovsky/redux-react-router";
-
-declare module "@mui/styles/defaultTheme" {
-	interface DefaultTheme extends Theme {
-	}
-}
 
 function Wrapper() {
 	const {

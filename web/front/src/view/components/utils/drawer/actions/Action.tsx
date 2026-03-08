@@ -5,12 +5,12 @@ export type ActionComponentProps = {
 	icon: React.ReactNode;
 	children?: React.ReactNode;
 	className?: string;
-	onClick: (e: React.MouseEvent<HTMLDivElement>) => void;
+	onClick?: () => void;
 };
 
 export const ActionComponent = ({ children, icon, onClick, className }: ActionComponentProps) => {
 	return (
-		<div className={"Action " + (className ?? "")} onClick={onClick}>
+		<div className={"Action " + (className ?? "")} onClick={() => onClick?.()}>
 			<div className={"icon"}>
 				<IconButton size="medium">{icon}</IconButton>
 			</div>

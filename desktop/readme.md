@@ -46,30 +46,30 @@ config/
 ### Prerequisites
 
 - Node.js 20+
-- yarn
+- pnpm 10
 
 ### Install
 
 ```bash
-yarn install
+pnpm install
 ```
 
 ### Run in development
 
 ```bash
-yarn run dev
+pnpm dev
 ```
 
 ### Build app
 
 ```bash
-yarn run build
+pnpm build
 ```
 
 ### Build and publish a desktop release locally
 
 ```bash
-yarn run release
+pnpm release
 ```
 
 This flow:
@@ -81,17 +81,17 @@ This flow:
 ### Preview built app
 
 ```bash
-yarn run start
+pnpm start
 ```
 
 ## Useful Scripts
 
-- `yarn run dev` — run Electron app in dev mode
-- `yarn run build` — build app
-- `yarn run start` — preview built app
-- `yarn run lint` — lint and auto-fix (project-wide)
-- `yarn run format` — run Prettier
-- `yarn run typecheck` — watch mode TS checks
+- `pnpm dev` — run Electron app in dev mode
+- `pnpm build` — build app
+- `pnpm start` — preview built app
+- `pnpm lint` — lint and auto-fix (project-wide)
+- `pnpm format` — run Prettier
+- `pnpm typecheck` — watch mode TS checks
 
 ## Configuration
 

@@ -36,14 +36,14 @@ function Application() {
 			arr.push(
 				createDrawerAction("Logout", {
 					icon: <Logout fill={"currentColor"} />,
-					onClick: storeActions.logout,
+					onClick: () => storeActions.logout(),
 				}),
 			);
 		} else {
 			arr.push(
 				createDrawerAction("Login", {
 					icon: <Login fill={"currentColor"} />,
-					onClick: storeActions.login,
+					onClick: () => storeActions.login(),
 				}),
 			);
 		}

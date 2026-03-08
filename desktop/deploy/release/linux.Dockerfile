@@ -1,13 +1,15 @@
 FROM electronuserland/builder:22
 
+ARG PNPM_VERSION=10.30.3
 WORKDIR /project/desktop
 
-COPY package.json yarn.lock .npmrc ./
+RUN npm install -g pnpm@${PNPM_VERSION}
 
-RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \
-    --mount=type=secret,id=github_token \
+COPY package.json pnpm-lock.yaml .npmrc ./
+
+RUN --mount=type=secret,id=github_token \
     export GITHUB_TOKEN=$(cat /run/secrets/github_token) && \
-    yarn install --frozen-lockfile
+    pnpm install --frozen-lockfile
 
 COPY . .
 
