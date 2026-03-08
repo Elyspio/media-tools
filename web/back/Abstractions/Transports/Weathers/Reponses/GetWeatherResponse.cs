@@ -107,7 +107,7 @@ public sealed class Weather
 
 	[JsonPropertyName("main")] public WeatherType Main { get; set; }
 
-	[JsonPropertyName("description")] public string Description { get; set; }
+	[JsonPropertyName("description")] public string Description { get; set; } = string.Empty;
 }
 
 public sealed class Daily

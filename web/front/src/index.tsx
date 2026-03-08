@@ -26,9 +26,10 @@ function Wrapper() {
 		theme: state.theme.current === "dark" ? themes.dark : themes.light,
 		current: state.theme.current,
 	}));
+	const basename = import.meta.env.BASE_URL === "/" ? undefined : import.meta.env.BASE_URL.replace(/\/$/, "");
 
 	return (
-		<ReduxRouter history={history} basename={process.env.NODE_ENV === "development" ? undefined : "/elytools-api"}>
+		<ReduxRouter history={history} basename={basename}>
 			<StyledEngineProvider injectFirst>
 				<ThemeProvider theme={theme}>
 					<Application />
@@ -50,7 +51,3 @@ function App() {
 }
 
 createRoot(document.getElementById("root")!).render(<App />);
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
