@@ -6,7 +6,7 @@
 	"main": "./out/main/index.js",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Elyspio/media-tools.git"
+		"url": "https://github.com/Elyspio/elytools.git"
 	},
 	"author": "jona.guich69@gmail.com",
 	"scripts": {
@@ -25,7 +25,7 @@
 		"build:release:linux": "tsx ./scripts/build/build-release-linux.ts",
 		"build:release:linux:container": "tsx ./scripts/build/build-release-linux-container.ts",
 		"publish:release": "tsx ./scripts/publish/publish-release.ts",
-		"release": "concurrently \"pnpm run build:release:win\" \"pnpm run build:release:linux\" && pnpm run publish:release",
+		"release": "concurrently -n windows,linux,typescript \"pnpm run build:release:win\" \"pnpm run build:release:linux\" \"tsc --noEmit\" && pnpm run publish:release",
 		"postinstall": "electron-builder install-app-deps"
 	},
 	"dependencies": {
