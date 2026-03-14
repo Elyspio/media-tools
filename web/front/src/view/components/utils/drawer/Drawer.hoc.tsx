@@ -1,6 +1,6 @@
 import React from "react";
 import { ActionComponent, ActionComponentProps, ActionDescription, ActionDescriptionProps } from "./actions/Action";
-import { Box, Grid, Paper, Typography } from "@mui/material";
+import { Box, Paper, Typography } from "@mui/material";
 import { Drawer } from "./Drawer";
 import "./actions/Actions.scss";
 
@@ -29,13 +29,11 @@ export function withDrawer({ component, title, actions }: WithDrawerProps) {
 	return (
 		<Box className={"Drawer-hoc"}>
 			<Paper elevation={1} color={"red"}>
-				<Grid className={"header"} alignItems={"center"} justifyContent={"center"} container>
-					<Grid item>
-						<Typography variant={"h4"} align={"center"}>
-							{title}
-						</Typography>
-					</Grid>
-				</Grid>
+				<Box className={"header"} display={"flex"} alignItems={"center"} justifyContent={"center"}>
+					<Typography variant={"h4"} align={"center"}>
+						{title}
+					</Typography>
+				</Box>
 			</Paper>
 
 			<Drawer position={"right"} actionsComponent={<Actions elements={actions} />}>

@@ -46,7 +46,7 @@ The desktop app lives in `desktop/` and is the most complete part of the reposit
 ### Prerequisites
 
 - Node.js
-- Yarn Classic
+- pnpm 10
 - FFmpeg available to the desktop runtime
 - qBittorrent Web UI enabled if you want to use the torrent module
 
@@ -54,34 +54,34 @@ The desktop app lives in `desktop/` and is the most complete part of the reposit
 
 ```bash
 cd desktop
-yarn install
-yarn dev
+pnpm install
+pnpm dev
 ```
 
 Useful scripts:
 
-- `yarn dev` starts the Electron app in development mode
-- `yarn lint` runs ESLint with autofix
-- `yarn format` runs Prettier
-- `yarn clean` removes release artifacts
+- `pnpm dev` starts the Electron app in development mode
+- `pnpm lint` runs ESLint with autofix
+- `pnpm format` runs Prettier
+- `pnpm clean` removes release artifacts
 
 ### Build And Release
 
 ```bash
 cd desktop
-yarn build
+pnpm build
 ```
 
 The desktop package also includes release scripts:
 
-- `yarn build:release:win`
-- `yarn build:release:linux`
-- `yarn build:release:linux:container`
-- `yarn release`
+- `pnpm build:release:win`
+- `pnpm build:release:linux`
+- `pnpm build:release:linux:container`
+- `pnpm release`
 
 Notes:
 
-- `yarn build` runs `electron-vite build` and then packages the app with Electron Builder for Windows
+- `pnpm build` runs `electron-vite build` and then packages the app with Electron Builder for Windows
 - Linux container builds require Docker and `GITHUB_TOKEN`
 - release publishing targets GitHub releases for the `Elyspio/media-tools` repository
 
@@ -158,8 +158,8 @@ It currently includes:
 
 #### Prerequisites
 
-- Node.js 20.19+ or 22.12+
-- Yarn Classic
+- Node.js
+- pnpm 10
 - backend running on `http://localhost:4000` or regenerated clients
 - authentication service running on `http://localhost:4001`
 
@@ -167,18 +167,15 @@ It currently includes:
 
 ```bash
 cd web/front
-yarn install
-yarn dev
+pnpm install
+pnpm start
 ```
 
 Useful scripts:
 
-- `yarn dev` starts the Vite dev server
-- `yarn build` builds the frontend
-- `yarn preview` serves the production build locally
-- `yarn typecheck` runs the TypeScript type checker
-- `yarn refresh-clients` regenerates the backend client from the local Swagger document
-- `yarn docker` runs the Docker deployment build script
+- `pnpm build` builds the frontend
+- `pnpm refresh-clients` regenerates the backend client from the local Swagger document
+- `pnpm docker` runs the Docker deployment build script
 
 If you regenerate clients, make sure the backend Swagger document is reachable at `http://localhost:4000/swagger/Elytools.Api/swagger.json`. The current script uses HTTP explicitly, so adjust it if your local backend only serves HTTPS.
 
@@ -193,6 +190,6 @@ If you regenerate clients, make sure the backend Swagger document is reachable a
 If you only want the main application:
 
 1. Go to `desktop/`.
-2. Run `yarn install`.
-3. Run `yarn dev`.
+2. Run `pnpm install`.
+3. Run `pnpm dev`.
 4. Open the settings panel and fill in your own service endpoints.

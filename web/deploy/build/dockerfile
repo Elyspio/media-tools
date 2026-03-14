@@ -30,12 +30,16 @@ RUN dotnet publish ${MAIN_CSPROJ_PATH} --no-restore -o /app/out
 # Building front
 FROM --platform=linux/amd64 node:22 as builder-front
 
+ARG PNPM_VERSION=10.30.3
+
+RUN npm install -g pnpm@${PNPM_VERSION}
+
 COPY front/package.json /front/
-COPY front/yarn.lock /front/
-RUN cd /front && yarn
+COPY front/pnpm-lock.yaml /front/
+RUN cd /front && pnpm install --frozen-lockfile
 
 COPY front /front/
-RUN cd /front && yarn build
+RUN cd /front && pnpm build
 
 
 # Running
