@@ -12,7 +12,7 @@ export function useAsyncState<T>(func: UseAsyncStateParams<T>, defaultValue: T, 
 
 	useEffect(() => {
 		handle(func);
-		let timer: NodeJS.Timer | undefined;
+		let timer: ReturnType<typeof setInterval> | undefined;
 		if (replay) {
 			timer = setInterval(() => {
 				handle(func);

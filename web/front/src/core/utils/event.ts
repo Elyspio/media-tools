@@ -1,18 +1,25 @@
-import { EventEmitter } from "events";
-
 type Event = {
 	[key in string]: (...args: any) => void;
 };
 
 export class EventManager<T extends Event = {}> {
-	private base = new EventEmitter();
+	private listeners = new Map<string, Set<(...args: unknown[]) => void>>();
 
 	public on<event extends keyof T>(evt: event, callback: T[event]) {
-		this.base.on(evt as string, callback);
+		const eventName = evt as string;
+		const listeners = this.listeners.get(eventName) ?? new Set<(...args: unknown[]) => void>();
+		listeners.add(callback as (...args: unknown[]) => void);
+		this.listeners.set(eventName, listeners);
 	}
 
 	public emit<event extends keyof T>(evt: event, ...params: Parameters<T[event]>) {
-		console.log("EventManager emit", evt);
-		this.base.emit(evt as string, params);
+		const listeners = this.listeners.get(evt as string);
+		if (!listeners) {
+			return;
+		}
+
+		for (const listener of listeners) {
+			listener(...(params as unknown as unknown[]));
+		}
 	}
 }

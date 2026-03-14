@@ -17,7 +17,7 @@ const store = configureStore({
 		screenShare: screenShareReducer,
 		...createRouterReducerMapObject(history),
 	},
-	devTools: process.env.NODE_ENV !== "production",
+	devTools: import.meta.env.DEV,
 	middleware: (getDefaultMiddleware) => getDefaultMiddleware({ thunk: { extraArgument: { container } as ExtraArgument } }).prepend(routerMiddleware),
 });
 export type StoreState = ReturnType<typeof store.getState>;

@@ -5,6 +5,7 @@ import { LocalStorageService } from "../../../core/services/common/localStorage.
 import { DiKeysService } from "../../../core/di/services/di.keys.service";
 import { createAsyncActionGenerator, getService } from "../../common/common.actions";
 import { setUserFromToken } from "./authentication.action";
+import { setTheme } from "../theme/theme.action";
 import { SettingsType } from "../../../core/apis/rest/authentication/generated";
 import { AuthenticationEvents, AuthenticationService } from "../../../core/services/common/auth/authentication.service";
 import { TokenService } from "../../../core/services/common/auth/token.service";
@@ -15,7 +16,7 @@ const localStorages = container.get<LocalStorageService>(DiKeysService.localStor
 
 function waitForLogin(page: Window) {
 	return new Promise<void>(async (resolve) => {
-		let interval: NodeJS.Timer | undefined;
+		let interval: ReturnType<typeof setInterval> | undefined;
 
 		const clearInter = () => interval !== undefined && clearInterval(interval);
 		page.onclose = clearInter;
@@ -88,8 +89,6 @@ window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e)
 	const newColorScheme = e.matches ? "dark" : "light";
 	const { settings } = store.getState().authentication;
 	if (settings?.theme === SettingsType.System) {
-		window.store.dispatch(setTheme(newColorScheme);
-	)
-		;
+		store.dispatch(setTheme(newColorScheme));
 	}
 });

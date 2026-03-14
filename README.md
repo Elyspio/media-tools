@@ -147,7 +147,7 @@ dotnet test Tests/Elytools.Api.Tests.Weather/Elytools.Api.Tests.Weather.csproj
 
 ### Frontend
 
-The frontend is a React application in `web/front/`.
+The frontend is a React + Vite application in `web/front/`.
 
 It currently includes:
 
@@ -158,7 +158,7 @@ It currently includes:
 
 #### Prerequisites
 
-- Node.js
+- Node.js 20.19+ or 22.12+
 - Yarn Classic
 - backend running on `http://localhost:4000` or regenerated clients
 - authentication service running on `http://localhost:4001`
@@ -168,12 +168,15 @@ It currently includes:
 ```bash
 cd web/front
 yarn install
-yarn start
+yarn dev
 ```
 
 Useful scripts:
 
+- `yarn dev` starts the Vite dev server
 - `yarn build` builds the frontend
+- `yarn preview` serves the production build locally
+- `yarn typecheck` runs the TypeScript type checker
 - `yarn refresh-clients` regenerates the backend client from the local Swagger document
 - `yarn docker` runs the Docker deployment build script
 

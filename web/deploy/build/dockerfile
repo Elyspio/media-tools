@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS builder-back
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS builder-back
 
 ARG MAIN_CSPROJ_PATH
 ARG ROOT_FOLDER
@@ -28,7 +28,7 @@ RUN dotnet publish ${MAIN_CSPROJ_PATH} --no-restore -o /app/out
 
 
 # Building front
-FROM --platform=linux/amd64 node:16 as builder-front
+FROM --platform=linux/amd64 node:22 as builder-front
 
 COPY front/package.json /front/
 COPY front/yarn.lock /front/
@@ -39,7 +39,7 @@ RUN cd /front && yarn build
 
 
 # Running
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS production
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS production
 
 ARG ENTRY_DLL
 ENV ENTRY_DLL ${ENTRY_DLL}
