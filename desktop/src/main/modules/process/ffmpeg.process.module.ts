@@ -96,7 +96,24 @@ export class FfmpegProcessModule extends LogModule {
 
 	@log.debug()
 	public async convert(opts: FfmpegConvertOptions): Promise<string> {
-		const args = ["-y", "-i", opts.files.input, "-c:v", opts.format.id, opts.files.output];
+		const args = [
+			"-y", // Overwrite output files without asking
+			"-i",
+			`${opts.files.input}`, // Source file
+			"-preset",
+			"p6", // 1 (faster) - 7 (better)
+			"-tune",
+			"hq", // film, animation, grain, stillimage, fastdecode, zerolatency
+			"-c:a",
+			"copy", // Copy audio stream without re-encoding
+			"-c:v",
+			opts.format.id, // Use specified video encoder
+			"-r",
+			opts.fps.toString(), // Set output frame rate (used to be a multiple of 24 like 120 or 240)
+			`${opts.files.output}` ,
+		];
+
+		this.logger.error("Starting ffmpeg process "+  args.join(" ") );
 
 		const result = await this.processModule.spawn("ffmpeg", args, {});
 

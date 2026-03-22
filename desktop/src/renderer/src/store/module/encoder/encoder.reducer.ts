@@ -19,6 +19,7 @@ export interface EncoderState {
 	current: {
 		pids: string[];
 		format?: string;
+		fps: number;
 	};
 }
 
@@ -29,6 +30,7 @@ const defaultState: EncoderState = {
 	},
 	current: {
 		pids: [],
+		fps: 24,
 	},
 };
 
@@ -39,7 +41,9 @@ const slice = createSlice({
 		setFormat: (state, action: PayloadAction<string | undefined>) => {
 			state.current.format = action.payload;
 		},
-
+		setFps: (state, action: PayloadAction<number>) => {
+			state.current.fps = action.payload;
+		},
 		removeFileProcess: (state, { payload: { pids } }: PayloadAction<{ pids: string[] }>) => {
 			state.current.pids = state.current.pids.filter((p) => !pids.includes(p));
 		},
@@ -70,4 +74,4 @@ const slice = createSlice({
 
 export const reducer = slice.reducer;
 
-export const { setProcessProgress, setFileProcesses, setFormat, removeFileProcess } = slice.actions;
+export const { setProcessProgress, setFileProcesses, setFormat, removeFileProcess, setFps } = slice.actions;

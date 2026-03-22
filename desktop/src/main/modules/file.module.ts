@@ -137,12 +137,7 @@ export class FileModule extends LogModule {
 	private async executeDirectorySizeCommand(directory: string): Promise<string> {
 		switch (process.platform) {
 			case "win32":
-				return await this.execFileText("powershell.exe", [
-					"-NoProfile",
-					"-NonInteractive",
-					"-Command",
-					this.getWindowsDirectorySizeScript(directory),
-				]);
+				return await this.execFileText("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", this.getWindowsDirectorySizeScript(directory)]);
 			case "darwin":
 				return await this.execFileText("/bin/sh", ["-lc", this.getMacDirectorySizeScript(), "sh", directory]);
 			default:

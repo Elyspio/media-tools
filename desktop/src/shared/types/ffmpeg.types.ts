@@ -6,6 +6,7 @@ export type FfmpegConvertOptions = {
 	format: {
 		id: string;
 	};
+	fps: number;
 };
 
 export type EncoderType = "video" | "audio" | "subtitle" | "unknown";

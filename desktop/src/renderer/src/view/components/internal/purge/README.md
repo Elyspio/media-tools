@@ -9,4 +9,3 @@ Purge helps clean heavy build artifacts such as `node_modules`, `bin`, and `obj`
 3. Click **Scan** and confirm the targets list looks correct.
 4. (Optional) Toggle **Estimate size** and rescan to verify size output.
 5. Click **Purge now** and confirm the targets are removed.
-

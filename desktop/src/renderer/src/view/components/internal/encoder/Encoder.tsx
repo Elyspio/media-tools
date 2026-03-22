@@ -8,7 +8,7 @@ import { SelectFolder } from "../../shared/nodes/SelectFolder";
 import { setCurrentProcess } from "@modules/process/process.actions";
 import { convertMedia, setupFfmpeg, stopConvertMedia } from "@modules/encoder/encoder.async.actions";
 import { encodersSelectors } from "@modules/encoder/encoders.selectors";
-import { setFormat } from "@modules/encoder/encoder.reducer";
+import { setFormat, setFps } from "@modules/encoder/encoder.reducer";
 import { setMedias } from "@modules/media/media.async.actions";
 import type { Encoder as EncoderType } from "@shared/types/ffmpeg.types";
 import { PlayArrow, Stop } from "@mui/icons-material";
@@ -26,6 +26,7 @@ export function Encoder() {
 	const encoders = useAppSelector(encodersSelectors.ffmpeg.encoders);
 	const files = useAppSelector((s) => s.media.data);
 	const format = useAppSelector((s) => s.encoder.current.format);
+	const fps = useAppSelector((s) => s.encoder.current.fps);
 	const encoding = useAppSelector((s) => s.encoder.current.pids.length > 0);
 
 	const actions = useMemo(
@@ -35,6 +36,7 @@ export function Encoder() {
 					setFormat,
 					setCurrentProcess,
 					setMedias,
+					setFps,
 					stopConvertMedia,
 					convert: convertMedia,
 					setupFfmpeg,
@@ -92,6 +94,8 @@ export function Encoder() {
 					<Stack spacing={2}>
 						<Stack spacing={3} direction={"row"} justifyContent={"flex-start"} alignItems={"flex-end"}>
 							<SelectFolder variant={"outlined"} onChange={onFileSelect} mode={"files"} />
+
+							<TextField sx={{width: 40}} variant={"standard"} size={"small"} label={"FPS"} type={"number"} value={fps} onChange={event => actions.setFps(Number.parseInt(event.target.value))}/>
 
 							<Autocomplete
 								sx={{ width: 200 }}

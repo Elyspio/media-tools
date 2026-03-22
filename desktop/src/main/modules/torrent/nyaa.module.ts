@@ -2,7 +2,6 @@ import { XMLParser } from "fast-xml-parser";
 import { injectable } from "inversify";
 import { LogModule } from "@main/modules/log.module";
 import type { NyaaRawItem, NyaaRssResult, NyaaTorrentItem } from "@shared/types/torrent.types";
-import fs from "fs";
 
 const RSS_URL = "https://nyaa.si/?page=rss&f=0&c=0_0";
 
@@ -29,9 +28,6 @@ export class NyaaModule extends LogModule {
 		const xml = await res.text();
 
 		const json = this.parser.parse(xml) as NyaaRssResult;
-
-		fs.writeFileSync("nyaa.xml", xml);
-		fs.writeFileSync("nyaa.json", JSON.stringify(json, null, 2));
 
 		const items = json?.rss?.channel?.item ?? [];
 

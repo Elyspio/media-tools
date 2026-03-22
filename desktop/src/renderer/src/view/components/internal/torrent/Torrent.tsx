@@ -161,15 +161,7 @@ export function Torrent() {
 			</form>
 
 			<Box flex={1} minHeight={0} sx={{ "& .value-low": { color: "orange" }, "& .value-none": { color: "red" }, "& .value-ok": { color: "limegreen" } }}>
-				<DataGrid
-					sx={{ height: "100%" }}
-					rows={torrents}
-					columns={columns}
-					loading={loading}
-					getRowId={(row) => row.id}
-					disableRowSelectionOnClick
-					hideFooter
-				/>
+				<DataGrid sx={{ height: "100%" }} rows={torrents} columns={columns} loading={loading} getRowId={(row) => row.id} disableRowSelectionOnClick hideFooter />
 			</Box>
 		</Stack>
 	);

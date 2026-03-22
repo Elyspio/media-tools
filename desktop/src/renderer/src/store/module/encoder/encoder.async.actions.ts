@@ -60,7 +60,7 @@ export const convertMedia = createAsyncThunk("convert", async (_, { getState, di
 
 	const state = getState();
 
-	const format = state.encoder.current.format;
+	const { format, fps } = state.encoder.current;
 
 	if (!format) throw new Error("Unknown format");
 
@@ -107,6 +107,7 @@ export const convertMedia = createAsyncThunk("convert", async (_, { getState, di
 						input: file.file.path,
 						output: outputPath,
 					},
+					fps
 				});
 
 				dispatch(setFileProcesses({ path: file.file.path, pid }));
