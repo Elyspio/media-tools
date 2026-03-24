@@ -1,56 +1,60 @@
-# Media Tools
+# Elytools
 
-Media Tools, published as `Elytools`, is a personal cross-platform toolbox for media and home-lab workflows.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
+[![Node.js](https://img.shields.io/badge/Node.js-20+-68a063?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Electron](https://img.shields.io/badge/Electron-40+-47848F?logo=electron&logoColor=white)](https://www.electronjs.org/)
+[![React](https://img.shields.io/badge/React-19+-61dafb?logo=react&logoColor=black)](https://react.dev/)
+[![.NET](https://img.shields.io/badge/.NET-10.0-512bd4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 
-This repository currently contains:
+A comprehensive cross-platform toolbox for media workflows, system utilities, and home-lab automation.
 
-- an Electron desktop application for local utilities such as video encoding, torrent lookup, cache cleanup, and Home Assistant access
-- a small ASP.NET Core backend that exposes weather endpoints and a SignalR screen-share hub
-- a React frontend that consumes the backend and authentication APIs
+## 🎯 Project Scope
 
-Several parts of the project are wired to private infrastructure by default, so expect to adjust endpoints and credentials before using it outside the original environment.
+Elytools is a personal suite designed to centralize and automate common workflows. It consists of a powerful desktop application and a supporting web infrastructure.
 
-## Repository Layout
+> **Note:** Several parts are wired to private infrastructure by default. You may need to adjust endpoints and credentials in the settings.
+
+---
+
+## 🏗️ Core Components
+
+### 🖥️ [Desktop Application](./desktop/readme.md)
+The flagship experience: a feature-rich Electron app providing deep system integration.
+
+- **Encoder**: Video conversion/probing pipeline powered by FFmpeg.
+- **Torrent**: Search on `nyaa.si` and forward to qBittorrent via OAuth2.
+- **Integrations**: Home Assistant access, OIDC login flow, auto-updates.
+- **Stack**: Electron, React, TypeScript, MUI, Inversify.
+
+👉 **[View Desktop README](./desktop/readme.md)** for installation and usage.
+
+### 🌐 Web Infrastructure
+Supporting services and a web-based client for remote access.
+
+- **Backend**: ASP.NET Core API providing weather data and SignalR screen-share hub.
+- **Frontend**: React + Vite client for remote monitoring and auth flows.
+- **Stack**: .NET 10, MongoDB, Redis, React.
+
+👉 **[Jump to Web Stack Details](#-web-stack)**
+
+---
+
+## 📂 Repository Layout
 
 ```text
 .
-|-- desktop/    Electron + React + TypeScript application
-`-- web/
-    |-- back/   ASP.NET Core API and tests
-    |-- front/  React web client
-    `-- deploy/ Docker-based deployment assets
+├── desktop/    # Electron + React + TypeScript application
+└── web/
+    ├── back/   # ASP.NET Core API and tests
+    ├── front/  # React web client
+    └── deploy/ # Docker-based deployment assets
 ```
 
-## Desktop App
+---
 
-The desktop app lives in `desktop/` and is the most complete part of the repository.
+## 🚀 Quick Start
 
-### What It Does
-
-- encode videos through FFmpeg/FFprobe
-- search `nyaa.si` and forward torrents to qBittorrent
-- purge `node_modules` folders and build caches
-- open a configured Home Assistant instance
-- store app settings locally and support OIDC login
-- check GitHub releases for app updates
-
-### Tech Stack
-
-- Electron
-- React
-- TypeScript
-- Vite via `electron-vite`
-- Material UI
-- Redux Toolkit
-
-### Prerequisites
-
-- Node.js
-- pnpm 10
-- FFmpeg available to the desktop runtime
-- qBittorrent Web UI enabled if you want to use the torrent module
-
-### Install And Run
+To run the main desktop application:
 
 ```bash
 cd desktop
@@ -58,138 +62,31 @@ pnpm install
 pnpm dev
 ```
 
-Useful scripts:
+*For web services, refer to the [Web Stack](#-web-stack) section below.*
 
-- `pnpm dev` starts the Electron app in development mode
-- `pnpm lint` runs ESLint with autofix
-- `pnpm format` runs Prettier
-- `pnpm clean` removes release artifacts
+---
 
-### Build And Release
+## 🌐 Web Stack
 
-```bash
-cd desktop
-pnpm build
-```
+### Backend (`/web/back`)
+ASP.NET Core application exposing APIs and SignalR hubs.
+- **Prerequisites**: .NET SDK 10, MongoDB, Redis.
+- **Run**: `dotnet run --project Web/Elytools.Api.Web.csproj`
 
-The desktop package also includes release scripts:
+### Frontend (`/web/front`)
+React web client for authentication and screen sharing.
+- **Prerequisites**: Node.js, pnpm.
+- **Run**: `pnpm install && pnpm start`
 
-- `pnpm build:release:win`
-- `pnpm build:release:linux`
-- `pnpm build:release:linux:container`
-- `pnpm release`
+---
 
-Notes:
+## 🔧 Desktop Configuration
 
-- `pnpm build` runs `electron-vite build` and then packages the app with Electron Builder for Windows
-- Linux container builds require Docker and `GITHUB_TOKEN`
-- release publishing targets GitHub releases for the `Elyspio/media-tools` repository
+The app creates local configuration files under the user app-data folder:
+- **Windows**: `%LOCALAPPDATA%\elytools\config\`
+- **Linux**: `~/.config/elytools/config/`
 
-### Desktop Configuration
-
-On first launch the app creates a local config file under the user app-data folder, typically:
-
-- Windows: `%LOCALAPPDATA%\elytools\config\config.json`
-- macOS: `~/Library/Application Support/elytools/config/config.json`
-
-The settings UI exposes these main values:
-
-- Home Assistant URL
-- backend API URL
-- screen-share hub URL
-- qBittorrent API base URL
-- OIDC issuer URL, client ID, scopes, and redirect path
-
-The OIDC redirect scheme used by the app is `elytools://...`.
-
-## Web Stack
-
-The web code lives under `web/`.
-
-### Backend
-
-The backend is an ASP.NET Core application in `web/back/`.
-
-#### What It Exposes
-
-- `GET /api/types` for client type generation
-- SignalR hub at `/ws/screen-share`
-- Swagger UI in development
-
-#### Prerequisites
-
-- .NET SDK 10.0
-- MongoDB
-- Redis
-- `OpenWeatherMap_ApiKey` environment variable
-
-Default local settings in `appsettings.json` point to:
-
-- API on `https://localhost:4000`
-- MongoDB on `mongodb://root:root@localhost:6003/...`
-- Redis on `localhost:6379`
-- authentication service on `http://localhost:4001`
-
-#### Run Locally
-
-```bash
-cd web/back
-dotnet restore
-dotnet run --project Web/Elytools.Api.Web.csproj
-```
-
-#### Test
-
-```bash
-cd web/back
-dotnet test Tests/Elytools.Api.Tests.Weather/Elytools.Api.Tests.Weather.csproj
-```
-
-### Frontend
-
-The frontend is a React + Vite application in `web/front/`.
-
-It currently includes:
-
-- authentication flow wiring
-- theme switching
-- a screen-share viewer backed by the SignalR hub
-- generated REST clients for the backend and auth service
-
-#### Prerequisites
-
-- Node.js
-- pnpm 10
-- backend running on `http://localhost:4000` or regenerated clients
-- authentication service running on `http://localhost:4001`
-
-#### Install And Run
-
-```bash
-cd web/front
-pnpm install
-pnpm start
-```
-
-Useful scripts:
-
-- `pnpm build` builds the frontend
-- `pnpm refresh-clients` regenerates the backend client from the local Swagger document
-- `pnpm docker` runs the Docker deployment build script
-
-If you regenerate clients, make sure the backend Swagger document is reachable at `http://localhost:4000/swagger/Elytools.Api/swagger.json`. The current script uses HTTP explicitly, so adjust it if your local backend only serves HTTPS.
-
-## Deployment Notes
-
-- `web/deploy/` contains Docker build assets for the web stack
-- the current deployment script assumes access to a private SSH target and is not generic out of the box
-- the desktop app is configured to publish packaged releases to GitHub
-
-## Quick Start
-
-If you only want the main application:
-
-1. Go to `desktop/`.
-2. Run `pnpm install`.
-3. Run `pnpm dev`.
-4. Open the settings panel and fill in your own service endpoints.
+The UI exposes settings for:
+- Home Assistant & Backend URLs
+- Screen-share hub & qBittorrent API
+- OIDC configuration (Issuer, Client ID, Scopes)
