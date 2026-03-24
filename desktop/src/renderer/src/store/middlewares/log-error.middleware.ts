@@ -9,4 +9,3 @@ export const logErrorMiddleware: Middleware = () => (next) => (action) => {
 
 	return next(action);
 };
-

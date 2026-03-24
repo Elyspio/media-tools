@@ -104,16 +104,28 @@ export class FfmpegProcessModule extends LogModule {
 			"p6", // 1 (faster) - 7 (better)
 			"-tune",
 			"hq", // film, animation, grain, stillimage, fastdecode, zerolatency
+			"-cq",
+			"24",
+			"-b:v",
+			"0",
+			"-spatial-aq",
+			"1",
+			"-temporal-aq",
+			"1",
+			"-pix_fmt",
+			"yuv420p10le",
+			"-rc",
+			"vbr",
 			"-c:a",
 			"copy", // Copy audio stream without re-encoding
 			"-c:v",
 			opts.format.id, // Use specified video encoder
 			"-r",
 			opts.fps.toString(), // Set output frame rate (used to be a multiple of 24 like 120 or 240)
-			`${opts.files.output}` ,
+			`${opts.files.output}`,
 		];
 
-		this.logger.error("Starting ffmpeg process "+  args.join(" ") );
+		this.logger.error("Starting ffmpeg process " + args.join(" "));
 
 		const result = await this.processModule.spawn("ffmpeg", args, {});
 

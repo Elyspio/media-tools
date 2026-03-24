@@ -95,7 +95,15 @@ export function Encoder() {
 						<Stack spacing={3} direction={"row"} justifyContent={"flex-start"} alignItems={"flex-end"}>
 							<SelectFolder variant={"outlined"} onChange={onFileSelect} mode={"files"} />
 
-							<TextField sx={{width: 40}} variant={"standard"} size={"small"} label={"FPS"} type={"number"} value={fps} onChange={event => actions.setFps(Number.parseInt(event.target.value))}/>
+							<TextField
+								sx={{ width: 40 }}
+								variant={"standard"}
+								size={"small"}
+								label={"FPS"}
+								type={"number"}
+								value={fps}
+								onChange={(event) => actions.setFps(Number.parseInt(event.target.value))}
+							/>
 
 							<Autocomplete
 								sx={{ width: 200 }}

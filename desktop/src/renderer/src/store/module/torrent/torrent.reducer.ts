@@ -7,6 +7,7 @@ const defaultState: TorrentState = {
 	results: [],
 	loading: false,
 	sendingId: null,
+	parseEpisodeInfos: true,
 };
 
 const slice = createSlice({
@@ -15,6 +16,9 @@ const slice = createSlice({
 	reducers: {
 		setQuery(state, action: PayloadAction<string>) {
 			state.query = action.payload;
+		},
+		setParseEpisodeInfos(state, action: PayloadAction<boolean>) {
+			state.parseEpisodeInfos = action.payload;
 		},
 	},
 	extraReducers: ({ addCase }) => {

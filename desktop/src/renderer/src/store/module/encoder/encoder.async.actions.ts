@@ -107,7 +107,7 @@ export const convertMedia = createAsyncThunk("convert", async (_, { getState, di
 						input: file.file.path,
 						output: outputPath,
 					},
-					fps
+					fps,
 				});
 
 				dispatch(setFileProcesses({ path: file.file.path, pid }));
