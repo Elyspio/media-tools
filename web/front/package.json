@@ -23,12 +23,13 @@
     "axios": "^1.13.6",
     "clsx": "^2.1.1",
     "history": "^5.3.0",
-    "inversify": "^8.0.0",
+    "react-compiler-runtime": "^1.0.0",
+    "inversify": "^8.1.0",
     "inversify-react": "^1.2.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-redux": "9.2.0",
-    "react-router": "^7.13.1",
+    "react-router": "^7.13.2",
     "react-toastify": "11.0.5",
     "redux": "5.0.1",
     "reflect-metadata": "^0.2.2"
@@ -36,8 +37,8 @@
   "devDependencies": {
     "@babel/core": "^7.29.0",
     "@babel/plugin-transform-runtime": "^7.29.0",
-    "@babel/runtime": "^7.28.6",
-    "@rolldown/plugin-babel": "^0.2.1",
+    "@babel/runtime": "^7.29.2",
+    "@rolldown/plugin-babel": "^0.2.2",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
@@ -46,7 +47,7 @@
     "prettier": "^3.8.1",
     "sass": "^1.98.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3",
-    "vite": "8.0.0"
+    "typescript": "^6.0.2",
+    "vite": "8.0.2"
   }
 }

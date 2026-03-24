@@ -1,5 +1,5 @@
 import { LogModule } from "./log.module";
-import { SkipFirst } from "@preload/parts/preload.ipc.wrapper";
+import type { SkipFirst } from "@preload/parts/preload.ipc.wrapper";
 import type { WebContents } from "electron";
 import { IpcSentEvents } from "@shared/ipc/ipc.sent.events";
 import { log } from "../utils/logs.utils";
