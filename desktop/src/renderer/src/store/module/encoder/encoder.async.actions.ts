@@ -22,7 +22,7 @@ type IgnoreAlreadyConvertedFilesParams = {
  * @warning This function only supports hevc, h264 and av1 for now
  * @warning Files will not be modified nor have an associated process
  */
-export const ignoreAlreadyConvertedFiles = createAsyncThunk("convert", ({ files, format }: IgnoreAlreadyConvertedFilesParams, { dispatch }) => {
+export const ignoreAlreadyConvertedFiles = createAsyncThunk("skip-already-converted", ({ files, format }: IgnoreAlreadyConvertedFilesParams, { dispatch }) => {
 	let alreadyConverted: Media[] = [];
 
 	if (format.includes("hevc")) {
@@ -94,7 +94,7 @@ export const convertMedia = createAsyncThunk("convert", async (_, { getState, di
 		return acc;
 	}, [] as Media[][]);
 
-	await Promise.all(
+	await Promise.allSettled(
 		conversionBatches.map(async (batch) => {
 			for (const file of batch.filter((f) => !alreadyConverted.includes(f))) {
 				if (!encoderConvertStates.isConverting) break;
@@ -112,7 +112,9 @@ export const convertMedia = createAsyncThunk("convert", async (_, { getState, di
 
 				dispatch(setFileProcesses({ path: file.file.path, pid }));
 
-				const nbFrames = ffmpegService.extractNbFrames(file.property);
+				const sourceNbFrames = ffmpegService.extractNbFrames(file.property);
+				const sourceFps = ffmpegService.extractFps(file.property);
+				const nbFrames = sourceFps > 0 ? Math.floor(sourceNbFrames * (fps / sourceFps)) : sourceNbFrames;
 
 				const removeListener = window.preload.ipc.on.process.spawn.stderr((pid1, data) => {
 					if (pid1 !== pid) return;
@@ -131,9 +133,16 @@ export const convertMedia = createAsyncThunk("convert", async (_, { getState, di
 					);
 				});
 
-				await waitProcessExits(getState, pid);
+				try {
+					await waitProcessExits(getState, pid);
+				} catch {
+					removeListener();
+					break;
+				}
 
 				removeListener();
+
+				if (!encoderConvertStates.isConverting) break;
 
 				// Move converted file to original location
 				const originalDir = pathService.dirname(file.file.path);
@@ -159,14 +168,11 @@ export const SpecialEncodingProgressValues = {
 export const stopConvertMedia = createAsyncThunk("stop-convert", async (_, { dispatch, getState, extra }) => {
 	const state = getState();
 
-	const pids = state.encoder.current.pids;
-	if (pids.length === 0) {
-		throw new Error("No ongoing conversion process");
-	}
+	const pids = [...state.encoder.current.pids];
 
 	encoderConvertStates.isConverting = false;
 
-	dispatch(removeFileProcess({ pids }));
+	if (pids.length === 0) return;
 
 	const processService = getService(ProcessService, extra);
 
@@ -177,13 +183,17 @@ export const stopConvertMedia = createAsyncThunk("stop-convert", async (_, { dis
 
 		const currentPath = Object.entries(state.encoder.processes.pids).find(([, p]) => p === pid)?.[0];
 
-		dispatch(
-			setProcessProgress({
-				path: currentPath!,
-				value: SpecialEncodingProgressValues.Aborted,
-			})
-		);
+		if (currentPath) {
+			dispatch(
+				setProcessProgress({
+					path: currentPath,
+					value: SpecialEncodingProgressValues.Aborted,
+				})
+			);
+		}
 	}
+
+	dispatch(removeFileProcess({ pids }));
 });
 
 function sleep(milliseconds: number) {

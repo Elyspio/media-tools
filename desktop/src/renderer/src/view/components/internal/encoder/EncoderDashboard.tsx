@@ -14,10 +14,20 @@ const statusLabels: Record<string, string> = {
 	Aborted: "Aborted",
 };
 
+function formatEta(seconds: number): string {
+	if (!Number.isFinite(seconds) || seconds <= 0) return "";
+	const h = Math.floor(seconds / 3600);
+	const m = Math.floor((seconds % 3600) / 60);
+	const s = Math.floor(seconds % 60);
+	if (h > 0) return `${h}h${String(m).padStart(2, "0")}m`;
+	if (m > 0) return `${m}m${String(s).padStart(2, "0")}s`;
+	return `${s}s`;
+}
+
 export const EncoderDashboard = () => {
 	const files = useAppSelector((s) => s.media.data);
-
 	const progresses = useAppSelector((s) => s.encoder.processes.progress);
+	const startedAts = useAppSelector((s) => s.encoder.processes.startedAt);
 
 	const fileStatus = useMemo(
 		() =>
@@ -48,9 +58,10 @@ export const EncoderDashboard = () => {
 				property,
 				status: fileStatus[file.path],
 				progress: progresses[file.path] || 0,
+				startedAt: startedAts[file.path] ?? 0,
 			})
 		);
-	}, [files, fileStatus, progresses]);
+	}, [files, fileStatus, progresses, startedAts]);
 
 	const columns: GridColDef<MediaWithEncoderProps>[] = [
 		{
@@ -98,22 +109,46 @@ export const EncoderDashboard = () => {
 		{
 			field: "progress",
 			headerName: "Progress",
-			minWidth: 150,
+			minWidth: 200,
 			sortable: false,
 			filterable: false,
 			disableColumnMenu: true,
 			align: "center",
 			headerAlign: "center",
-			renderCell: (params: EncoderGridRenderCellParams) => (
-				<Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%", height: "100%" }}>
-					<LinearProgress
-						variant="determinate"
-						value={params.row.progress * 100}
-						color={params.row.status === "Converted" ? "success" : "primary"}
-						sx={{ flexGrow: 1, height: 6, borderRadius: 3, bgcolor: "action.hover" }}
-					/>
-				</Box>
-			),
+			renderCell: (params: EncoderGridRenderCellParams) => {
+				const { progress, status, startedAt } = params.row;
+				const pct = Math.min(progress * 100, 100);
+
+				let eta = "";
+				if (status === "InProgress" && progress > 0.01 && startedAt > 0) {
+					const elapsed = (Date.now() - startedAt) / 1000;
+					const remaining = (elapsed / progress) * (1 - progress);
+					eta = formatEta(remaining);
+				}
+
+				return (
+					<Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%", height: "100%" }}>
+						<LinearProgress
+							variant="determinate"
+							value={pct}
+							color={status === "Converted" ? "success" : "primary"}
+							sx={{ flexGrow: 1, height: 6, borderRadius: 3, bgcolor: "action.hover" }}
+						/>
+						<Typography
+							sx={{
+								fontFamily: "var(--font-mono)",
+								fontSize: "0.65rem",
+								color: "var(--text-muted)",
+								minWidth: 72,
+								textAlign: "right",
+								whiteSpace: "nowrap",
+							}}
+						>
+							{status === "InProgress" ? `${pct.toFixed(0)}%${eta ? ` · ${eta}` : ""}` : status === "Converted" ? "Done" : ""}
+						</Typography>
+					</Box>
+				);
+			},
 		},
 	];
 
@@ -125,6 +160,7 @@ type FileStatus = "InProgress" | "Pending" | "Converted" | "Aborted";
 type MediaWithEncoderProps = Media & {
 	status: FileStatus;
 	progress: number;
+	startedAt: number;
 };
 
 type EncoderGridRenderCellParams = GridRenderCellParams<MediaWithEncoderProps>;

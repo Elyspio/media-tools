@@ -1,33 +1,54 @@
-@use "sass:math";
-
 @use "../../variables" as *;
 
 .ResourceUtilization {
 	display: flex;
-	justify-content: space-evenly;
+	justify-content: center;
+	gap: 24px;
 	-webkit-app-region: drag;
-	flex-direction: row;
 	align-items: center;
 	width: 100%;
-	padding: 4px 0;
-	color: $headerColor !important;
-	background-color: #0e0e0e !important;
-	border-radius: 0 !important;
-	height: math.div($titlebarHeight, 1.5);
+	height: 24px;
 	flex-shrink: 0;
+	background-color: var(--surface-0);
+	border-top: 1px solid var(--border-subtle);
+}
 
-	.item {
-		display: flex;
-		justify-content: center;
-		align-items: center;
+.ResourceUtilization__metric {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
 
-		.label {
-			margin-right: 1rem;
-		}
+.ResourceUtilization__label {
+	font-family: var(--font-mono);
+	font-size: 0.7rem;
+	font-weight: 500;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--text-faint);
+	min-width: 24px;
+}
 
-		.value {
-			min-width: 3rem;
-			display: block;
-		}
-	}
+.ResourceUtilization__bar {
+	width: 48px;
+	height: 3px;
+	border-radius: 1.5px;
+	background-color: rgba(255, 255, 255, 0.08);
+	overflow: hidden;
+}
+
+.ResourceUtilization__bar-fill {
+	height: 100%;
+	border-radius: 1.5px;
+	transition:
+		width 300ms ease,
+		background-color 300ms ease;
+}
+
+.ResourceUtilization__value {
+	font-family: var(--font-mono);
+	font-size: 0.6rem;
+	color: var(--text-faint);
+	min-width: 28px;
+	text-align: right;
 }

@@ -40,17 +40,25 @@ export class FfmpegService {
 		return Number.parseInt(frame);
 	}
 
-	public extractNbFrames(probe: FfprobeResult) {
-		const duration = Number(probe.format.duration); // in seconds
+	public extractFps(probe: FfprobeResult) {
 		const videoStream = probe.streams.find((s) => s.codec_type === "video");
 
 		if (!videoStream || !videoStream.avg_frame_rate) {
-			throw new Error("No video stream found");
+			return 0;
 		}
 
 		const [numerator, denominator] = videoStream.avg_frame_rate.split("/").map(Number);
 
-		const fps = numerator / denominator;
+		return numerator / denominator;
+	}
+
+	public extractNbFrames(probe: FfprobeResult) {
+		const duration = Number(probe.format.duration); // in seconds
+		const fps = this.extractFps(probe);
+
+		if (fps === 0) {
+			throw new Error("No video stream found");
+		}
 
 		return Math.floor(duration * fps);
 	}

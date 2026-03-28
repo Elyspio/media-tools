@@ -1,8 +1,20 @@
-$backgroundColor: #1b1b1b;
-$titlebarHeight: 2rem;
+$backgroundColor: #141414;
+$titlebarHeight: 2.25rem;
 $primary: #4fd2ff;
 $secondary: #00ff88;
 $headerColor: #bcbcbc;
+
+:root {
+	--surface-0: #0a0a0a;
+	--surface-1: #131313;
+	--surface-2: #1a1a1a;
+	--surface-3: #222222;
+	--border-subtle: rgba(255, 255, 255, 0.06);
+	--border-medium: rgba(255, 255, 255, 0.12);
+	--text-muted: rgba(255, 255, 255, 0.4);
+	--text-faint: rgba(255, 255, 255, 0.25);
+	--font-mono: "IBM Plex Mono", monospace;
+}
 
 body {
 	margin: 0;
@@ -10,15 +22,19 @@ body {
 }
 
 *::-webkit-scrollbar-track {
-	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-	background-color: #1a1a1a;
+	background-color: var(--surface-1);
 }
 
 *::-webkit-scrollbar {
 	width: 4px;
-	background-color: $secondary;
+	background-color: transparent;
 }
 
 *::-webkit-scrollbar-thumb {
-	background-color: $primary;
+	background-color: rgba(79, 210, 255, 0.3);
+	border-radius: 2px;
+
+	&:hover {
+		background-color: rgba(79, 210, 255, 0.5);
+	}
 }

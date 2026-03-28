@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { Autocomplete, Box, Button, Stack, TextField, Typography } from "@mui/material";
+import { Autocomplete, Box, Button, MenuItem, Stack, TextField, Typography } from "@mui/material";
 import "./Encoder.scss";
 import { useDispatch } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -11,11 +11,13 @@ import { encodersSelectors } from "@modules/encoder/encoders.selectors";
 import { setFormat, setFps } from "@modules/encoder/encoder.reducer";
 import { setMedias } from "@modules/media/media.async.actions";
 import type { Encoder as EncoderType } from "@shared/types/ffmpeg.types";
-import { PlayArrow, Stop } from "@mui/icons-material";
+import { FolderOpen, PlayArrow, Stop } from "@mui/icons-material";
 import type { FileInfo } from "@shared/types/dialog.types";
 import { EncoderDashboard } from "@components/internal/encoder/EncoderDashboard";
 import { convertSizeToHumanFormat } from "@view/utils/data.utils";
 import { FFmpegNotInstalledAlert } from "@components/internal/encoder/FFmpegNotInstalledAlert";
+
+const fpsOptions = [24, 30, 60, 120] as const;
 
 export function Encoder() {
 	const [manufacturer, setManufacturer] = React.useState<string>();
@@ -27,7 +29,7 @@ export function Encoder() {
 	const files = useAppSelector((s) => s.media.data);
 	const format = useAppSelector((s) => s.encoder.current.format);
 	const fps = useAppSelector((s) => s.encoder.current.fps);
-	const encoding = useAppSelector((s) => s.encoder.current.pids.length > 0);
+	const encoding = useAppSelector((s) => s.encoder.encoding);
 
 	const actions = useMemo(
 		() =>
@@ -50,8 +52,6 @@ export function Encoder() {
 		actions.setupFfmpeg();
 	}, [actions]);
 
-	// endregion store
-
 	const onFormatChange = React.useCallback(
 		(_: React.SyntheticEvent, val: EncoderType | null) => {
 			dispatch(setFormat(val?.id));
@@ -70,77 +70,72 @@ export function Encoder() {
 		return [...new Set(encoders.flatMap((e) => e.manufacturer))];
 	}, [encoders]);
 
-	const actionBtn = useMemo(() => {
-		if (!format) return null;
-
-		if (encoding)
-			return (
-				<Button size={"small"} color={"error"} variant="outlined" startIcon={<Stop />} onClick={() => actions.stopConvertMedia()}>
-					Cancel
-				</Button>
-			);
-
-		return (
-			<Button size={"small"} variant="outlined" startIcon={<PlayArrow />} onClick={() => actions.convert()}>
-				Encode
-			</Button>
-		);
-	}, [actions, encoding, format]);
-
 	return (
-		<Stack height={"100%"} minHeight={0} padding={2} spacing={1} alignItems={"center"} justifyContent={"center"}>
+		<Stack className={"Encoder"}>
 			{isFfmpegInstalled && (
-				<Stack spacing={1.5} height={"100%"} minHeight={0} width={"100%"}>
-					<Stack spacing={2}>
-						<Stack spacing={3} direction={"row"} justifyContent={"flex-start"} alignItems={"flex-end"}>
+				<>
+					<Box className={"Encoder__toolbar"}>
+						<Stack direction={"row"} spacing={1.5} alignItems={"flex-end"} flexWrap={"wrap"} useFlexGap>
 							<SelectFolder variant={"outlined"} onChange={onFileSelect} mode={"files"} />
 
-							<TextField
-								sx={{ width: 40 }}
-								variant={"standard"}
-								size={"small"}
-								label={"FPS"}
-								type={"number"}
-								value={fps}
-								onChange={(event) => actions.setFps(Number.parseInt(event.target.value))}
-							/>
+							<TextField sx={{ width: 90 }} select size={"small"} label={"FPS"} value={fps} onChange={(event) => actions.setFps(Number.parseInt(event.target.value))}>
+								{fpsOptions.map((opt) => (
+									<MenuItem key={opt} value={opt}>
+										{opt}
+									</MenuItem>
+								))}
+							</TextField>
 
 							<Autocomplete
 								sx={{ width: 200 }}
 								onChange={(_, v) => setManufacturer(v)}
-								renderInput={(params) => <TextField {...params} size={"small"} variant={"standard"} fullWidth label="Manufacturer" />}
+								renderInput={(params) => <TextField {...params} size={"small"} fullWidth label="Manufacturer" />}
 								options={manufacturers}
 								disableClearable
 							/>
 							{manufacturer && (
 								<Autocomplete
-									sx={{ width: 150 }}
+									sx={{ width: 180 }}
 									onChange={onFormatChange}
 									getOptionLabel={(option) => option.id}
-									renderInput={(params) => <TextField {...params} size={"small"} variant={"standard"} fullWidth label="Encoder" />}
+									renderInput={(params) => <TextField {...params} size={"small"} fullWidth label="Encoder" />}
 									options={encoders.filter((e) => e.manufacturer === manufacturer)}
 									disableClearable
 								/>
 							)}
 						</Stack>
-					</Stack>
+					</Box>
+
+					{files.length > 0 ? (
+						<Box className={"Encoder__dashboard"}>
+							<EncoderDashboard />
+						</Box>
+					) : (
+						<Box className={"Encoder__empty"}>
+							<FolderOpen sx={{ fontSize: 40, color: "var(--text-faint)" }} />
+							<Typography sx={{ color: "var(--text-muted)", fontSize: "0.8125rem" }}>Select files to begin encoding</Typography>
+						</Box>
+					)}
 
 					{files.length > 0 && (
-						<>
-							<Box display={"flex"} justifyContent={"center"} alignItems={"center"} height={"100%"} minHeight={0} flex={1}>
-								<EncoderDashboard />
-							</Box>
+						<Box className={"Encoder__footer"}>
+							<Typography variant="caption" sx={{ color: "var(--text-muted)", fontFamily: "var(--font-mono)", fontSize: "0.7rem" }}>
+								{files.length} file{files.length !== 1 ? "s" : ""} &middot; {convertSizeToHumanFormat(files.reduce((acc, f) => acc + f.file.size, 0))}
+							</Typography>
 
-							<Stack spacing={2} direction={"row"} alignItems={"center"} justifyContent={"space-between"}>
-								<Typography variant="caption" color="text.secondary">
-									Total: {files.length} files • {convertSizeToHumanFormat(files.reduce((acc, f) => acc + f.file.size, 0))}
-								</Typography>
-
-								{actionBtn}
-							</Stack>
-						</>
+							{format &&
+								(encoding ? (
+									<Button size={"small"} color={"error"} variant="outlined" startIcon={<Stop />} onClick={() => actions.stopConvertMedia()}>
+										Cancel
+									</Button>
+								) : (
+									<Button size={"small"} variant="contained" startIcon={<PlayArrow />} onClick={() => actions.convert()}>
+										Encode
+									</Button>
+								))}
+						</Box>
 					)}
-				</Stack>
+				</>
 			)}
 
 			{!isFfmpegInstalled && <FFmpegNotInstalledAlert />}

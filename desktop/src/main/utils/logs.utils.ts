@@ -83,7 +83,6 @@ export function log(logArguments?: LogArgument, level: "debug" | "log" = "log") 
 			const logger = (this as ILoggable).logger;
 
 			if (!logger) {
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 				throw new Error("Logger not found in target " + target.constructor.name);
 			}
 
@@ -103,7 +102,7 @@ export function log(logArguments?: LogArgument, level: "debug" | "log" = "log") 
 
 			const startAt = performance.now();
 
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call
 			const result = targetFunc.apply(this, args);
 
 			return handleResult(logger, level, startAt, str, result);

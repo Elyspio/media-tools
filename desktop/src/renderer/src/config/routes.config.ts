@@ -1,4 +1,9 @@
 import { ReactNode } from "react";
+import VideoSettingsIcon from "@mui/icons-material/VideoSettings";
+import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
+import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
+import HomeIcon from "@mui/icons-material/Home";
+import { createElement } from "react";
 
 export type RouteDescription = {
 	name: string;
@@ -25,6 +30,7 @@ const routesInfoBase: Record<RoutePath, RouteDescription> = {
 	"/internal/encoder": {
 		name: "Encoder",
 		description: "Video encoder tools and settings",
+		icon: createElement(VideoSettingsIcon),
 		show: {
 			appboard: true,
 			name: true,
@@ -33,6 +39,7 @@ const routesInfoBase: Record<RoutePath, RouteDescription> = {
 	"/internal/torrent": {
 		name: "Torrent",
 		description: "Search nyaa.si and send torrents to qBittorrent",
+		icon: createElement(CloudDownloadIcon),
 		show: {
 			appboard: true,
 			name: true,
@@ -41,6 +48,7 @@ const routesInfoBase: Record<RoutePath, RouteDescription> = {
 	"/internal/purge": {
 		name: "Purge",
 		description: "Purge node_modules and build caches",
+		icon: createElement(DeleteSweepIcon),
 		show: {
 			appboard: true,
 			name: true,
@@ -49,6 +57,7 @@ const routesInfoBase: Record<RoutePath, RouteDescription> = {
 	"/external/home-assistant": {
 		name: "Home Assistant",
 		description: "Access your Home Assistant instance",
+		icon: createElement(HomeIcon),
 		show: {
 			appboard: true,
 			name: true,

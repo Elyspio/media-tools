@@ -7,7 +7,7 @@ export function waitProcessExits(getState: () => StoreState, pid: string, timeou
 		const interval = setInterval(() => {
 			const state = getState();
 
-			const exitStatus = state.process.byPids[pid].exitStatus;
+			const exitStatus = state.process.byPids[pid]?.exitStatus;
 
 			if (exitStatus === undefined) return;
 

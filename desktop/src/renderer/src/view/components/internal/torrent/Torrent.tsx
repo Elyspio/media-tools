@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { Autocomplete, Box, Checkbox, Dialog, DialogContent, DialogTitle, FormControlLabel, IconButton, Stack, TextField, Tooltip } from "@mui/material";
+import { Autocomplete, Box, Checkbox, Dialog, DialogContent, DialogTitle, FormControlLabel, IconButton, Stack, TextField, Tooltip, Typography } from "@mui/material";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { toast } from "react-toastify";
@@ -11,6 +11,7 @@ import dayjs from "dayjs";
 import { CopyAll, Download, SearchOutlined } from "@mui/icons-material";
 import type { GetTorrentGroupedResult } from "@modules/torrent/torrent.types";
 import { useModal } from "@hooks/useModal";
+import "./Torrent.scss";
 
 const resolutions = ["720p", "1080p", "2160p", "4K", "8K"] as const;
 
@@ -61,6 +62,21 @@ export function Torrent() {
 
 	const [selectedGroup, setSelectedGroup] = useState<GetTorrentGroupedResult>();
 
+	const modal = useModal(false);
+
+	const onIconButtonClick = useCallback(
+		(torrent: GetTorrentGroupedResult) => {
+			modal.setOpen();
+			setSelectedGroup(torrent);
+		},
+		[modal]
+	);
+
+	const closeModal = () => {
+		modal.setClose();
+		setTimeout(() => setSelectedGroup(undefined), 300);
+	};
+
 	const columns = useMemo<GridColDef<NyaaTorrentItem>[]>(
 		() => [
 			{
@@ -72,15 +88,14 @@ export function Torrent() {
 				field: "seeders",
 				headerName: "Seed",
 				width: 60,
+				align: "center",
+				headerAlign: "center",
 				cellClassName: (params) => {
-					if (params.value === 0) return "value-none";
-					if (params.value <= 5) return "value-low";
-					return "value-ok";
+					if (params.value === 0) return "Torrent__seed-none";
+					if (params.value <= 5) return "Torrent__seed-low";
+					return "Torrent__seed-ok";
 				},
-				sortComparator: (v1: number, v2: number) => {
-					console.log({ v1, v2 });
-					return v1 - v2;
-				},
+				sortComparator: (v1: number, v2: number) => v1 - v2,
 			},
 			{
 				field: "size",
@@ -90,37 +105,39 @@ export function Torrent() {
 				width: 120,
 				valueGetter: (_, row) => row.size,
 			},
-
 			{
 				field: "date",
 				headerName: "Date",
 				width: 100,
+				align: "center",
+				headerAlign: "center",
 				valueGetter: (_, row) => dayjs(row.date).format("YYYY-MM-DD"),
 			},
 			{
 				field: "actions",
-				headerName: "Actions",
+				headerName: "",
 				width: 90,
 				sortable: false,
+				disableColumnMenu: true,
 				renderCell: ({ row }) => (
-					<Stack direction="row" spacing={0.5} alignItems="center" justifyContent={"center"} height={"100%"}>
+					<Stack direction="row" spacing={0.25} alignItems="center" justifyContent={"center"} height={"100%"}>
 						{row.torrentUrl.startsWith("https") && (
-							<Tooltip title="Download">
+							<Tooltip title="Download .torrent">
 								<IconButton size="small" onClick={() => window.open(row.torrentUrl, "_blank")?.focus()}>
-									<Download fontSize="inherit" />
+									<Download sx={{ fontSize: 16 }} />
 								</IconButton>
 							</Tooltip>
 						)}
 						{row.torrentUrl.startsWith("magnet") && (
-							<Tooltip title="Copy Magnet Link">
+							<Tooltip title="Copy magnet">
 								<IconButton size="small" onClick={() => void navigator.clipboard.writeText(row.torrentUrl)}>
-									<CopyAll fontSize="inherit" />
+									<CopyAll sx={{ fontSize: 16 }} />
 								</IconButton>
 							</Tooltip>
 						)}
 						<Tooltip title="Send to qBittorrent">
 							<IconButton size="small" color="primary" disabled={sendingId === row.id} onClick={() => sendToQbittorrent(row)}>
-								<CloudDownloadIcon fontSize="inherit" />
+								<CloudDownloadIcon sx={{ fontSize: 16 }} />
 							</IconButton>
 						</Tooltip>
 					</Stack>
@@ -140,115 +157,141 @@ export function Torrent() {
 			{
 				field: "min",
 				headerName: "Min",
-				width: 120,
-				headerAlign: "right",
-				align: "right",
+				width: 80,
+				headerAlign: "center",
+				align: "center",
 			},
 			{
 				field: "max",
 				headerName: "Max",
-				headerAlign: "right",
-				align: "right",
-				width: 120,
+				headerAlign: "center",
+				align: "center",
+				width: 80,
 			},
-
+			{
+				field: "count",
+				headerName: "Count",
+				headerAlign: "center",
+				align: "center",
+				width: 70,
+				valueGetter: (_, row) => row.data.length,
+			},
 			{
 				field: "actions",
-				headerName: "Actions",
-				width: 90,
+				headerName: "",
+				width: 80,
 				sortable: false,
+				disableColumnMenu: true,
 				renderCell: ({ row }) => (
-					<Stack direction="row" spacing={0.5} alignItems="center" justifyContent={"center"} height={"100%"}>
-						<IconButton size="small">
-							<CloudDownloadIcon fontSize="inherit" />
-						</IconButton>
-						{row.min && row.max && (
-							<IconButton size="small" onClick={() => onIconButtonClick(row)}>
-								<SearchOutlined fontSize="inherit" />
+					<Stack direction="row" spacing={0.25} alignItems="center" justifyContent={"center"} height={"100%"}>
+						<Tooltip title="Send to qBittorrent">
+							<IconButton size="small" color="primary">
+								<CloudDownloadIcon sx={{ fontSize: 16 }} />
 							</IconButton>
+						</Tooltip>
+						{row.min !== undefined && row.max !== undefined && (
+							<Tooltip title="View episodes">
+								<IconButton size="small" onClick={() => onIconButtonClick(row)}>
+									<SearchOutlined sx={{ fontSize: 16 }} />
+								</IconButton>
+							</Tooltip>
 						)}
 					</Stack>
 				),
 			},
 		],
-		[sendToQbittorrent, sendingId]
+		[onIconButtonClick]
 	);
 
 	const torrents = useMemo(() => [...results].sort((a, b) => a.template.localeCompare(b.template)), [results]);
 
-	const modal = useModal(false);
-
-	const onIconButtonClick = useCallback((torrent: GetTorrentGroupedResult) => {
-		modal.setOpen();
-		setSelectedGroup(torrent);
-	}, []);
-
-	const closeModal = () => {
-		modal.setClose();
-		setTimeout(() => setSelectedGroup(undefined), 300);
-	};
-
 	return (
-		<Stack spacing={3} padding={2} height={"100%"} width={"100%"}>
-			<form onSubmit={search}>
-				<Stack spacing={0.5}>
-					<Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
-						<TextField
-							value={query}
-							onChange={(e) => dispatch(torrentActions.setQuery(e.target.value))}
-							label="Search nyaa.si"
-							variant="standard"
-							size="small"
-							fullWidth
-							placeholder="e.g. Some Anime 1080p"
-						/>
+		<Stack className={"Torrent"}>
+			<Box className={"Torrent__search"}>
+				<form onSubmit={search}>
+					<Stack spacing={1}>
+						<Stack direction={"row"} spacing={1.5} alignItems={"flex-end"}>
+							<TextField
+								value={query}
+								onChange={(e) => dispatch(torrentActions.setQuery(e.target.value))}
+								label="Search nyaa.si"
+								size="small"
+								fullWidth
+								placeholder="e.g. Some Anime 1080p"
+							/>
 
-						<Autocomplete
-							renderInput={(params) => <TextField variant={"standard"} {...params} size={"small"} label={"Resolution"} />}
-							options={resolutions}
-							value={forceResolution}
-							sx={{ width: 150 }}
-							disableClearable
-							onChange={(_, v) => setForceResolution(v)}
-						/>
+							<Autocomplete
+								renderInput={(params) => <TextField {...params} size={"small"} label={"Resolution"} />}
+								options={resolutions}
+								value={forceResolution}
+								sx={{ width: 140, flexShrink: 0 }}
+								disableClearable
+								onChange={(_, v) => setForceResolution(v)}
+							/>
 
-						<Box px={1}>
-							<IconButton color={"primary"} sx={{ border: 0.5 }} disabled={loading || !query.trim()} type={"submit"}>
+							<IconButton color={"primary"} disabled={loading || !query.trim()} type={"submit"} sx={{ flexShrink: 0 }}>
 								<SearchOutlined />
 							</IconButton>
-						</Box>
-					</Stack>
+						</Stack>
 
-					<Stack direction={"row"} alignItems={"center"}>
-						<FormControlLabel control={<Checkbox size={"small"} checked={forceVostfr} />} checked={forceVostfr} onChange={(_, v) => setForceVostfr(v)} label="vostfr" />
-						<FormControlLabel
-							control={<Checkbox size={"small"} checked={parseEpisodeInfos} />}
-							checked={parseEpisodeInfos}
-							onChange={(_, v) => dispatch(torrentActions.setParseEpisodeInfos(v))}
-							label="Extract N°"
-						/>
+						<Stack direction={"row"} alignItems={"center"} spacing={1}>
+							<FormControlLabel
+								control={<Checkbox size={"small"} checked={forceVostfr} />}
+								checked={forceVostfr}
+								onChange={(_, v) => setForceVostfr(v)}
+								label="vostfr"
+								slotProps={{ typography: { fontSize: "0.8125rem" } }}
+							/>
+							<FormControlLabel
+								control={<Checkbox size={"small"} checked={parseEpisodeInfos} />}
+								checked={parseEpisodeInfos}
+								onChange={(_, v) => dispatch(torrentActions.setParseEpisodeInfos(v))}
+								label="Group by episode"
+								slotProps={{ typography: { fontSize: "0.8125rem" } }}
+							/>
+						</Stack>
 					</Stack>
-				</Stack>
-			</form>
+				</form>
+			</Box>
 
-			<Dialog open={modal.open} onClose={closeModal} keepMounted={true} fullWidth maxWidth={"md"}>
-				<DialogTitle>{selectedGroup?.template}</DialogTitle>
-				<DialogContent>
-					<Box flex={1} minHeight={0} sx={{ "& .value-low": { color: "orange" }, "& .value-none": { color: "red" }, "& .value-ok": { color: "limegreen" } }}>
-						<DataGrid
-							sx={{ height: "100%" }}
-							rows={selectedGroup?.data ?? []}
-							columns={columns}
-							loading={loading}
-							getRowId={(row) => row.id}
-							disableRowSelectionOnClick
-							hideFooter
-						/>
+			{torrents.length > 0 ? (
+				<Box className={"Torrent__results"}>
+					<DataGrid
+						columns={columnsGlobal}
+						onRowClick={(params) => onIconButtonClick(params.row as GetTorrentGroupedResult)}
+						rows={torrents}
+						getRowId={(row) => row.template}
+						hideFooter
+						loading={loading}
+						disableRowSelectionOnClick
+						sx={{ cursor: "pointer" }}
+					/>
+				</Box>
+			) : (
+				!loading && (
+					<Box className={"Torrent__empty"}>
+						<SearchOutlined sx={{ fontSize: 40, color: "var(--text-faint)" }} />
+						<Typography sx={{ color: "var(--text-muted)", fontSize: "0.8125rem" }}>Search for anime on nyaa.si</Typography>
+					</Box>
+				)
+			)}
+
+			{torrents.length > 0 && (
+				<Box className={"Torrent__status"}>
+					<Typography variant="caption" sx={{ color: "var(--text-muted)", fontFamily: "var(--font-mono)", fontSize: "0.7rem" }}>
+						{torrents.length} result{torrents.length !== 1 ? "s" : ""}
+					</Typography>
+				</Box>
+			)}
+
+			<Dialog open={modal.open} onClose={closeModal} keepMounted fullWidth maxWidth={"md"}>
+				<DialogTitle sx={{ fontSize: "0.875rem", fontWeight: 600 }}>{selectedGroup?.template}</DialogTitle>
+				<DialogContent sx={{ p: 0 }}>
+					<Box sx={{ height: 400 }}>
+						<DataGrid rows={selectedGroup?.data ?? []} columns={columns} loading={loading} getRowId={(row) => row.id} disableRowSelectionOnClick hideFooter />
 					</Box>
 				</DialogContent>
 			</Dialog>
-
-			<DataGrid columns={columnsGlobal} onRowClick={(params) => setSelectedGroup(params.row)} rows={torrents} getRowId={(row) => row.template} hideFooter />
 		</Stack>
 	);
 }

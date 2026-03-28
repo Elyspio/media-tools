@@ -29,7 +29,7 @@ export class StringService {
 	findSimilar<T>(arr: T[], keySelector: (x: T) => string, threshold = 4) {
 		const distances = arr.reduce(
 			(acc, x) => {
-				let xKey = keySelector(x);
+				const xKey = keySelector(x);
 				acc[xKey] = {};
 
 				for (const y of arr) {

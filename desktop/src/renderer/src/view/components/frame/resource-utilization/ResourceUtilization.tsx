@@ -1,35 +1,43 @@
 import "./ResourceUtilization.scss";
-import { Box } from "@mui/material";
-import Paper from "@mui/material/Paper";
 import { useAppSelector } from "@store";
+
+function getBarColor(value: number): string {
+	if (value >= 80) return "#ef5350";
+	if (value >= 50) return "#ffa726";
+	return "#4fd2ff";
+}
 
 export function ResourceUtilization() {
 	const info = useAppSelector((s) => s.config.system);
 
 	const format = (number?: number) => {
-		let str = "0";
-		if (number) {
-			str = number.toFixed(2);
-			if (number < 0) str = "0" + str;
-		}
-
-		return str + "%";
+		if (!number || number <= 0) return "0%";
+		return number.toFixed(1) + "%";
 	};
 
+	const metrics = [
+		{ label: "CPU", value: info?.cpuLoad ?? 0 },
+		{ label: "GPU", value: info?.gpuLoad?.encode ?? 0 },
+		{ label: "MEM", value: info?.mem?.current ?? 0 },
+	];
+
 	return (
-		<Paper className={"ResourceUtilization"}>
-			<Box className={"item"}>
-				<span className={"label"}>CPU</span>
-				<span className={"value"}>{format(info?.cpuLoad)}</span>
-			</Box>
-			<Box className={"item"}>
-				<span className={"label"}>GPU Encode</span>
-				<span className={"value"}>{format(info.gpuLoad?.encode)}</span>
-			</Box>
-			<Box className={"item"}>
-				<span className={"label"}>MEM</span>
-				<span className={"value"}>{format(info.mem?.current)}</span>
-			</Box>
-		</Paper>
+		<div className={"ResourceUtilization"}>
+			{metrics.map((m) => (
+				<div key={m.label} className={"ResourceUtilization__metric"}>
+					<span className={"ResourceUtilization__label"}>{m.label}</span>
+					<div className={"ResourceUtilization__bar"}>
+						<div
+							className={"ResourceUtilization__bar-fill"}
+							style={{
+								width: `${Math.min(100, Math.max(0, m.value))}%`,
+								backgroundColor: getBarColor(m.value),
+							}}
+						/>
+					</div>
+					<span className={"ResourceUtilization__value"}>{format(m.value)}</span>
+				</div>
+			))}
+		</div>
 	);
 }

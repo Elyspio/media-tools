@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Titlebar.scss";
-import { Button, Fade, IconButton, Stack, Typography, useTheme } from "@mui/material";
+import { Fade, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -21,7 +21,7 @@ const Titlebar: React.FC<Props> = ({ title, subtitle }) => {
 	const [settingModalOpened, setSettingModalOpened] = useState<boolean>(false);
 
 	useEffect(() => {
-		window.preload.ipc.send.app.screen.isFullScreen().then(setFullscreen);
+		void window.preload.ipc.send.app.screen.isFullScreen().then(setFullscreen);
 	}, []);
 
 	const toggleModal = () => {
@@ -41,51 +41,51 @@ const Titlebar: React.FC<Props> = ({ title, subtitle }) => {
 		return window.preload.ipc.send.app.screen.toggleFullScreen();
 	};
 
-	const theme = useTheme();
 	const location = useLocation();
+	const isHome = location.pathname === routes["/"].path;
 
 	return (
-		<Stack id={"Titlebar"} bgcolor={theme.palette.background.default} direction={"row"} spacing={1} alignItems={"center"} pl={2} justifyContent={"space-between"}>
-			<Stack direction={"row"} spacing={1} alignItems={"center"}>
-				<Typography color={"gray"}>{title || window.preload.config.appName}</Typography>
+		<Stack id={"Titlebar"} direction={"row"} alignItems={"center"} px={1.5} justifyContent={"space-between"}>
+			<Stack direction={"row"} alignItems={"center"} gap={0.75}>
+				<Typography className={"Titlebar__appname"}>{title || window.preload.config.appName}</Typography>
 
 				{subtitle && (
 					<>
-						<Typography color={"gray"}>|</Typography>
-						<Typography fontSize={"small"} color={"gray"}>
-							{subtitle}
-						</Typography>
+						<Typography className={"Titlebar__separator"}>/</Typography>
+						<Typography className={"Titlebar__subtitle"}>{subtitle}</Typography>
 					</>
 				)}
 
-				<Fade in={location.pathname !== routes["/"].path}>
-					<IconButton size={"small"} onClick={() => window.history.back()}>
-						<NavigateBefore {...svgProps} fontSize={"small"} />
+				<Fade in={!isHome}>
+					<IconButton size={"small"} className={"Titlebar__back"} onClick={() => window.history.back()}>
+						<NavigateBefore sx={{ fontSize: 16 }} />
 					</IconButton>
 				</Fade>
 			</Stack>
 
-			<Stack direction={"row"} spacing={1}>
-				<Button onClick={toggleModal}>
-					<SettingsIcon {...svgProps} fontSize={"small"} />
-				</Button>
+			<Stack direction={"row"} gap={0.25}>
+				<Tooltip title={"Settings"} placement={"bottom"}>
+					<IconButton className={"Titlebar__control"} onClick={toggleModal}>
+						<SettingsIcon sx={{ fontSize: 15 }} />
+					</IconButton>
+				</Tooltip>
 
-				<Button onClick={minimize}>
-					<RemoveIcon {...svgProps} />
-				</Button>
+				<IconButton className={"Titlebar__control"} onClick={minimize}>
+					<RemoveIcon sx={{ fontSize: 16 }} />
+				</IconButton>
 
-				<Button onClick={() => goFullscreen(!fullscreen)}>{fullscreen ? <FullscreenExitIcon {...svgProps} /> : <FullscreenIcon {...svgProps} />}</Button>
+				<IconButton className={"Titlebar__control"} onClick={() => goFullscreen(!fullscreen)}>
+					{fullscreen ? <FullscreenExitIcon sx={{ fontSize: 16 }} /> : <FullscreenIcon sx={{ fontSize: 16 }} />}
+				</IconButton>
 
-				<Button className={"close"} color={"error"} onClick={close}>
-					<Close {...svgProps} />
-				</Button>
+				<IconButton className={"Titlebar__control Titlebar__close"} onClick={close}>
+					<Close sx={{ fontSize: 16 }} />
+				</IconButton>
 			</Stack>
 
 			<Settings close={toggleModal} isOpen={settingModalOpened} />
 		</Stack>
 	);
 };
-
-const svgProps = { htmlColor: "gray" };
 
 export default Titlebar;
