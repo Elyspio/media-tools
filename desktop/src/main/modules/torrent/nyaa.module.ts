@@ -44,6 +44,7 @@ export class NyaaModule extends LogModule {
 			id: this.parseId(item),
 			title: item.title ?? "",
 			torrentUrl: item.link,
+			infoHash: item["nyaa:infoHash"],
 			size: item["nyaa:size"],
 			seeders,
 			leechers,

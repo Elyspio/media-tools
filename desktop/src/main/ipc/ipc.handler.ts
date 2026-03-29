@@ -209,11 +209,17 @@ const ipcHandlers: IpcHandledEvents = {
 	async "torrent:nyaa:list"(_, query: string) {
 		return await mainContainer.get(NyaaModule).list(query);
 	},
-	async "torrent:qbittorrent:add-from-url"(_, torrentUrl: string) {
-		await mainContainer.get(QBittorrentModule).addTorrentFromUrl(torrentUrl);
+	async "torrent:qbittorrent:add-from-url"(_, torrentUrl: string, infoHash?: string) {
+		return await mainContainer.get(QBittorrentModule).addTorrentFromUrl(torrentUrl, infoHash);
+	},
+	async "torrent:qbittorrent:get-hashes"() {
+		return await mainContainer.get(QBittorrentModule).getExistingHashes();
 	},
 	async "auth:oidc:login:start"() {
 		await mainContainer.get(OidcModule).startLogin();
+	},
+	"auth:oidc:login:cancel"() {
+		mainContainer.get(OidcModule).cancelLogin();
 	},
 	async "auth:oidc:logout"() {
 		await mainContainer.get(OidcModule).logout();

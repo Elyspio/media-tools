@@ -2,6 +2,7 @@ export type NyaaTorrentItem = {
 	id: string;
 	title: string;
 	torrentUrl: string;
+	infoHash?: string;
 	size: string;
 	seeders: number;
 	leechers: number;
@@ -11,6 +12,7 @@ export type NyaaTorrentItem = {
 
 export type TorrentAddResult = {
 	success: boolean;
+	duplicate?: boolean;
 	message?: string;
 };
 

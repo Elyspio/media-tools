@@ -21,6 +21,7 @@ export type FrameConfiguration = {
 export type OidcConfiguration = {
 	issuerUrl: string;
 	clientId: string;
+	clientSecret: string;
 	scopes: string;
 	redirectPath: string;
 };

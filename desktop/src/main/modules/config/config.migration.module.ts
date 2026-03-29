@@ -39,6 +39,7 @@ export class ConfigMigrationModule extends LogModule {
 				oidc: {
 					issuerUrl: "",
 					clientId: "",
+					clientSecret: "",
 					scopes: "openid profile offline_access",
 					redirectPath: "auth/callback",
 				},

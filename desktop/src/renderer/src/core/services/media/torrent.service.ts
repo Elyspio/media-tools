@@ -1,9 +1,14 @@
 import { injectable } from "inversify";
+import type { TorrentAddResult } from "@shared/types/torrent.types";
 
 @injectable()
 export class TorrentService {
-	async addTorrentFromUrl(torrentUrl: string) {
-		await window.preload.ipc.send.torrent.qbittorrent.addFromUrl(torrentUrl);
+	async addTorrentFromUrl(torrentUrl: string, infoHash?: string): Promise<TorrentAddResult> {
+		return await window.preload.ipc.send.torrent.qbittorrent.addFromUrl(torrentUrl, infoHash);
+	}
+
+	async getExistingHashes(): Promise<string[]> {
+		return await window.preload.ipc.send.torrent.qbittorrent.getExistingHashes();
 	}
 
 	/**

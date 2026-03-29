@@ -106,6 +106,7 @@ export class ConfigModule extends LogModule {
 				oidc: {
 					issuerUrl: "",
 					clientId: "",
+					clientSecret: "",
 					scopes: "openid profile offline_access",
 					redirectPath: "auth/callback",
 				},
