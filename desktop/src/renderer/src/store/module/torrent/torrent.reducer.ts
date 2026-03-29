@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { TorrentState } from "./torrent.types";
+import { SendStatus, TorrentState } from "./torrent.types";
 import { searchTorrents, sendTorrent } from "./torrent.async.actions";
 
 const defaultState: TorrentState = {
 	query: "",
 	results: [],
 	loading: false,
-	sendingId: null,
+	sendStatuses: {},
 	parseEpisodeInfos: true,
 };
 
@@ -20,10 +20,17 @@ const slice = createSlice({
 		setParseEpisodeInfos(state, action: PayloadAction<boolean>) {
 			state.parseEpisodeInfos = action.payload;
 		},
+		setSendStatus(state, action: PayloadAction<{ id: string; status: SendStatus }>) {
+			state.sendStatuses[action.payload.id] = action.payload.status;
+		},
+		clearSendStatus(state, action: PayloadAction<string>) {
+			delete state.sendStatuses[action.payload];
+		},
 	},
 	extraReducers: ({ addCase }) => {
 		addCase(searchTorrents.pending, (state) => {
 			state.loading = true;
+			state.sendStatuses = {};
 		});
 		addCase(searchTorrents.fulfilled, (state, action) => {
 			state.loading = false;
@@ -34,13 +41,13 @@ const slice = createSlice({
 		});
 
 		addCase(sendTorrent.pending, (state, action) => {
-			state.sendingId = action.meta.arg.id;
+			state.sendStatuses[action.meta.arg.id] = "sending";
 		});
-		addCase(sendTorrent.fulfilled, (state) => {
-			state.sendingId = null;
+		addCase(sendTorrent.fulfilled, (state, action) => {
+			state.sendStatuses[action.payload.id] = action.payload.duplicate ? "duplicate" : "success";
 		});
-		addCase(sendTorrent.rejected, (state) => {
-			state.sendingId = null;
+		addCase(sendTorrent.rejected, (state, action) => {
+			state.sendStatuses[action.meta.arg.id] = "error";
 		});
 	},
 });

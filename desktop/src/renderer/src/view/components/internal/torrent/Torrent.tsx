@@ -1,25 +1,28 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { Autocomplete, Box, Checkbox, Dialog, DialogContent, DialogTitle, FormControlLabel, IconButton, Stack, TextField, Tooltip, Typography } from "@mui/material";
-import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
+import { Autocomplete, Box, Checkbox, Dialog, DialogContent, DialogTitle, FormControlLabel, IconButton, Stack, TextField, Typography } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { toast } from "react-toastify";
 import { NyaaTorrentItem } from "@shared/types/torrent.types";
-import { useAppDispatch, useAppSelector } from "@store";
-import { searchTorrents, sendTorrent } from "@modules/torrent/torrent.async.actions";
+import { store, useAppDispatch, useAppSelector } from "@store";
+import { searchTorrents, sendTorrent, sendTorrentGroup } from "@modules/torrent/torrent.async.actions";
 import { torrentActions } from "@modules/torrent/torrent.reducer";
 import dayjs from "dayjs";
-import { CopyAll, Download, SearchOutlined } from "@mui/icons-material";
+import { SearchOutlined } from "@mui/icons-material";
 import type { GetTorrentGroupedResult } from "@modules/torrent/torrent.types";
 import { useModal } from "@hooks/useModal";
 import "./Torrent.scss";
+import { TorrentRowAction } from "./cells/TorrentRowAction";
+import { TorrentGroupAction } from "./cells/TorrentGroupAction";
 
 const resolutions = ["720p", "1080p", "2160p", "4K", "8K"] as const;
 
 type Resolution = (typeof resolutions)[number];
 
+const CLEAR_DELAY = 3000;
+
 export function Torrent() {
 	const dispatch = useAppDispatch();
-	const { query, results, loading, sendingId, parseEpisodeInfos } = useAppSelector((s) => s.torrent);
+	const { query, results, loading, sendStatuses, parseEpisodeInfos } = useAppSelector((s) => s.torrent);
 
 	const [forceVostfr, setForceVostfr] = useState(true);
 	const [forceResolution, setForceResolution] = useState<Resolution>("1080p");
@@ -44,20 +47,40 @@ export function Torrent() {
 		[dispatch, forceResolution, forceVostfr, query]
 	);
 
-	const sendToQbittorrent = useCallback(
-		(row: NyaaTorrentItem) => {
-			if (!row.torrentUrl) {
-				toast.error("No magnet or torrent URL available for this entry");
-				return;
-			}
-			void dispatch(sendTorrent(row))
-				.unwrap()
-				.then(() => toast.success("Sent to qBittorrent"))
-				.catch((error) => {
-					toast.error(error instanceof Error ? error.message : "Failed to send torrent");
-				});
+	const clearNonDuplicateStatus = useCallback(
+		(id: string) => {
+			setTimeout(() => {
+				const current = store.getState().torrent.sendStatuses[id];
+				if (current && current !== "duplicate") {
+					dispatch(torrentActions.clearSendStatus(id));
+				}
+			}, CLEAR_DELAY);
 		},
 		[dispatch]
+	);
+
+	const sendToQbittorrent = useCallback(
+		(row: NyaaTorrentItem) => {
+			if (!row.torrentUrl) return;
+			void dispatch(sendTorrent(row))
+				.unwrap()
+				.finally(() => clearNonDuplicateStatus(row.id));
+		},
+		[clearNonDuplicateStatus, dispatch]
+	);
+
+	const sendGroupToQbittorrent = useCallback(
+		(group: GetTorrentGroupedResult, e: React.MouseEvent) => {
+			e.stopPropagation();
+			void dispatch(sendTorrentGroup(group))
+				.unwrap()
+				.finally(() => {
+					for (const item of group.data) {
+						clearNonDuplicateStatus(item.id);
+					}
+				});
+		},
+		[clearNonDuplicateStatus, dispatch]
 	);
 
 	const [selectedGroup, setSelectedGroup] = useState<GetTorrentGroupedResult>();
@@ -119,32 +142,10 @@ export function Torrent() {
 				width: 90,
 				sortable: false,
 				disableColumnMenu: true,
-				renderCell: ({ row }) => (
-					<Stack direction="row" spacing={0.25} alignItems="center" justifyContent={"center"} height={"100%"}>
-						{row.torrentUrl.startsWith("https") && (
-							<Tooltip title="Download .torrent">
-								<IconButton size="small" onClick={() => window.open(row.torrentUrl, "_blank")?.focus()}>
-									<Download sx={{ fontSize: 16 }} />
-								</IconButton>
-							</Tooltip>
-						)}
-						{row.torrentUrl.startsWith("magnet") && (
-							<Tooltip title="Copy magnet">
-								<IconButton size="small" onClick={() => void navigator.clipboard.writeText(row.torrentUrl)}>
-									<CopyAll sx={{ fontSize: 16 }} />
-								</IconButton>
-							</Tooltip>
-						)}
-						<Tooltip title="Send to qBittorrent">
-							<IconButton size="small" color="primary" disabled={sendingId === row.id} onClick={() => sendToQbittorrent(row)}>
-								<CloudDownloadIcon sx={{ fontSize: 16 }} />
-							</IconButton>
-						</Tooltip>
-					</Stack>
-				),
+				renderCell: ({ row }) => <TorrentRowAction row={row} sendToQbittorrent={sendToQbittorrent} />,
 			},
 		],
-		[sendToQbittorrent, sendingId]
+		[sendToQbittorrent, sendStatuses]
 	);
 
 	const columnsGlobal = useMemo<GridColDef<GetTorrentGroupedResult>[]>(
@@ -182,25 +183,10 @@ export function Torrent() {
 				width: 80,
 				sortable: false,
 				disableColumnMenu: true,
-				renderCell: ({ row }) => (
-					<Stack direction="row" spacing={0.25} alignItems="center" justifyContent={"center"} height={"100%"}>
-						<Tooltip title="Send to qBittorrent">
-							<IconButton size="small" color="primary">
-								<CloudDownloadIcon sx={{ fontSize: 16 }} />
-							</IconButton>
-						</Tooltip>
-						{row.min !== undefined && row.max !== undefined && (
-							<Tooltip title="View episodes">
-								<IconButton size="small" onClick={() => onIconButtonClick(row)}>
-									<SearchOutlined sx={{ fontSize: 16 }} />
-								</IconButton>
-							</Tooltip>
-						)}
-					</Stack>
-				),
+				renderCell: ({ row }) => <TorrentGroupAction row={row} onClick={sendGroupToQbittorrent} onIconButtonClick={onIconButtonClick} />,
 			},
 		],
-		[onIconButtonClick]
+		[onIconButtonClick, sendGroupToQbittorrent, sendStatuses]
 	);
 
 	const torrents = useMemo(() => [...results].sort((a, b) => a.template.localeCompare(b.template)), [results]);

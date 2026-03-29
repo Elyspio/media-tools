@@ -1,11 +1,11 @@
-import { BrowserWindow } from "electron";
+import { shell } from "electron";
 import { inject, injectable } from "inversify";
 import crypto from "node:crypto";
 import { ConfigModule } from "@main/modules/config/config.module";
-import { WindowModule } from "@main/modules/window/window.module";
 import { SecureStorageModule } from "@main/modules/security/secure-storage.module";
 import { mainConfig } from "@shared/config/main.config";
 import type { OidcAuthStatus } from "@shared/types/auth.types";
+import { LogModule } from "@main/modules/log.module";
 
 type OidcDiscovery = {
 	authorization_endpoint: string;
@@ -15,10 +15,10 @@ type OidcDiscovery = {
 type OidcPendingAuth = {
 	state: string;
 	codeVerifier: string;
-	window: BrowserWindow;
 	resolve: () => void;
 	reject: (err: Error) => void;
 	discovery: OidcDiscovery;
+	timeoutHandle: ReturnType<typeof setTimeout>;
 };
 
 type OidcTokenResponse = {
@@ -28,7 +28,7 @@ type OidcTokenResponse = {
 };
 
 @injectable()
-export class OidcModule {
+export class OidcModule extends LogModule {
 	private pendingAuth?: OidcPendingAuth;
 	private accessToken?: string;
 	private accessTokenExpiresAt = 0;
@@ -36,9 +36,10 @@ export class OidcModule {
 
 	public constructor(
 		@inject(ConfigModule) private readonly configModule: ConfigModule,
-		@inject(WindowModule) private readonly windowModule: WindowModule,
 		@inject(SecureStorageModule) private readonly secureStorageModule: SecureStorageModule
-	) {}
+	) {
+		super("OidcModule");
+	}
 
 	public async startLogin(): Promise<void> {
 		if (this.pendingAuth) {
@@ -65,38 +66,26 @@ export class OidcModule {
 		authUrl.searchParams.set("code_challenge", codeChallenge);
 		authUrl.searchParams.set("code_challenge_method", "S256");
 
-		const authWindow = new BrowserWindow({
-			parent: this.windowModule.getMainWindow(),
-			modal: true,
-			show: true,
-			title: "Authenticate",
-			width: 540,
-			height: 760,
-			autoHideMenuBar: true,
-			webPreferences: {
-				nodeIntegration: false,
-				contextIsolation: true,
-				sandbox: true,
-			},
-		});
-
-		await authWindow.loadURL(authUrl.toString());
+		await shell.openExternal(authUrl.toString());
 
 		return await new Promise<void>((resolve, reject) => {
+			const timeoutHandle = setTimeout(
+				() => {
+					if (!this.pendingAuth) return;
+					this.pendingAuth = undefined;
+					reject(new Error("OIDC login timed out (5 minutes)"));
+				},
+				5 * 60 * 1000
+			);
+
 			this.pendingAuth = {
 				state,
 				codeVerifier,
-				window: authWindow,
 				resolve,
 				reject,
 				discovery,
+				timeoutHandle,
 			};
-
-			authWindow.on("closed", () => {
-				if (!this.pendingAuth) return;
-				this.pendingAuth = undefined;
-				reject(new Error("OIDC login was cancelled"));
-			});
 		});
 	}
 
@@ -135,16 +124,24 @@ export class OidcModule {
 			}
 
 			await this.exchangeCodeForTokens(code, pending.codeVerifier, pending.discovery);
+			clearTimeout(pending.timeoutHandle);
+			this.pendingAuth = undefined;
 			pending.resolve();
-			pending.window.close();
-			this.pendingAuth = undefined;
 		} catch (error) {
-			pending.reject(error as Error);
-			pending.window.close();
+			clearTimeout(pending.timeoutHandle);
 			this.pendingAuth = undefined;
+			pending.reject(error as Error);
 		}
 
 		return true;
+	}
+
+	public cancelLogin(): void {
+		if (!this.pendingAuth) return;
+		const pending = this.pendingAuth;
+		clearTimeout(pending.timeoutHandle);
+		this.pendingAuth = undefined;
+		pending.reject(new Error("OIDC login was cancelled by the user"));
 	}
 
 	public async logout(): Promise<void> {
@@ -180,6 +177,7 @@ export class OidcModule {
 		const payload = new URLSearchParams({
 			grant_type: "refresh_token",
 			client_id: auth.clientId,
+			...(auth.clientSecret ? { client_secret: auth.clientSecret } : {}),
 			refresh_token: refreshToken,
 		});
 
@@ -206,6 +204,7 @@ export class OidcModule {
 			grant_type: "authorization_code",
 			code,
 			client_id: auth.clientId,
+			...(auth.clientSecret ? { client_secret: auth.clientSecret } : {}),
 			redirect_uri: redirectUri,
 			code_verifier: codeVerifier,
 		});
@@ -219,6 +218,7 @@ export class OidcModule {
 		});
 
 		if (!res.ok) {
+			this.log;
 			throw new Error(`Failed to exchange OIDC code (${res.status})`);
 		}
 
@@ -247,7 +247,7 @@ export class OidcModule {
 		const { auth } = await this.getOidcConfig();
 		const issuer = auth.issuerUrl.replace(/\/$/, "");
 		const res = await fetch(`${issuer}/.well-known/openid-configuration`);
-		if (!res.ok) {
+		if (res.status !== 200) {
 			throw new Error(`Failed to fetch OIDC discovery document (${res.status})`);
 		}
 

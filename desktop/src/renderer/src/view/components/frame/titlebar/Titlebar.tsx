@@ -9,7 +9,7 @@ import NavigateBefore from "@mui/icons-material/NavigateBefore";
 import Close from "@mui/icons-material/Close";
 import Settings from "../settings/Settings";
 import { routes } from "@/config/routes.config";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 
 interface Props {
 	title?: string;
@@ -44,10 +44,14 @@ const Titlebar: React.FC<Props> = ({ title, subtitle }) => {
 	const location = useLocation();
 	const isHome = location.pathname === routes["/"].path;
 
+	const navigate = useNavigate();
+
 	return (
 		<Stack id={"Titlebar"} direction={"row"} alignItems={"center"} px={1.5} justifyContent={"space-between"}>
 			<Stack direction={"row"} alignItems={"center"} gap={0.75}>
-				<Typography className={"Titlebar__appname"}>{title || window.preload.config.appName}</Typography>
+				<Typography className={"Titlebar__appname"} onClick={() => navigate(routes["/"].path)}>
+					{title || window.preload.config.appName}
+				</Typography>
 
 				{subtitle && (
 					<>
@@ -57,7 +61,7 @@ const Titlebar: React.FC<Props> = ({ title, subtitle }) => {
 				)}
 
 				<Fade in={!isHome}>
-					<IconButton size={"small"} className={"Titlebar__back"} onClick={() => window.history.back()}>
+					<IconButton size={"small"} className={"Titlebar__back"} onClick={() => navigate(-1)}>
 						<NavigateBefore sx={{ fontSize: 16 }} />
 					</IconButton>
 				</Fade>

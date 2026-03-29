@@ -8,7 +8,7 @@ import { ExecResult, SpawnResult } from "@shared/types/process.types";
 import { RmDirOptions } from "fs";
 import { Stats } from "node:fs";
 import { FfmpegConvertOptions } from "@shared/types/ffmpeg.types";
-import { NyaaTorrentItem } from "@shared/types/torrent.types";
+import { NyaaTorrentItem, TorrentAddResult } from "@shared/types/torrent.types";
 import { OidcAuthStatus } from "@shared/types/auth.types";
 
 export function getIpcSender() {
@@ -133,6 +133,9 @@ export function getIpcSender() {
 				startLogin: async () => {
 					await ipcRendererWrapper.invoke("auth:oidc:login:start");
 				},
+				cancelLogin: () => {
+					ipcRendererWrapper.invoke("auth:oidc:login:cancel");
+				},
 				logout: async () => {
 					await ipcRendererWrapper.invoke("auth:oidc:logout");
 				},
@@ -143,8 +146,11 @@ export function getIpcSender() {
 		},
 		torrent: {
 			qbittorrent: {
-				addFromUrl: async (torrentUrl: string): Promise<void> => {
-					await ipcRendererWrapper.invoke("torrent:qbittorrent:add-from-url", torrentUrl);
+				addFromUrl: async (torrentUrl: string, infoHash?: string): Promise<TorrentAddResult> => {
+					return await ipcRendererWrapper.invoke("torrent:qbittorrent:add-from-url", torrentUrl, infoHash);
+				},
+				getExistingHashes: async (): Promise<string[]> => {
+					return await ipcRendererWrapper.invoke("torrent:qbittorrent:get-hashes");
 				},
 			},
 			nyaa: {

@@ -87,7 +87,7 @@ export const Settings: React.FC<OwnProps> = ({ close, isOpen }) => {
 	);
 
 	const setOidcField = useCallback(
-		(field: "issuerUrl" | "clientId" | "scopes" | "redirectPath", value: string) => {
+		(field: "issuerUrl" | "clientId" | "clientSecret" | "scopes" | "redirectPath", value: string) => {
 			updateDraft((draft) => ({
 				...draft,
 				endpoints: {
@@ -159,6 +159,10 @@ export const Settings: React.FC<OwnProps> = ({ close, isOpen }) => {
 			setIsAuthenticating(false);
 		}
 	}, [refreshAuthStatus, saveConfig]);
+
+	const cancelLogin = useCallback(() => {
+		window.preload.ipc.send.auth.oidc.cancelLogin();
+	}, []);
 
 	const logout = useCallback(async () => {
 		await window.preload.ipc.send.auth.oidc.logout();
@@ -249,6 +253,15 @@ export const Settings: React.FC<OwnProps> = ({ close, isOpen }) => {
 										fullWidth
 									/>
 									<TextField
+										label="Client Secret"
+										value={draftConfig.endpoints.oidc.clientSecret}
+										onChange={(e) => setOidcField("clientSecret", e.target.value)}
+										size="small"
+										fullWidth
+										type="password"
+										helperText="Leave empty for public clients (PKCE only)"
+									/>
+									<TextField
 										label="Scopes"
 										value={draftConfig.endpoints.oidc.scopes}
 										onChange={(e) => setOidcField("scopes", e.target.value)}
@@ -276,8 +289,13 @@ export const Settings: React.FC<OwnProps> = ({ close, isOpen }) => {
 												Logout
 											</Button>
 										)}
+										{isAuthenticating && (
+											<Button size="small" variant="outlined" color="error" onClick={cancelLogin}>
+												Cancel
+											</Button>
+										)}
 										<Typography variant="caption" sx={{ color: authStatus.authenticated ? "#00FF88" : "var(--text-muted)" }}>
-											{authStatus.authenticated ? "Authenticated" : "Not authenticated"}
+											{isAuthenticating ? "Waiting for browser..." : authStatus.authenticated ? "Authenticated" : "Not authenticated"}
 										</Typography>
 									</Stack>
 								</Box>
