@@ -8,50 +8,38 @@ import svgr from "vite-plugin-svgr";
 
 const basePath = path.join(__dirname, "..");
 const disableMainBytecode = process.env["ELYTOOLS_DISABLE_MAIN_BYTECODE"] === "1";
+const cpuFeaturesShim = path.join(__dirname, "shims", "cpu-features.js");
 
 const nodeAlias = convertPathToAlias(tsconfigNode.compilerOptions.paths, basePath);
 const rendererAlias = convertPathToAlias(tsconfigWeb.compilerOptions.paths, basePath);
 
-console.log({
-	nodeAlias,
-	rendererAlias,
-});
 
 export default defineConfig({
-	main: {
-		build: {
-			externalizeDeps: false,
-			bytecode: !disableMainBytecode,
-		},
-		resolve: {
-			alias: nodeAlias,
-		},
-	},
-	preload: {
-		build: {
-			bytecode: false,
-		},
-		resolve: {
-			alias: nodeAlias,
-		},
-	},
-	renderer: {
-		resolve: {
-			alias: rendererAlias,
-		},
-
-		plugins: [
-			svgr(),
-			react({
-				babel: {
-					plugins: [
-						["babel-plugin-react-compiler", {}],
-						"babel-plugin-transform-typescript-metadata",
-						["@babel/plugin-proposal-decorators", { legacy: true }],
-						["@babel/plugin-proposal-class-properties", { loose: true }],
-					],
-				},
-			}),
-		],
-	},
+  main: {
+    build: {
+      externalizeDeps: false,
+      bytecode: !disableMainBytecode,
+    },
+    resolve: {
+      alias: {
+        ...nodeAlias,
+        "cpu-features": cpuFeaturesShim,
+        "cpu-features/lib/index": cpuFeaturesShim,
+      },
+    },
+  },
+  preload: {
+    build: {
+      bytecode: false,
+    },
+    resolve: {
+      alias: nodeAlias,
+    },
+  },
+  renderer: {
+    resolve: {
+      alias: rendererAlias,
+    },
+    plugins: [svgr(), react()],
+  },
 });

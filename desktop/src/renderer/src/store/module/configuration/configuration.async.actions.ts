@@ -4,50 +4,55 @@ import { addProcessStd, completeProcess } from "@modules/process/process.actions
 import { LatestConfig } from "@shared/config/app.config";
 import { SystemService } from "@services/system/system.service";
 import { setSystemInformation } from "@modules/configuration/configuration.actions";
+import { initSsh } from "@modules/ssh/ssh.async.actions";
 
 const createAsyncThunk = createAsyncActionGenerator("configuration");
 
 export const setConfig = createAsyncThunk("set", async (config: LatestConfig, { extra }) => {
-	const services = getServices({ config: ConfigurationService }, extra);
+  const services = getServices({ config: ConfigurationService }, extra);
 
-	await services.config.set(config);
+  await services.config.set(config);
 });
 
 export const regenerateConfig = createAsyncThunk("regenerate", async (_, { extra }) => {
-	const services = getServices({ config: ConfigurationService }, extra);
+  const services = getServices({ config: ConfigurationService }, extra);
 
-	await services.config.regenerate();
+  await services.config.regenerate();
 });
 
 export const initConfig = createAsyncThunk("init", async (_, { extra, dispatch, getState }) => {
-	const services = getServices({ config: ConfigurationService, system: SystemService }, extra);
+  const services = getServices({ config: ConfigurationService, system: SystemService }, extra);
 
-	await dispatch(setConfig(await services.config.get()));
+  await dispatch(setConfig(await services.config.get()));
 
-	setInterval(() => {
-		void (async () => {
-			const state = getState();
+  setInterval(() => {
+    void (async () => {
+      const state = getState();
 
-			if (!state.config.current.frame.show.resourceUtilization) {
-				return;
-			}
+      if (!state.config.current.frame.show.resourceUtilization) {
+        return;
+      }
 
-			const [cpu, mem, gpu] = await Promise.all([services.system.cpuLoad(), services.system.memoryUsed(), services.system.gpuLoad()]);
-			dispatch(
-				setSystemInformation({
-					cpuLoad: cpu,
-					mem: mem,
-					gpuLoad: gpu,
-				})
-			);
-		})();
-	}, 1000);
+      const [cpu, mem, gpu] = await Promise.all([
+        services.system.cpuLoad(),
+        services.system.memoryUsed(),
+        services.system.gpuLoad(),
+      ]);
+      dispatch(
+        setSystemInformation({
+          cpuLoad: cpu,
+          mem: mem,
+          gpuLoad: gpu,
+        }),
+      );
+    })();
+  }, 1000);
 });
 
 export const resetDimensions = createAsyncThunk("reset-dimensions", async () => {
-	// const services = getServices({ window: WindowService }, extra);
-	//
-	// services.window.resetDimensions();
+  // const services = getServices({ window: WindowService }, extra);
+  //
+  // services.window.resetDimensions();
 });
 
 // export const watchWindowResize = createAsyncThunk("watch-window-resize", async (_, { extra, getState,  }) => {
@@ -72,18 +77,19 @@ export const resetDimensions = createAsyncThunk("reset-dimensions", async () => 
 // });
 
 export const initApp = createAsyncThunk("init-app", async (_, { dispatch }) => {
-	await dispatch(initConfig());
-	// dispatch(watchWindowResize());
+  await dispatch(initConfig());
+  await dispatch(initSsh());
+  // dispatch(watchWindowResize());
 
-	window.preload.ipc.on.process.spawn.exit((pid, code) => {
-		dispatch(completeProcess({ pid, exitStatus: code ?? -1 }));
-	});
+  window.preload.ipc.on.process.spawn.exit((pid, code) => {
+    dispatch(completeProcess({ pid, exitStatus: code ?? -1 }));
+  });
 
-	window.preload.ipc.on.process.spawn.stdout((pid, data) => {
-		dispatch(addProcessStd({ pid, type: "stdout", data }));
-	});
+  window.preload.ipc.on.process.spawn.stdout((pid, data) => {
+    dispatch(addProcessStd({ pid, type: "stdout", data }));
+  });
 
-	window.preload.ipc.on.process.spawn.stderr((pid, data) => {
-		dispatch(addProcessStd({ pid, type: "stderr", data }));
-	});
+  window.preload.ipc.on.process.spawn.stderr((pid, data) => {
+    dispatch(addProcessStd({ pid, type: "stderr", data }));
+  });
 });

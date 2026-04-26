@@ -9,29 +9,31 @@ import { Container } from "inversify";
 import { logErrorMiddleware } from "@store/middlewares/log-error.middleware";
 import { webContainer } from "@core/di/web.container";
 import { processSlice } from "@modules/process/process.reducer";
+import { sshReducer } from "@modules/ssh/ssh.reducer";
 
 const reducers = combineReducers({
-	config: configurationReducer,
-	media: mediaSlice.reducer,
-	encoder: encoderReducer,
-	process: processSlice.reducer,
-	torrent: torrentReducer,
+  config: configurationReducer,
+  media: mediaSlice.reducer,
+  encoder: encoderReducer,
+  process: processSlice.reducer,
+  torrent: torrentReducer,
+  ssh: sshReducer,
 });
 
 export const store = configureStore({
-	reducer: reducers,
-	middleware: (defaults) =>
-		defaults({
-			serializableCheck: {
-				ignoredActions: ["media/setCurrentProcess"],
-			},
-			thunk: {
-				extraArgument: {
-					container: webContainer,
-				},
-			},
-		}).concat(logErrorMiddleware),
-	preloadedState: getUriParam("store", { json: true, remove: true }) ?? undefined,
+  reducer: reducers,
+  middleware: (defaults) =>
+    defaults({
+      serializableCheck: {
+        ignoredActions: ["media/setCurrentProcess"],
+      },
+      thunk: {
+        extraArgument: {
+          container: webContainer,
+        },
+      },
+    }).concat(logErrorMiddleware),
+  preloadedState: getUriParam("store", { json: true, remove: true }) ?? undefined,
 });
 
 export type StoreState = ReturnType<typeof store.getState>;
@@ -44,5 +46,5 @@ export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<StoreState> = useSelector;
 
 export type ExtraArgument = {
-	container: Container;
+  container: Container;
 };

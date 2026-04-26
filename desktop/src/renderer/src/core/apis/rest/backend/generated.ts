@@ -12,259 +12,287 @@ import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import axios, { AxiosError } from "axios";
 
 export class TypingClient {
-	protected instance: AxiosInstance;
-	protected baseUrl: string;
-	protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+  protected instance: AxiosInstance;
+  protected baseUrl: string;
+  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-	constructor(baseUrl?: string, instance?: AxiosInstance) {
-		this.instance = instance || axios.create();
+  constructor(baseUrl?: string, instance?: AxiosInstance) {
+    this.instance = instance || axios.create();
 
-		this.baseUrl = baseUrl ?? "https://localhost:4000";
-	}
+    this.baseUrl = baseUrl ?? "https://localhost:4000";
+  }
 
-	getTypes(signal?: AbortSignal): Promise<Types> {
-		let url_ = this.baseUrl + "/api/types";
-		url_ = url_.replace(/[?&]$/, "");
+  getTypes(signal?: AbortSignal): Promise<Types> {
+    let url_ = this.baseUrl + "/api/types";
+    url_ = url_.replace(/[?&]$/, "");
 
-		let options_: AxiosRequestConfig = {
-			method: "GET",
-			url: url_,
-			headers: {
-				Accept: "application/json",
-			},
-			signal,
-		};
+    let options_: AxiosRequestConfig = {
+      method: "GET",
+      url: url_,
+      headers: {
+        Accept: "application/json",
+      },
+      signal,
+    };
 
-		return this.instance
-			.request(options_)
-			.catch((_error: any) => {
-				if (isAxiosError(_error) && _error.response) {
-					return _error.response;
-				} else {
-					throw _error;
-				}
-			})
-			.then((_response: AxiosResponse) => {
-				return this.processGetTypes(_response);
-			});
-	}
+    return this.instance
+      .request(options_)
+      .catch((_error: any) => {
+        if (isAxiosError(_error) && _error.response) {
+          return _error.response;
+        } else {
+          throw _error;
+        }
+      })
+      .then((_response: AxiosResponse) => {
+        return this.processGetTypes(_response);
+      });
+  }
 
-	protected processGetTypes(response: AxiosResponse): Promise<Types> {
-		const status = response.status;
-		let _headers: any = {};
-		if (response.headers && typeof response.headers === "object") {
-			for (const k in response.headers) {
-				if (response.headers.hasOwnProperty(k)) {
-					_headers[k] = response.headers[k];
-				}
-			}
-		}
-		if (status === 200) {
-			const _responseText = response.data;
-			let result200: any = null;
-			let resultData200 = _responseText;
-			result200 = JSON.parse(resultData200);
-			return Promise.resolve<Types>(result200);
-		} else if (status !== 200 && status !== 204) {
-			const _responseText = response.data;
-			return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-		}
-		return Promise.resolve<Types>(null as any);
-	}
+  protected processGetTypes(response: AxiosResponse): Promise<Types> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && typeof response.headers === "object") {
+      for (const k in response.headers) {
+        if (response.headers.hasOwnProperty(k)) {
+          _headers[k] = response.headers[k];
+        }
+      }
+    }
+    if (status === 200) {
+      const _responseText = response.data;
+      let result200: any = null;
+      let resultData200 = _responseText;
+      result200 = JSON.parse(resultData200);
+      return Promise.resolve<Types>(result200);
+    } else if (status !== 200 && status !== 204) {
+      const _responseText = response.data;
+      return throwException(
+        "An unexpected server error occurred.",
+        status,
+        _responseText,
+        _headers,
+      );
+    }
+    return Promise.resolve<Types>(null as any);
+  }
 }
 
 export class WeatherClient {
-	protected instance: AxiosInstance;
-	protected baseUrl: string;
-	protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+  protected instance: AxiosInstance;
+  protected baseUrl: string;
+  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-	constructor(baseUrl?: string, instance?: AxiosInstance) {
-		this.instance = instance || axios.create();
+  constructor(baseUrl?: string, instance?: AxiosInstance) {
+    this.instance = instance || axios.create();
 
-		this.baseUrl = baseUrl ?? "https://localhost:4000";
-	}
+    this.baseUrl = baseUrl ?? "https://localhost:4000";
+  }
 
-	getWeatherCities(signal?: AbortSignal): Promise<WeatherCityName[]> {
-		let url_ = this.baseUrl + "/weathers/cities";
-		url_ = url_.replace(/[?&]$/, "");
+  getWeatherCities(signal?: AbortSignal): Promise<WeatherCityName[]> {
+    let url_ = this.baseUrl + "/weathers/cities";
+    url_ = url_.replace(/[?&]$/, "");
 
-		let options_: AxiosRequestConfig = {
-			method: "GET",
-			url: url_,
-			headers: {
-				Accept: "application/json",
-			},
-			signal,
-		};
+    let options_: AxiosRequestConfig = {
+      method: "GET",
+      url: url_,
+      headers: {
+        Accept: "application/json",
+      },
+      signal,
+    };
 
-		return this.instance
-			.request(options_)
-			.catch((_error: any) => {
-				if (isAxiosError(_error) && _error.response) {
-					return _error.response;
-				} else {
-					throw _error;
-				}
-			})
-			.then((_response: AxiosResponse) => {
-				return this.processGetWeatherCities(_response);
-			});
-	}
+    return this.instance
+      .request(options_)
+      .catch((_error: any) => {
+        if (isAxiosError(_error) && _error.response) {
+          return _error.response;
+        } else {
+          throw _error;
+        }
+      })
+      .then((_response: AxiosResponse) => {
+        return this.processGetWeatherCities(_response);
+      });
+  }
 
-	getWeather(city: WeatherCityName, signal?: AbortSignal): Promise<GetWeatherResult> {
-		let url_ = this.baseUrl + "/weathers/cities/{city}";
-		if (city === undefined || city === null) throw new Error("The parameter 'city' must be defined.");
-		url_ = url_.replace("{city}", encodeURIComponent("" + city));
-		url_ = url_.replace(/[?&]$/, "");
+  getWeather(city: WeatherCityName, signal?: AbortSignal): Promise<GetWeatherResult> {
+    let url_ = this.baseUrl + "/weathers/cities/{city}";
+    if (city === undefined || city === null)
+      throw new Error("The parameter 'city' must be defined.");
+    url_ = url_.replace("{city}", encodeURIComponent("" + city));
+    url_ = url_.replace(/[?&]$/, "");
 
-		let options_: AxiosRequestConfig = {
-			method: "GET",
-			url: url_,
-			headers: {
-				Accept: "application/json",
-			},
-			signal,
-		};
+    let options_: AxiosRequestConfig = {
+      method: "GET",
+      url: url_,
+      headers: {
+        Accept: "application/json",
+      },
+      signal,
+    };
 
-		return this.instance
-			.request(options_)
-			.catch((_error: any) => {
-				if (isAxiosError(_error) && _error.response) {
-					return _error.response;
-				} else {
-					throw _error;
-				}
-			})
-			.then((_response: AxiosResponse) => {
-				return this.processGetWeather(_response);
-			});
-	}
+    return this.instance
+      .request(options_)
+      .catch((_error: any) => {
+        if (isAxiosError(_error) && _error.response) {
+          return _error.response;
+        } else {
+          throw _error;
+        }
+      })
+      .then((_response: AxiosResponse) => {
+        return this.processGetWeather(_response);
+      });
+  }
 
-	protected processGetWeatherCities(response: AxiosResponse): Promise<WeatherCityName[]> {
-		const status = response.status;
-		let _headers: any = {};
-		if (response.headers && typeof response.headers === "object") {
-			for (const k in response.headers) {
-				if (response.headers.hasOwnProperty(k)) {
-					_headers[k] = response.headers[k];
-				}
-			}
-		}
-		if (status === 200) {
-			const _responseText = response.data;
-			let result200: any = null;
-			let resultData200 = _responseText;
-			result200 = JSON.parse(resultData200);
-			return Promise.resolve<WeatherCityName[]>(result200);
-		} else if (status !== 200 && status !== 204) {
-			const _responseText = response.data;
-			return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-		}
-		return Promise.resolve<WeatherCityName[]>(null as any);
-	}
+  protected processGetWeatherCities(response: AxiosResponse): Promise<WeatherCityName[]> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && typeof response.headers === "object") {
+      for (const k in response.headers) {
+        if (response.headers.hasOwnProperty(k)) {
+          _headers[k] = response.headers[k];
+        }
+      }
+    }
+    if (status === 200) {
+      const _responseText = response.data;
+      let result200: any = null;
+      let resultData200 = _responseText;
+      result200 = JSON.parse(resultData200);
+      return Promise.resolve<WeatherCityName[]>(result200);
+    } else if (status !== 200 && status !== 204) {
+      const _responseText = response.data;
+      return throwException(
+        "An unexpected server error occurred.",
+        status,
+        _responseText,
+        _headers,
+      );
+    }
+    return Promise.resolve<WeatherCityName[]>(null as any);
+  }
 
-	protected processGetWeather(response: AxiosResponse): Promise<GetWeatherResult> {
-		const status = response.status;
-		let _headers: any = {};
-		if (response.headers && typeof response.headers === "object") {
-			for (const k in response.headers) {
-				if (response.headers.hasOwnProperty(k)) {
-					_headers[k] = response.headers[k];
-				}
-			}
-		}
-		if (status === 200) {
-			const _responseText = response.data;
-			let result200: any = null;
-			let resultData200 = _responseText;
-			result200 = JSON.parse(resultData200);
-			return Promise.resolve<GetWeatherResult>(result200);
-		} else if (status !== 200 && status !== 204) {
-			const _responseText = response.data;
-			return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-		}
-		return Promise.resolve<GetWeatherResult>(null as any);
-	}
+  protected processGetWeather(response: AxiosResponse): Promise<GetWeatherResult> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && typeof response.headers === "object") {
+      for (const k in response.headers) {
+        if (response.headers.hasOwnProperty(k)) {
+          _headers[k] = response.headers[k];
+        }
+      }
+    }
+    if (status === 200) {
+      const _responseText = response.data;
+      let result200: any = null;
+      let resultData200 = _responseText;
+      result200 = JSON.parse(resultData200);
+      return Promise.resolve<GetWeatherResult>(result200);
+    } else if (status !== 200 && status !== 204) {
+      const _responseText = response.data;
+      return throwException(
+        "An unexpected server error occurred.",
+        status,
+        _responseText,
+        _headers,
+      );
+    }
+    return Promise.resolve<GetWeatherResult>(null as any);
+  }
 }
 
 export interface Types {
-	frame?: Frame | undefined;
+  frame?: Frame | undefined;
 }
 
 export interface Frame {
-	data: string;
-	width: number;
-	height: number;
+  data: string;
+  width: number;
+  height: number;
 }
 
 export enum WeatherCityName {
-	Caluire = "Caluire",
-	SaintDidier = "SaintDidier",
+  Caluire = "Caluire",
+  SaintDidier = "SaintDidier",
 }
 
 export interface GetWeatherResult {
-	current: Forecast;
-	hourly: Forecast[];
+  current: Forecast;
+  hourly: Forecast[];
 }
 
 export interface Forecast {
-	date: string;
-	temperature: Temperature;
-	type: WeatherType;
-	rain?: number | undefined;
+  date: string;
+  temperature: Temperature;
+  type: WeatherType;
+  rain?: number | undefined;
 }
 
 export interface Temperature {
-	current: number;
-	feelsLike: number;
+  current: number;
+  feelsLike: number;
 }
 
 export enum WeatherType {
-	Thunderstorm = "Thunderstorm",
-	Drizzle = "Drizzle",
-	Snow = "Snow",
-	Mist = "Mist",
-	Smoke = "Smoke",
-	Haze = "Haze",
-	Dust = "Dust",
-	Fog = "Fog",
-	Sand = "Sand",
-	Ash = "Ash",
-	Squall = "Squall",
-	Tornado = "Tornado",
-	Clear = "Clear",
-	Clouds = "Clouds",
-	Rain = "Rain",
+  Thunderstorm = "Thunderstorm",
+  Drizzle = "Drizzle",
+  Snow = "Snow",
+  Mist = "Mist",
+  Smoke = "Smoke",
+  Haze = "Haze",
+  Dust = "Dust",
+  Fog = "Fog",
+  Sand = "Sand",
+  Ash = "Ash",
+  Squall = "Squall",
+  Tornado = "Tornado",
+  Clear = "Clear",
+  Clouds = "Clouds",
+  Rain = "Rain",
 }
 
 export class ApiException extends Error {
-	override message: string;
-	status: number;
-	response: string;
-	headers: { [key: string]: any };
-	result: any;
-	protected isApiException = true;
+  override message: string;
+  status: number;
+  response: string;
+  headers: { [key: string]: any };
+  result: any;
+  protected isApiException = true;
 
-	constructor(message: string, status: number, response: string, headers: { [key: string]: any }, result: any) {
-		super();
+  constructor(
+    message: string,
+    status: number,
+    response: string,
+    headers: { [key: string]: any },
+    result: any,
+  ) {
+    super();
 
-		this.message = message;
-		this.status = status;
-		this.response = response;
-		this.headers = headers;
-		this.result = result;
-	}
+    this.message = message;
+    this.status = status;
+    this.response = response;
+    this.headers = headers;
+    this.result = result;
+  }
 
-	static isApiException(obj: any): obj is ApiException {
-		return obj.isApiException === true;
-	}
+  static isApiException(obj: any): obj is ApiException {
+    return obj.isApiException === true;
+  }
 }
 
-function throwException(message: string, status: number, response: string, headers: { [key: string]: any }, result?: any): any {
-	if (result !== null && result !== undefined) throw result;
-	else throw new ApiException(message, status, response, headers, null);
+function throwException(
+  message: string,
+  status: number,
+  response: string,
+  headers: { [key: string]: any },
+  result?: any,
+): any {
+  if (result !== null && result !== undefined) throw result;
+  else throw new ApiException(message, status, response, headers, null);
 }
 
 function isAxiosError(obj: any): obj is AxiosError {
-	return obj && obj.isAxiosError === true;
+  return obj && obj.isAxiosError === true;
 }

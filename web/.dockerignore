@@ -1,8 +1,0 @@
-back/**/bin
-back/**/obj
-deploy
-.idea
-.git
-front/dist
-front/node_modules
-back/.vs
