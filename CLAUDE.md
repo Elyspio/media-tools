@@ -30,23 +30,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Package manager: **pnpm 10.32.1**. Vite config at `config/electron.vite.config.ts`, builder config at `config/electron-builder.yml`.
 
-### Web Backend (`cd web/back`)
-
-| Task | Command |
-|------|---------|
-| Build | `dotnet build` |
-| Test | `dotnet test` |
-| Run | `dotnet run --project Web/Elytools.Api.Web.csproj` |
-
-### Web Frontend (`cd web/front`)
-
-| Task | Command |
-|------|---------|
-| Install deps | `pnpm install` |
-| Dev server | `pnpm dev` (port 3000) |
-| Build | `pnpm build` |
-| Regenerate API clients | `pnpm refresh-clients` |
-
 ## Architecture
 
 ### Desktop — Three-Process Electron Model
@@ -71,14 +54,6 @@ Cached JSON at `%LOCALAPPDATA%/elytools/config/` (Linux: `~/.config/elytools/con
 ### TypeScript Path Aliases (Desktop)
 
 `@/*` → renderer src, `@main/*` → main process, `@preload/*` → preload, `@shared/*` → shared types. Also `@components/*`, `@services/*`, `@apis/*`.
-
-### Web Backend — Modular .NET
-
-Solution `Elytools.Api.sln` with projects: Abstractions, Core, Adapters, Web, Sockets, Tests. DI uses custom `AddModule<T>()` pattern in `Web/Server/Builder.cs`. SignalR hub at `/ws/screen-share`.
-
-### Web Frontend
-
-React 19 + Vite + Inversify DI. API clients auto-generated from NSwag (`pnpm refresh-clients`). Production base path: `/elytools-api/`.
 
 ## Key Conventions
 

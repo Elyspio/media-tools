@@ -2,3 +2,4 @@
 desktop/nyaa.*
 *.tsbuildinfo
 .claude/settings.local.json
+desktop/.claude

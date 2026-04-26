@@ -44,10 +44,7 @@ Supporting services and a web-based client for remote access.
 ```text
 .
 ├── desktop/    # Electron + React + TypeScript application
-└── web/
-    ├── back/   # ASP.NET Core API and tests
-    ├── front/  # React web client
-    └── deploy/ # Docker-based deployment assets
+
 ```
 
 ---
@@ -63,20 +60,6 @@ pnpm dev
 ```
 
 *For web services, refer to the [Web Stack](#-web-stack) section below.*
-
----
-
-## 🌐 Web Stack
-
-### Backend (`/web/back`)
-ASP.NET Core application exposing APIs and SignalR hubs.
-- **Prerequisites**: .NET SDK 10, MongoDB, Redis.
-- **Run**: `dotnet run --project Web/Elytools.Api.Web.csproj`
-
-### Frontend (`/web/front`)
-React web client for authentication and screen sharing.
-- **Prerequisites**: Node.js, pnpm.
-- **Run**: `pnpm install && pnpm start`
 
 ---
 
