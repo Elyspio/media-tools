@@ -59,7 +59,7 @@
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "ssh2": "^1.17.0",
-    "systeminformation": "^5.31.5",
+    "systeminformation": "^5.31.6",
     "vite-plugin-svgr": "^5.2.0",
     "winston": "^3.19.0"
   },
